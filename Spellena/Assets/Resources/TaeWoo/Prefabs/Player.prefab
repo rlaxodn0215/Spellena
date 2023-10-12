@@ -460,6 +460,7 @@ MonoBehaviour:
   jumpHeight: 5
   animator: {fileID: 0}
   rigidbody: {fileID: 0}
+  isOccupying: 0
   AeternaData: {fileID: 11400000, guid: 68088471f050fa74fb68919ed9133893, type: 2}
   DimensionSword: {fileID: 0}
   DimensionDoor: {fileID: 0}
