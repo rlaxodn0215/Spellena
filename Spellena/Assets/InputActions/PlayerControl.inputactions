@@ -24,7 +24,34 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Skill_1",
+                    "name": "Walk",
+                    "type": "Button",
+                    "id": "54b3753b-b01d-4f90-bbb5-32b7c43bbcd2",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Sit",
+                    "type": "Button",
+                    "id": "fac7d23a-a706-4d21-89a4-f1497b9704f5",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Interaction",
+                    "type": "Button",
+                    "id": "873478a1-3497-4f82-bd4b-2c6392f85f81",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Skill1",
                     "type": "Button",
                     "id": "9e48be17-8905-45ba-81b9-fdcfe24d91ec",
                     "expectedControlType": "Button",
@@ -33,7 +60,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Skill_2",
+                    "name": "Skill2",
                     "type": "Button",
                     "id": "b0877e92-11da-4ef6-ab74-0cdd223915f0",
                     "expectedControlType": "Button",
@@ -42,7 +69,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Skill_3",
+                    "name": "Skill3",
                     "type": "Button",
                     "id": "467c893b-c415-468a-be3f-10ed8f2b1d45",
                     "expectedControlType": "Button",
@@ -51,7 +78,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Skill_4",
+                    "name": "Skill4",
                     "type": "Button",
                     "id": "6fd97b47-a85c-43fa-bc29-5a939870a496",
                     "expectedControlType": "Button",
@@ -77,7 +104,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "PC",
-                    "action": "Skill_1",
+                    "action": "Skill1",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -88,7 +115,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "PC",
-                    "action": "Skill_2",
+                    "action": "Skill2",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -99,7 +126,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "PC",
-                    "action": "Skill_3",
+                    "action": "Skill3",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -110,7 +137,40 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "PC",
-                    "action": "Skill_4",
+                    "action": "Skill4",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "54943ecb-8cf2-4c9c-aa1a-fa42c597cca7",
+                    "path": "<Keyboard>/leftShift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "PC",
+                    "action": "Walk",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "48823ca0-edd6-4371-9e0e-c595ae04dc1a",
+                    "path": "<Keyboard>/leftCtrl",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "PC",
+                    "action": "Sit",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b3bcd021-4e67-433b-9fb6-83046959a049",
+                    "path": "<Keyboard>/f",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "PC",
+                    "action": "Interaction",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
