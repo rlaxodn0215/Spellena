@@ -70,6 +70,8 @@ namespace Player
         private bool IsMoving;
         private bool grounded;
 
+        public bool isOccupying = false;
+
         private void Awake()
         {
             playerInput = GetComponent<PlayerInput>();
@@ -103,6 +105,7 @@ namespace Player
         {
             PlayerSkillInput();
             CharactorUpdate();
+            isOccupying = false;
         }
 
         protected void FixedUpdate()
@@ -182,6 +185,7 @@ namespace Player
             if (other.tag == "OccupationArea")
             {
                 Debug.Log("¡°∑…¡ﬂ...");
+                isOccupying = true;
             }
         }
 
