@@ -93,29 +93,23 @@ namespace Player
             playerActionDatas.Add(_data);
         }
 
-        protected void Start()
+        protected virtual void Start()
         {
-            //gameObject.tag = "Friendly";
             Initialize();
-            CharactorStart();
         }
-        protected void Update()
+        protected virtual void Update()
         {
-            PlayerSkillInput();
-            CharactorUpdate();
+
         }
 
-        protected void FixedUpdate()
+        protected virtual void FixedUpdate()
         {
             PlayerMove();
-            CharactorFixedUpdate();
         }
+
         // 캐릭터에 따른 초기화
-        protected virtual void CharactorStart() { }
         // 캐릭터에 따른 Update
-        protected virtual void CharactorUpdate() { }
-        protected virtual void PlayerSkillInput() { }
-        protected virtual void CharactorFixedUpdate() { }
+        //gameObject.tag = "Friendly";
 
         void Initialize()
         {
@@ -222,7 +216,7 @@ namespace Player
                 // playerData.murder = tag.gameObject.playerName;
                 // 히트 스캔일 경우 RPC에 쏜 사람 이름 매개변수로 전달
                 // 죽은 것 서버에 연락 
-                //GetComponent<PhotonView>().RPC("TakeDamage", RpcTarget.All, );
+                //GetComponent<PhotonView>().RPC("TakeDamage", RpcTarget.AllBuffered, );
             }
         }
 
