@@ -101,8 +101,6 @@ namespace Player
         }
         protected virtual void Update()
         {
-            PlayerSkillInput();
-            CharactorUpdate();
             isOccupying = false;
         }
 
