@@ -51,7 +51,8 @@ namespace Player
         [HideInInspector]
         public Dictionary<string, Ability> Skills;
 
-        private Vector3 input;
+        private Vector3 moveVec;
+        private bool IsMoving;
         private bool grounded;
 
         protected void Start()
@@ -88,13 +89,19 @@ namespace Player
 
         void OnMove(InputValue value)
         {
-            input = transform.TransformVector(new Vector3(value.Get<Vector2>().x, 0, value.Get<Vector2>().y));
-            input.Normalize();
+            moveVec = new Vector3(value.Get<Vector2>().x, 0, value.Get<Vector2>().y);
+            if (moveVec.magnitude <= 0)
+                IsMoving = false;
+            else
+                IsMoving = true;
         }
 
         protected void PlayerMove()
         {
-            rigidbody.MovePosition(rigidbody.transform.position + input * moveSpeed * Time.deltaTime);
+            if (IsMoving)
+            {
+                rigidbody.MovePosition(rigidbody.transform.position + moveVec * moveSpeed * Time.deltaTime);
+            }
         }
 
         void OnJump()

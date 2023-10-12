@@ -44,7 +44,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
         Debug.Log(message: "We're connected and in a room!");
 
-        GameObject _player = PhotonNetwork.Instantiate("Prefabs/" + player.name, spawnPoint.position, Quaternion.identity);
+        GameObject _player = PhotonNetwork.Instantiate("TaeWoo/Prefabs/" + player.name, spawnPoint.position, Quaternion.identity);
         _player.GetComponent<Player.Charactor>().IsLocalPlayer();
     }
 
