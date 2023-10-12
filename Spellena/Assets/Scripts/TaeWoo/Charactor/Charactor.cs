@@ -20,14 +20,14 @@ namespace Player
         public bool isExecuting;
     }
 
-    // ÇÃ·¹ÀÌ¾î Ä³¸¯ÅÍ Á¾·ù ÆÄ¾Ç
+    // í”Œë ˆì´ì–´ ìºë¦­í„° ì¢…ë¥˜ íŒŒì•…
     public enum PlayerCharactor
     {
         Aeterna,
         ElementalOrder
     }
 
-    // ¼­¹ö¿¡ »ç¸Á ¹× »ìÀÎÀÚ¸¦ ¾Ë¸®±â À§ÇÑ ÄÚµå
+    // ì„œë²„ì— ì‚¬ë§ ë° ì‚´ì¸ìë¥¼ ì•Œë¦¬ê¸° ìœ„í•œ ì½”ë“œ
     public struct PlayerData
     {
         public string playerName;
@@ -62,13 +62,15 @@ namespace Player
         [HideInInspector]
         public Rigidbody rigidbody;
 
-        // ´É·Â ³Ö´Â Dictionary   
+        // ëŠ¥ë ¥ ë„£ëŠ” Dictionary   
         [HideInInspector]
         public Dictionary<string, Ability> Skills;
 
         private Vector3 moveVec;
         private bool IsMoving;
         private bool grounded;
+
+        public bool isOccupying = false;
 
         private void Awake()
         {
@@ -99,7 +101,9 @@ namespace Player
         }
         protected virtual void Update()
         {
-
+            PlayerSkillInput();
+            CharactorUpdate();
+            isOccupying = false;
         }
 
         protected virtual void FixedUpdate()
@@ -107,8 +111,8 @@ namespace Player
             PlayerMove();
         }
 
-        // Ä³¸¯ÅÍ¿¡ µû¸¥ ÃÊ±âÈ­
-        // Ä³¸¯ÅÍ¿¡ µû¸¥ Update
+        // ìºë¦­í„°ì— ë”°ë¥¸ ì´ˆê¸°í™”
+        // ìºë¦­í„°ì— ë”°ë¥¸ Update
         //gameObject.tag = "Friendly";
 
         void Initialize()
@@ -161,7 +165,7 @@ namespace Player
             }
         }
 
-        //¹Ù´Ú Äİ¶óÀÌ´õ Á¢ÃË È®ÀÎ
+        //ë°”ë‹¥ ì½œë¼ì´ë” ì ‘ì´‰ í™•ì¸
         protected void OnTriggerEnter(Collider other)
         {
             if (other.tag == "Ground")
@@ -175,7 +179,8 @@ namespace Player
         {
             if (other.tag == "OccupationArea")
             {
-                Debug.Log("Á¡·ÉÁß...");
+                Debug.Log("ì ë ¹ì¤‘...");
+                isOccupying = true;
             }
         }
 
@@ -183,16 +188,16 @@ namespace Player
         {
             if (collision.gameObject.tag == "Enemy")
             {
-                //ÅõÃ´¹«±â
+                //íˆ¬ì²™ë¬´ê¸°
                 //PlayerDamaged(collision.gameObject.playerName,10);
                 //destory
             }
         }
 
-        // Å¸¿ö °ÅÁ¡ Èú¸µ
+        // íƒ€ì›Œ ê±°ì  íë§
         protected void OnCollisionStay(Collision collision)
         {
-            //if(collision.gameObject.tag == "Å¾")
+            //if(collision.gameObject.tag == "íƒ‘")
 
             if(Input.GetKey(KeyCode.F))
             {
@@ -212,10 +217,10 @@ namespace Player
             Hp-=damage;
             if (Hp <= 0)
             {
-                // ÅõÃ´ ¹«±â¿¡ ½ğ »ç¶÷ ÀÌ¸§ ÀúÀå
+                // íˆ¬ì²™ ë¬´ê¸°ì— ìœ ì‚¬ëŒ ì´ë¦„ ì €ì¥
                 // playerData.murder = tag.gameObject.playerName;
-                // È÷Æ® ½ºÄµÀÏ °æ¿ì RPC¿¡ ½ğ »ç¶÷ ÀÌ¸§ ¸Å°³º¯¼ö·Î Àü´Ş
-                // Á×Àº °Í ¼­¹ö¿¡ ¿¬¶ô 
+                // íˆíŠ¸ ìŠ¤ìº”ì¼ ê²½ìš° RPCì— ìœ ì‚¬ëŒ ì´ë¦„ ë§¤ê°œë³€ìˆ˜ë¡œ ì „ë‹¬
+                // ì£½ì€ ê²ƒ ì„œë²„ì— ì—°ë½ 
                 //GetComponent<PhotonView>().RPC("TakeDamage", RpcTarget.AllBuffered, );
             }
         }
