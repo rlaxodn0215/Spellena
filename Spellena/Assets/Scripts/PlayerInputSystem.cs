@@ -18,7 +18,7 @@ public class PlayerInputSystem : MonoBehaviour
         public bool IsExecuting;
     }
 
-    List<PlayerActionData> playerActionDatas = new List<PlayerActionData>();
+     List<PlayerActionData> playerActionDatas = new List<PlayerActionData>();
 
     Vector2 moveVec;
 

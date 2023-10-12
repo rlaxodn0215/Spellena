@@ -33,9 +33,9 @@ namespace Player
 
         void Initialize()
         {
-            Skills["Basic_Attack"] = new DimensionSword(this);
-            Skills["Skill_1"] = new DimensionOpen(this);
-            Skills["Skill_2"] = new DimensionIO(this);
+            Skills["BasicAttack"] = new DimensionSword(this);
+            Skills["Skill1"] = new DimensionOpen(this);
+            Skills["Skill2"] = new DimensionIO(this);
 
             skillTimer = new float[Skills.Count];
 
@@ -50,32 +50,60 @@ namespace Player
         }
 
 
-        void OnSkill_1()
+        void OnSkill1()
         {
-            if (skillButton == 1) skillButton = -1;
+            if (skillButton == 1)
+            {
+                skillButton = -1;
+                Debug.Log("BasicAttack Ready");
+            }
+
             if (skillTimer[1] <= 0.0f)
             {
-                if (skillButton == 1) skillButton = -1;
-                else skillButton = 1;
+                if (skillButton == 1)
+                {
+                    skillButton = -1;
+                    Debug.Log("BasicAttack Ready");
+                }
+
+                else
+                {
+                    skillButton = 1;
+                    Debug.Log("Skill1 Ready");
+                }
             }
         }
 
-        void OnSkill_2()
+        void OnSkill2()
         {
-            if (skillButton == 2) skillButton = -1;
+            if (skillButton == 2)
+            {
+                skillButton = -1;
+                Debug.Log("BasicAttack Ready");
+            }
+
             if (skillTimer[2] <= 0.0f)
             {
-                if (skillButton == 2) skillButton = -1;
-                else skillButton = 2;
+                if (skillButton == 2)
+                {
+                    skillButton = -1;
+                    Debug.Log("BasicAttack Ready");
+                }
+
+                else
+                {
+                    skillButton = 2;
+                    Debug.Log("Skill2 Ready");
+                }
             }
         }
 
-        void OnSkill_3()
+        void OnSkill3()
         {
 
         }
 
-        void OnSkill_4()
+        void OnSkill4()
         {
 
         }
@@ -87,14 +115,16 @@ namespace Player
             {
                 if(skillButton==1 && skillTimer[1]<=0.0f)
                 {
-                    Skills["Skill_1"].Execution();
+                    Skills["Skill1"].Execution();
+                    //playerActionDatas[(int)PlayerActionState.Skill1].isExecuting = true;
                     skillTimer[1] = AeternaData.skillTimer[1];
                     StartCoroutine(SkillTimer(1));
                 }
 
                 else if(skillButton==2 && skillTimer[2] <= 0.0f)
                 {
-                    Skills["Skill_2"].Execution();
+                    Skills["Skill2"].Execution();
+                    //playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = true;
                     skillTimer[2] = AeternaData.skillTimer[2];
                     StartCoroutine(SkillTimer(2));
                 }
@@ -102,7 +132,7 @@ namespace Player
                 else
                 {
                     if(skillButton == -1)
-                        Skills["Basic_Attack"].Execution();
+                        Skills["BasicAttack"].Execution();
                 }
             }
         }

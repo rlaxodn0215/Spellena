@@ -8,6 +8,18 @@ using Photon.Realtime;
 
 namespace Player
 {
+    public enum PlayerActionState
+    {
+        Move, Jump, Walk, Sit, Interaction, Skill1, Skill2, Skill3, Skill4
+    }
+
+    public class PlayerActionData
+    {
+        public PlayerActionState playerActionState;
+        public InputAction inputAction;
+        public bool isExecuting;
+    }
+
     // 플레이어 캐릭터 종류 파악
     public enum PlayerCharactor
     {
@@ -30,6 +42,9 @@ namespace Player
 
     public class Charactor : MonoBehaviour
     {
+        PlayerInput playerInput;
+        public List<PlayerActionData> playerActionDatas = new List<PlayerActionData>();
+
         public string playerName;
         public int Hp;
         public PlayerCharactor charactor;
@@ -54,6 +69,29 @@ namespace Player
         private Vector3 moveVec;
         private bool IsMoving;
         private bool grounded;
+
+        private void Awake()
+        {
+            playerInput = GetComponent<PlayerInput>();
+            SetPlayerKeys(PlayerActionState.Move, "Move");
+            SetPlayerKeys(PlayerActionState.Jump, "Jump");
+            SetPlayerKeys(PlayerActionState.Walk, "Walk");
+            SetPlayerKeys(PlayerActionState.Sit, "Sit");
+            SetPlayerKeys(PlayerActionState.Interaction, "Interaction");
+            SetPlayerKeys(PlayerActionState.Skill1, "Skill1");
+            SetPlayerKeys(PlayerActionState.Skill2, "Skill2");
+            SetPlayerKeys(PlayerActionState.Skill3, "Skill3");
+            SetPlayerKeys(PlayerActionState.Skill4, "Skill4");
+        }
+
+        void SetPlayerKeys(PlayerActionState playerActionState, string action)
+        {
+            PlayerActionData _data = new PlayerActionData();
+            _data.playerActionState = playerActionState;
+            _data.inputAction = playerInput.actions.FindAction(action);
+            _data.isExecuting = false;
+            playerActionDatas.Add(_data);
+        }
 
         protected void Start()
         {
@@ -90,17 +128,32 @@ namespace Player
         void OnMove(InputValue value)
         {
             moveVec = new Vector3(value.Get<Vector2>().x, 0, value.Get<Vector2>().y);
+
+            //List<int> _temp = new List<int>();
             if (moveVec.magnitude <= 0)
-                IsMoving = false;
+                playerActionDatas[(int)PlayerActionState.Move].isExecuting = false;
             else
-                IsMoving = true;
+                playerActionDatas[(int)PlayerActionState.Move].isExecuting = true;
         }
 
         protected void PlayerMove()
         {
-            if (IsMoving)
+            if (playerActionDatas[(int)PlayerActionState.Move].isExecuting)
             {
-                rigidbody.MovePosition(rigidbody.transform.position + moveVec * moveSpeed * Time.deltaTime);
+                Vector3 _temp = new Vector3(0, 0, 0);
+                if (moveVec.z > 0)
+                    _temp += transform.forward;
+                else if (moveVec.z < 0)
+                    _temp -= transform.forward;
+                if (moveVec.x > 0)
+                    _temp += transform.right;
+                else if (moveVec.x < 0)
+                    _temp -= transform.right;
+
+                _temp.Normalize();
+
+                rigidbody.MovePosition(rigidbody.transform.position + _temp* moveSpeed * Time.deltaTime);
+                
             }
         }
 
@@ -109,6 +162,7 @@ namespace Player
             if (grounded)
             {
                 rigidbody.velocity = new Vector3(rigidbody.velocity.x, jumpHeight, rigidbody.velocity.z);
+                playerActionDatas[(int)PlayerActionState.Jump].isExecuting = true;
                 grounded = false;
             }
         }
@@ -117,6 +171,7 @@ namespace Player
         protected void OnTriggerEnter(Collider other)
         {
             grounded = true;
+            playerActionDatas[(int)PlayerActionState.Jump].isExecuting = false;
         }
 
         protected void OnCollisionEnter(Collision collision)
