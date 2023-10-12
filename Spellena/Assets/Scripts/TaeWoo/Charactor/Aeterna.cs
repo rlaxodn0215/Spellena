@@ -52,12 +52,6 @@ namespace Player
 
         void OnSkill1()
         {
-            if (skillButton == 1)
-            {
-                skillButton = -1;
-                Debug.Log("BasicAttack Ready");
-            }
-
             if (skillTimer[1] <= 0.0f)
             {
                 if (skillButton == 1)
@@ -72,16 +66,16 @@ namespace Player
                     Debug.Log("Skill1 Ready");
                 }
             }
-        }
 
-        void OnSkill2()
-        {
-            if (skillButton == 2)
+            else
             {
                 skillButton = -1;
                 Debug.Log("BasicAttack Ready");
             }
+        }
 
+        void OnSkill2()
+        {
             if (skillTimer[2] <= 0.0f)
             {
                 if (skillButton == 2)
@@ -95,6 +89,12 @@ namespace Player
                     skillButton = 2;
                     Debug.Log("Skill2 Ready");
                 }
+            }
+
+            else
+            {
+                skillButton = -1;
+                Debug.Log("BasicAttack Ready");
             }
         }
 

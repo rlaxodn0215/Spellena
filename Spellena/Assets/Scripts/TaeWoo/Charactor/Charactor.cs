@@ -170,8 +170,19 @@ namespace Player
         //바닥 콜라이더 접촉 확인
         protected void OnTriggerEnter(Collider other)
         {
-            grounded = true;
-            playerActionDatas[(int)PlayerActionState.Jump].isExecuting = false;
+            if (other.tag == "Ground")
+            {
+                grounded = true;
+                playerActionDatas[(int)PlayerActionState.Jump].isExecuting = false;
+            }
+        }
+
+        protected void OnTriggerStay(Collider other)
+        {
+            if (other.tag == "OccupationArea")
+            {
+                Debug.Log("점령중...");
+            }
         }
 
         protected void OnCollisionEnter(Collision collision)
