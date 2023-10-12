@@ -16,19 +16,21 @@ namespace Player
         [HideInInspector]
         public float[] skillTimer;
 
-        protected override void CharactorStart() 
-        { 
+        protected override void Start() 
+        {
+            base.Start();
             Initialize();
         }
 
-        protected override void CharactorUpdate()
+        protected override void Update()
         {
-            
+            base.Update();
+            PlayerSkillInput();
         }
 
-        protected override void CharactorFixedUpdate()
+        protected override void FixedUpdate()
         {
-
+            base.FixedUpdate();
         }
 
         void Initialize()
@@ -108,7 +110,7 @@ namespace Player
 
         }
 
-        protected override void PlayerSkillInput()
+        protected void PlayerSkillInput()
         {
             // 입력된 스킬 슬롯 에 따라 해당 스킬 사용
             if (Input.GetMouseButtonDown(0))
