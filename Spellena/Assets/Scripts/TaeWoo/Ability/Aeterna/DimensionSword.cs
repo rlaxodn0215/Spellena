@@ -12,14 +12,14 @@ namespace Player
         public DimensionSword(Aeterna player)
         {
             Player = player;
-            //animator = player.GetComponent<Animator>();
+            animator = player.GetComponent<Animator>();
             //Sword = player.DimensionSword;
         }
         public void Execution()
         {
             //공격 애니매이션 사용, 칼 활성화
             //만일 타격이 없다면 원거리 공격
-            //animator.SetBool("")
+            animator.SetTrigger("BasicAttack");
             Debug.Log("DimensionSword!");
             
         }

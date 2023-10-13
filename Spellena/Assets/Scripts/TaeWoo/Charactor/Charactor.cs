@@ -173,7 +173,9 @@ namespace Player
             {
                 rigidbody.velocity = new Vector3(rigidbody.velocity.x, jumpHeight, rigidbody.velocity.z);
                 playerActionDatas[(int)PlayerActionState.Jump].isExecuting = true;
+                animator.SetTrigger("Jump");
                 grounded = false;
+                animator.SetBool("Grounded", grounded);
             }
         }
 
@@ -199,6 +201,7 @@ namespace Player
             {
                 grounded = true;
                 playerActionDatas[(int)PlayerActionState.Jump].isExecuting = false;
+                animator.SetBool("Grounded", grounded);
             }
         }
 

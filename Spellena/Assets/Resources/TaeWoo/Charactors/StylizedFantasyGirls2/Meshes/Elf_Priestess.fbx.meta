@@ -34,12 +34,1143 @@ ModelImporter:
     rigImportErrors: 
     rigImportWarnings: 
     animationImportErrors: 
-    animationImportWarnings: 
+    animationImportWarnings: "\nClip 'Walk_Forward' has import animation warnings
+      that might lower retargeting quality:\nNote: Activate translation DOF on avatar
+      to improve retargeting quality.\n\t'spine_01' has translation animation that
+      will be discarded.\n\t'upperarm_l' has translation animation that will be discarded.\n\t'lowerarm_l'
+      has translation animation that will be discarded.\n\t'upperarm_r' has translation
+      animation that will be discarded.\n\t'lowerarm_r' has translation animation
+      that will be discarded.\n\t'foot_l' has translation animation that will be
+      discarded.\n\t'ball_l' has translation animation that will be discarded.\n\t'calf_r'
+      has translation animation that will be discarded.\n\t'foot_r' has translation
+      animation that will be discarded.\n\t'ball_r' has translation animation that
+      will be discarded.\n\nClip 'Walk_Backwards' has import animation warnings that
+      might lower retargeting quality:\nNote: Activate translation DOF on avatar
+      to improve retargeting quality.\n\t'spine_01' has translation animation that
+      will be discarded.\n\t'upperarm_l' has translation animation that will be discarded.\n\t'lowerarm_l'
+      has translation animation that will be discarded.\n\t'upperarm_r' has translation
+      animation that will be discarded.\n\t'lowerarm_r' has translation animation
+      that will be discarded.\n\t'ball_l' has translation animation that will be
+      discarded.\n\t'foot_r' has translation animation that will be discarded.\n\t'ball_r'
+      has translation animation that will be discarded.\n\nClip 'Walk_Left' has import
+      animation warnings that might lower retargeting quality:\nNote: Activate translation
+      DOF on avatar to improve retargeting quality.\n\t'spine_01' has translation
+      animation that will be discarded.\n\t'upperarm_l' has translation animation
+      that will be discarded.\n\t'lowerarm_l' has translation animation that will
+      be discarded.\n\t'upperarm_r' has translation animation that will be discarded.\n\t'lowerarm_r'
+      has translation animation that will be discarded.\n\t'foot_l' has translation
+      animation that will be discarded.\n\t'ball_l' has translation animation that
+      will be discarded.\n\t'foot_r' has translation animation that will be discarded.\n\t'ball_r'
+      has translation animation that will be discarded.\n\nClip 'Walk_Right' has
+      import animation warnings that might lower retargeting quality:\nNote: Activate
+      translation DOF on avatar to improve retargeting quality.\n\t'spine_01' has
+      translation animation that will be discarded.\n\t'upperarm_l' has translation
+      animation that will be discarded.\n\t'lowerarm_l' has translation animation
+      that will be discarded.\n\t'upperarm_r' has translation animation that will
+      be discarded.\n\t'lowerarm_r' has translation animation that will be discarded.\n\t'foot_l'
+      has translation animation that will be discarded.\n\t'ball_l' has translation
+      animation that will be discarded.\n\t'foot_r' has translation animation that
+      will be discarded.\n\t'ball_r' has translation animation that will be discarded.\n\nClip
+      'Run_Forward' has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'upperarm_l'
+      has translation animation that will be discarded.\n\t'lowerarm_l' has translation
+      animation that will be discarded.\n\t'upperarm_r' has translation animation
+      that will be discarded.\n\t'lowerarm_r' has translation animation that will
+      be discarded.\n\t'foot_l' has translation animation that will be discarded.\n\t'ball_l'
+      has translation animation that will be discarded.\n\t'foot_r' has translation
+      animation that will be discarded.\n\t'ball_r' has translation animation that
+      will be discarded.\n\nClip 'Run_Backwards' has import animation warnings that
+      might lower retargeting quality:\nNote: Activate translation DOF on avatar
+      to improve retargeting quality.\n\t'upperarm_l' has translation animation that
+      will be discarded.\n\t'lowerarm_l' has translation animation that will be discarded.\n\t'upperarm_r'
+      has translation animation that will be discarded.\n\t'lowerarm_r' has translation
+      animation that will be discarded.\n\t'foot_l' has translation animation that
+      will be discarded.\n\t'ball_l' has translation animation that will be discarded.\n\t'foot_r'
+      has translation animation that will be discarded.\n\t'ball_r' has translation
+      animation that will be discarded.\n\nClip 'Run_Left' has import animation warnings
+      that might lower retargeting quality:\nNote: Activate translation DOF on avatar
+      to improve retargeting quality.\n\t'upperarm_l' has translation animation that
+      will be discarded.\n\t'lowerarm_l' has translation animation that will be discarded.\n\t'upperarm_r'
+      has translation animation that will be discarded.\n\t'lowerarm_r' has translation
+      animation that will be discarded.\n\t'foot_l' has translation animation that
+      will be discarded.\n\t'ball_l' has translation animation that will be discarded.\n\t'foot_r'
+      has translation animation that will be discarded.\n\t'ball_r' has translation
+      animation that will be discarded.\n\nClip 'Run_Right' has import animation
+      warnings that might lower retargeting quality:\nNote: Activate translation
+      DOF on avatar to improve retargeting quality.\n\t'upperarm_l' has translation
+      animation that will be discarded.\n\t'lowerarm_l' has translation animation
+      that will be discarded.\n\t'upperarm_r' has translation animation that will
+      be discarded.\n\t'lowerarm_r' has translation animation that will be discarded.\n\t'foot_l'
+      has translation animation that will be discarded.\n\t'ball_l' has translation
+      animation that will be discarded.\n\t'foot_r' has translation animation that
+      will be discarded.\n\t'ball_r' has translation animation that will be discarded.\n\nClip
+      'Swim_Idle' has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'upperarm_l'
+      has translation animation that will be discarded.\n\t'lowerarm_l' has translation
+      animation that will be discarded.\n\t'upperarm_r' has translation animation
+      that will be discarded.\n\t'lowerarm_r' has translation animation that will
+      be discarded.\n\nClip 'Swim_Death' has import animation warnings that might
+      lower retargeting quality:\nNote: Activate translation DOF on avatar to improve
+      retargeting quality.\n\t'upperarm_l' has translation animation that will be
+      discarded.\n\t'lowerarm_l' has translation animation that will be discarded.\n\t'hand_l'
+      has translation animation that will be discarded.\n\t'upperarm_r' has translation
+      animation that will be discarded.\n\t'lowerarm_r' has translation animation
+      that will be discarded.\n\t'foot_l' has translation animation that will be
+      discarded.\n\t'ball_l' has translation animation that will be discarded.\n\t'foot_r'
+      has translation animation that will be discarded.\n\t'ball_r' has translation
+      animation that will be discarded.\n\nClip 'Swim_Forward' has import animation
+      warnings that might lower retargeting quality:\nNote: Activate translation
+      DOF on avatar to improve retargeting quality.\n\t'spine_01' has translation
+      animation that will be discarded.\n\t'spine_02' has translation animation that
+      will be discarded.\n\t'spine_03' has translation animation that will be discarded.\n\t'clavicle_l'
+      has translation animation that will be discarded.\n\t'upperarm_l' has translation
+      animation that will be discarded.\n\t'lowerarm_l' has translation animation
+      that will be discarded.\n\t'hand_l' has translation animation that will be
+      discarded.\n\t'index_01_l' has translation animation that will be discarded.\n\t'index_02_l'
+      has translation animation that will be discarded.\n\t'middle_01_l' has translation
+      animation that will be discarded.\n\t'middle_02_l' has translation animation
+      that will be discarded.\n\t'middle_03_l' has translation animation that will
+      be discarded.\n\t'pinky_01_l' has translation animation that will be discarded.\n\t'pinky_02_l'
+      has translation animation that will be discarded.\n\t'pinky_03_l' has translation
+      animation that will be discarded.\n\t'ring_01_l' has translation animation
+      that will be discarded.\n\t'ring_02_l' has translation animation that will
+      be discarded.\n\t'ring_03_l' has translation animation that will be discarded.\n\t'thumb_01_l'
+      has translation animation that will be discarded.\n\t'thumb_02_l' has translation
+      animation that will be discarded.\n\t'thumb_03_l' has translation animation
+      that will be discarded.\n\t'clavicle_r' has translation animation that will
+      be discarded.\n\t'upperarm_r' has translation animation that will be discarded.\n\t'lowerarm_r'
+      has translation animation that will be discarded.\n\t'hand_r' has translation
+      animation that will be discarded.\n\t'index_01_r' has translation animation
+      that will be discarded.\n\t'index_02_r' has translation animation that will
+      be discarded.\n\t'index_03_r' has translation animation that will be discarded.\n\t'middle_01_r'
+      has translation animation that will be discarded.\n\t'middle_02_r' has translation
+      animation that will be discarded.\n\t'middle_03_r' has translation animation
+      that will be discarded.\n\t'pinky_01_r' has translation animation that will
+      be discarded.\n\t'pinky_02_r' has translation animation that will be discarded.\n\t'pinky_03_r'
+      has translation animation that will be discarded.\n\t'ring_01_r' has translation
+      animation that will be discarded.\n\t'ring_02_r' has translation animation
+      that will be discarded.\n\t'ring_03_r' has translation animation that will
+      be discarded.\n\t'thumb_01_r' has translation animation that will be discarded.\n\t'thumb_02_r'
+      has translation animation that will be discarded.\n\t'thumb_03_r' has translation
+      animation that will be discarded.\n\t'neck_01' has translation animation that
+      will be discarded.\n\t'thigh_l' has translation animation that will be discarded.\n\t'calf_l'
+      has translation animation that will be discarded.\n\t'foot_l' has translation
+      animation that will be discarded.\n\t'ball_l' has translation animation that
+      will be discarded.\n\t'thigh_r' has translation animation that will be discarded.\n\t'calf_r'
+      has translation animation that will be discarded.\n\t'foot_r' has translation
+      animation that will be discarded.\n\t'ball_r' has translation animation that
+      will be discarded.\n\nClip 'Swim_Backwards' has import animation warnings that
+      might lower retargeting quality:\nNote: Activate translation DOF on avatar
+      to improve retargeting quality.\n\t'spine_01' has translation animation that
+      will be discarded.\n\t'spine_02' has translation animation that will be discarded.\n\t'spine_03'
+      has translation animation that will be discarded.\n\t'clavicle_l' has translation
+      animation that will be discarded.\n\t'upperarm_l' has translation animation
+      that will be discarded.\n\t'lowerarm_l' has translation animation that will
+      be discarded.\n\t'hand_l' has translation animation that will be discarded.\n\t'index_01_l'
+      has translation animation that will be discarded.\n\t'index_02_l' has translation
+      animation that will be discarded.\n\t'index_03_l' has translation animation
+      that will be discarded.\n\t'middle_01_l' has translation animation that will
+      be discarded.\n\t'middle_02_l' has translation animation that will be discarded.\n\t'middle_03_l'
+      has translation animation that will be discarded.\n\t'pinky_01_l' has translation
+      animation that will be discarded.\n\t'pinky_02_l' has translation animation
+      that will be discarded.\n\t'pinky_03_l' has translation animation that will
+      be discarded.\n\t'ring_01_l' has translation animation that will be discarded.\n\t'ring_02_l'
+      has translation animation that will be discarded.\n\t'ring_03_l' has translation
+      animation that will be discarded.\n\t'thumb_01_l' has translation animation
+      that will be discarded.\n\t'thumb_02_l' has translation animation that will
+      be discarded.\n\t'thumb_03_l' has translation animation that will be discarded.\n\t'clavicle_r'
+      has translation animation that will be discarded.\n\t'upperarm_r' has translation
+      animation that will be discarded.\n\t'lowerarm_r' has translation animation
+      that will be discarded.\n\t'hand_r' has translation animation that will be
+      discarded.\n\t'index_01_r' has translation animation that will be discarded.\n\t'middle_01_r'
+      has translation animation that will be discarded.\n\t'pinky_01_r' has translation
+      animation that will be discarded.\n\t'ring_01_r' has translation animation
+      that will be discarded.\n\t'thumb_03_r' has translation animation that will
+      be discarded.\n\t'neck_01' has translation animation that will be discarded.\n\t'thigh_l'
+      has translation animation that will be discarded.\n\t'calf_l' has translation
+      animation that will be discarded.\n\t'foot_l' has translation animation that
+      will be discarded.\n\t'ball_l' has translation animation that will be discarded.\n\t'thigh_r'
+      has translation animation that will be discarded.\n\t'calf_r' has translation
+      animation that will be discarded.\n\t'foot_r' has translation animation that
+      will be discarded.\n\t'ball_r' has translation animation that will be discarded.\n\nClip
+      'Swim_Left' has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'spine_01'
+      has translation animation that will be discarded.\n\t'spine_02' has translation
+      animation that will be discarded.\n\t'spine_03' has translation animation that
+      will be discarded.\n\t'clavicle_l' has translation animation that will be discarded.\n\t'upperarm_l'
+      has translation animation that will be discarded.\n\t'lowerarm_l' has translation
+      animation that will be discarded.\n\t'hand_l' has translation animation that
+      will be discarded.\n\t'index_01_l' has translation animation that will be discarded.\n\t'middle_01_l'
+      has translation animation that will be discarded.\n\t'pinky_01_l' has translation
+      animation that will be discarded.\n\t'pinky_02_l' has translation animation
+      that will be discarded.\n\t'ring_01_l' has translation animation that will
+      be discarded.\n\t'thumb_03_l' has translation animation that will be discarded.\n\t'clavicle_r'
+      has translation animation that will be discarded.\n\t'upperarm_r' has translation
+      animation that will be discarded.\n\t'lowerarm_r' has translation animation
+      that will be discarded.\n\t'hand_r' has translation animation that will be
+      discarded.\n\t'index_01_r' has translation animation that will be discarded.\n\t'index_02_r'
+      has translation animation that will be discarded.\n\t'index_03_r' has translation
+      animation that will be discarded.\n\t'middle_01_r' has translation animation
+      that will be discarded.\n\t'middle_02_r' has translation animation that will
+      be discarded.\n\t'middle_03_r' has translation animation that will be discarded.\n\t'pinky_01_r'
+      has translation animation that will be discarded.\n\t'pinky_02_r' has translation
+      animation that will be discarded.\n\t'pinky_03_r' has translation animation
+      that will be discarded.\n\t'ring_01_r' has translation animation that will
+      be discarded.\n\t'ring_02_r' has translation animation that will be discarded.\n\t'ring_03_r'
+      has translation animation that will be discarded.\n\t'thumb_01_r' has translation
+      animation that will be discarded.\n\t'thumb_02_r' has translation animation
+      that will be discarded.\n\t'thumb_03_r' has translation animation that will
+      be discarded.\n\t'neck_01' has translation animation that will be discarded.\n\t'thigh_l'
+      has translation animation that will be discarded.\n\t'calf_l' has translation
+      animation that will be discarded.\n\t'foot_l' has translation animation that
+      will be discarded.\n\t'ball_l' has translation animation that will be discarded.\n\t'thigh_r'
+      has translation animation that will be discarded.\n\t'calf_r' has translation
+      animation that will be discarded.\n\t'foot_r' has translation animation that
+      will be discarded.\n\t'ball_r' has translation animation that will be discarded.\n\nClip
+      'Swim_Right' has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'spine_01'
+      has translation animation that will be discarded.\n\t'spine_02' has translation
+      animation that will be discarded.\n\t'spine_03' has translation animation that
+      will be discarded.\n\t'clavicle_l' has translation animation that will be discarded.\n\t'upperarm_l'
+      has translation animation that will be discarded.\n\t'lowerarm_l' has translation
+      animation that will be discarded.\n\t'hand_l' has translation animation that
+      will be discarded.\n\t'index_01_l' has translation animation that will be discarded.\n\t'index_02_l'
+      has translation animation that will be discarded.\n\t'index_03_l' has translation
+      animation that will be discarded.\n\t'middle_01_l' has translation animation
+      that will be discarded.\n\t'middle_02_l' has translation animation that will
+      be discarded.\n\t'middle_03_l' has translation animation that will be discarded.\n\t'pinky_01_l'
+      has translation animation that will be discarded.\n\t'pinky_02_l' has translation
+      animation that will be discarded.\n\t'pinky_03_l' has translation animation
+      that will be discarded.\n\t'ring_01_l' has translation animation that will
+      be discarded.\n\t'ring_02_l' has translation animation that will be discarded.\n\t'ring_03_l'
+      has translation animation that will be discarded.\n\t'thumb_01_l' has translation
+      animation that will be discarded.\n\t'thumb_02_l' has translation animation
+      that will be discarded.\n\t'thumb_03_l' has translation animation that will
+      be discarded.\n\t'upperarm_r' has translation animation that will be discarded.\n\t'lowerarm_r'
+      has translation animation that will be discarded.\n\t'hand_r' has translation
+      animation that will be discarded.\n\t'index_01_r' has translation animation
+      that will be discarded.\n\t'index_02_r' has translation animation that will
+      be discarded.\n\t'index_03_r' has translation animation that will be discarded.\n\t'middle_01_r'
+      has translation animation that will be discarded.\n\t'middle_02_r' has translation
+      animation that will be discarded.\n\t'middle_03_r' has translation animation
+      that will be discarded.\n\t'pinky_01_r' has translation animation that will
+      be discarded.\n\t'pinky_02_r' has translation animation that will be discarded.\n\t'pinky_03_r'
+      has translation animation that will be discarded.\n\t'ring_01_r' has translation
+      animation that will be discarded.\n\t'ring_02_r' has translation animation
+      that will be discarded.\n\t'ring_03_r' has translation animation that will
+      be discarded.\n\t'thumb_01_r' has translation animation that will be discarded.\n\t'thumb_02_r'
+      has translation animation that will be discarded.\n\t'thumb_03_r' has translation
+      animation that will be discarded.\n\t'neck_01' has translation animation that
+      will be discarded.\n\t'thigh_l' has translation animation that will be discarded.\n\t'calf_l'
+      has translation animation that will be discarded.\n\t'foot_l' has translation
+      animation that will be discarded.\n\t'ball_l' has translation animation that
+      will be discarded.\n\t'thigh_r' has translation animation that will be discarded.\n\t'calf_r'
+      has translation animation that will be discarded.\n\t'foot_r' has translation
+      animation that will be discarded.\n\t'ball_r' has translation animation that
+      will be discarded.\n\nClip 'Jump_Start' has import animation warnings that
+      might lower retargeting quality:\nNote: Activate translation DOF on avatar
+      to improve retargeting quality.\n\t'upperarm_l' has translation animation that
+      will be discarded.\n\t'lowerarm_l' has translation animation that will be discarded.\n\t'hand_l'
+      has translation animation that will be discarded.\n\t'index_01_l' has translation
+      animation that will be discarded.\n\t'index_02_l' has translation animation
+      that will be discarded.\n\t'index_03_l' has translation animation that will
+      be discarded.\n\t'middle_01_l' has translation animation that will be discarded.\n\t'middle_02_l'
+      has translation animation that will be discarded.\n\t'middle_03_l' has translation
+      animation that will be discarded.\n\t'pinky_01_l' has translation animation
+      that will be discarded.\n\t'pinky_02_l' has translation animation that will
+      be discarded.\n\t'pinky_03_l' has translation animation that will be discarded.\n\t'ring_01_l'
+      has translation animation that will be discarded.\n\t'ring_02_l' has translation
+      animation that will be discarded.\n\t'ring_03_l' has translation animation
+      that will be discarded.\n\t'thumb_01_l' has translation animation that will
+      be discarded.\n\t'thumb_02_l' has translation animation that will be discarded.\n\t'thumb_03_l'
+      has translation animation that will be discarded.\n\t'upperarm_r' has translation
+      animation that will be discarded.\n\t'lowerarm_r' has translation animation
+      that will be discarded.\n\t'hand_r' has translation animation that will be
+      discarded.\n\t'index_01_r' has translation animation that will be discarded.\n\t'index_02_r'
+      has translation animation that will be discarded.\n\t'middle_01_r' has translation
+      animation that will be discarded.\n\t'middle_02_r' has translation animation
+      that will be discarded.\n\t'pinky_01_r' has translation animation that will
+      be discarded.\n\t'pinky_02_r' has translation animation that will be discarded.\n\t'pinky_03_r'
+      has translation animation that will be discarded.\n\t'ring_01_r' has translation
+      animation that will be discarded.\n\t'ring_02_r' has translation animation
+      that will be discarded.\n\t'ring_03_r' has translation animation that will
+      be discarded.\n\t'calf_l' has translation animation that will be discarded.\n\t'foot_l'
+      has translation animation that will be discarded.\n\t'ball_l' has translation
+      animation that will be discarded.\n\t'calf_r' has translation animation that
+      will be discarded.\n\t'foot_r' has translation animation that will be discarded.\n\t'ball_r'
+      has translation animation that will be discarded.\n\nClip 'Jump_Loop' has import
+      animation warnings that might lower retargeting quality:\nNote: Activate translation
+      DOF on avatar to improve retargeting quality.\n\t'spine_03' has translation
+      animation that will be discarded.\n\t'upperarm_l' has translation animation
+      that will be discarded.\n\t'lowerarm_l' has translation animation that will
+      be discarded.\n\t'hand_l' has translation animation that will be discarded.\n\t'index_01_l'
+      has translation animation that will be discarded.\n\t'index_02_l' has translation
+      animation that will be discarded.\n\t'index_03_l' has translation animation
+      that will be discarded.\n\t'middle_01_l' has translation animation that will
+      be discarded.\n\t'middle_02_l' has translation animation that will be discarded.\n\t'middle_03_l'
+      has translation animation that will be discarded.\n\t'pinky_01_l' has translation
+      animation that will be discarded.\n\t'pinky_02_l' has translation animation
+      that will be discarded.\n\t'pinky_03_l' has translation animation that will
+      be discarded.\n\t'ring_01_l' has translation animation that will be discarded.\n\t'ring_02_l'
+      has translation animation that will be discarded.\n\t'ring_03_l' has translation
+      animation that will be discarded.\n\t'thumb_01_l' has translation animation
+      that will be discarded.\n\t'thumb_02_l' has translation animation that will
+      be discarded.\n\t'thumb_03_l' has translation animation that will be discarded.\n\t'clavicle_r'
+      has translation animation that will be discarded.\n\t'upperarm_r' has translation
+      animation that will be discarded.\n\t'lowerarm_r' has translation animation
+      that will be discarded.\n\t'hand_r' has translation animation that will be
+      discarded.\n\t'index_01_r' has translation animation that will be discarded.\n\t'index_02_r'
+      has translation animation that will be discarded.\n\t'middle_01_r' has translation
+      animation that will be discarded.\n\t'middle_02_r' has translation animation
+      that will be discarded.\n\t'middle_03_r' has translation animation that will
+      be discarded.\n\t'pinky_01_r' has translation animation that will be discarded.\n\t'pinky_02_r'
+      has translation animation that will be discarded.\n\t'pinky_03_r' has translation
+      animation that will be discarded.\n\t'ring_01_r' has translation animation
+      that will be discarded.\n\t'ring_02_r' has translation animation that will
+      be discarded.\n\t'ring_03_r' has translation animation that will be discarded.\n\t'thumb_02_r'
+      has translation animation that will be discarded.\n\t'thumb_03_r' has translation
+      animation that will be discarded.\n\t'neck_01' has translation animation that
+      will be discarded.\n\t'head' has translation animation that will be discarded.\n\t'eye_l'
+      has translation animation that will be discarded.\n\t'foot_l' has translation
+      animation that will be discarded.\n\t'ball_l' has translation animation that
+      will be discarded.\n\t'calf_r' has translation animation that will be discarded.\n\t'foot_r'
+      has translation animation that will be discarded.\n\t'ball_r' has translation
+      animation that will be discarded.\n\nClip 'Jump_End' has import animation warnings
+      that might lower retargeting quality:\nNote: Activate translation DOF on avatar
+      to improve retargeting quality.\n\t'spine_01' has translation animation that
+      will be discarded.\n\t'upperarm_l' has translation animation that will be discarded.\n\t'lowerarm_l'
+      has translation animation that will be discarded.\n\t'hand_l' has translation
+      animation that will be discarded.\n\t'index_01_l' has translation animation
+      that will be discarded.\n\t'index_02_l' has translation animation that will
+      be discarded.\n\t'index_03_l' has translation animation that will be discarded.\n\t'middle_01_l'
+      has translation animation that will be discarded.\n\t'middle_02_l' has translation
+      animation that will be discarded.\n\t'middle_03_l' has translation animation
+      that will be discarded.\n\t'pinky_01_l' has translation animation that will
+      be discarded.\n\t'pinky_02_l' has translation animation that will be discarded.\n\t'pinky_03_l'
+      has translation animation that will be discarded.\n\t'ring_01_l' has translation
+      animation that will be discarded.\n\t'ring_02_l' has translation animation
+      that will be discarded.\n\t'ring_03_l' has translation animation that will
+      be discarded.\n\t'thumb_01_l' has translation animation that will be discarded.\n\t'thumb_02_l'
+      has translation animation that will be discarded.\n\t'thumb_03_l' has translation
+      animation that will be discarded.\n\t'clavicle_r' has translation animation
+      that will be discarded.\n\t'upperarm_r' has translation animation that will
+      be discarded.\n\t'lowerarm_r' has translation animation that will be discarded.\n\t'hand_r'
+      has translation animation that will be discarded.\n\t'index_01_r' has translation
+      animation that will be discarded.\n\t'index_02_r' has translation animation
+      that will be discarded.\n\t'middle_01_r' has translation animation that will
+      be discarded.\n\t'middle_02_r' has translation animation that will be discarded.\n\t'middle_03_r'
+      has translation animation that will be discarded.\n\t'pinky_01_r' has translation
+      animation that will be discarded.\n\t'pinky_02_r' has translation animation
+      that will be discarded.\n\t'pinky_03_r' has translation animation that will
+      be discarded.\n\t'ring_01_r' has translation animation that will be discarded.\n\t'ring_02_r'
+      has translation animation that will be discarded.\n\t'ring_03_r' has translation
+      animation that will be discarded.\n\t'thumb_02_r' has translation animation
+      that will be discarded.\n\t'thumb_03_r' has translation animation that will
+      be discarded.\n\t'neck_01' has translation animation that will be discarded.\n\t'head'
+      has translation animation that will be discarded.\n\t'eye_l' has translation
+      animation that will be discarded.\n\t'calf_l' has translation animation that
+      will be discarded.\n\t'foot_l' has translation animation that will be discarded.\n\t'ball_l'
+      has translation animation that will be discarded.\n\t'calf_r' has translation
+      animation that will be discarded.\n\t'foot_r' has translation animation that
+      will be discarded.\n\t'ball_r' has translation animation that will be discarded.\n\nClip
+      'Combat_Cast_Ready' has import animation warnings that might lower retargeting
+      quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'upperarm_l'
+      has translation animation that will be discarded.\n\t'lowerarm_l' has translation
+      animation that will be discarded.\n\t'hand_l' has translation animation that
+      will be discarded.\n\t'index_01_l' has translation animation that will be discarded.\n\t'index_02_l'
+      has translation animation that will be discarded.\n\t'index_03_l' has translation
+      animation that will be discarded.\n\t'middle_01_l' has translation animation
+      that will be discarded.\n\t'middle_02_l' has translation animation that will
+      be discarded.\n\t'middle_03_l' has translation animation that will be discarded.\n\t'pinky_01_l'
+      has translation animation that will be discarded.\n\t'pinky_02_l' has translation
+      animation that will be discarded.\n\t'pinky_03_l' has translation animation
+      that will be discarded.\n\t'ring_01_l' has translation animation that will
+      be discarded.\n\t'ring_02_l' has translation animation that will be discarded.\n\t'ring_03_l'
+      has translation animation that will be discarded.\n\t'thumb_01_l' has translation
+      animation that will be discarded.\n\t'thumb_02_l' has translation animation
+      that will be discarded.\n\t'thumb_03_l' has translation animation that will
+      be discarded.\n\t'upperarm_r' has translation animation that will be discarded.\n\t'lowerarm_r'
+      has translation animation that will be discarded.\n\t'hand_r' has translation
+      animation that will be discarded.\n\t'index_01_r' has translation animation
+      that will be discarded.\n\t'middle_01_r' has translation animation that will
+      be discarded.\n\t'pinky_01_r' has translation animation that will be discarded.\n\t'ring_01_r'
+      has translation animation that will be discarded.\n\t'calf_r' has translation
+      animation that will be discarded.\n\t'foot_r' has translation animation that
+      will be discarded.\n\t'ball_r' has translation animation that will be discarded.\n\nClip
+      'Combat_Cast_Attack' has import animation warnings that might lower retargeting
+      quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'upperarm_l'
+      has translation animation that will be discarded.\n\t'lowerarm_l' has translation
+      animation that will be discarded.\n\t'hand_l' has translation animation that
+      will be discarded.\n\t'index_01_l' has translation animation that will be discarded.\n\t'index_02_l'
+      has translation animation that will be discarded.\n\t'index_03_l' has translation
+      animation that will be discarded.\n\t'middle_01_l' has translation animation
+      that will be discarded.\n\t'middle_02_l' has translation animation that will
+      be discarded.\n\t'middle_03_l' has translation animation that will be discarded.\n\t'pinky_01_l'
+      has translation animation that will be discarded.\n\t'pinky_02_l' has translation
+      animation that will be discarded.\n\t'pinky_03_l' has translation animation
+      that will be discarded.\n\t'ring_01_l' has translation animation that will
+      be discarded.\n\t'ring_02_l' has translation animation that will be discarded.\n\t'ring_03_l'
+      has translation animation that will be discarded.\n\t'thumb_01_l' has translation
+      animation that will be discarded.\n\t'thumb_02_l' has translation animation
+      that will be discarded.\n\t'thumb_03_l' has translation animation that will
+      be discarded.\n\t'upperarm_r' has translation animation that will be discarded.\n\t'lowerarm_r'
+      has translation animation that will be discarded.\n\t'hand_r' has translation
+      animation that will be discarded.\n\t'index_01_r' has translation animation
+      that will be discarded.\n\t'middle_01_r' has translation animation that will
+      be discarded.\n\t'pinky_01_r' has translation animation that will be discarded.\n\t'ring_01_r'
+      has translation animation that will be discarded.\n\t'calf_r' has translation
+      animation that will be discarded.\n\t'foot_r' has translation animation that
+      will be discarded.\n\t'ball_r' has translation animation that will be discarded.\n\nClip
+      'Combat_Cast_Attack01' has import animation warnings that might lower retargeting
+      quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'upperarm_l'
+      has translation animation that will be discarded.\n\t'lowerarm_l' has translation
+      animation that will be discarded.\n\t'hand_l' has translation animation that
+      will be discarded.\n\t'index_01_l' has translation animation that will be discarded.\n\t'index_02_l'
+      has translation animation that will be discarded.\n\t'index_03_l' has translation
+      animation that will be discarded.\n\t'middle_01_l' has translation animation
+      that will be discarded.\n\t'middle_02_l' has translation animation that will
+      be discarded.\n\t'middle_03_l' has translation animation that will be discarded.\n\t'pinky_01_l'
+      has translation animation that will be discarded.\n\t'pinky_02_l' has translation
+      animation that will be discarded.\n\t'pinky_03_l' has translation animation
+      that will be discarded.\n\t'ring_01_l' has translation animation that will
+      be discarded.\n\t'ring_02_l' has translation animation that will be discarded.\n\t'ring_03_l'
+      has translation animation that will be discarded.\n\t'thumb_01_l' has translation
+      animation that will be discarded.\n\t'thumb_02_l' has translation animation
+      that will be discarded.\n\t'thumb_03_l' has translation animation that will
+      be discarded.\n\t'upperarm_r' has translation animation that will be discarded.\n\t'lowerarm_r'
+      has translation animation that will be discarded.\n\t'hand_r' has translation
+      animation that will be discarded.\n\t'index_01_r' has translation animation
+      that will be discarded.\n\t'middle_01_r' has translation animation that will
+      be discarded.\n\t'pinky_01_r' has translation animation that will be discarded.\n\t'ring_01_r'
+      has translation animation that will be discarded.\n\t'thumb_03_r' has translation
+      animation that will be discarded.\n\t'calf_l' has translation animation that
+      will be discarded.\n\t'foot_l' has translation animation that will be discarded.\n\t'ball_l'
+      has translation animation that will be discarded.\n\t'calf_r' has translation
+      animation that will be discarded.\n\t'foot_r' has translation animation that
+      will be discarded.\n\t'ball_r' has translation animation that will be discarded.\n\nClip
+      'Combat_Cast_Attack02' has import animation warnings that might lower retargeting
+      quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'upperarm_l'
+      has translation animation that will be discarded.\n\t'lowerarm_l' has translation
+      animation that will be discarded.\n\t'hand_l' has translation animation that
+      will be discarded.\n\t'index_01_l' has translation animation that will be discarded.\n\t'index_02_l'
+      has translation animation that will be discarded.\n\t'index_03_l' has translation
+      animation that will be discarded.\n\t'middle_01_l' has translation animation
+      that will be discarded.\n\t'middle_02_l' has translation animation that will
+      be discarded.\n\t'middle_03_l' has translation animation that will be discarded.\n\t'pinky_01_l'
+      has translation animation that will be discarded.\n\t'pinky_02_l' has translation
+      animation that will be discarded.\n\t'pinky_03_l' has translation animation
+      that will be discarded.\n\t'ring_01_l' has translation animation that will
+      be discarded.\n\t'ring_02_l' has translation animation that will be discarded.\n\t'ring_03_l'
+      has translation animation that will be discarded.\n\t'thumb_01_l' has translation
+      animation that will be discarded.\n\t'thumb_02_l' has translation animation
+      that will be discarded.\n\t'thumb_03_l' has translation animation that will
+      be discarded.\n\t'upperarm_r' has translation animation that will be discarded.\n\t'lowerarm_r'
+      has translation animation that will be discarded.\n\t'hand_r' has translation
+      animation that will be discarded.\n\t'index_01_r' has translation animation
+      that will be discarded.\n\t'middle_01_r' has translation animation that will
+      be discarded.\n\t'pinky_01_r' has translation animation that will be discarded.\n\t'pinky_02_r'
+      has translation animation that will be discarded.\n\t'pinky_03_r' has translation
+      animation that will be discarded.\n\t'ring_01_r' has translation animation
+      that will be discarded.\n\t'thumb_03_r' has translation animation that will
+      be discarded.\n\t'foot_l' has translation animation that will be discarded.\n\t'ball_l'
+      has translation animation that will be discarded.\n\t'calf_r' has translation
+      animation that will be discarded.\n\t'foot_r' has translation animation that
+      will be discarded.\n\t'ball_r' has translation animation that will be discarded.\n\nClip
+      'Combat_Cast_Dodge' has import animation warnings that might lower retargeting
+      quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'upperarm_l'
+      has translation animation that will be discarded.\n\t'lowerarm_l' has translation
+      animation that will be discarded.\n\t'hand_l' has translation animation that
+      will be discarded.\n\t'index_01_l' has translation animation that will be discarded.\n\t'index_02_l'
+      has translation animation that will be discarded.\n\t'index_03_l' has translation
+      animation that will be discarded.\n\t'middle_01_l' has translation animation
+      that will be discarded.\n\t'middle_02_l' has translation animation that will
+      be discarded.\n\t'middle_03_l' has translation animation that will be discarded.\n\t'pinky_01_l'
+      has translation animation that will be discarded.\n\t'pinky_02_l' has translation
+      animation that will be discarded.\n\t'pinky_03_l' has translation animation
+      that will be discarded.\n\t'ring_01_l' has translation animation that will
+      be discarded.\n\t'ring_02_l' has translation animation that will be discarded.\n\t'ring_03_l'
+      has translation animation that will be discarded.\n\t'thumb_01_l' has translation
+      animation that will be discarded.\n\t'thumb_02_l' has translation animation
+      that will be discarded.\n\t'thumb_03_l' has translation animation that will
+      be discarded.\n\t'upperarm_r' has translation animation that will be discarded.\n\t'lowerarm_r'
+      has translation animation that will be discarded.\n\t'hand_r' has translation
+      animation that will be discarded.\n\t'index_01_r' has translation animation
+      that will be discarded.\n\t'middle_01_r' has translation animation that will
+      be discarded.\n\t'ring_01_r' has translation animation that will be discarded.\n\t'calf_l'
+      has translation animation that will be discarded.\n\t'foot_l' has translation
+      animation that will be discarded.\n\t'ball_l' has translation animation that
+      will be discarded.\n\t'calf_r' has translation animation that will be discarded.\n\t'foot_r'
+      has translation animation that will be discarded.\n\t'ball_r' has translation
+      animation that will be discarded.\n\nClip 'Combat_Cast_SpellA_Start' has import
+      animation warnings that might lower retargeting quality:\nNote: Activate translation
+      DOF on avatar to improve retargeting quality.\n\t'upperarm_l' has translation
+      animation that will be discarded.\n\t'lowerarm_l' has translation animation
+      that will be discarded.\n\t'hand_l' has translation animation that will be
+      discarded.\n\t'index_01_l' has translation animation that will be discarded.\n\t'index_02_l'
+      has translation animation that will be discarded.\n\t'index_03_l' has translation
+      animation that will be discarded.\n\t'middle_01_l' has translation animation
+      that will be discarded.\n\t'middle_02_l' has translation animation that will
+      be discarded.\n\t'middle_03_l' has translation animation that will be discarded.\n\t'pinky_01_l'
+      has translation animation that will be discarded.\n\t'pinky_02_l' has translation
+      animation that will be discarded.\n\t'pinky_03_l' has translation animation
+      that will be discarded.\n\t'ring_01_l' has translation animation that will
+      be discarded.\n\t'ring_02_l' has translation animation that will be discarded.\n\t'ring_03_l'
+      has translation animation that will be discarded.\n\t'thumb_01_l' has translation
+      animation that will be discarded.\n\t'thumb_02_l' has translation animation
+      that will be discarded.\n\t'thumb_03_l' has translation animation that will
+      be discarded.\n\t'upperarm_r' has translation animation that will be discarded.\n\t'lowerarm_r'
+      has translation animation that will be discarded.\n\t'hand_r' has translation
+      animation that will be discarded.\n\t'index_01_r' has translation animation
+      that will be discarded.\n\t'middle_01_r' has translation animation that will
+      be discarded.\n\t'middle_02_r' has translation animation that will be discarded.\n\t'pinky_01_r'
+      has translation animation that will be discarded.\n\t'ring_01_r' has translation
+      animation that will be discarded.\n\t'ring_02_r' has translation animation
+      that will be discarded.\n\t'ring_03_r' has translation animation that will
+      be discarded.\n\t'calf_r' has translation animation that will be discarded.\n\t'foot_r'
+      has translation animation that will be discarded.\n\t'ball_r' has translation
+      animation that will be discarded.\n\nClip 'Combat_Cast_SpellA_Loop' has import
+      animation warnings that might lower retargeting quality:\nNote: Activate translation
+      DOF on avatar to improve retargeting quality.\n\t'upperarm_l' has translation
+      animation that will be discarded.\n\t'lowerarm_l' has translation animation
+      that will be discarded.\n\t'hand_l' has translation animation that will be
+      discarded.\n\t'index_01_l' has translation animation that will be discarded.\n\t'middle_01_l'
+      has translation animation that will be discarded.\n\t'pinky_01_l' has translation
+      animation that will be discarded.\n\t'ring_01_l' has translation animation
+      that will be discarded.\n\t'upperarm_r' has translation animation that will
+      be discarded.\n\t'lowerarm_r' has translation animation that will be discarded.\n\t'hand_r'
+      has translation animation that will be discarded.\n\t'index_01_r' has translation
+      animation that will be discarded.\n\t'index_02_r' has translation animation
+      that will be discarded.\n\t'middle_01_r' has translation animation that will
+      be discarded.\n\t'middle_02_r' has translation animation that will be discarded.\n\t'middle_03_r'
+      has translation animation that will be discarded.\n\t'pinky_01_r' has translation
+      animation that will be discarded.\n\t'pinky_02_r' has translation animation
+      that will be discarded.\n\t'ring_01_r' has translation animation that will
+      be discarded.\n\t'ring_02_r' has translation animation that will be discarded.\n\t'ring_03_r'
+      has translation animation that will be discarded.\n\t'calf_r' has translation
+      animation that will be discarded.\n\t'foot_r' has translation animation that
+      will be discarded.\n\t'ball_r' has translation animation that will be discarded.\n\nClip
+      'Spell_Unarmed_Ready' has import animation warnings that might lower retargeting
+      quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'upperarm_l'
+      has translation animation that will be discarded.\n\t'lowerarm_l' has translation
+      animation that will be discarded.\n\t'upperarm_r' has translation animation
+      that will be discarded.\n\t'lowerarm_r' has translation animation that will
+      be discarded.\n\nClip 'Spell_Unarmed_Up_Impact' has import animation warnings
+      that might lower retargeting quality:\nNote: Activate translation DOF on avatar
+      to improve retargeting quality.\n\t'upperarm_l' has translation animation that
+      will be discarded.\n\t'lowerarm_l' has translation animation that will be discarded.\n\t'hand_l'
+      has translation animation that will be discarded.\n\t'index_01_l' has translation
+      animation that will be discarded.\n\t'index_02_l' has translation animation
+      that will be discarded.\n\t'index_03_l' has translation animation that will
+      be discarded.\n\t'middle_01_l' has translation animation that will be discarded.\n\t'middle_02_l'
+      has translation animation that will be discarded.\n\t'middle_03_l' has translation
+      animation that will be discarded.\n\t'pinky_01_l' has translation animation
+      that will be discarded.\n\t'pinky_02_l' has translation animation that will
+      be discarded.\n\t'pinky_03_l' has translation animation that will be discarded.\n\t'ring_01_l'
+      has translation animation that will be discarded.\n\t'ring_02_l' has translation
+      animation that will be discarded.\n\t'ring_03_l' has translation animation
+      that will be discarded.\n\t'thumb_01_l' has translation animation that will
+      be discarded.\n\t'thumb_02_l' has translation animation that will be discarded.\n\t'thumb_03_l'
+      has translation animation that will be discarded.\n\t'upperarm_r' has translation
+      animation that will be discarded.\n\t'lowerarm_r' has translation animation
+      that will be discarded.\n\t'hand_r' has translation animation that will be
+      discarded.\n\t'index_01_r' has translation animation that will be discarded.\n\t'index_02_r'
+      has translation animation that will be discarded.\n\t'index_03_r' has translation
+      animation that will be discarded.\n\t'middle_01_r' has translation animation
+      that will be discarded.\n\t'middle_02_r' has translation animation that will
+      be discarded.\n\t'middle_03_r' has translation animation that will be discarded.\n\t'pinky_01_r'
+      has translation animation that will be discarded.\n\t'pinky_03_r' has translation
+      animation that will be discarded.\n\t'ring_01_r' has translation animation
+      that will be discarded.\n\t'ring_02_r' has translation animation that will
+      be discarded.\n\t'ring_03_r' has translation animation that will be discarded.\n\t'thumb_01_r'
+      has translation animation that will be discarded.\n\t'thumb_02_r' has translation
+      animation that will be discarded.\n\t'thumb_03_r' has translation animation
+      that will be discarded.\n\t'ball_l' has translation animation that will be
+      discarded.\n\t'foot_r' has translation animation that will be discarded.\n\t'ball_r'
+      has translation animation that will be discarded.\n\nClip 'Spell_Unarmed_Up_Channel'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'upperarm_l'
+      has translation animation that will be discarded.\n\t'lowerarm_l' has translation
+      animation that will be discarded.\n\t'hand_l' has translation animation that
+      will be discarded.\n\t'index_01_l' has translation animation that will be discarded.\n\t'index_02_l'
+      has translation animation that will be discarded.\n\t'index_03_l' has translation
+      animation that will be discarded.\n\t'middle_01_l' has translation animation
+      that will be discarded.\n\t'middle_02_l' has translation animation that will
+      be discarded.\n\t'middle_03_l' has translation animation that will be discarded.\n\t'pinky_01_l'
+      has translation animation that will be discarded.\n\t'pinky_02_l' has translation
+      animation that will be discarded.\n\t'pinky_03_l' has translation animation
+      that will be discarded.\n\t'ring_01_l' has translation animation that will
+      be discarded.\n\t'ring_02_l' has translation animation that will be discarded.\n\t'ring_03_l'
+      has translation animation that will be discarded.\n\t'thumb_01_l' has translation
+      animation that will be discarded.\n\t'thumb_02_l' has translation animation
+      that will be discarded.\n\t'thumb_03_l' has translation animation that will
+      be discarded.\n\t'upperarm_r' has translation animation that will be discarded.\n\t'lowerarm_r'
+      has translation animation that will be discarded.\n\t'hand_r' has translation
+      animation that will be discarded.\n\t'index_01_r' has translation animation
+      that will be discarded.\n\t'index_02_r' has translation animation that will
+      be discarded.\n\t'index_03_r' has translation animation that will be discarded.\n\t'middle_01_r'
+      has translation animation that will be discarded.\n\t'middle_02_r' has translation
+      animation that will be discarded.\n\t'middle_03_r' has translation animation
+      that will be discarded.\n\t'pinky_01_r' has translation animation that will
+      be discarded.\n\t'pinky_02_r' has translation animation that will be discarded.\n\t'ring_01_r'
+      has translation animation that will be discarded.\n\t'ring_02_r' has translation
+      animation that will be discarded.\n\t'thumb_01_r' has translation animation
+      that will be discarded.\n\t'thumb_02_r' has translation animation that will
+      be discarded.\n\t'thumb_03_r' has translation animation that will be discarded.\n\t'foot_l'
+      has translation animation that will be discarded.\n\t'calf_r' has translation
+      animation that will be discarded.\n\t'foot_r' has translation animation that
+      will be discarded.\n\nClip 'Spell_Unarmed_Forward_Impact' has import animation
+      warnings that might lower retargeting quality:\nNote: Activate translation
+      DOF on avatar to improve retargeting quality.\n\t'spine_01' has translation
+      animation that will be discarded.\n\t'spine_02' has translation animation that
+      will be discarded.\n\t'spine_03' has translation animation that will be discarded.\n\t'clavicle_l'
+      has translation animation that will be discarded.\n\t'upperarm_l' has translation
+      animation that will be discarded.\n\t'lowerarm_l' has translation animation
+      that will be discarded.\n\t'hand_l' has translation animation that will be
+      discarded.\n\t'index_01_l' has translation animation that will be discarded.\n\t'index_02_l'
+      has translation animation that will be discarded.\n\t'index_03_l' has translation
+      animation that will be discarded.\n\t'middle_01_l' has translation animation
+      that will be discarded.\n\t'middle_02_l' has translation animation that will
+      be discarded.\n\t'middle_03_l' has translation animation that will be discarded.\n\t'pinky_01_l'
+      has translation animation that will be discarded.\n\t'pinky_02_l' has translation
+      animation that will be discarded.\n\t'pinky_03_l' has translation animation
+      that will be discarded.\n\t'ring_01_l' has translation animation that will
+      be discarded.\n\t'ring_02_l' has translation animation that will be discarded.\n\t'ring_03_l'
+      has translation animation that will be discarded.\n\t'thumb_01_l' has translation
+      animation that will be discarded.\n\t'thumb_02_l' has translation animation
+      that will be discarded.\n\t'thumb_03_l' has translation animation that will
+      be discarded.\n\t'clavicle_r' has translation animation that will be discarded.\n\t'upperarm_r'
+      has translation animation that will be discarded.\n\t'lowerarm_r' has translation
+      animation that will be discarded.\n\t'hand_r' has translation animation that
+      will be discarded.\n\t'index_01_r' has translation animation that will be discarded.\n\t'index_02_r'
+      has translation animation that will be discarded.\n\t'index_03_r' has translation
+      animation that will be discarded.\n\t'middle_01_r' has translation animation
+      that will be discarded.\n\t'middle_02_r' has translation animation that will
+      be discarded.\n\t'middle_03_r' has translation animation that will be discarded.\n\t'pinky_01_r'
+      has translation animation that will be discarded.\n\t'pinky_02_r' has translation
+      animation that will be discarded.\n\t'pinky_03_r' has translation animation
+      that will be discarded.\n\t'ring_01_r' has translation animation that will
+      be discarded.\n\t'ring_02_r' has translation animation that will be discarded.\n\t'ring_03_r'
+      has translation animation that will be discarded.\n\t'thumb_01_r' has translation
+      animation that will be discarded.\n\t'thumb_02_r' has translation animation
+      that will be discarded.\n\t'thumb_03_r' has translation animation that will
+      be discarded.\n\t'neck_01' has translation animation that will be discarded.\n\t'head'
+      has translation animation that will be discarded.\n\t'thigh_l' has translation
+      animation that will be discarded.\n\t'calf_l' has translation animation that
+      will be discarded.\n\t'foot_l' has translation animation that will be discarded.\n\t'ball_l'
+      has translation animation that will be discarded.\n\t'thigh_r' has translation
+      animation that will be discarded.\n\t'calf_r' has translation animation that
+      will be discarded.\n\t'foot_r' has translation animation that will be discarded.\n\t'ball_r'
+      has translation animation that will be discarded.\n\nClip 'Spell_Unarmed_Forward_Channel'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'spine_01'
+      has translation animation that will be discarded.\n\t'spine_02' has translation
+      animation that will be discarded.\n\t'spine_03' has translation animation that
+      will be discarded.\n\t'clavicle_l' has translation animation that will be discarded.\n\t'upperarm_l'
+      has translation animation that will be discarded.\n\t'lowerarm_l' has translation
+      animation that will be discarded.\n\t'hand_l' has translation animation that
+      will be discarded.\n\t'index_01_l' has translation animation that will be discarded.\n\t'index_02_l'
+      has translation animation that will be discarded.\n\t'index_03_l' has translation
+      animation that will be discarded.\n\t'middle_01_l' has translation animation
+      that will be discarded.\n\t'middle_02_l' has translation animation that will
+      be discarded.\n\t'middle_03_l' has translation animation that will be discarded.\n\t'pinky_01_l'
+      has translation animation that will be discarded.\n\t'pinky_02_l' has translation
+      animation that will be discarded.\n\t'pinky_03_l' has translation animation
+      that will be discarded.\n\t'ring_01_l' has translation animation that will
+      be discarded.\n\t'ring_02_l' has translation animation that will be discarded.\n\t'ring_03_l'
+      has translation animation that will be discarded.\n\t'thumb_01_l' has translation
+      animation that will be discarded.\n\t'thumb_02_l' has translation animation
+      that will be discarded.\n\t'thumb_03_l' has translation animation that will
+      be discarded.\n\t'clavicle_r' has translation animation that will be discarded.\n\t'upperarm_r'
+      has translation animation that will be discarded.\n\t'lowerarm_r' has translation
+      animation that will be discarded.\n\t'hand_r' has translation animation that
+      will be discarded.\n\t'index_01_r' has translation animation that will be discarded.\n\t'middle_01_r'
+      has translation animation that will be discarded.\n\t'middle_02_r' has translation
+      animation that will be discarded.\n\t'pinky_01_r' has translation animation
+      that will be discarded.\n\t'pinky_02_r' has translation animation that will
+      be discarded.\n\t'ring_01_r' has translation animation that will be discarded.\n\t'ring_02_r'
+      has translation animation that will be discarded.\n\t'neck_01' has translation
+      animation that will be discarded.\n\t'thigh_l' has translation animation that
+      will be discarded.\n\t'calf_r' has translation animation that will be discarded.\n\t'foot_r'
+      has translation animation that will be discarded.\n\t'ball_r' has translation
+      animation that will be discarded.\n\nClip 'Spell_Unarmed_Dodge' has import
+      animation warnings that might lower retargeting quality:\nNote: Activate translation
+      DOF on avatar to improve retargeting quality.\n\t'upperarm_l' has translation
+      animation that will be discarded.\n\t'lowerarm_l' has translation animation
+      that will be discarded.\n\t'hand_l' has translation animation that will be
+      discarded.\n\t'index_01_l' has translation animation that will be discarded.\n\t'index_02_l'
+      has translation animation that will be discarded.\n\t'middle_01_l' has translation
+      animation that will be discarded.\n\t'middle_02_l' has translation animation
+      that will be discarded.\n\t'pinky_01_l' has translation animation that will
+      be discarded.\n\t'ring_01_l' has translation animation that will be discarded.\n\t'upperarm_r'
+      has translation animation that will be discarded.\n\t'lowerarm_r' has translation
+      animation that will be discarded.\n\t'hand_r' has translation animation that
+      will be discarded.\n\t'thumb_03_r' has translation animation that will be discarded.\n\t'foot_l'
+      has translation animation that will be discarded.\n\t'ball_l' has translation
+      animation that will be discarded.\n\t'calf_r' has translation animation that
+      will be discarded.\n\t'foot_r' has translation animation that will be discarded.\n\t'ball_r'
+      has translation animation that will be discarded.\n\nClip 'Combat_Unarmed_Ready'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'upperarm_l'
+      has translation animation that will be discarded.\n\t'lowerarm_l' has translation
+      animation that will be discarded.\n\t'hand_l' has translation animation that
+      will be discarded.\n\t'index_01_l' has translation animation that will be discarded.\n\t'index_02_l'
+      has translation animation that will be discarded.\n\t'index_03_l' has translation
+      animation that will be discarded.\n\t'middle_01_l' has translation animation
+      that will be discarded.\n\t'middle_02_l' has translation animation that will
+      be discarded.\n\t'middle_03_l' has translation animation that will be discarded.\n\t'pinky_01_l'
+      has translation animation that will be discarded.\n\t'pinky_02_l' has translation
+      animation that will be discarded.\n\t'pinky_03_l' has translation animation
+      that will be discarded.\n\t'ring_01_l' has translation animation that will
+      be discarded.\n\t'ring_02_l' has translation animation that will be discarded.\n\t'ring_03_l'
+      has translation animation that will be discarded.\n\t'thumb_01_l' has translation
+      animation that will be discarded.\n\t'thumb_02_l' has translation animation
+      that will be discarded.\n\t'upperarm_r' has translation animation that will
+      be discarded.\n\t'lowerarm_r' has translation animation that will be discarded.\n\t'hand_r'
+      has translation animation that will be discarded.\n\t'index_01_r' has translation
+      animation that will be discarded.\n\t'index_02_r' has translation animation
+      that will be discarded.\n\t'index_03_r' has translation animation that will
+      be discarded.\n\t'middle_01_r' has translation animation that will be discarded.\n\t'middle_02_r'
+      has translation animation that will be discarded.\n\t'middle_03_r' has translation
+      animation that will be discarded.\n\t'pinky_01_r' has translation animation
+      that will be discarded.\n\t'pinky_02_r' has translation animation that will
+      be discarded.\n\t'pinky_03_r' has translation animation that will be discarded.\n\t'ring_01_r'
+      has translation animation that will be discarded.\n\t'ring_02_r' has translation
+      animation that will be discarded.\n\t'ring_03_r' has translation animation
+      that will be discarded.\n\t'calf_r' has translation animation that will be
+      discarded.\n\t'foot_r' has translation animation that will be discarded.\n\t'ball_r'
+      has translation animation that will be discarded.\n\nClip 'Combat_Unarmed_Hit'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'spine_02'
+      has translation animation that will be discarded.\n\t'upperarm_l' has translation
+      animation that will be discarded.\n\t'lowerarm_l' has translation animation
+      that will be discarded.\n\t'hand_l' has translation animation that will be
+      discarded.\n\t'index_01_l' has translation animation that will be discarded.\n\t'index_02_l'
+      has translation animation that will be discarded.\n\t'index_03_l' has translation
+      animation that will be discarded.\n\t'middle_01_l' has translation animation
+      that will be discarded.\n\t'middle_02_l' has translation animation that will
+      be discarded.\n\t'middle_03_l' has translation animation that will be discarded.\n\t'pinky_01_l'
+      has translation animation that will be discarded.\n\t'pinky_02_l' has translation
+      animation that will be discarded.\n\t'pinky_03_l' has translation animation
+      that will be discarded.\n\t'ring_01_l' has translation animation that will
+      be discarded.\n\t'ring_02_l' has translation animation that will be discarded.\n\t'ring_03_l'
+      has translation animation that will be discarded.\n\t'thumb_01_l' has translation
+      animation that will be discarded.\n\t'thumb_02_l' has translation animation
+      that will be discarded.\n\t'thumb_03_l' has translation animation that will
+      be discarded.\n\t'upperarm_r' has translation animation that will be discarded.\n\t'lowerarm_r'
+      has translation animation that will be discarded.\n\t'hand_r' has translation
+      animation that will be discarded.\n\t'index_01_r' has translation animation
+      that will be discarded.\n\t'index_02_r' has translation animation that will
+      be discarded.\n\t'index_03_r' has translation animation that will be discarded.\n\t'middle_01_r'
+      has translation animation that will be discarded.\n\t'middle_02_r' has translation
+      animation that will be discarded.\n\t'middle_03_r' has translation animation
+      that will be discarded.\n\t'pinky_01_r' has translation animation that will
+      be discarded.\n\t'pinky_02_r' has translation animation that will be discarded.\n\t'pinky_03_r'
+      has translation animation that will be discarded.\n\t'ring_01_r' has translation
+      animation that will be discarded.\n\t'ring_02_r' has translation animation
+      that will be discarded.\n\t'ring_03_r' has translation animation that will
+      be discarded.\n\t'thumb_01_r' has translation animation that will be discarded.\n\t'calf_l'
+      has translation animation that will be discarded.\n\t'foot_l' has translation
+      animation that will be discarded.\n\t'ball_l' has translation animation that
+      will be discarded.\n\t'calf_r' has translation animation that will be discarded.\n\t'foot_r'
+      has translation animation that will be discarded.\n\t'ball_r' has translation
+      animation that will be discarded.\n\nClip 'Combat_Unarmed_Dodge' has import
+      animation warnings that might lower retargeting quality:\nNote: Activate translation
+      DOF on avatar to improve retargeting quality.\n\t'upperarm_l' has translation
+      animation that will be discarded.\n\t'lowerarm_l' has translation animation
+      that will be discarded.\n\t'hand_l' has translation animation that will be
+      discarded.\n\t'index_01_l' has translation animation that will be discarded.\n\t'index_02_l'
+      has translation animation that will be discarded.\n\t'index_03_l' has translation
+      animation that will be discarded.\n\t'middle_01_l' has translation animation
+      that will be discarded.\n\t'middle_02_l' has translation animation that will
+      be discarded.\n\t'middle_03_l' has translation animation that will be discarded.\n\t'pinky_01_l'
+      has translation animation that will be discarded.\n\t'pinky_02_l' has translation
+      animation that will be discarded.\n\t'pinky_03_l' has translation animation
+      that will be discarded.\n\t'ring_01_l' has translation animation that will
+      be discarded.\n\t'ring_02_l' has translation animation that will be discarded.\n\t'ring_03_l'
+      has translation animation that will be discarded.\n\t'thumb_01_l' has translation
+      animation that will be discarded.\n\t'thumb_02_l' has translation animation
+      that will be discarded.\n\t'thumb_03_l' has translation animation that will
+      be discarded.\n\t'upperarm_r' has translation animation that will be discarded.\n\t'lowerarm_r'
+      has translation animation that will be discarded.\n\t'hand_r' has translation
+      animation that will be discarded.\n\t'index_01_r' has translation animation
+      that will be discarded.\n\t'index_02_r' has translation animation that will
+      be discarded.\n\t'index_03_r' has translation animation that will be discarded.\n\t'middle_01_r'
+      has translation animation that will be discarded.\n\t'middle_02_r' has translation
+      animation that will be discarded.\n\t'middle_03_r' has translation animation
+      that will be discarded.\n\t'pinky_01_r' has translation animation that will
+      be discarded.\n\t'pinky_02_r' has translation animation that will be discarded.\n\t'pinky_03_r'
+      has translation animation that will be discarded.\n\t'ring_01_r' has translation
+      animation that will be discarded.\n\t'ring_02_r' has translation animation
+      that will be discarded.\n\t'ring_03_r' has translation animation that will
+      be discarded.\n\t'thumb_01_r' has translation animation that will be discarded.\n\t'thumb_02_r'
+      has translation animation that will be discarded.\n\t'thumb_03_r' has translation
+      animation that will be discarded.\n\t'calf_l' has translation animation that
+      will be discarded.\n\t'foot_l' has translation animation that will be discarded.\n\t'ball_l'
+      has translation animation that will be discarded.\n\t'calf_r' has translation
+      animation that will be discarded.\n\t'foot_r' has translation animation that
+      will be discarded.\n\t'ball_r' has translation animation that will be discarded.\n\nClip
+      'Combat_Unarmed_Attack' has import animation warnings that might lower retargeting
+      quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'spine_02'
+      has translation animation that will be discarded.\n\t'spine_03' has translation
+      animation that will be discarded.\n\t'clavicle_l' has translation animation
+      that will be discarded.\n\t'upperarm_l' has translation animation that will
+      be discarded.\n\t'lowerarm_l' has translation animation that will be discarded.\n\t'hand_l'
+      has translation animation that will be discarded.\n\t'index_01_l' has translation
+      animation that will be discarded.\n\t'index_02_l' has translation animation
+      that will be discarded.\n\t'index_03_l' has translation animation that will
+      be discarded.\n\t'middle_01_l' has translation animation that will be discarded.\n\t'middle_02_l'
+      has translation animation that will be discarded.\n\t'middle_03_l' has translation
+      animation that will be discarded.\n\t'pinky_01_l' has translation animation
+      that will be discarded.\n\t'pinky_02_l' has translation animation that will
+      be discarded.\n\t'pinky_03_l' has translation animation that will be discarded.\n\t'ring_01_l'
+      has translation animation that will be discarded.\n\t'ring_02_l' has translation
+      animation that will be discarded.\n\t'ring_03_l' has translation animation
+      that will be discarded.\n\t'thumb_01_l' has translation animation that will
+      be discarded.\n\t'thumb_02_l' has translation animation that will be discarded.\n\t'thumb_03_l'
+      has translation animation that will be discarded.\n\t'clavicle_r' has translation
+      animation that will be discarded.\n\t'upperarm_r' has translation animation
+      that will be discarded.\n\t'lowerarm_r' has translation animation that will
+      be discarded.\n\t'hand_r' has translation animation that will be discarded.\n\t'index_01_r'
+      has translation animation that will be discarded.\n\t'index_02_r' has translation
+      animation that will be discarded.\n\t'index_03_r' has translation animation
+      that will be discarded.\n\t'middle_01_r' has translation animation that will
+      be discarded.\n\t'middle_02_r' has translation animation that will be discarded.\n\t'middle_03_r'
+      has translation animation that will be discarded.\n\t'pinky_01_r' has translation
+      animation that will be discarded.\n\t'pinky_02_r' has translation animation
+      that will be discarded.\n\t'pinky_03_r' has translation animation that will
+      be discarded.\n\t'ring_01_r' has translation animation that will be discarded.\n\t'ring_02_r'
+      has translation animation that will be discarded.\n\t'ring_03_r' has translation
+      animation that will be discarded.\n\t'thumb_01_r' has translation animation
+      that will be discarded.\n\t'thumb_02_r' has translation animation that will
+      be discarded.\n\t'thumb_03_r' has translation animation that will be discarded.\n\t'neck_01'
+      has translation animation that will be discarded.\n\t'head' has translation
+      animation that will be discarded.\n\t'eye_l' has translation animation that
+      will be discarded.\n\t'eye_r' has translation animation that will be discarded.\n\t'ball_l'
+      has translation animation that will be discarded.\n\t'calf_r' has translation
+      animation that will be discarded.\n\t'foot_r' has translation animation that
+      will be discarded.\n\t'ball_r' has translation animation that will be discarded.\n\nClip
+      'Combat_Unarmed_Attack01' has import animation warnings that might lower retargeting
+      quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'spine_03'
+      has translation animation that will be discarded.\n\t'clavicle_l' has translation
+      animation that will be discarded.\n\t'upperarm_l' has translation animation
+      that will be discarded.\n\t'lowerarm_l' has translation animation that will
+      be discarded.\n\t'hand_l' has translation animation that will be discarded.\n\t'index_01_l'
+      has translation animation that will be discarded.\n\t'index_02_l' has translation
+      animation that will be discarded.\n\t'index_03_l' has translation animation
+      that will be discarded.\n\t'middle_01_l' has translation animation that will
+      be discarded.\n\t'middle_02_l' has translation animation that will be discarded.\n\t'middle_03_l'
+      has translation animation that will be discarded.\n\t'pinky_01_l' has translation
+      animation that will be discarded.\n\t'pinky_02_l' has translation animation
+      that will be discarded.\n\t'pinky_03_l' has translation animation that will
+      be discarded.\n\t'ring_01_l' has translation animation that will be discarded.\n\t'ring_02_l'
+      has translation animation that will be discarded.\n\t'ring_03_l' has translation
+      animation that will be discarded.\n\t'thumb_01_l' has translation animation
+      that will be discarded.\n\t'thumb_02_l' has translation animation that will
+      be discarded.\n\t'thumb_03_l' has translation animation that will be discarded.\n\t'clavicle_r'
+      has translation animation that will be discarded.\n\t'upperarm_r' has translation
+      animation that will be discarded.\n\t'lowerarm_r' has translation animation
+      that will be discarded.\n\t'hand_r' has translation animation that will be
+      discarded.\n\t'index_01_r' has translation animation that will be discarded.\n\t'index_02_r'
+      has translation animation that will be discarded.\n\t'index_03_r' has translation
+      animation that will be discarded.\n\t'middle_01_r' has translation animation
+      that will be discarded.\n\t'middle_02_r' has translation animation that will
+      be discarded.\n\t'middle_03_r' has translation animation that will be discarded.\n\t'pinky_01_r'
+      has translation animation that will be discarded.\n\t'pinky_02_r' has translation
+      animation that will be discarded.\n\t'pinky_03_r' has translation animation
+      that will be discarded.\n\t'ring_01_r' has translation animation that will
+      be discarded.\n\t'ring_02_r' has translation animation that will be discarded.\n\t'ring_03_r'
+      has translation animation that will be discarded.\n\t'thumb_01_r' has translation
+      animation that will be discarded.\n\t'thumb_02_r' has translation animation
+      that will be discarded.\n\t'thumb_03_r' has translation animation that will
+      be discarded.\n\t'neck_01' has translation animation that will be discarded.\n\t'calf_l'
+      has translation animation that will be discarded.\n\t'foot_l' has translation
+      animation that will be discarded.\n\t'ball_l' has translation animation that
+      will be discarded.\n\t'calf_r' has translation animation that will be discarded.\n\t'foot_r'
+      has translation animation that will be discarded.\n\t'ball_r' has translation
+      animation that will be discarded.\n\nClip 'Combat_Stun' has import animation
+      warnings that might lower retargeting quality:\nNote: Activate translation
+      DOF on avatar to improve retargeting quality.\n\t'spine_03' has translation
+      animation that will be discarded.\n\t'clavicle_l' has translation animation
+      that will be discarded.\n\t'upperarm_l' has translation animation that will
+      be discarded.\n\t'lowerarm_l' has translation animation that will be discarded.\n\t'clavicle_r'
+      has translation animation that will be discarded.\n\t'upperarm_r' has translation
+      animation that will be discarded.\n\t'lowerarm_r' has translation animation
+      that will be discarded.\n\t'hand_r' has translation animation that will be
+      discarded.\n\t'middle_01_r' has translation animation that will be discarded.\n\t'pinky_01_r'
+      has translation animation that will be discarded.\n\t'ring_01_r' has translation
+      animation that will be discarded.\n\t'neck_01' has translation animation that
+      will be discarded.\n\t'head' has translation animation that will be discarded.\n\t'eye_l'
+      has translation animation that will be discarded.\n\t'eye_r' has translation
+      animation that will be discarded.\n\t'calf_l' has translation animation that
+      will be discarded.\n\t'calf_r' has translation animation that will be discarded.\n\t'foot_r'
+      has translation animation that will be discarded.\n\nClip 'Combat_Knockdown'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'spine_01'
+      has translation animation that will be discarded.\n\t'spine_02' has translation
+      animation that will be discarded.\n\t'spine_03' has translation animation that
+      will be discarded.\n\t'clavicle_l' has translation animation that will be discarded.\n\t'upperarm_l'
+      has translation animation that will be discarded.\n\t'lowerarm_l' has translation
+      animation that will be discarded.\n\t'hand_l' has translation animation that
+      will be discarded.\n\t'index_01_l' has translation animation that will be discarded.\n\t'index_02_l'
+      has translation animation that will be discarded.\n\t'index_03_l' has translation
+      animation that will be discarded.\n\t'middle_01_l' has translation animation
+      that will be discarded.\n\t'middle_02_l' has translation animation that will
+      be discarded.\n\t'middle_03_l' has translation animation that will be discarded.\n\t'pinky_01_l'
+      has translation animation that will be discarded.\n\t'pinky_02_l' has translation
+      animation that will be discarded.\n\t'pinky_03_l' has translation animation
+      that will be discarded.\n\t'ring_01_l' has translation animation that will
+      be discarded.\n\t'ring_02_l' has translation animation that will be discarded.\n\t'ring_03_l'
+      has translation animation that will be discarded.\n\t'thumb_01_l' has translation
+      animation that will be discarded.\n\t'thumb_02_l' has translation animation
+      that will be discarded.\n\t'thumb_03_l' has translation animation that will
+      be discarded.\n\t'clavicle_r' has translation animation that will be discarded.\n\t'upperarm_r'
+      has translation animation that will be discarded.\n\t'lowerarm_r' has translation
+      animation that will be discarded.\n\t'hand_r' has translation animation that
+      will be discarded.\n\t'index_01_r' has translation animation that will be discarded.\n\t'index_02_r'
+      has translation animation that will be discarded.\n\t'index_03_r' has translation
+      animation that will be discarded.\n\t'middle_01_r' has translation animation
+      that will be discarded.\n\t'middle_02_r' has translation animation that will
+      be discarded.\n\t'middle_03_r' has translation animation that will be discarded.\n\t'pinky_01_r'
+      has translation animation that will be discarded.\n\t'pinky_02_r' has translation
+      animation that will be discarded.\n\t'pinky_03_r' has translation animation
+      that will be discarded.\n\t'ring_01_r' has translation animation that will
+      be discarded.\n\t'ring_02_r' has translation animation that will be discarded.\n\t'ring_03_r'
+      has translation animation that will be discarded.\n\t'thumb_01_r' has translation
+      animation that will be discarded.\n\t'thumb_02_r' has translation animation
+      that will be discarded.\n\t'thumb_03_r' has translation animation that will
+      be discarded.\n\t'neck_01' has translation animation that will be discarded.\n\t'head'
+      has translation animation that will be discarded.\n\t'jaw' has translation
+      animation that will be discarded.\n\t'eye_l' has translation animation that
+      will be discarded.\n\t'eye_r' has translation animation that will be discarded.\n\t'calf_l'
+      has translation animation that will be discarded.\n\t'foot_l' has translation
+      animation that will be discarded.\n\t'ball_l' has translation animation that
+      will be discarded.\n\t'calf_r' has translation animation that will be discarded.\n\t'foot_r'
+      has translation animation that will be discarded.\n\t'ball_r' has translation
+      animation that will be discarded.\n\nClip 'Idle01' has import animation warnings
+      that might lower retargeting quality:\nNote: Activate translation DOF on avatar
+      to improve retargeting quality.\n\t'upperarm_l' has translation animation that
+      will be discarded.\n\t'lowerarm_l' has translation animation that will be discarded.\n\t'upperarm_r'
+      has translation animation that will be discarded.\n\t'lowerarm_r' has translation
+      animation that will be discarded.\n\t'foot_r' has translation animation that
+      will be discarded.\n\nClip 'Death' has import animation warnings that might
+      lower retargeting quality:\nNote: Activate translation DOF on avatar to improve
+      retargeting quality.\n\t'upperarm_l' has translation animation that will be
+      discarded.\n\t'lowerarm_l' has translation animation that will be discarded.\n\t'upperarm_r'
+      has translation animation that will be discarded.\n\t'lowerarm_r' has translation
+      animation that will be discarded.\n\t'foot_l' has translation animation that
+      will be discarded.\n\t'ball_l' has translation animation that will be discarded.\n\t'calf_r'
+      has translation animation that will be discarded.\n\t'foot_r' has translation
+      animation that will be discarded.\n\t'ball_r' has translation animation that
+      will be discarded.\n\nClip 'Emote_Applaud' has import animation warnings that
+      might lower retargeting quality:\nNote: Activate translation DOF on avatar
+      to improve retargeting quality.\n\t'upperarm_l' has translation animation that
+      will be discarded.\n\t'lowerarm_l' has translation animation that will be discarded.\n\t'upperarm_r'
+      has translation animation that will be discarded.\n\t'lowerarm_r' has translation
+      animation that will be discarded.\n\t'calf_l' has translation animation that
+      will be discarded.\n\t'foot_l' has translation animation that will be discarded.\n\t'ball_l'
+      has translation animation that will be discarded.\n\t'foot_r' has translation
+      animation that will be discarded.\n\t'ball_r' has translation animation that
+      will be discarded.\n\nClip 'Emote_Cry' has import animation warnings that might
+      lower retargeting quality:\nNote: Activate translation DOF on avatar to improve
+      retargeting quality.\n\t'upperarm_l' has translation animation that will be
+      discarded.\n\t'lowerarm_l' has translation animation that will be discarded.\n\t'upperarm_r'
+      has translation animation that will be discarded.\n\t'lowerarm_r' has translation
+      animation that will be discarded.\n\t'calf_l' has translation animation that
+      will be discarded.\n\t'foot_l' has translation animation that will be discarded.\n\t'ball_l'
+      has translation animation that will be discarded.\n\t'foot_r' has translation
+      animation that will be discarded.\n\t'ball_r' has translation animation that
+      will be discarded.\n\nClip 'Emote_Laugh' has import animation warnings that
+      might lower retargeting quality:\nNote: Activate translation DOF on avatar
+      to improve retargeting quality.\n\t'upperarm_l' has translation animation that
+      will be discarded.\n\t'lowerarm_l' has translation animation that will be discarded.\n\t'upperarm_r'
+      has translation animation that will be discarded.\n\t'lowerarm_r' has translation
+      animation that will be discarded.\n\t'calf_l' has translation animation that
+      will be discarded.\n\t'foot_l' has translation animation that will be discarded.\n\t'ball_l'
+      has translation animation that will be discarded.\n\t'foot_r' has translation
+      animation that will be discarded.\n\t'ball_r' has translation animation that
+      will be discarded.\n\nClip 'Emote_Roar' has import animation warnings that
+      might lower retargeting quality:\nNote: Activate translation DOF on avatar
+      to improve retargeting quality.\n\t'upperarm_l' has translation animation that
+      will be discarded.\n\t'lowerarm_l' has translation animation that will be discarded.\n\t'pinky_03_l'
+      has translation animation that will be discarded.\n\t'upperarm_r' has translation
+      animation that will be discarded.\n\t'lowerarm_r' has translation animation
+      that will be discarded.\n\t'calf_l' has translation animation that will be
+      discarded.\n\t'foot_l' has translation animation that will be discarded.\n\t'ball_l'
+      has translation animation that will be discarded.\n\t'foot_r' has translation
+      animation that will be discarded.\n\t'ball_r' has translation animation that
+      will be discarded.\n\nClip 'Emote_Rude' has import animation warnings that
+      might lower retargeting quality:\nNote: Activate translation DOF on avatar
+      to improve retargeting quality.\n\t'upperarm_l' has translation animation that
+      will be discarded.\n\t'lowerarm_l' has translation animation that will be discarded.\n\t'hand_l'
+      has translation animation that will be discarded.\n\t'upperarm_r' has translation
+      animation that will be discarded.\n\t'lowerarm_r' has translation animation
+      that will be discarded.\n\t'jaw' has translation animation that will be discarded.\n\t'calf_l'
+      has translation animation that will be discarded.\n\t'foot_l' has translation
+      animation that will be discarded.\n\t'ball_l' has translation animation that
+      will be discarded.\n\t'foot_r' has translation animation that will be discarded.\n\t'ball_r'
+      has translation animation that will be discarded.\n\nClip 'Emote_Salute' has
+      import animation warnings that might lower retargeting quality:\nNote: Activate
+      translation DOF on avatar to improve retargeting quality.\n\t'upperarm_l' has
+      translation animation that will be discarded.\n\t'lowerarm_l' has translation
+      animation that will be discarded.\n\t'hand_l' has translation animation that
+      will be discarded.\n\t'upperarm_r' has translation animation that will be discarded.\n\t'lowerarm_r'
+      has translation animation that will be discarded.\n\t'hand_r' has translation
+      animation that will be discarded.\n\t'calf_l' has translation animation that
+      will be discarded.\n\t'foot_l' has translation animation that will be discarded.\n\t'ball_l'
+      has translation animation that will be discarded.\n\t'calf_r' has translation
+      animation that will be discarded.\n\t'foot_r' has translation animation that
+      will be discarded.\n\t'ball_r' has translation animation that will be discarded.\n\nClip
+      'Emote_Shout' has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'upperarm_l'
+      has translation animation that will be discarded.\n\t'lowerarm_l' has translation
+      animation that will be discarded.\n\t'hand_l' has translation animation that
+      will be discarded.\n\t'index_01_l' has translation animation that will be discarded.\n\t'middle_01_l'
+      has translation animation that will be discarded.\n\t'upperarm_r' has translation
+      animation that will be discarded.\n\t'lowerarm_r' has translation animation
+      that will be discarded.\n\t'hand_r' has translation animation that will be
+      discarded.\n\t'index_01_r' has translation animation that will be discarded.\n\t'index_03_r'
+      has translation animation that will be discarded.\n\t'middle_01_r' has translation
+      animation that will be discarded.\n\t'pinky_01_r' has translation animation
+      that will be discarded.\n\t'ring_01_r' has translation animation that will
+      be discarded.\n\t'calf_l' has translation animation that will be discarded.\n\t'foot_l'
+      has translation animation that will be discarded.\n\t'ball_l' has translation
+      animation that will be discarded.\n\t'calf_r' has translation animation that
+      will be discarded.\n\t'foot_r' has translation animation that will be discarded.\n\t'ball_r'
+      has translation animation that will be discarded.\n\nClip 'Emote_Talk' has
+      import animation warnings that might lower retargeting quality:\nNote: Activate
+      translation DOF on avatar to improve retargeting quality.\n\t'upperarm_l' has
+      translation animation that will be discarded.\n\t'lowerarm_l' has translation
+      animation that will be discarded.\n\t'hand_l' has translation animation that
+      will be discarded.\n\t'index_01_l' has translation animation that will be discarded.\n\t'middle_01_l'
+      has translation animation that will be discarded.\n\t'pinky_01_l' has translation
+      animation that will be discarded.\n\t'ring_01_l' has translation animation
+      that will be discarded.\n\t'thumb_03_l' has translation animation that will
+      be discarded.\n\t'upperarm_r' has translation animation that will be discarded.\n\t'lowerarm_r'
+      has translation animation that will be discarded.\n\t'hand_r' has translation
+      animation that will be discarded.\n\t'index_01_r' has translation animation
+      that will be discarded.\n\t'index_02_r' has translation animation that will
+      be discarded.\n\t'index_03_r' has translation animation that will be discarded.\n\t'middle_01_r'
+      has translation animation that will be discarded.\n\t'middle_02_r' has translation
+      animation that will be discarded.\n\t'middle_03_r' has translation animation
+      that will be discarded.\n\t'pinky_01_r' has translation animation that will
+      be discarded.\n\t'ring_01_r' has translation animation that will be discarded.\n\t'ring_02_r'
+      has translation animation that will be discarded.\n\t'ring_03_r' has translation
+      animation that will be discarded.\n\t'thumb_02_r' has translation animation
+      that will be discarded.\n\t'calf_l' has translation animation that will be
+      discarded.\n\t'foot_l' has translation animation that will be discarded.\n\t'ball_l'
+      has translation animation that will be discarded.\n\t'calf_r' has translation
+      animation that will be discarded.\n\t'foot_r' has translation animation that
+      will be discarded.\n\t'ball_r' has translation animation that will be discarded.\n\nClip
+      'Emote_TalkExclamation' has import animation warnings that might lower retargeting
+      quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'upperarm_l'
+      has translation animation that will be discarded.\n\t'lowerarm_l' has translation
+      animation that will be discarded.\n\t'hand_l' has translation animation that
+      will be discarded.\n\t'index_01_l' has translation animation that will be discarded.\n\t'middle_01_l'
+      has translation animation that will be discarded.\n\t'pinky_01_l' has translation
+      animation that will be discarded.\n\t'ring_01_l' has translation animation
+      that will be discarded.\n\t'upperarm_r' has translation animation that will
+      be discarded.\n\t'lowerarm_r' has translation animation that will be discarded.\n\t'hand_r'
+      has translation animation that will be discarded.\n\t'index_01_r' has translation
+      animation that will be discarded.\n\t'middle_01_r' has translation animation
+      that will be discarded.\n\t'pinky_01_r' has translation animation that will
+      be discarded.\n\t'ring_01_r' has translation animation that will be discarded.\n\nClip
+      'Emote_TalkQuestion' has import animation warnings that might lower retargeting
+      quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'clavicle_l'
+      has translation animation that will be discarded.\n\t'upperarm_l' has translation
+      animation that will be discarded.\n\t'lowerarm_l' has translation animation
+      that will be discarded.\n\t'hand_l' has translation animation that will be
+      discarded.\n\t'index_01_l' has translation animation that will be discarded.\n\t'index_02_l'
+      has translation animation that will be discarded.\n\t'middle_01_l' has translation
+      animation that will be discarded.\n\t'pinky_01_l' has translation animation
+      that will be discarded.\n\t'ring_01_l' has translation animation that will
+      be discarded.\n\t'thumb_02_l' has translation animation that will be discarded.\n\t'thumb_03_l'
+      has translation animation that will be discarded.\n\t'upperarm_r' has translation
+      animation that will be discarded.\n\t'lowerarm_r' has translation animation
+      that will be discarded.\n\t'hand_r' has translation animation that will be
+      discarded.\n\t'index_01_r' has translation animation that will be discarded.\n\t'index_02_r'
+      has translation animation that will be discarded.\n\t'index_03_r' has translation
+      animation that will be discarded.\n\t'middle_01_r' has translation animation
+      that will be discarded.\n\t'middle_02_r' has translation animation that will
+      be discarded.\n\t'middle_03_r' has translation animation that will be discarded.\n\t'pinky_01_r'
+      has translation animation that will be discarded.\n\t'pinky_02_r' has translation
+      animation that will be discarded.\n\t'pinky_03_r' has translation animation
+      that will be discarded.\n\t'ring_01_r' has translation animation that will
+      be discarded.\n\t'ring_02_r' has translation animation that will be discarded.\n\t'ring_03_r'
+      has translation animation that will be discarded.\n\t'thumb_01_r' has translation
+      animation that will be discarded.\n\t'thumb_02_r' has translation animation
+      that will be discarded.\n\t'thumb_03_r' has translation animation that will
+      be discarded.\n\t'calf_l' has translation animation that will be discarded.\n\t'calf_r'
+      has translation animation that will be discarded.\n\t'foot_r' has translation
+      animation that will be discarded.\n\t'ball_r' has translation animation that
+      will be discarded.\n\nClip 'Emote_Wave' has import animation warnings that
+      might lower retargeting quality:\nNote: Activate translation DOF on avatar
+      to improve retargeting quality.\n\t'spine_03' has translation animation that
+      will be discarded.\n\t'clavicle_l' has translation animation that will be discarded.\n\t'upperarm_l'
+      has translation animation that will be discarded.\n\t'lowerarm_l' has translation
+      animation that will be discarded.\n\t'hand_l' has translation animation that
+      will be discarded.\n\t'index_01_l' has translation animation that will be discarded.\n\t'index_02_l'
+      has translation animation that will be discarded.\n\t'middle_01_l' has translation
+      animation that will be discarded.\n\t'middle_02_l' has translation animation
+      that will be discarded.\n\t'pinky_01_l' has translation animation that will
+      be discarded.\n\t'ring_01_l' has translation animation that will be discarded.\n\t'thumb_01_l'
+      has translation animation that will be discarded.\n\t'thumb_02_l' has translation
+      animation that will be discarded.\n\t'thumb_03_l' has translation animation
+      that will be discarded.\n\t'upperarm_r' has translation animation that will
+      be discarded.\n\t'lowerarm_r' has translation animation that will be discarded.\n\t'hand_r'
+      has translation animation that will be discarded.\n\t'index_01_r' has translation
+      animation that will be discarded.\n\t'index_02_r' has translation animation
+      that will be discarded.\n\t'index_03_r' has translation animation that will
+      be discarded.\n\t'middle_01_r' has translation animation that will be discarded.\n\t'middle_02_r'
+      has translation animation that will be discarded.\n\t'middle_03_r' has translation
+      animation that will be discarded.\n\t'pinky_01_r' has translation animation
+      that will be discarded.\n\t'pinky_02_r' has translation animation that will
+      be discarded.\n\t'pinky_03_r' has translation animation that will be discarded.\n\t'ring_01_r'
+      has translation animation that will be discarded.\n\t'ring_02_r' has translation
+      animation that will be discarded.\n\t'ring_03_r' has translation animation
+      that will be discarded.\n\t'thumb_01_r' has translation animation that will
+      be discarded.\n\t'thumb_02_r' has translation animation that will be discarded.\n\t'thumb_03_r'
+      has translation animation that will be discarded.\n\t'neck_01' has translation
+      animation that will be discarded.\n\t'calf_l' has translation animation that
+      will be discarded.\n\t'calf_r' has translation animation that will be discarded.\n\t'foot_r'
+      has translation animation that will be discarded.\n\t'ball_r' has translation
+      animation that will be discarded.\n\nClip 'Spell_Unarmed_Hit' has import animation
+      warnings that might lower retargeting quality:\nNote: Activate translation
+      DOF on avatar to improve retargeting quality.\n\t'upperarm_l' has translation
+      animation that will be discarded.\n\t'lowerarm_l' has translation animation
+      that will be discarded.\n\t'upperarm_r' has translation animation that will
+      be discarded.\n\t'lowerarm_r' has translation animation that will be discarded.\n\t'foot_l'
+      has translation animation that will be discarded.\n\t'foot_r' has translation
+      animation that will be discarded.\n\t'ball_r' has translation animation that
+      will be discarded.\n\nClip 'Combat_Cast_Hit' has import animation warnings
+      that might lower retargeting quality:\nNote: Activate translation DOF on avatar
+      to improve retargeting quality.\n\t'upperarm_l' has translation animation that
+      will be discarded.\n\t'lowerarm_l' has translation animation that will be discarded.\n\t'hand_l'
+      has translation animation that will be discarded.\n\t'index_01_l' has translation
+      animation that will be discarded.\n\t'index_02_l' has translation animation
+      that will be discarded.\n\t'index_03_l' has translation animation that will
+      be discarded.\n\t'middle_01_l' has translation animation that will be discarded.\n\t'middle_02_l'
+      has translation animation that will be discarded.\n\t'middle_03_l' has translation
+      animation that will be discarded.\n\t'pinky_01_l' has translation animation
+      that will be discarded.\n\t'pinky_02_l' has translation animation that will
+      be discarded.\n\t'pinky_03_l' has translation animation that will be discarded.\n\t'ring_01_l'
+      has translation animation that will be discarded.\n\t'ring_02_l' has translation
+      animation that will be discarded.\n\t'ring_03_l' has translation animation
+      that will be discarded.\n\t'thumb_01_l' has translation animation that will
+      be discarded.\n\t'thumb_02_l' has translation animation that will be discarded.\n\t'thumb_03_l'
+      has translation animation that will be discarded.\n\t'upperarm_r' has translation
+      animation that will be discarded.\n\t'lowerarm_r' has translation animation
+      that will be discarded.\n\t'hand_r' has translation animation that will be
+      discarded.\n\t'index_01_r' has translation animation that will be discarded.\n\t'middle_01_r'
+      has translation animation that will be discarded.\n\t'pinky_01_r' has translation
+      animation that will be discarded.\n\t'ring_01_r' has translation animation
+      that will be discarded.\n\t'foot_l' has translation animation that will be
+      discarded.\n\t'calf_r' has translation animation that will be discarded.\n\t'ball_r'
+      has translation animation that will be discarded.\n"
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 1
     importConstraints: 1
-    animationCompression: 0
+    animationCompression: 3
     animationRotationError: 0.5
     animationPositionError: 0.5
     animationScaleError: 0.5
@@ -1631,8 +2762,1073 @@ ModelImporter:
   importAnimation: 1
   humanDescription:
     serializedVersion: 3
-    human: []
-    skeleton: []
+    human:
+    - boneName: pelvis
+      humanName: Hips
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: thigh_l
+      humanName: LeftUpperLeg
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: thigh_r
+      humanName: RightUpperLeg
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: calf_l
+      humanName: LeftLowerLeg
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: calf_r
+      humanName: RightLowerLeg
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: foot_l
+      humanName: LeftFoot
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: foot_r
+      humanName: RightFoot
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: spine_01
+      humanName: Spine
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: spine_02
+      humanName: Chest
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: neck_01
+      humanName: Neck
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: head
+      humanName: Head
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: clavicle_l
+      humanName: LeftShoulder
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: clavicle_r
+      humanName: RightShoulder
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: upperarm_l
+      humanName: LeftUpperArm
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: upperarm_r
+      humanName: RightUpperArm
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: lowerarm_l
+      humanName: LeftLowerArm
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: lowerarm_r
+      humanName: RightLowerArm
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: hand_l
+      humanName: LeftHand
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: hand_r
+      humanName: RightHand
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: ball_l
+      humanName: LeftToes
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: ball_r
+      humanName: RightToes
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: eye_l
+      humanName: LeftEye
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: eye_r
+      humanName: RightEye
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: jaw
+      humanName: Jaw
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: thumb_01_l
+      humanName: Left Thumb Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: thumb_02_l
+      humanName: Left Thumb Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: thumb_03_l
+      humanName: Left Thumb Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: index_01_l
+      humanName: Left Index Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: index_02_l
+      humanName: Left Index Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: index_03_l
+      humanName: Left Index Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: middle_01_l
+      humanName: Left Middle Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: middle_02_l
+      humanName: Left Middle Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: middle_03_l
+      humanName: Left Middle Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: ring_01_l
+      humanName: Left Ring Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: ring_02_l
+      humanName: Left Ring Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: ring_03_l
+      humanName: Left Ring Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: pinky_01_l
+      humanName: Left Little Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: pinky_02_l
+      humanName: Left Little Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: pinky_03_l
+      humanName: Left Little Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: thumb_01_r
+      humanName: Right Thumb Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: thumb_02_r
+      humanName: Right Thumb Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: thumb_03_r
+      humanName: Right Thumb Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: index_01_r
+      humanName: Right Index Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: index_02_r
+      humanName: Right Index Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: index_03_r
+      humanName: Right Index Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: middle_01_r
+      humanName: Right Middle Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: middle_02_r
+      humanName: Right Middle Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: middle_03_r
+      humanName: Right Middle Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: ring_01_r
+      humanName: Right Ring Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: ring_02_r
+      humanName: Right Ring Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: ring_03_r
+      humanName: Right Ring Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: pinky_01_r
+      humanName: Right Little Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: pinky_02_r
+      humanName: Right Little Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: pinky_03_r
+      humanName: Right Little Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: spine_03
+      humanName: UpperChest
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    skeleton:
+    - name: Elf_Priestess(Clone)
+      parentName: 
+      position: {x: 0, y: 0, z: 0}
+      rotation: {x: 0, y: 0, z: 0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Shaman
+      parentName: Elf_Priestess(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Body
+      parentName: Shaman
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Body_Mesh
+      parentName: Body
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Eyelashes
+      parentName: Body
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Eye
+      parentName: Body
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Hair
+      parentName: Shaman
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Hair_Mesh
+      parentName: Hair
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Armor
+      parentName: Shaman
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Headdress
+      parentName: Armor
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Chest
+      parentName: Armor
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Pants
+      parentName: Armor
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Skirt
+      parentName: Armor
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Arms
+      parentName: Armor
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Shoulders
+      parentName: Armor
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Kneepads
+      parentName: Armor
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Boots
+      parentName: Armor
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: HairBound
+      parentName: Armor
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: root
+      parentName: Elf_Priestess(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0.00000006657903, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ik_foot_root
+      parentName: root
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ik_foot_r
+      parentName: ik_foot_root
+      position: {x: 0.18120296, y: 0.13457532, z: -0.051524803}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ik_foot_l
+      parentName: ik_foot_root
+      position: {x: -0.18179658, y: 0.13464534, z: -0.051498607}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ik_hand_root
+      parentName: root
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ik_hand_gun
+      parentName: ik_hand_root
+      position: {x: 0.55627, y: 1.0621735, z: 0.05706496}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ik_hand_r
+      parentName: ik_hand_gun
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ik_hand_l
+      parentName: ik_hand_gun
+      position: {x: -1.1125431, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: pelvis
+      parentName: root
+      position: {x: -0, y: 0.9675045, z: -0.010630151}
+      rotation: {x: -0.4990873, y: 0.5009273, z: -0.49908736, w: 0.50089467}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Hip_R
+      parentName: pelvis
+      position: {x: -0.12217689, y: -0.0008482015, z: 0.17643557}
+      rotation: {x: -0.31674808, y: 0.6506743, z: 0.3451049, w: 0.59765905}
+      scale: {x: 1, y: 0.9999999, z: 1}
+    - name: Hip_L
+      parentName: pelvis
+      position: {x: -0.12217743, y: -0.00084873557, z: -0.17643999}
+      rotation: {x: -0.31674808, y: 0.6506743, z: 0.3451049, w: 0.59765905}
+      scale: {x: 1, y: 0.9999999, z: 1}
+    - name: spine_01
+      parentName: pelvis
+      position: {x: -0.10808945, y: -0.008507678, z: -0.0000032011442}
+      rotation: {x: 0.00031158802, y: -0.0004138985, z: 0.003831744, w: 0.99999255}
+      scale: {x: 1, y: 0.9999999, z: 1}
+    - name: spine_02
+      parentName: spine_01
+      position: {x: -0.19190216, y: 0.015691137, z: 0.00014285058}
+      rotation: {x: -0.0052645854, y: 0.0063226405, z: -0.077155754, w: 0.9969851}
+      scale: {x: 1, y: 1.0000002, z: 1.0000001}
+    - name: spine_03
+      parentName: spine_02
+      position: {x: -0.1341294, y: 0.00069746014, z: -0.0014825463}
+      rotation: {x: 0.000000103614916, y: -0.00000011228798, z: -0.054597348, w: 0.99850845}
+      scale: {x: 1, y: 1, z: 0.99999994}
+    - name: Back_r
+      parentName: spine_03
+      position: {x: -0.13018584, y: 0.13571899, z: 0.09233581}
+      rotation: {x: 0.678545, y: -0.4618132, z: 0.32074916, w: -0.4726788}
+      scale: {x: 1, y: 1, z: 0.99999994}
+    - name: Back_l
+      parentName: spine_03
+      position: {x: -0.12837845, y: 0.13790345, z: -0.09162891}
+      rotation: {x: 0.31952205, y: 0.46002245, z: 0.6872324, w: 0.46259776}
+      scale: {x: 1, y: 1, z: 0.99999994}
+    - name: Back_2HL
+      parentName: spine_03
+      position: {x: 0.11448585, y: 0.18603839, z: -0.03951341}
+      rotation: {x: 0.35033962, y: -0.35455182, z: -0.48707095, w: 0.71715903}
+      scale: {x: 1.0000001, y: 1, z: 0.99999994}
+    - name: clavicle_l
+      parentName: spine_03
+      position: {x: -0.115630336, y: -0.037089366, z: -0.03940577}
+      rotation: {x: 0.16843654, y: -0.7346189, z: -0.06922185, w: 0.6535844}
+      scale: {x: 0.99999994, y: 1.0000001, z: 0.9999999}
+    - name: upperarm_l
+      parentName: clavicle_l
+      position: {x: -0.11173839, y: 0.00035099982, z: 0.013446808}
+      rotation: {x: 0.024126463, y: 0.05075097, z: 0.13515826, w: 0.9892293}
+      scale: {x: 0.99999994, y: 1.0000001, z: 1}
+    - name: upperarm_twist_01_l
+      parentName: upperarm_l
+      position: {x: -0.01855423, y: 0.008235545, z: 0.002407074}
+      rotation: {x: -2.9976032e-15, y: -0.000000029802326, z: -0.00000010058286, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: lowerarm_l
+      parentName: upperarm_l
+      position: {x: -0.29219756, y: -0.01610867, z: -0.0040631103}
+      rotation: {x: -0.043548148, y: 0.039786458, z: 0.057819724, w: 0.99658287}
+      scale: {x: 1, y: 1.0000001, z: 1.0000001}
+    - name: lowerarm_twist_01_l
+      parentName: lowerarm_l
+      position: {x: -0.05826828, y: 0.015236244, z: 0.0075995633}
+      rotation: {x: -0.00000023841856, y: 0.0000002384186, z: -0.00000006332989, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: hand_l
+      parentName: lowerarm_l
+      position: {x: -0.2684523, y: 0.0020049666, z: -0.016935578}
+      rotation: {x: -0.58910596, y: -0.20234336, z: -0.10004555, w: 0.7758881}
+      scale: {x: 1.0000001, y: 1.0000001, z: 1}
+    - name: Weapon_L
+      parentName: hand_l
+      position: {x: -0.09760021, y: 0.024368133, z: 0.0060525704}
+      rotation: {x: 0.82849246, y: 0.4852486, z: -0.27545238, w: -0.047540914}
+      scale: {x: 1, y: 1, z: 0.99999994}
+    - name: pinky_01_l
+      parentName: hand_l
+      position: {x: -0.07229404, y: -0.0018386841, z: 0.048547838}
+      rotation: {x: -0.0314868, y: 0.085986026, z: -0.0021277363, w: 0.99579644}
+      scale: {x: 1, y: 1, z: 1}
+    - name: pinky_02_l
+      parentName: pinky_01_l
+      position: {x: -0.035241164, y: -0.005189285, z: 0.002514882}
+      rotation: {x: 0.010410323, y: -0.017553678, z: -0.0007522133, w: 0.9997915}
+      scale: {x: 1.0000001, y: 1, z: 1.0000001}
+    - name: pinky_03_l
+      parentName: pinky_02_l
+      position: {x: -0.029637756, y: -0.0020481872, z: 0.0029648875}
+      rotation: {x: 0.0039833984, y: 0.011700341, z: -0.008758215, w: 0.99988526}
+      scale: {x: 1.0000001, y: 1, z: 0.99999994}
+    - name: ring_01_l
+      parentName: hand_l
+      position: {x: -0.08167503, y: -0.013211517, z: 0.032355137}
+      rotation: {x: -0.0019962485, y: 0.105041906, z: 0.031812016, w: 0.99395686}
+      scale: {x: 0.99999994, y: 1, z: 0.99999994}
+    - name: ring_02_l
+      parentName: ring_01_l
+      position: {x: -0.04429428, y: -0.00081924436, z: -0.0000034332274}
+      rotation: {x: 0.048317213, y: -0.00019651647, z: -0.014071033, w: 0.998733}
+      scale: {x: 1.0000001, y: 1.0000001, z: 1.0000001}
+    - name: ring_03_l
+      parentName: ring_02_l
+      position: {x: -0.034751434, y: 0.0009664917, z: -0.00034718512}
+      rotation: {x: -0.025806822, y: -0.031357437, z: -0.040153924, w: 0.9983679}
+      scale: {x: 1, y: 0.9999999, z: 1}
+    - name: index_01_l
+      parentName: hand_l
+      position: {x: -0.09527122, y: -0.013639145, z: -0.015025024}
+      rotation: {x: 0.04536583, y: 0.0523402, z: 0.07679413, w: 0.9946382}
+      scale: {x: 0.9999999, y: 1, z: 0.99999994}
+    - name: index_02_l
+      parentName: index_01_l
+      position: {x: -0.042615432, y: 0.0046811677, z: 0.00054529187}
+      rotation: {x: 0.0021158191, y: -0.00006923078, z: -0.09183035, w: 0.9957725}
+      scale: {x: 1, y: 1.0000001, z: 1}
+    - name: index_03_l
+      parentName: index_02_l
+      position: {x: -0.03392181, y: 0.0000074768063, z: 0.0010405349}
+      rotation: {x: 0.0052834996, y: -0.020183237, z: -0.085881054, w: 0.99608696}
+      scale: {x: 1, y: 1, z: 1.0000001}
+    - name: middle_01_l
+      parentName: hand_l
+      position: {x: -0.09099518, y: -0.019359589, z: 0.010585308}
+      rotation: {x: 0.007602064, y: 0.08887748, z: 0.045113105, w: 0.9949914}
+      scale: {x: 1, y: 0.99999994, z: 0.99999994}
+    - name: middle_02_l
+      parentName: middle_01_l
+      position: {x: -0.046382446, y: 0.0014108276, z: 0.000023107528}
+      rotation: {x: -0.024396872, y: 0.01538245, z: -0.07297357, w: 0.9969168}
+      scale: {x: 0.9999999, y: 0.9999999, z: 1}
+    - name: middle_03_l
+      parentName: middle_02_l
+      position: {x: -0.036443405, y: -0.0014025879, z: -0.0011450005}
+      rotation: {x: 0.091402225, y: -0.021541601, z: -0.0076651764, w: 0.9955515}
+      scale: {x: 1, y: 1, z: 1}
+    - name: thumb_01_l
+      parentName: hand_l
+      position: {x: -0.0216053, y: 0.017134856, z: -0.024643859}
+      rotation: {x: 0.50449806, y: -0.29265845, z: 0.29377955, w: 0.75731516}
+      scale: {x: 0.9999998, y: 1, z: 0.99999994}
+    - name: thumb_02_l
+      parentName: thumb_01_l
+      position: {x: -0.037654303, y: 0.008760223, z: 0.0016903686}
+      rotation: {x: 0.021077806, y: -0.0056161564, z: -0.012553317, w: 0.9996832}
+      scale: {x: 1, y: 1.0000001, z: 0.9999999}
+    - name: thumb_03_l
+      parentName: thumb_02_l
+      position: {x: -0.03908279, y: 0.011015625, z: 0.0011414337}
+      rotation: {x: 0.016535653, y: 0.01602174, z: -0.1373857, w: 0.99025}
+      scale: {x: 1.0000001, y: 0.99999994, z: 1}
+    - name: Shoulder_l
+      parentName: upperarm_l
+      position: {x: 0.02900238, y: -0.035973314, z: 0.010773239}
+      rotation: {x: 0.68091816, y: 0.30397114, z: -0.21803601, w: 0.6296129}
+      scale: {x: 1, y: 1, z: 1}
+    - name: clavicle_r
+      parentName: spine_03
+      position: {x: -0.11637787, y: -0.037985936, z: 0.036224864}
+      rotation: {x: 0.72968715, y: 0.15340587, z: 0.6622605, w: 0.07371871}
+      scale: {x: 1, y: 1, z: 1}
+    - name: upperarm_r
+      parentName: clavicle_r
+      position: {x: 0.11165692, y: 0.00070878025, z: -0.014095764}
+      rotation: {x: 0.02511713, y: 0.052603547, z: 0.1453239, w: 0.9876655}
+      scale: {x: 0.99999994, y: 1, z: 0.9999998}
+    - name: lowerarm_r
+      parentName: upperarm_r
+      position: {x: 0.2921983, y: 0.012542639, z: 0.0057995603}
+      rotation: {x: -0.041815538, y: 0.043001592, z: 0.058310527, w: 0.996495}
+      scale: {x: 0.99999994, y: 1, z: 0.9999999}
+    - name: lowerarm_twist_01_r
+      parentName: lowerarm_r
+      position: {x: 0.05818264, y: -0.01576252, z: -0.0071689603}
+      rotation: {x: 0.00000012665984, y: 0.00000023841858, z: -3.019806e-14, w: 1}
+      scale: {x: 1.0000001, y: 1.0000001, z: 1.0000001}
+    - name: hand_r
+      parentName: lowerarm_r
+      position: {x: 0.26817402, y: -0.005469932, z: 0.0202565}
+      rotation: {x: -0.5891058, y: -0.20234333, z: -0.10004548, w: 0.7758882}
+      scale: {x: 1, y: 1.0000001, z: 1.0000001}
+    - name: Weapon_R
+      parentName: hand_r
+      position: {x: 0.09705215, y: -0.026020126, z: -0.0076545905}
+      rotation: {x: 0.058417343, y: 0.27798635, z: 0.47884578, w: 0.83067304}
+      scale: {x: 1, y: 1.0000001, z: 1}
+    - name: pinky_01_r
+      parentName: hand_r
+      position: {x: 0.07162247, y: 0.0010794067, z: -0.049556445}
+      rotation: {x: -0.03222905, y: 0.08488619, z: -0.0039672162, w: 0.9958614}
+      scale: {x: 1.0000001, y: 1.0000001, z: 1.0000001}
+    - name: pinky_02_r
+      parentName: pinky_01_r
+      position: {x: 0.035249937, y: 0.0048281094, z: -0.0030533026}
+      rotation: {x: 0.0115690995, y: -0.01845961, z: -0.00076145626, w: 0.99976236}
+      scale: {x: 1, y: 0.99999994, z: 1.0000001}
+    - name: pinky_03_r
+      parentName: pinky_02_r
+      position: {x: 0.029599609, y: 0.0017228698, z: -0.003505554}
+      rotation: {x: 0.0039835004, y: 0.011700577, z: -0.008758217, w: 0.99988526}
+      scale: {x: 1, y: 1, z: 1.0000001}
+    - name: ring_01_r
+      parentName: hand_r
+      position: {x: 0.081441574, y: 0.01208435, z: -0.03336933}
+      rotation: {x: -0.0018233053, y: 0.10394725, z: 0.030946288, w: 0.99409956}
+      scale: {x: 1.0000002, y: 1, z: 1}
+    - name: ring_02_r
+      parentName: ring_01_r
+      position: {x: 0.044296417, y: 0.00021057128, z: -0.0006816673}
+      rotation: {x: 0.049744286, y: -0.0013138871, z: -0.013947241, w: 0.9986637}
+      scale: {x: 1.0000001, y: 1.0000001, z: 1.0000001}
+    - name: ring_03_r
+      parentName: ring_02_r
+      position: {x: 0.034732588, y: -0.0015135192, z: -0.00025279997}
+      rotation: {x: -0.025806578, y: -0.031357292, z: -0.04015397, w: 0.9983679}
+      scale: {x: 0.99999994, y: 0.99999994, z: 1}
+    - name: index_01_r
+      parentName: hand_r
+      position: {x: 0.09571198, y: 0.011700057, z: 0.01381277}
+      rotation: {x: 0.04652146, y: 0.05116138, z: 0.07670997, w: 0.9946526}
+      scale: {x: 1.0000001, y: 1.0000001, z: 1}
+    - name: index_02_r
+      parentName: index_01_r
+      position: {x: 0.04251152, y: -0.0054495237, z: -0.0011656951}
+      rotation: {x: 0.0027819076, y: -0.00082417537, z: -0.092030644, w: 0.995752}
+      scale: {x: 1, y: 1, z: 0.99999994}
+    - name: index_03_r
+      parentName: index_02_r
+      position: {x: 0.03389473, y: -0.0006056976, z: -0.0016030883}
+      rotation: {x: 0.005283595, y: -0.02018329, z: -0.085880905, w: 0.99608696}
+      scale: {x: 0.99999994, y: 0.99999994, z: 0.99999994}
+    - name: middle_01_r
+      parentName: hand_r
+      position: {x: 0.09118156, y: 0.017801056, z: -0.0116657065}
+      rotation: {x: 0.008034912, y: 0.087964, z: 0.044678494, w: 0.99508876}
+      scale: {x: 1, y: 1.0000001, z: 1.0000001}
+    - name: middle_02_r
+      parentName: middle_01_r
+      position: {x: 0.046349637, y: -0.0021240234, z: -0.000727272}
+      rotation: {x: -0.023214834, y: 0.014480915, z: -0.07296519, w: 0.99695915}
+      scale: {x: 1, y: 0.9999999, z: 1}
+    - name: middle_03_r
+      parentName: middle_02_r
+      position: {x: 0.036475066, y: 0.00087112427, z: 0.00046355245}
+      rotation: {x: 0.09140234, y: -0.02154152, z: -0.0076652784, w: 0.9955515}
+      scale: {x: 0.99999994, y: 1, z: 0.9999999}
+    - name: thumb_01_r
+      parentName: hand_r
+      position: {x: 0.021629028, y: -0.017821196, z: 0.024131106}
+      rotation: {x: 0.37386075, y: -0.30883276, z: 0.25656644, w: 0.83607674}
+      scale: {x: 1, y: 0.99999994, z: 1.0000002}
+    - name: thumb_02_r
+      parentName: thumb_01_r
+      position: {x: 0.037655983, y: -0.00876709, z: -0.0016230011}
+      rotation: {x: 0.20869403, y: -0.01825886, z: -0.00639407, w: 0.9777896}
+      scale: {x: 1.0000001, y: 1, z: 1}
+    - name: thumb_03_r
+      parentName: thumb_02_r
+      position: {x: 0.038906325, y: -0.011575852, z: 0.0015511322}
+      rotation: {x: 0.065272555, y: -0.11118178, z: -0.1606808, w: 0.9785499}
+      scale: {x: 1, y: 1.0000001, z: 1}
+    - name: upperarm_twist_01_r
+      parentName: upperarm_r
+      position: {x: 0.018340224, y: -0.008634577, z: -0.0024865721}
+      rotation: {x: -3.5527118e-15, y: -0.000000119209275, z: -0.00000002980231, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Shoulder_r
+      parentName: upperarm_r
+      position: {x: -0.0286911, y: 0.036277216, z: -0.010037002}
+      rotation: {x: 0.6903468, y: 0.3013533, z: -0.21630226, w: 0.6211448}
+      scale: {x: 1, y: 0.99999994, z: 1}
+    - name: neck_01
+      parentName: spine_03
+      position: {x: -0.15900818, y: -0.039756756, z: -0.0020414472}
+      rotation: {x: 0, y: 0, z: 0.32576045, w: 0.94545233}
+      scale: {x: 0.99999994, y: 1, z: 0.99999994}
+    - name: head
+      parentName: neck_01
+      position: {x: -0.09094055, y: 0.018968735, z: -0.0013096774}
+      rotation: {x: -0.0000000012086556, y: -0.000000009994134, z: -0.120061696, w: 0.99276644}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Helmet
+      parentName: head
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 3.5833767e-10, y: -0.0000000014333507, z: -7.1667533e-10, w: 1}
+      scale: {x: 0.99999994, y: 0.99999994, z: 1}
+    - name: eyelid_upper_r
+      parentName: head
+      position: {x: -0.071022645, y: -0.06744759, z: 0.03522341}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 0.99999994, y: 0.99999994, z: 1}
+    - name: eyelid_lower_r
+      parentName: head
+      position: {x: -0.054743346, y: -0.07025269, z: 0.03543024}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 0.99999994, y: 0.99999994, z: 1}
+    - name: eyelid_upper_l
+      parentName: head
+      position: {x: -0.07000565, y: -0.06695236, z: -0.03808711}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 0.99999994, y: 0.99999994, z: 1}
+    - name: eyelid_lower_l
+      parentName: head
+      position: {x: -0.05372635, y: -0.0697575, z: -0.037880283}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 0.99999994, y: 0.99999994, z: 1}
+    - name: eye_r
+      parentName: head
+      position: {x: -0.061936185, y: -0.051451795, z: 0.035457417}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 0.99999994, y: 0.99999994, z: 1}
+    - name: eye_l
+      parentName: head
+      position: {x: -0.060919188, y: -0.05095661, z: -0.03785295}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 0.99999994, y: 0.99999994, z: 1}
+    - name: ribbon_01
+      parentName: head
+      position: {x: -0.22597702, y: -0.023169573, z: -0.0032907366}
+      rotation: {x: -0.42524773, y: 0.90504414, z: 0.000107923486, w: 0.0077124084}
+      scale: {x: 1.0000001, y: 0.99999994, z: 1}
+    - name: ribbon_02
+      parentName: ribbon_01
+      position: {x: -0.00000015258789, y: 0.053087156, z: 0.00000005286827}
+      rotation: {x: 0.00000004871927, y: -0.000000017909665, z: 0.20761622, w: 0.9782104}
+      scale: {x: 1.0000001, y: 1.0000001, z: 1}
+    - name: ribbon_03
+      parentName: ribbon_02
+      position: {x: -0.00000015258789, y: 0.043977737, z: -0.00000007774608}
+      rotation: {x: 0.000000037164554, y: -0.00000011518077, z: 0.2612991, w: 0.9652579}
+      scale: {x: 1, y: 0.99999994, z: 1}
+    - name: ribbon_04
+      parentName: ribbon_03
+      position: {x: -0.00000015258789, y: 0.04987072, z: -0.00000007618772}
+      rotation: {x: 0.000000018359572, y: 0.0000000036480885, z: 0.1948921, w: 0.9808247}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ribbon_05
+      parentName: ribbon_04
+      position: {x: 0.00000015258789, y: 0.051191557, z: -0.000000019888393}
+      rotation: {x: 0.00000003318734, y: 0.000000005837106, z: 0.17322457, w: 0.98488235}
+      scale: {x: 1, y: 1.0000001, z: 1}
+    - name: ribbon_06
+      parentName: ribbon_05
+      position: {x: -0, y: 0.04634239, z: 0.000000009643845}
+      rotation: {x: 0.00000005878748, y: 0.00000023166939, z: -0.17709778, w: 0.98419327}
+      scale: {x: 1, y: 1, z: 1}
+    - name: jaw
+      parentName: head
+      position: {x: 0.008543244, y: -0.014979057, z: 0.000017335415}
+      rotation: {x: 0, y: 0, z: 0.10292676, w: 0.994689}
+      scale: {x: 1, y: 0.9999999, z: 1}
+    - name: Tail_01
+      parentName: head
+      position: {x: -0.1198407, y: 0.15789181, z: -0.0005955243}
+      rotation: {x: -0.11855181, y: 0.99291795, z: 0.0025314335, w: 0.0072857114}
+      scale: {x: 1, y: 0.99999994, z: 1}
+    - name: Tail_02
+      parentName: Tail_01
+      position: {x: -0.00000030517577, y: 0.0668618, z: 0.00000003930123}
+      rotation: {x: 0.000000013220262, y: -6.070569e-10, z: -0.045870338, w: 0.9989474}
+      scale: {x: 1.0000002, y: 1.0000002, z: 1}
+    - name: Tail_03
+      parentName: Tail_02
+      position: {x: -0.00000015258789, y: 0.09990761, z: -0.000000038920113}
+      rotation: {x: 0.000000007444504, y: 7.715749e-10, z: 0.103091344, w: 0.99467194}
+      scale: {x: 1, y: 0.99999994, z: 1}
+    - name: Tail_04
+      parentName: Tail_03
+      position: {x: -0.0000007629394, y: 0.11788299, z: -0.000000025679327}
+      rotation: {x: 0.000000036004575, y: 0.0000000088063725, z: 0.23758686, w: 0.97136635}
+      scale: {x: 0.9999999, y: 0.9999999, z: 1}
+    - name: Tail_05
+      parentName: Tail_04
+      position: {x: -0.00000015258789, y: 0.100787885, z: -0.000000009727955}
+      rotation: {x: 0.000000024393128, y: 0.0000000051137032, z: 0.205177, w: 0.9787249}
+      scale: {x: 1, y: 0.99999994, z: 1}
+    - name: Tail_06
+      parentName: Tail_05
+      position: {x: 0.00000061035155, y: 0.09637516, z: 0.00000007399067}
+      rotation: {x: 0.000000034618207, y: 0.000000007049156, z: 0.19953108, w: 0.97989154}
+      scale: {x: 0.99999994, y: 0.99999994, z: 1}
+    - name: skirt_Back_01
+      parentName: spine_01
+      position: {x: -0.018675765, y: 0.105432406, z: -0.00005410157}
+      rotation: {x: 0.000000014901703, y: 0.0000000048729243, z: 0.31080878, w: 0.9504725}
+      scale: {x: 1.0000001, y: 1.0000001, z: 1.0000001}
+    - name: skirt_Back_02
+      parentName: skirt_Back_01
+      position: {x: 0.18675873, y: 0.0023593903, z: -0.0001926174}
+      rotation: {x: 0.000000036323744, y: 0.00000023570212, z: -0.12901703, w: 0.9916424}
+      scale: {x: 1, y: 0.9999998, z: 1}
+    - name: skirt_Back_03
+      parentName: skirt_Back_02
+      position: {x: 0.1727257, y: 0.0012196731, z: -0.00016989834}
+      rotation: {x: 0.000000030082322, y: -0.00000016217122, z: -0.09244432, w: 0.9957179}
+      scale: {x: 1, y: 1, z: 1}
+    - name: skirt_Back_04
+      parentName: skirt_Back_03
+      position: {x: 0.18339542, y: -0.00037395477, z: -0.0001660425}
+      rotation: {x: 0.00000004090171, y: -0.0000000017949526, z: -0.043842338, w: 0.99903846}
+      scale: {x: 1, y: 1.0000001, z: 1.0000001}
+    - name: skirt_r_01
+      parentName: spine_01
+      position: {x: -0.013027191, y: 0.039253045, z: 0.123360805}
+      rotation: {x: -0.31697404, y: 0.90294915, z: 0.27093878, w: 0.103935085}
+      scale: {x: 1.0000002, y: 1.0000002, z: 1.0000001}
+    - name: skirt_r_02
+      parentName: skirt_r_01
+      position: {x: -0.19872825, y: -0.0019000244, z: 0.0000004863739}
+      rotation: {x: -0.00000022330443, y: -0.00000014236194, z: 0.11692681, w: 0.9931406}
+      scale: {x: 1, y: 1.0000001, z: 1}
+    - name: skirt_r_03
+      parentName: skirt_r_02
+      position: {x: -0.15339507, y: -0.00010543823, z: -0.00052927015}
+      rotation: {x: 0.0000001880075, y: 0.0000000103969064, z: 0.09513727, w: 0.9954642}
+      scale: {x: 1.0000001, y: 1.0000001, z: 1}
+    - name: skirt_l_01
+      parentName: spine_01
+      position: {x: -0.013221893, y: 0.039108068, z: -0.12338577}
+      rotation: {x: 0.9027067, y: 0.3171287, z: -0.10484091, w: 0.27121663}
+      scale: {x: 1.0000002, y: 1.0000001, z: 1}
+    - name: skirt_l_02
+      parentName: skirt_l_01
+      position: {x: 0.19872649, y: 0.0018984223, z: -0.0000003814697}
+      rotation: {x: 0, y: 0, z: 0.11692681, w: 0.9931406}
+      scale: {x: 1.0000002, y: 1.0000002, z: 1}
+    - name: skirt_l_03
+      parentName: skirt_l_02
+      position: {x: 0.15339507, y: 0.00010570526, z: 0.0005294228}
+      rotation: {x: 0.000000016065227, y: -0.00000009954598, z: 0.09513703, w: 0.9954642}
+      scale: {x: 0.99999994, y: 0.9999999, z: 0.9999999}
+    - name: thigh_l
+      parentName: pelvis
+      position: {x: 0.014490585, y: -0.005318071, z: -0.09005723}
+      rotation: {x: 0.075397246, y: 0.06007419, z: 0.036140867, w: 0.994686}
+      scale: {x: 0.99999994, y: 0.99999994, z: 1}
+    - name: calf_l
+      parentName: thigh_l
+      position: {x: 0.42509547, y: -0.023634728, z: -0.0002822113}
+      rotation: {x: -0.05133206, y: -0.0002042434, z: 0.042060632, w: 0.9977955}
+      scale: {x: 1.0000001, y: 1.0000001, z: 1.0000001}
+    - name: calf_twist_01_l
+      parentName: calf_l
+      position: {x: 0.20466286, y: -0.0021044635, z: 0.0068751522}
+      rotation: {x: 0.002809014, y: 0.0019333261, z: 0.0076129115, w: 0.99996525}
+      scale: {x: 0.9999998, y: 0.99999994, z: 0.99999994}
+    - name: foot_l
+      parentName: calf_l
+      position: {x: 0.39794397, y: -0.033556517, z: 0.0044130897}
+      rotation: {x: 0.0002509007, y: -0.03241772, z: -0.06954837, w: 0.9970517}
+      scale: {x: 0.9999999, y: 0.9999999, z: 1}
+    - name: ball_l
+      parentName: foot_l
+      position: {x: 0.1035686, y: -0.16815788, z: -0.018237114}
+      rotation: {x: 0.000080138845, y: -0.000029568693, z: 0.7186336, w: 0.695389}
+      scale: {x: 1, y: 0.99999994, z: 1.0000001}
+    - name: thigh_twist_01_l
+      parentName: thigh_l
+      position: {x: 0.2206182, y: -0.012266087, z: -0.00014648437}
+      rotation: {x: 0.000000007683409, y: -0.00000002421438, z: 1.8604897e-16, w: 1}
+      scale: {x: 1.0000001, y: 1.0000001, z: 1}
+    - name: thigh_r
+      parentName: pelvis
+      position: {x: 0.014482955, y: -0.0053121196, z: 0.09005843}
+      rotation: {x: -0.06007389, y: 0.075397566, z: 0.9946861, w: -0.03613689}
+      scale: {x: 1, y: 1.0000001, z: 1}
+    - name: calf_r
+      parentName: thigh_r
+      position: {x: -0.42505786, y: 0.02358896, z: 0.000010318756}
+      rotation: {x: -0.05133206, y: -0.0002042434, z: 0.042060632, w: 0.9977955}
+      scale: {x: 1, y: 1, z: 1.0000001}
+    - name: calf_twist_01_r
+      parentName: calf_r
+      position: {x: -0.20468415, y: 0.0020946502, z: -0.007011471}
+      rotation: {x: 0.0028089655, y: 0.0019333251, z: 0.0076126736, w: 0.99996525}
+      scale: {x: 1, y: 1.0000001, z: 1.0000001}
+    - name: foot_r
+      parentName: calf_r
+      position: {x: -0.3979892, y: 0.033539824, z: -0.0046780775}
+      rotation: {x: 0.00025087252, y: -0.032417767, z: -0.06954853, w: 0.99705166}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ball_r
+      parentName: foot_r
+      position: {x: -0.1036005, y: 0.16816863, z: 0.018077621}
+      rotation: {x: 0.000080152844, y: -0.000029604795, z: 0.7186337, w: 0.6953888}
+      scale: {x: 0.9999999, y: 0.9999998, z: 0.99999994}
+    - name: thigh_twist_01_r
+      parentName: thigh_r
+      position: {x: -0.22059776, y: 0.012242293, z: 0.000005302429}
+      rotation: {x: 0, y: -0, z: -0.000000044703484, w: 1}
+      scale: {x: 1, y: 1, z: 1.0000001}
     armTwist: 0.5
     foreArmTwist: 0.5
     upperLegTwist: 0.5
@@ -1643,11 +3839,11 @@ ModelImporter:
     globalScale: 1
     rootMotionBoneName: 
     hasTranslationDoF: 0
-    hasExtraRoot: 0
+    hasExtraRoot: 1
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
   autoGenerateAvatarMappingIfUnspecified: 1
-  animationType: 2
+  animationType: 3
   humanoidOversampling: 1
   avatarSetup: 1
   addHumanoidExtraRootOnlyWhenUsingAvatar: 1
