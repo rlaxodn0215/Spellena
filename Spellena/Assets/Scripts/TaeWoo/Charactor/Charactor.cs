@@ -134,23 +134,37 @@ namespace Player
 
         protected void PlayerMove()
         {
+            Vector3 _temp = new Vector3(0, 0, 0);
+
             if (playerActionDatas[(int)PlayerActionState.Move].isExecuting)
             {
-                Vector3 _temp = new Vector3(0, 0, 0);
                 if (moveVec.z > 0)
+                {
                     _temp += transform.forward;
+                }
                 else if (moveVec.z < 0)
+                {
                     _temp -= transform.forward;
+                }
                 if (moveVec.x > 0)
+                {
                     _temp += transform.right;
+                }
                 else if (moveVec.x < 0)
+                {
                     _temp -= transform.right;
+                }
 
                 _temp.Normalize();
 
                 rigidbody.MovePosition(rigidbody.transform.position + _temp* moveSpeed * Time.deltaTime);
                 
             }
+
+            _temp = transform.InverseTransformVector(_temp);
+
+            animator.SetFloat("VerticalSpeed", _temp.z);
+            animator.SetFloat("HorizontalSpeed", _temp.x);
         }
 
         void OnJump()
@@ -161,6 +175,21 @@ namespace Player
                 playerActionDatas[(int)PlayerActionState.Jump].isExecuting = true;
                 grounded = false;
             }
+        }
+
+        void OnWalk()
+        {
+
+        }
+
+        void OnSit()
+        {
+
+        }
+
+        void OnInteraction()
+        {
+
         }
 
         //바닥 콜라이더 접촉 확인
