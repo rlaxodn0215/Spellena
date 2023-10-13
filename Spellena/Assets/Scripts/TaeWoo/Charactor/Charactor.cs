@@ -194,8 +194,30 @@ namespace Player
 
         }
 
-        //바닥 콜라이더 접촉 확인
-        protected void OnTriggerEnter(Collider other)
+        private void OnCollisionEnter(Collision collision)
+        {
+            if (collision.gameObject.tag == "Enemy")
+            {
+                //투척무기
+                //PlayerDamaged(collision.gameObject.playerName,10);
+                //destory
+            }
+
+        }
+
+        private void OnCollisionStay(Collision collision)
+        {
+            //if(collision.gameObject.tag == "탑")
+
+            if (Input.GetKey(KeyCode.F))
+            {
+                Debug.Log("Healing");
+            }
+
+        }
+
+
+        private void OnTriggerEnter(Collider other)
         {
             if (other.tag == "Ground")
             {
@@ -205,7 +227,7 @@ namespace Player
             }
         }
 
-        protected void OnTriggerStay(Collider other)
+        void OnTriggerStay(Collider other)
         {
             if (other.tag == "OccupationArea")
             {
@@ -214,26 +236,6 @@ namespace Player
             }
         }
 
-        protected void OnCollisionEnter(Collision collision)
-        {
-            if (collision.gameObject.tag == "Enemy")
-            {
-                //투척무기
-                //PlayerDamaged(collision.gameObject.playerName,10);
-                //destory
-            }
-        }
-
-        // 타워 거점 힐링
-        protected void OnCollisionStay(Collision collision)
-        {
-            //if(collision.gameObject.tag == "탑")
-
-            if(Input.GetKey(KeyCode.F))
-            {
-                Debug.Log("Healing");
-            }
-        }
         public void IsLocalPlayer()
         {
             GetComponent<PlayerInput>().enabled = true;
