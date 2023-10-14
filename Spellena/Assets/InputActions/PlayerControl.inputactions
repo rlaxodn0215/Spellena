@@ -24,13 +24,13 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Walk",
-                    "type": "Button",
+                    "name": "Run",
+                    "type": "Value",
                     "id": "54b3753b-b01d-4f90-bbb5-32b7c43bbcd2",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "Key",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false
+                    "initialStateCheck": true
                 },
                 {
                     "name": "Sit",
@@ -139,7 +139,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "PC",
-                    "action": "Walk",
+                    "action": "Run",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

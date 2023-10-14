@@ -10,7 +10,7 @@ namespace Player
 {
     public enum PlayerActionState
     {
-        Move, Jump, Walk, Sit, Interaction, Skill1, Skill2, Skill3, Skill4
+        Move, Jump, Run, Sit, Interaction, Skill1, Skill2, Skill3, Skill4
     }
 
     public class PlayerActionData
@@ -79,7 +79,7 @@ namespace Player
             playerInput = GetComponent<PlayerInput>();
             SetPlayerKeys(PlayerActionState.Move, "Move");
             SetPlayerKeys(PlayerActionState.Jump, "Jump");
-            SetPlayerKeys(PlayerActionState.Walk, "Walk");
+            SetPlayerKeys(PlayerActionState.Run, "Run");
             SetPlayerKeys(PlayerActionState.Sit, "Sit");
             SetPlayerKeys(PlayerActionState.Interaction, "Interaction");
             SetPlayerKeys(PlayerActionState.Skill1, "Skill1");
@@ -192,8 +192,21 @@ namespace Player
             }
         }
 
-        void OnWalk()
+        void OnRun()
         {
+            Debug.Log("Run!");
+
+            if (!playerActionDatas[(int)PlayerActionState.Run].isExecuting)
+            {
+                animator.SetBool("Run", true);
+                playerActionDatas[(int)PlayerActionState.Run].isExecuting = true;
+            }
+
+            else
+            {
+                animator.SetBool("Run", false);
+                playerActionDatas[(int)PlayerActionState.Run].isExecuting = false;
+            }
 
         }
 
@@ -239,12 +252,7 @@ namespace Player
 
         private void OnTriggerEnter(Collider other)
         {
-            //if (other.tag == "Ground")
-            //{
-            //    grounded = true;
-            //    playerActionDatas[(int)PlayerActionState.Jump].isExecuting = false;
-            //    animator.SetBool("Grounded", grounded);
-            //}
+
         }
 
         void OnTriggerStay(Collider other)
@@ -252,7 +260,6 @@ namespace Player
             if (other.tag == "OccupationArea")
             {
                 Debug.Log("점령중...");
-                //Debug.Log("점령중...");
                 isOccupying = true;
             }
         }

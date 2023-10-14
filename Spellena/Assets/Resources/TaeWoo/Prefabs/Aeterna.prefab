@@ -331,7 +331,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 55
+    m_Bits: 183
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -461,7 +461,7 @@ GameObject:
   - component: {fileID: 1517351796}
   - component: {fileID: 1517351802}
   - component: {fileID: 1254214872}
-  - component: {fileID: 2077390123}
+  - component: {fileID: 683120009}
   m_Layer: 0
   m_Name: Aeterna
   m_TagString: Untagged
@@ -677,8 +677,8 @@ MonoBehaviour:
   m_DefaultActionMap: PlayerActions
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
---- !u!65 &2077390123
-BoxCollider:
+--- !u!136 &683120009
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -687,9 +687,10 @@ BoxCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.1, y: 0.1, z: 0.1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Radius: 0.1589776
+  m_Height: 1.8605461
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.88050747, z: 0}
 --- !u!1001 &810757162
 PrefabInstance:
   m_ObjectHideFlags: 0
