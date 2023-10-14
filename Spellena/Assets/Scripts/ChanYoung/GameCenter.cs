@@ -4,10 +4,20 @@ using Photon.Realtime;
 using Photon.Pun.Demo.PunBasics;
 using System.Collections.Generic;
 using Player;
-using static Photon.Pun.UtilityScripts.PunTeams;
+using UnityEngine.UI;
 
 public class GameCenter : MonoBehaviourPunCallbacks, IPunObservable
 {
+    GameObject gameStateText;
+    Text gameStateTextUI;
+    GameObject timerText;
+    Text timerTextUI;
+    GameObject teamAOccupyingText;
+    GameObject teamBOccupyingText;
+    Text teamAOccupyingTextUI;
+    Text teamBOccupyingTextUI;
+    GameObject occupyingGaugeText;
+    Text occupyingGaugeTextUI;
     enum GameState
     {
         WaitingAllPlayer,
@@ -53,18 +63,30 @@ public class GameCenter : MonoBehaviourPunCallbacks, IPunObservable
     Occupation occupyingB;//B팀의 점령도
     OccupyingTeam occupyingTeam;//점령 게이지 바
 
-    int maxPlayers = 10;//최대 플레이어 수
+    int maxPlayers = 1;//최대 플레이어 수
 
     void Awake()
     {
         gameState = GameState.WaitingAllPlayer;
+        gameStateText = GameObject.Find("GameState");
+        gameStateTextUI = gameStateText.GetComponent<Text>();
+        timerText = GameObject.Find("Timer");
+        timerTextUI = timerText.GetComponent<Text>();
+        teamAOccupyingText = GameObject.Find("TeamAOccupying");
+        teamBOccupyingText = GameObject.Find("TeamBOccupying");
+        teamAOccupyingTextUI = teamAOccupyingText.GetComponent<Text>();
+        teamBOccupyingTextUI = teamBOccupyingText.GetComponent<Text>();
+        occupyingGaugeText = GameObject.Find("OccupyingGauge");
+        occupyingGaugeTextUI = occupyingGaugeText.GetComponent<Text>();
     }
 
     void Update()
     {
+        timerTextUI.text = ((int)globalTimer).ToString();
         if(gameState == GameState.WaitingAllPlayer)
         {
-            if(PhotonNetwork.PlayerList.Length >= maxPlayers)
+            gameStateTextUI.text = "Waiting Player";
+            if (PhotonNetwork.PlayerList.Length >= maxPlayers)
             {
                 //짝수는 A팀 홀수는 B팀으로 구성된다.
                 for (int i = 0; i < PhotonNetwork.PlayerList.Length; i++)
@@ -84,10 +106,12 @@ public class GameCenter : MonoBehaviourPunCallbacks, IPunObservable
         }
         else if (gameState == GameState.MatchStart)
         {
+            gameStateTextUI.text = "Match Start";
             gameState = GameState.CharacterSelect;
         }
         else if (gameState == GameState.CharacterSelect)
         {
+            gameStateTextUI.text = "Character Select";
             globalTimer += Time.deltaTime;
             if (globalTimer >= characterSelectTime)
             {
@@ -97,6 +121,7 @@ public class GameCenter : MonoBehaviourPunCallbacks, IPunObservable
         }
         else if (gameState == GameState.Ready)
         {
+            gameStateTextUI.text = "Ready";
             globalTimer += Time.deltaTime;
             if (globalTimer >= readyTime)
             {
@@ -106,6 +131,11 @@ public class GameCenter : MonoBehaviourPunCallbacks, IPunObservable
         }
         else if (gameState == GameState.Round)
         {
+            teamAOccupyingTextUI.text = ((int)occupyingA.rate).ToString();
+            teamBOccupyingTextUI.text = ((int)occupyingB.rate).ToString();
+            occupyingGaugeTextUI.text = occupyingTeam.name+ " : " + ((int)occupyingTeam.rate).ToString();
+
+            gameStateTextUI.text = "Round";
             //지역이 점령되어있으면 점령한 팀의 점령비율이 높아진다.
             if (currentOccupationTeam == teamA)
                 occupyingA.rate += Time.deltaTime * occupyingRate;//약 1.8초당 1씩 오름
@@ -117,6 +147,7 @@ public class GameCenter : MonoBehaviourPunCallbacks, IPunObservable
         }
         else if (gameState == GameState.RoundEnd)
         {
+            gameStateTextUI.text = "Round End";
             if (roundA >= 2 || roundB >= 2)
             {
                 gameState = GameState.MatchEnd;
@@ -129,10 +160,12 @@ public class GameCenter : MonoBehaviourPunCallbacks, IPunObservable
         }
         else if (gameState == GameState.MatchEnd)
         {
+            gameStateTextUI.text = "Match End";
             gameState = GameState.Result;
         }
         else if (gameState == GameState.Result)
         {
+            gameStateTextUI.text = "Result";
             //종료
         }
     }
@@ -210,6 +243,8 @@ public class GameCenter : MonoBehaviourPunCallbacks, IPunObservable
     }
     void ChangeOccupyingRate(int num, string name) //점령 게이지 변화
     {
+        if (currentOccupationTeam == name)
+            return;
         if (occupyingTeam.name == name)
         {
             occupyingTeam.rate += occupyingGaugeRate * Time.deltaTime * num;
@@ -265,6 +300,5 @@ public class GameCenter : MonoBehaviourPunCallbacks, IPunObservable
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
-
     }
 }
