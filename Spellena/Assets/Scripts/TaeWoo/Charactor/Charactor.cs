@@ -48,6 +48,8 @@ namespace Player
         public string playerName;
         public int Hp;
         public PlayerCharactor charactor;
+        public GameObject Sight;
+        public GameObject groundRaycast;
         public GameObject camera;
         public GameObject UI;
 
@@ -132,6 +134,17 @@ namespace Player
                 playerActionDatas[(int)PlayerActionState.Move].isExecuting = true;
         }
 
+        private void OnAnimatorIK()
+        {
+            SetLookAtObj();
+        }
+
+        void SetLookAtObj()
+        {
+            animator.SetLookAtWeight(1f,0.9f);
+            animator.SetLookAtPosition(Sight.transform.position);
+        }
+
         protected void PlayerMove()
         {
             Vector3 _temp = new Vector3(0, 0, 0);
@@ -203,6 +216,13 @@ namespace Player
                 //destory
             }
 
+            if (collision.gameObject.tag == "Ground")
+            {
+                grounded = true;
+                playerActionDatas[(int)PlayerActionState.Jump].isExecuting = false;
+                animator.SetBool("Grounded", grounded);
+            }
+
         }
 
         private void OnCollisionStay(Collision collision)
@@ -219,12 +239,12 @@ namespace Player
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.tag == "Ground")
-            {
-                grounded = true;
-                playerActionDatas[(int)PlayerActionState.Jump].isExecuting = false;
-                animator.SetBool("Grounded", grounded);
-            }
+            //if (other.tag == "Ground")
+            //{
+            //    grounded = true;
+            //    playerActionDatas[(int)PlayerActionState.Jump].isExecuting = false;
+            //    animator.SetBool("Grounded", grounded);
+            //}
         }
 
         void OnTriggerStay(Collider other)
@@ -232,6 +252,7 @@ namespace Player
             if (other.tag == "OccupationArea")
             {
                 Debug.Log("점령중...");
+                //Debug.Log("점령중...");
                 isOccupying = true;
             }
         }

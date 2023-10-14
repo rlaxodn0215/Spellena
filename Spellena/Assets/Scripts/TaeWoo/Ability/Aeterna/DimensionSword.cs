@@ -31,7 +31,7 @@ namespace Player
         IEnumerator EndAttack()
         {
             yield return new WaitForSeconds(animator.GetCurrentAnimatorClipInfo(1).Length);
-            Sword.GetComponent<BoxCollider>().enabled = true;
+            Sword.GetComponent<BoxCollider>().enabled = false;
             Debug.Log("DimensionSword finish");
         }
     }
