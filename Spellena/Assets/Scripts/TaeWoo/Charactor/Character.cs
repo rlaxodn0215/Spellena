@@ -104,7 +104,7 @@ namespace Player
         }
         protected virtual void Update()
         {
-            RayCasting();
+            //RayCasting();
             isOccupying = false;
         }
 
@@ -125,11 +125,11 @@ namespace Player
             playerData = new PlayerData(playerName, "");
         }
 
-        void RayCasting()
-        {
-            Ray ray = new Ray(camera.transform.position,camera.transform.forward);
-            Physics.Raycast(ray,out hit);
-        }
+        //void RayCasting()
+        //{
+        //    Ray ray = new Ray(camera.transform.position,camera.transform.forward);
+        //    Physics.Raycast(ray,out hit);
+        //}
 
         void OnMove(InputValue value)
         {

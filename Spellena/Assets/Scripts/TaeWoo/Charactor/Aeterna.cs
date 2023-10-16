@@ -11,6 +11,7 @@ namespace Player
         public GameObject DimensionSword;
         public GameObject DimensionSlash;
         public GameObject DimensionDoor;
+        public GameObject DimensionDoorGUI;
 
         [HideInInspector]
         public int skillButton = -1;
@@ -41,6 +42,7 @@ namespace Player
 
             DimensionOpen dimensionOpen = this.gameObject.AddComponent<DimensionOpen>();
             dimensionOpen.AddPlayer(this);
+            dimensionOpen.maxDistance = 100;
             Skills["Skill1"] = dimensionOpen;
 
             DimensionIO dimensionIO = this.gameObject.AddComponent<DimensionIO>();
@@ -73,6 +75,7 @@ namespace Player
                 else
                 {
                     skillButton = 1;
+                    Skills["Skill1"].IsActive();
                     Debug.Log("Skill1 Ready");
                 }
             }
