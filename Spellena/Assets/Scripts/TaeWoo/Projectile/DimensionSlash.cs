@@ -10,11 +10,15 @@ namespace Player
     {
         [HideInInspector]
         public Aeterna Owner;
+        [HideInInspector]
+        public Vector3 dir;
 
         // Start is called before the first frame update
         protected override void Start()
         {
             base.Start();
+            dir = Owner.camera.transform.localRotation * Vector3.forward;
+            dir += Owner.transform.localRotation * Vector3.up;
             StartCoroutine(Death(lifeTime));
         }
 
@@ -33,7 +37,7 @@ namespace Player
 
         private void Move()
         {
-            transform.Translate(Owner.camera.transform.localRotation * Vector3.forward * Speed * Time.deltaTime);
+            transform.Translate(dir * Speed * Time.deltaTime);
         }
 
         IEnumerator Death(int lifetime)
