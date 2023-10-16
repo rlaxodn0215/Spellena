@@ -77,7 +77,7 @@ namespace Player
                 }
             }
 
-            else
+            else if(skillTimer[0] <=0.0f)
             {
                 skillButton = -1;
                 Debug.Log("BasicAttack Ready");
@@ -101,7 +101,7 @@ namespace Player
                 }
             }
 
-            else
+            else if(skillTimer[0] <= 0.0f)
             {
                 skillButton = -1;
                 Debug.Log("BasicAttack Ready");
@@ -138,9 +138,11 @@ namespace Player
 
             else
             {
-                if (skillButton == -1)
+                if (skillButton == -1 && skillTimer[0]<=0.0f)
                 {
                     Skills["BasicAttack"].Execution();
+                    skillTimer[0] = AeternaData.skillTimer[0];
+                    StartCoroutine(SkillTimer(0));
                 }
             }
         }
