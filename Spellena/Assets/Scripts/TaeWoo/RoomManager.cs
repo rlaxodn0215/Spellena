@@ -57,7 +57,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
         }
 
         GameObject _player = PhotonNetwork.Instantiate("TaeWoo/Prefabs/Aeterna", spawnPoint.position, Quaternion.identity);
-        _player.GetComponent<Player.Charactor>().IsLocalPlayer();
+        _player.GetComponent<Player.Character>().IsLocalPlayer();
         PhotonNetwork.PlayerList[PhotonNetwork.PlayerList.Length - 1].TagObject = _player;
 
     }

@@ -9,7 +9,7 @@ namespace Player
         private Aeterna Player;
         //private GameObject
 
-        public override void AddPlayer(Charactor player)
+        public override void AddPlayer(Character player)
         {
             Player = (Aeterna)player;
         }
