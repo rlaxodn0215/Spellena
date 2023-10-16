@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Player
 {
-    public class ElementalOrder : Charactor
+    public class ElementalOrder : Character
     {
         protected override void Start()
         {
