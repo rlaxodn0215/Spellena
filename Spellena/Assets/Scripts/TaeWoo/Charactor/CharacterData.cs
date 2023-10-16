@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName ="Data", menuName ="ScriptableObject/CharactorData")]
-public class CharactorData : ScriptableObject
+public class CharacterData : ScriptableObject
 {
     public int Hp;
     public float moveSpeed;

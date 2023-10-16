@@ -7,7 +7,7 @@ namespace Player
 {
     public class Aeterna : Character
     {
-        public CharactorData AeternaData;
+        public CharacterData AeternaData;
         public GameObject DimensionSword;
         public GameObject DimensionSlash;
         public GameObject DimensionDoor;
