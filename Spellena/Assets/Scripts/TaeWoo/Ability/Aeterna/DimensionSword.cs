@@ -12,7 +12,7 @@ namespace Player
         private Animator animator;
         private GameObject Sword;
         private GameObject dimensionSlash;
-        public override void AddPlayer(Charactor player)
+        public override void AddPlayer(Character player)
         {
             Player = (Aeterna)player;
             animator = player.GetComponent<Animator>();
@@ -32,10 +32,10 @@ namespace Player
         IEnumerator ShootSlash()
         {
             yield return new WaitForSeconds(animator.GetCurrentAnimatorClipInfo(1).Length/2);
-            dimensionSlash.GetComponent<DimensionSlash>().Owner = Player.name;
-            dimensionSlash.GetComponent<DimensionSlash>().teamTag = Player.tag;
-            PhotonNetwork.Instantiate("TaeWoo/Prefabs/Effect/" + dimensionSlash.name,
-                new Vector3(transform.position.x, transform.position.y, transform.position.z + 0.5f),Quaternion.identity);
+
+            dimensionSlash.GetComponent<DimensionSlash>().owner = Player;
+
+            PhotonNetwork.Instantiate("TaeWoo/Prefabs/Effect/" + dimensionSlash.name, Player.camera.transform.position, Player.transform.localRotation);
             Debug.Log("검기 소환");
         }
 

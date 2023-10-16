@@ -63,7 +63,7 @@ public class GameCenter : MonoBehaviourPunCallbacks, IPunObservable
     Occupation occupyingB;//B팀의 점령도
     OccupyingTeam occupyingTeam;//점령 게이지 바
 
-    int maxPlayers = 2;//최대 플레이어 수
+    int maxPlayers = 2;// 대 플레이어 수
 
     void Awake()
     {
@@ -86,6 +86,8 @@ public class GameCenter : MonoBehaviourPunCallbacks, IPunObservable
         if (gameState == GameState.WaitingAllPlayer)
         {
             gameStateTextUI.text = "Waiting Player";
+
+            /*
             if (PhotonNetwork.PlayerList.Length >= maxPlayers)
             {
                 //짝수는 A팀 홀수는 B팀으로 구성된다.
@@ -94,15 +96,18 @@ public class GameCenter : MonoBehaviourPunCallbacks, IPunObservable
                     GameObject _temp = PhotonNetwork.PlayerList[i].TagObject as GameObject;
                     if (i % 2 == 0)
                     {
+                        _temp.tag = "TeamA";
                         playersA.Add(_temp);
                     }
                     else
                     {
+                        _temp.tag = "TeamB";
                         playersB.Add(_temp);
                     }
                 }
+            */
+            if(playersA.Count + playersB.Count >= maxPlayers)
                 gameState = GameState.MatchStart;
-            }
         }
         else if (gameState == GameState.MatchStart)
         {
@@ -169,6 +174,21 @@ public class GameCenter : MonoBehaviourPunCallbacks, IPunObservable
             //종료
         }
     }
+
+    public void AddPlayer(GameObject player)
+    {
+        if (playersA.Count >= playersB.Count)
+        {
+            player.tag = "TeamB";
+            playersB.Add(player);
+        }
+        else
+        {
+            player.tag = "TeamA";
+            playersA.Add(player);
+        }
+    }
+
     void CheckRoundEnd()
     {
         if (occupyingA.rate >= occupyingComplete && currentOccupationTeam == teamA && teamBOccupying <= 0)
@@ -198,7 +218,7 @@ public class GameCenter : MonoBehaviourPunCallbacks, IPunObservable
         teamBOccupying = 0;
         for (int i = 0; i < playersA.Count; i++)
         {
-            if (playersA[i].GetComponent<Charactor>().isOccupying == true)
+            if (playersA[i].GetComponent<Character>().isOccupying == true)
             {
                 teamAOccupying++;
             }
@@ -206,7 +226,7 @@ public class GameCenter : MonoBehaviourPunCallbacks, IPunObservable
 
         for (int i = 0; i < playersB.Count; i++)
         {
-            if (playersB[i].GetComponent<Charactor>().isOccupying == true)
+            if (playersB[i].GetComponent<Character>().isOccupying == true)
             {
                 teamBOccupying++;
             }
@@ -300,8 +320,6 @@ public class GameCenter : MonoBehaviourPunCallbacks, IPunObservable
     float roundEndTime = 3f;
     string teamA = "A";
     string teamB = "B";
-
-
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {

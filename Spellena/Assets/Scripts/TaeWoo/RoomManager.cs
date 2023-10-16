@@ -50,14 +50,23 @@ public class RoomManager : MonoBehaviourPunCallbacks
     public override void OnJoinedRoom()
     {
         base.OnJoinedRoom();
-
-        if(PhotonNetwork.IsMasterClient)
+        GameObject _gameCenter;
+        if (PhotonNetwork.IsMasterClient)
         {
-            GameObject _gameCenter = PhotonNetwork.Instantiate("ChanYoung/Prefabs/GameCenter", spawnPoint.position, Quaternion.identity);
+            _gameCenter = PhotonNetwork.Instantiate("ChanYoung/Prefabs/GameCenter", spawnPoint.position, Quaternion.identity);
+            _gameCenter.name = "GameCenter";
+        }
+
+        else
+        {
+            _gameCenter = GameObject.Find("GameCenter");
         }
 
         GameObject _player = PhotonNetwork.Instantiate("TaeWoo/Prefabs/Aeterna", spawnPoint.position, Quaternion.identity);
-        _player.GetComponent<Player.Charactor>().IsLocalPlayer();
+        _player.GetComponent<Player.Character>().IsLocalPlayer();
+
+        _gameCenter.GetComponent<GameCenter>().AddPlayer(_player);
+        
         PhotonNetwork.PlayerList[PhotonNetwork.PlayerList.Length - 1].TagObject = _player;
 
     }

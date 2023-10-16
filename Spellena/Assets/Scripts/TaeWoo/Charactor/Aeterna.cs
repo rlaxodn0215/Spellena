@@ -5,9 +5,9 @@ using UnityEngine.InputSystem;
 
 namespace Player
 {
-    public class Aeterna : Charactor
+    public class Aeterna : Character
     {
-        public CharactorData AeternaData;
+        public CharacterData AeternaData;
         public GameObject DimensionSword;
         public GameObject DimensionSlash;
         public GameObject DimensionDoor;
@@ -26,7 +26,6 @@ namespace Player
         protected override void Update()
         {
             base.Update();
-            PlayerSkillInput();
         }
 
         protected override void FixedUpdate()
@@ -119,31 +118,29 @@ namespace Player
 
         }
 
-        protected void PlayerSkillInput()
+        private void OnMouseButton()
         {
-            // 입력된 스킬 슬롯 에 따라 해당 스킬 사용
-            if (Input.GetMouseButtonDown(0))
+            if (skillButton == 1 && skillTimer[1] <= 0.0f)
             {
-                if(skillButton==1 && skillTimer[1]<=0.0f)
-                {
-                    Skills["Skill1"].Execution();
-                    //playerActionDatas[(int)PlayerActionState.Skill1].isExecuting = true;
-                    skillTimer[1] = AeternaData.skillTimer[1];
-                    StartCoroutine(SkillTimer(1));
-                }
+                Skills["Skill1"].Execution();
+                //playerActionDatas[(int)PlayerActionState.Skill1].isExecuting = true;
+                skillTimer[1] = AeternaData.skillTimer[1];
+                StartCoroutine(SkillTimer(1));
+            }
 
-                else if(skillButton==2 && skillTimer[2] <= 0.0f)
-                {
-                    Skills["Skill2"].Execution();
-                    //playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = true;
-                    skillTimer[2] = AeternaData.skillTimer[2];
-                    StartCoroutine(SkillTimer(2));
-                }
+            else if (skillButton == 2 && skillTimer[2] <= 0.0f)
+            {
+                Skills["Skill2"].Execution();
+                //playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = true;
+                skillTimer[2] = AeternaData.skillTimer[2];
+                StartCoroutine(SkillTimer(2));
+            }
 
-                else
+            else
+            {
+                if (skillButton == -1)
                 {
-                    if(skillButton == -1)
-                        Skills["BasicAttack"].Execution();
+                    Skills["BasicAttack"].Execution();
                 }
             }
         }

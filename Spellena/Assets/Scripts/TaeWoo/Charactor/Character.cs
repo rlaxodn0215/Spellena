@@ -40,7 +40,7 @@ namespace Player
         }
     }
 
-    public class Charactor : MonoBehaviour
+    public class Character : MonoBehaviourPunCallbacks
     {
         PlayerInput playerInput;
         public List<PlayerActionData> playerActionDatas = new List<PlayerActionData>();
@@ -63,13 +63,14 @@ namespace Player
         public Animator animator;
         [HideInInspector]
         public Rigidbody rigidbody;
+        [HideInInspector]
+        public RaycastHit hit;
 
         // 능력 넣는 Dictionary   
         [HideInInspector]
         public Dictionary<string, Ability> Skills;
 
         private Vector3 moveVec;
-        private bool IsMoving;
         private bool grounded;
 
         public bool isOccupying = false;
@@ -103,6 +104,7 @@ namespace Player
         }
         protected virtual void Update()
         {
+            RayCasting();
             isOccupying = false;
         }
 
@@ -123,6 +125,12 @@ namespace Player
             playerData = new PlayerData(playerName, "");
         }
 
+        void RayCasting()
+        {
+            Ray ray = new Ray(camera.transform.position,camera.transform.forward);
+            Physics.Raycast(ray,out hit);
+        }
+
         void OnMove(InputValue value)
         {
             moveVec = new Vector3(value.Get<Vector2>().x, 0, value.Get<Vector2>().y);
@@ -141,12 +149,16 @@ namespace Player
 
         void SetLookAtObj()
         {
+            if (animator == null) return;
+
             animator.SetLookAtWeight(1f,0.9f);
             animator.SetLookAtPosition(Sight.transform.position);
         }
 
         protected void PlayerMove()
         {
+            if (animator == null || rigidbody == null) return;
+
             Vector3 _temp = new Vector3(0, 0, 0);
 
             if (playerActionDatas[(int)PlayerActionState.Move].isExecuting)
@@ -217,11 +229,13 @@ namespace Player
 
         void OnInteraction()
         {
-
+            Debug.Log("Interaction");
         }
 
         private void OnCollisionEnter(Collision collision)
         {
+            if (animator == null) return;
+
             if (collision.gameObject.tag == "Enemy")
             {
                 //투척무기
@@ -242,10 +256,10 @@ namespace Player
         {
             //if(collision.gameObject.tag == "탑")
 
-            if (Input.GetKey(KeyCode.F))
-            {
-                Debug.Log("Healing");
-            }
+            //if (Input.GetKey(KeyCode.F))
+            //{
+            //    Debug.Log("Healing");
+            //}
 
         }
 
@@ -268,6 +282,12 @@ namespace Player
         {
             GetComponent<PlayerInput>().enabled = true;
             camera.SetActive(true);
+            Transform _temp = transform.GetChild(0).GetChild(0);// = LayerMask.NameToLayer("Me");
+            for(int i =0; i < _temp.childCount;i++)
+            {
+                _temp.GetChild(i).gameObject.layer = LayerMask.NameToLayer("Me");
+            }
+            //.layer = LayerMask.NameToLayer("Me");
             UI.SetActive(true);
         }
 
@@ -280,11 +300,11 @@ namespace Player
                 // 투척 무기에 쏜 사람 이름 저장
                 playerData.murder = enemy;
                 // 히트 스캔일 경우 RPC에 쏜 사람 이름 매개변수로 전달
-
-                Debug.Log("맞는것 확인");
+                Debug.Log("죽는것 확인");
                 // 죽은 것 서버에 연락 
                 //GetComponent<PhotonView>().RPC("TakeDamage", RpcTarget.AllBuffered, );
             }
+            Debug.Log("맞는것 확인");
         }
 
         //public void PlayerDead(PlayerData data)
