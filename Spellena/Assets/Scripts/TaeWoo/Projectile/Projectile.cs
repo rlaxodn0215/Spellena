@@ -4,15 +4,9 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
-    [HideInInspector]
-    public string Owner;
-
-    [HideInInspector]
-    public string teamTag;
-
     public int damage;
     public int lifeTime;
-
+    public int Speed;
 
     protected virtual void Start()
     {

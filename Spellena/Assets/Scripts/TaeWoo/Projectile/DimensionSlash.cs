@@ -8,7 +8,8 @@ namespace Player
 {
     public class DimensionSlash : Projectile
     {
-        public int Speed;
+        [HideInInspector]
+        public Aeterna Owner;
 
         // Start is called before the first frame update
         protected override void Start()
@@ -32,7 +33,7 @@ namespace Player
 
         private void Move()
         {
-            transform.Translate(transform.forward * Speed * Time.deltaTime);
+            transform.Translate(Owner.camera.transform.localRotation * Vector3.forward * Speed * Time.deltaTime);
         }
 
         IEnumerator Death(int lifetime)
@@ -43,8 +44,8 @@ namespace Player
 
         private void OnTriggerEnter(Collider other)
         {
-            if (teamTag=="TeamA" && other.tag == "TeamB" ||
-                teamTag == "TeamB" && other.tag == "TeamA")
+            if (Owner.tag=="TeamA" && other.tag == "TeamB" ||
+                Owner.tag == "TeamB" && other.tag == "TeamA")
             {
                 other.gameObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBuffered,Owner,damage);
                 Debug.Log("검기 맞음");

@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 
 namespace Player
 {
-    public class Aeterna : Charactor
+    public class Aeterna : Character
     {
         public CharactorData AeternaData;
         public GameObject DimensionSword;
@@ -142,8 +142,11 @@ namespace Player
 
                 else
                 {
-                    if(skillButton == -1)
+                    if (skillButton == -1)
+                    {
                         Skills["BasicAttack"].Execution();
+                        Debug.Log(camera.transform.localRotation.ToEuler());
+                    }
                 }
             }
         }
