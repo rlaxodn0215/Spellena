@@ -24,8 +24,13 @@ namespace Player
             //만일 타격이 없다면 원거리 공격
             animator.SetTrigger("BasicAttack");
             Sword.GetComponent<BoxCollider>().enabled = true;
-            MakeCoroutine.Start_Coroutine(EndAttack());
+            //StartCoroutine(EndAttack());
             Debug.Log("DimensionSword!");
+        }
+
+        void Update()
+        {
+            Debug.Log("Update");
         }
 
         IEnumerator EndAttack()

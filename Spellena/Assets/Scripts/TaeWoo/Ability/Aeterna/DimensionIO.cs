@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Player
 {
-    public class DimensionIO : Ability
+    public class DimensionIO : MonoBehaviour, Ability
     {
         private Aeterna Player;
         public DimensionIO(Aeterna player)

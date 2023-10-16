@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Player
 {
-    public class DimensionOpen : Ability
+    public class DimensionOpen : MonoBehaviour, Ability
     {
         private Aeterna Player;
         public DimensionOpen(Aeterna player)
