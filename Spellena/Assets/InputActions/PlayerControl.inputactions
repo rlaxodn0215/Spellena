@@ -24,6 +24,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "MouseButton",
+                    "type": "Button",
+                    "id": "c688387f-6e32-457f-b9d8-80f705424874",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Run",
                     "type": "Value",
                     "id": "54b3753b-b01d-4f90-bbb5-32b7c43bbcd2",
@@ -230,6 +239,17 @@
                     "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "4794f8e8-bb03-416e-bb27-c5fe29e31dd3",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "PC",
+                    "action": "MouseButton",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         }
