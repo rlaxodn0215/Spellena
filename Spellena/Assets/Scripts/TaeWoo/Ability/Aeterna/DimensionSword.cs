@@ -34,7 +34,7 @@ namespace Player
             yield return new WaitForSeconds(animator.GetCurrentAnimatorClipInfo(1).Length/2);
             dimensionSlash.GetComponent<DimensionSlash>().Owner = Player.name;
             dimensionSlash.GetComponent<DimensionSlash>().teamTag = Player.tag;
-            PhotonNetwork.Instantiate("TaeWoo/Prefabs/Effect" + dimensionSlash.name,
+            PhotonNetwork.Instantiate("TaeWoo/Prefabs/Effect/" + dimensionSlash.name,
                 new Vector3(transform.position.x, transform.position.y, transform.position.z + 0.5f),Quaternion.identity);
             Debug.Log("검기 소환");
         }
