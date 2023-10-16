@@ -9,7 +9,7 @@ namespace Player
     public class DimensionSlash : Projectile
     {
         [HideInInspector]
-        public Aeterna Owner;
+        public Aeterna owner;
         [HideInInspector]
         public Vector3 dir;
 
@@ -17,8 +17,8 @@ namespace Player
         protected override void Start()
         {
             base.Start();
-            dir = Owner.camera.transform.localRotation * Vector3.forward;
-            dir += Owner.transform.localRotation * Vector3.up;
+            dir = owner.camera.transform.localRotation*Vector3.forward;
+            Debug.Log(dir);
             StartCoroutine(Death(lifeTime));
         }
 
@@ -48,10 +48,10 @@ namespace Player
 
         private void OnTriggerEnter(Collider other)
         {
-            if (Owner.tag=="TeamA" && other.tag == "TeamB" ||
-                Owner.tag == "TeamB" && other.tag == "TeamA")
+            if (owner.tag=="TeamA" && other.tag == "TeamB" ||
+                owner.tag == "TeamB" && other.tag == "TeamA")
             {
-                other.gameObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBuffered,Owner,damage);
+                other.gameObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBuffered,owner,damage);
                 Debug.Log("검기 맞음");
                 Destroy(gameObject);
             }
