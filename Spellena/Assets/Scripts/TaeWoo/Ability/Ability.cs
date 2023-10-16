@@ -6,6 +6,7 @@ namespace Player
 {
     public class Ability : MonoBehaviour
     {
-        //void Execution();
+        public virtual void AddPlayer(Charactor player) { }
+        public virtual void Execution() { }
     }
 }

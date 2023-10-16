@@ -542,6 +542,9 @@ MonoBehaviour:
   - Type: 9
     SynchronizeType: 0
     Name: BasicAttack
+  - Type: 4
+    SynchronizeType: 0
+    Name: Run
   m_SynchronizeLayers:
   - SynchronizeType: 0
     LayerIndex: 0
@@ -644,6 +647,7 @@ MonoBehaviour:
   isOccupying: 0
   AeternaData: {fileID: 11400000, guid: 68088471f050fa74fb68919ed9133893, type: 2}
   DimensionSword: {fileID: 919132148892307835}
+  DimensionSlash: {fileID: 2629910554034382192, guid: 228c79d47d0dc73499bfe6cff4b252eb, type: 3}
   DimensionDoor: {fileID: 0}
   skillButton: -1
   skillTimer: []

@@ -527,7 +527,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &783175787
 PrefabInstance:
@@ -536,6 +536,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1254214872, guid: 6fd0435c3a6d0a64b91b15ab7a0e1ee5, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1517351797, guid: 6fd0435c3a6d0a64b91b15ab7a0e1ee5, type: 3}
+      propertyPath: m_TeleportEnabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1517351797, guid: 6fd0435c3a6d0a64b91b15ab7a0e1ee5, type: 3}
+      propertyPath: m_SynchronizeAngularVelocity
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1517351801, guid: 6fd0435c3a6d0a64b91b15ab7a0e1ee5, type: 3}
       propertyPath: sceneViewId
       value: 1
@@ -546,7 +558,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5624648683831435769, guid: 6fd0435c3a6d0a64b91b15ab7a0e1ee5, type: 3}
       propertyPath: m_RootOrder
-      value: 5
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 5624648683831435769, guid: 6fd0435c3a6d0a64b91b15ab7a0e1ee5, type: 3}
       propertyPath: m_LocalPosition.x

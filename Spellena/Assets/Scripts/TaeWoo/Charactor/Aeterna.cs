@@ -9,6 +9,7 @@ namespace Player
     {
         public CharactorData AeternaData;
         public GameObject DimensionSword;
+        public GameObject DimensionSlash;
         public GameObject DimensionDoor;
 
         [HideInInspector]
@@ -35,9 +36,17 @@ namespace Player
 
         void Initialize()
         {
-            Skills["BasicAttack"] = new DimensionSword(this);
-            Skills["Skill1"] = new DimensionOpen(this);
-            Skills["Skill2"] = new DimensionIO(this);
+            DimensionSword dimensionSword = this.gameObject.AddComponent<DimensionSword>();
+            dimensionSword.AddPlayer(this);
+            Skills["BasicAttack"] = dimensionSword;
+
+            DimensionOpen dimensionOpen = this.gameObject.AddComponent<DimensionOpen>();
+            dimensionOpen.AddPlayer(this);
+            Skills["Skill1"] = dimensionOpen;
+
+            DimensionIO dimensionIO = this.gameObject.AddComponent<DimensionIO>();
+            dimensionIO.AddPlayer(this);
+            Skills["Skill2"] = dimensionIO;
 
             skillTimer = new float[Skills.Count];
 

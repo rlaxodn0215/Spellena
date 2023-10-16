@@ -4,15 +4,17 @@ using UnityEngine;
 
 namespace Player
 {
-    public class DimensionOpen : MonoBehaviour, Ability
+    public class DimensionOpen : Ability
     {
         private Aeterna Player;
-        public DimensionOpen(Aeterna player)
+        //private GameObject
+
+        public override void AddPlayer(Charactor player)
         {
-            Player = player;
+            Player = (Aeterna)player;
         }
 
-        public void Execution()
+        public override void Execution()
         {
             Debug.Log("DimensionOpen");
         }
