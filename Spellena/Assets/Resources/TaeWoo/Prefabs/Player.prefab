@@ -454,6 +454,8 @@ MonoBehaviour:
   playerName: rlaxodn
   Hp: 0
   charactor: 0
+  Sight: {fileID: 0}
+  groundRaycast: {fileID: 0}
   camera: {fileID: 8951237360352147448}
   UI: {fileID: 8951237361126929955}
   moveSpeed: 5

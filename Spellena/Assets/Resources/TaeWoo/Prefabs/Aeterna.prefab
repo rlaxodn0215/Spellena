@@ -542,6 +542,9 @@ MonoBehaviour:
   - Type: 9
     SynchronizeType: 0
     Name: BasicAttack
+  - Type: 4
+    SynchronizeType: 0
+    Name: Run
   m_SynchronizeLayers:
   - SynchronizeType: 0
     LayerIndex: 0

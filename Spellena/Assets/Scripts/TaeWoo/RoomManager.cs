@@ -56,7 +56,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
             GameObject _gameCenter = PhotonNetwork.Instantiate("ChanYoung/Prefabs/GameCenter", spawnPoint.position, Quaternion.identity);
         }
 
-        GameObject _player = PhotonNetwork.Instantiate("TaeWoo/Prefabs/" + player.name, spawnPoint.position, Quaternion.identity);
+        GameObject _player = PhotonNetwork.Instantiate("TaeWoo/Prefabs/Aeterna", spawnPoint.position, Quaternion.identity);
         _player.GetComponent<Player.Charactor>().IsLocalPlayer();
         PhotonNetwork.PlayerList[PhotonNetwork.PlayerList.Length - 1].TagObject = _player;
 
