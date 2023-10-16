@@ -198,7 +198,7 @@ public class GameCenter : MonoBehaviourPunCallbacks, IPunObservable
         teamBOccupying = 0;
         for (int i = 0; i < playersA.Count; i++)
         {
-            if (playersA[i].GetComponent<Charactor>().isOccupying == true)
+            if (playersA[i].GetComponent<Character>().isOccupying == true)
             {
                 teamAOccupying++;
             }
@@ -206,7 +206,7 @@ public class GameCenter : MonoBehaviourPunCallbacks, IPunObservable
 
         for (int i = 0; i < playersB.Count; i++)
         {
-            if (playersB[i].GetComponent<Charactor>().isOccupying == true)
+            if (playersB[i].GetComponent<Character>().isOccupying == true)
             {
                 teamBOccupying++;
             }

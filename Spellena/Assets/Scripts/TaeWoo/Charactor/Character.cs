@@ -40,7 +40,7 @@ namespace Player
         }
     }
 
-    public class Charactor : MonoBehaviour
+    public class Character : MonoBehaviour
     {
         PlayerInput playerInput;
         public List<PlayerActionData> playerActionDatas = new List<PlayerActionData>();
@@ -63,13 +63,14 @@ namespace Player
         public Animator animator;
         [HideInInspector]
         public Rigidbody rigidbody;
+        [HideInInspector]
+        public RaycastHit hit;
 
         // 능력 넣는 Dictionary   
         [HideInInspector]
         public Dictionary<string, Ability> Skills;
 
         private Vector3 moveVec;
-        private bool IsMoving;
         private bool grounded;
 
         public bool isOccupying = false;
@@ -103,6 +104,7 @@ namespace Player
         }
         protected virtual void Update()
         {
+            RayCasting();
             isOccupying = false;
         }
 
@@ -121,6 +123,12 @@ namespace Player
             rigidbody = GetComponent<Rigidbody>();
             Skills = new Dictionary<string, Ability>();
             playerData = new PlayerData(playerName, "");
+        }
+
+        void RayCasting()
+        {
+            Ray ray = new Ray(camera.transform.position,camera.transform.forward);
+            Physics.Raycast(ray,out hit);
         }
 
         void OnMove(InputValue value)
@@ -217,7 +225,7 @@ namespace Player
 
         void OnInteraction()
         {
-
+            Debug.Log("Interaction");
         }
 
         private void OnCollisionEnter(Collision collision)
@@ -242,10 +250,10 @@ namespace Player
         {
             //if(collision.gameObject.tag == "탑")
 
-            if (Input.GetKey(KeyCode.F))
-            {
-                Debug.Log("Healing");
-            }
+            //if (Input.GetKey(KeyCode.F))
+            //{
+            //    Debug.Log("Healing");
+            //}
 
         }
 

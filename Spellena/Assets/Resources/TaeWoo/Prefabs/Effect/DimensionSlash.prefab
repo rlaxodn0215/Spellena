@@ -30,7 +30,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2629910554034382192}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.6378332, y: 1.9491252, z: -0.8814478}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -95,7 +95,7 @@ SphereCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2629910554034382192}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5
@@ -112,11 +112,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 08393aa31b600e84da70ceed614d97e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Owner: Aeterna(Clone)
-  teamTag: Untagged
   damage: 10
-  lifeTime: 3
-  Speed: 2
+  lifeTime: 5
+  Speed: 10
+  Owner: {fileID: 0}
 --- !u!114 &67063335449727586
 MonoBehaviour:
   m_ObjectHideFlags: 0
