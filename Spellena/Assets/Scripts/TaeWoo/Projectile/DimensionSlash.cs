@@ -9,30 +9,38 @@ namespace Player
     public class DimensionSlash : Projectile
     {
         [HideInInspector]
-        public Aeterna Owner;
+        public Aeterna owner;
         [HideInInspector]
         public Vector3 dir;
 
         // Start is called before the first frame update
-        protected override void Start()
+        IEnumerator Start()
         {
-            base.Start();
-            dir = Owner.camera.transform.localRotation * Vector3.forward;
-            dir += Owner.transform.localRotation * Vector3.up;
-            StartCoroutine(Death(lifeTime));
+            if(owner !=null)
+            {
+                if(owner.tag == "TeamA")
+                {
+                    this.gameObject.layer = LayerMask.NameToLayer("ProjectileA");
+                }
+
+                else if(owner.tag == "TeamB")
+                {
+                    this.gameObject.layer = LayerMask.NameToLayer("ProjectileB");
+                }
+            }
+
+            if(owner.camera !=null)
+                dir = owner.camera.transform.localRotation*Vector3.forward;
+
+            yield return new WaitForSeconds(lifeTime);
+            GetComponent<PhotonView>().RPC("Disappear", RpcTarget.AllBuffered);
+
         }
 
         // Update is called once per frame
-        protected override void Update()
+        void Update()
         {
-            base.Update();
             Move();
-        }
-
-        protected override void FixedUpdate()
-        {
-            base.FixedUpdate();
-
         }
 
         private void Move()
@@ -40,18 +48,20 @@ namespace Player
             transform.Translate(dir * Speed * Time.deltaTime);
         }
 
-        IEnumerator Death(int lifetime)
+        [PunRPC]
+        public void Disappear()
         {
-            yield return new WaitForSeconds(lifeTime);
             Destroy(gameObject);
         }
 
         private void OnTriggerEnter(Collider other)
         {
-            if (Owner.tag=="TeamA" && other.tag == "TeamB" ||
-                Owner.tag == "TeamB" && other.tag == "TeamA")
+            if (owner.tag == null || other.tag == null) return; 
+
+            if (gameObject.layer.ToString()== "ProjectileA" && other.tag == "TeamB" ||
+                gameObject.layer.ToString() == "ProjectileB" && other.tag == "TeamA")
             {
-                other.gameObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBuffered,Owner,damage);
+                other.gameObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBuffered,owner,damage);
                 Debug.Log("검기 맞음");
                 Destroy(gameObject);
             }

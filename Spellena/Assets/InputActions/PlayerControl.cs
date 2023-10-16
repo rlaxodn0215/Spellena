@@ -46,6 +46,15 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
+                    ""name"": ""MouseButton"",
+                    ""type"": ""Button"",
+                    ""id"": ""c688387f-6e32-457f-b9d8-80f705424874"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
                     ""name"": ""Run"",
                     ""type"": ""Value"",
                     ""id"": ""54b3753b-b01d-4f90-bbb5-32b7c43bbcd2"",
@@ -252,6 +261,17 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
                     ""action"": ""Move"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4794f8e8-bb03-416e-bb27-c5fe29e31dd3"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""PC"",
+                    ""action"": ""MouseButton"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -279,6 +299,7 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
         m_PlayerActions = asset.FindActionMap("PlayerActions", throwIfNotFound: true);
         m_PlayerActions_Move = m_PlayerActions.FindAction("Move", throwIfNotFound: true);
         m_PlayerActions_Jump = m_PlayerActions.FindAction("Jump", throwIfNotFound: true);
+        m_PlayerActions_MouseButton = m_PlayerActions.FindAction("MouseButton", throwIfNotFound: true);
         m_PlayerActions_Run = m_PlayerActions.FindAction("Run", throwIfNotFound: true);
         m_PlayerActions_Sit = m_PlayerActions.FindAction("Sit", throwIfNotFound: true);
         m_PlayerActions_Interaction = m_PlayerActions.FindAction("Interaction", throwIfNotFound: true);
@@ -349,6 +370,7 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
     private List<IPlayerActionsActions> m_PlayerActionsActionsCallbackInterfaces = new List<IPlayerActionsActions>();
     private readonly InputAction m_PlayerActions_Move;
     private readonly InputAction m_PlayerActions_Jump;
+    private readonly InputAction m_PlayerActions_MouseButton;
     private readonly InputAction m_PlayerActions_Run;
     private readonly InputAction m_PlayerActions_Sit;
     private readonly InputAction m_PlayerActions_Interaction;
@@ -362,6 +384,7 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
         public PlayerActionsActions(@PlayerControl wrapper) { m_Wrapper = wrapper; }
         public InputAction @Move => m_Wrapper.m_PlayerActions_Move;
         public InputAction @Jump => m_Wrapper.m_PlayerActions_Jump;
+        public InputAction @MouseButton => m_Wrapper.m_PlayerActions_MouseButton;
         public InputAction @Run => m_Wrapper.m_PlayerActions_Run;
         public InputAction @Sit => m_Wrapper.m_PlayerActions_Sit;
         public InputAction @Interaction => m_Wrapper.m_PlayerActions_Interaction;
@@ -384,6 +407,9 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
             @Jump.started += instance.OnJump;
             @Jump.performed += instance.OnJump;
             @Jump.canceled += instance.OnJump;
+            @MouseButton.started += instance.OnMouseButton;
+            @MouseButton.performed += instance.OnMouseButton;
+            @MouseButton.canceled += instance.OnMouseButton;
             @Run.started += instance.OnRun;
             @Run.performed += instance.OnRun;
             @Run.canceled += instance.OnRun;
@@ -415,6 +441,9 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
             @Jump.started -= instance.OnJump;
             @Jump.performed -= instance.OnJump;
             @Jump.canceled -= instance.OnJump;
+            @MouseButton.started -= instance.OnMouseButton;
+            @MouseButton.performed -= instance.OnMouseButton;
+            @MouseButton.canceled -= instance.OnMouseButton;
             @Run.started -= instance.OnRun;
             @Run.performed -= instance.OnRun;
             @Run.canceled -= instance.OnRun;
@@ -466,6 +495,7 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
     {
         void OnMove(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
+        void OnMouseButton(InputAction.CallbackContext context);
         void OnRun(InputAction.CallbackContext context);
         void OnSit(InputAction.CallbackContext context);
         void OnInteraction(InputAction.CallbackContext context);

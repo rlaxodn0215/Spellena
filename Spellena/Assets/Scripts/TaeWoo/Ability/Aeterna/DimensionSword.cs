@@ -33,9 +33,9 @@ namespace Player
         {
             yield return new WaitForSeconds(animator.GetCurrentAnimatorClipInfo(1).Length/2);
 
-            dimensionSlash.GetComponent<DimensionSlash>().Owner = Player;
+            dimensionSlash.GetComponent<DimensionSlash>().owner = Player;
 
-            PhotonNetwork.Instantiate("TaeWoo/Prefabs/Effect/" + dimensionSlash.name, Player.camera.transform.position, Quaternion.identity);
+            PhotonNetwork.Instantiate("TaeWoo/Prefabs/Effect/" + dimensionSlash.name, Player.camera.transform.position, Player.transform.localRotation);
             Debug.Log("검기 소환");
         }
 

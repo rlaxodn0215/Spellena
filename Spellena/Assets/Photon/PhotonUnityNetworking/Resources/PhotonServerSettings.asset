@@ -41,6 +41,7 @@ MonoBehaviour:
   - RespawnSpaceship
   - PlayerDamaged
   - callTest
+  - Disappear
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1
