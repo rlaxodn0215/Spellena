@@ -4,8 +4,9 @@ using UnityEngine;
 
 namespace Player
 {
-    public interface Ability
+    public class Ability : MonoBehaviour
     {
-        void Execution();
+        public virtual void AddPlayer(Charactor player) { }
+        public virtual void Execution() { }
     }
 }

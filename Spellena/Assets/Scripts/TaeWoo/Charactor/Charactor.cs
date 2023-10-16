@@ -278,8 +278,10 @@ namespace Player
             if (Hp <= 0)
             {
                 // 투척 무기에 쏜 사람 이름 저장
-                // playerData.murder = tag.gameObject.playerName;
+                playerData.murder = enemy;
                 // 히트 스캔일 경우 RPC에 쏜 사람 이름 매개변수로 전달
+
+                Debug.Log("맞는것 확인");
                 // 죽은 것 서버에 연락 
                 //GetComponent<PhotonView>().RPC("TakeDamage", RpcTarget.AllBuffered, );
             }

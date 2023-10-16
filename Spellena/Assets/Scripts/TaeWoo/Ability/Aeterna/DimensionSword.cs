@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
+using Photon.Realtime;
 
 namespace Player
 {
@@ -9,23 +11,32 @@ namespace Player
         private Aeterna Player;
         private Animator animator;
         private GameObject Sword;
-        private int NearDamage = 80;
-        private int FarDamage = 120;
-
-        public DimensionSword(Aeterna player)
+        private GameObject dimensionSlash;
+        public override void AddPlayer(Charactor player)
         {
-            Player = player;
+            Player = (Aeterna)player;
             animator = player.GetComponent<Animator>();
-            Sword = player.DimensionSword;
+            Sword = Player.DimensionSword;
+            dimensionSlash = Player.DimensionSlash;
         }
-        public void Execution()
+
+        public override void Execution()
         {
-            //공격 애니매이션 사용, 칼 활성화
-            //만일 타격이 없다면 원거리 공격
             animator.SetTrigger("BasicAttack");
             Sword.GetComponent<BoxCollider>().enabled = true;
-            MakeCoroutine.Start_Coroutine(EndAttack());
+            StartCoroutine(EndAttack());
+            StartCoroutine(ShootSlash());
             Debug.Log("DimensionSword!");
+        }
+
+        IEnumerator ShootSlash()
+        {
+            yield return new WaitForSeconds(animator.GetCurrentAnimatorClipInfo(1).Length/2);
+            dimensionSlash.GetComponent<DimensionSlash>().Owner = Player.name;
+            dimensionSlash.GetComponent<DimensionSlash>().teamTag = Player.tag;
+            PhotonNetwork.Instantiate("TaeWoo/Prefabs/Effect" + dimensionSlash.name,
+                new Vector3(transform.position.x, transform.position.y, transform.position.z + 0.5f),Quaternion.identity);
+            Debug.Log("검기 소환");
         }
 
         IEnumerator EndAttack()

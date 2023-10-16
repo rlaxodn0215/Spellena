@@ -7,12 +7,13 @@ namespace Player
     public class DimensionIO : Ability
     {
         private Aeterna Player;
-        public DimensionIO(Aeterna player)
+
+        public override void AddPlayer(Charactor player)
         {
-            Player = player;
+            Player = (Aeterna)player;
         }
 
-        public void Execution()
+        public override void Execution()
         {
             Debug.Log("DimensionIO");
         }
