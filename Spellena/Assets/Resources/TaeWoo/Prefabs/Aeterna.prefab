@@ -534,7 +534,7 @@ MonoBehaviour:
     SynchronizeType: 1
     Name: HorizontalSpeed
   - Type: 9
-    SynchronizeType: 0
+    SynchronizeType: 1
     Name: Jump
   - Type: 4
     SynchronizeType: 1

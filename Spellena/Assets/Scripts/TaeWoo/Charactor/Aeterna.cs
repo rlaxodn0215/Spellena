@@ -42,7 +42,7 @@ namespace Player
 
             DimensionOpen dimensionOpen = this.gameObject.AddComponent<DimensionOpen>();
             dimensionOpen.AddPlayer(this);
-            dimensionOpen.maxDistance = 100;
+            dimensionOpen.maxDistance = 10;
             Skills["Skill1"] = dimensionOpen;
 
             DimensionIO dimensionIO = this.gameObject.AddComponent<DimensionIO>();
@@ -64,6 +64,12 @@ namespace Player
 
         void OnSkill1()
         {
+            foreach (KeyValuePair<string, Ability> keyValue in Skills)
+            {
+                Ability ability = keyValue.Value;
+                ability.IsDisActive();
+            }
+
             if (skillTimer[1] <= 0.0f)
             {
                 if (skillButton == 1)
@@ -89,6 +95,12 @@ namespace Player
 
         void OnSkill2()
         {
+            foreach (KeyValuePair<string, Ability> keyValue in Skills)
+            {
+                Ability ability = keyValue.Value;
+                ability.IsDisActive();
+            }
+
             if (skillTimer[2] <= 0.0f)
             {
                 if (skillButton == 2)
@@ -113,12 +125,20 @@ namespace Player
 
         void OnSkill3()
         {
-
+            foreach (KeyValuePair<string, Ability> keyValue in Skills)
+            {
+                Ability ability = keyValue.Value;
+                ability.IsDisActive();
+            }
         }
 
         void OnSkill4()
         {
-
+            foreach (KeyValuePair<string, Ability> keyValue in Skills)
+            {
+                Ability ability = keyValue.Value;
+                ability.IsDisActive();
+            }
         }
 
         private void OnMouseButton()
