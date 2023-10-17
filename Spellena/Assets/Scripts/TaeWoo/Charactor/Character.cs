@@ -40,7 +40,7 @@ namespace Player
         }
     }
 
-    public class Character : MonoBehaviourPunCallbacks
+    public class Character : MonoBehaviourPunCallbacks, IPunObservable
     {
         PlayerInput playerInput;
         public List<PlayerActionData> playerActionDatas = new List<PlayerActionData>();
@@ -75,6 +75,24 @@ namespace Player
 
         public bool isOccupying = false;
 
+        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+        {
+            if (stream.IsWriting)
+            {
+                // 데이터를 보내는 부분
+                stream.SendNext(isOccupying);
+                stream.SendNext(playerName);
+                stream.SendNext(Hp);
+            }
+            else
+            {
+                // 데이터를 받는 부분
+                isOccupying = (bool)stream.ReceiveNext();
+                playerName = (string)stream.ReceiveNext();
+                Hp = (int)stream.ReceiveNext();
+            }
+        }
+
         private void Awake()
         {
             playerInput = GetComponent<PlayerInput>();
@@ -104,13 +122,21 @@ namespace Player
         }
         protected virtual void Update()
         {
-            isOccupying = false;
+            RayCasting();
+            if (photonView.IsMine)
+            {
+                isOccupying = false;
+            }
         }
 
         protected virtual void FixedUpdate()
         {
             PlayerMove();
         }
+
+        // 캐릭터에 따른 초기화
+        // 캐릭터에 따른 Update
+        //gameObject.tag = "Friendly";
 
         void Initialize()
         {
@@ -120,11 +146,17 @@ namespace Player
             playerData = new PlayerData(playerName, "");
         }
 
+        void RayCasting()
+        {
+            Ray ray = new Ray(camera.transform.position,camera.transform.forward);
+            Physics.Raycast(ray,out hit);
+        }
 
         void OnMove(InputValue value)
         {
             moveVec = new Vector3(value.Get<Vector2>().x, 0, value.Get<Vector2>().y);
 
+            //List<int> _temp = new List<int>();
             if (moveVec.magnitude <= 0)
                 playerActionDatas[(int)PlayerActionState.Move].isExecuting = false;
             else
@@ -183,8 +215,6 @@ namespace Player
 
         void OnJump()
         {
-            if (playerActionDatas[(int)PlayerActionState.Jump].isExecuting) return;
-
             if (grounded)
             {
                 rigidbody.velocity = new Vector3(rigidbody.velocity.x, jumpHeight, rigidbody.velocity.z);
@@ -245,6 +275,12 @@ namespace Player
 
         private void OnCollisionStay(Collision collision)
         {
+            //if(collision.gameObject.tag == "탑")
+
+            //if (Input.GetKey(KeyCode.F))
+            //{
+            //    Debug.Log("Healing");
+            //}
 
         }
 
@@ -256,10 +292,13 @@ namespace Player
 
         void OnTriggerStay(Collider other)
         {
-            if (other.tag == "OccupationArea")
+            if (photonView.IsMine)
             {
-                Debug.Log("점령중...");
-                isOccupying = true;
+                if (other.tag == "OccupationArea")
+                {
+                    Debug.Log("점령중...");
+                    isOccupying = true;
+                }
             }
         }
 
@@ -267,15 +306,15 @@ namespace Player
         {
             GetComponent<PlayerInput>().enabled = true;
             camera.SetActive(true);
-            Transform _temp = transform.GetChild(0).GetChild(0);
+            Transform _temp = transform.GetChild(0).GetChild(0);// = LayerMask.NameToLayer("Me");
             for(int i =0; i < _temp.childCount;i++)
             {
                 _temp.GetChild(i).gameObject.layer = LayerMask.NameToLayer("Me");
             }
+            //.layer = LayerMask.NameToLayer("Me");
             UI.SetActive(true);
         }
 
-        // int, float, string 만 매개변수 가능
         [PunRPC]
         public void PlayerDamaged(string enemy ,int damage)
         {
@@ -292,12 +331,6 @@ namespace Player
             Debug.Log("맞는것 확인");
         }
 
-        [PunRPC]
-        public void SlowDown(int num)
-        {
-
-            Debug.Log("SlowDown");
-        }
 
         //public void PlayerDead(PlayerData data)
         //{
