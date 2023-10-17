@@ -40,7 +40,7 @@ namespace Player
         }
     }
 
-    public class Character : MonoBehaviourPunCallbacks
+    public class Character : MonoBehaviourPunCallbacks, IPunObservable
     {
         PlayerInput playerInput;
         public List<PlayerActionData> playerActionDatas = new List<PlayerActionData>();
@@ -75,6 +75,24 @@ namespace Player
 
         public bool isOccupying = false;
 
+        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+        {
+            if (stream.IsWriting)
+            {
+                // 데이터를 보내는 부분
+                stream.SendNext(isOccupying);
+                stream.SendNext(playerName);
+                stream.SendNext(Hp);
+            }
+            else
+            {
+                // 데이터를 받는 부분
+                isOccupying = (bool)stream.ReceiveNext();
+                playerName = (string)stream.ReceiveNext();
+                Hp = (int)stream.ReceiveNext();
+            }
+        }
+
         private void Awake()
         {
             playerInput = GetComponent<PlayerInput>();
@@ -105,7 +123,10 @@ namespace Player
         protected virtual void Update()
         {
             RayCasting();
-            isOccupying = false;
+            if (photonView.IsMine)
+            {
+                isOccupying = false;
+            }
         }
 
         protected virtual void FixedUpdate()
@@ -271,10 +292,13 @@ namespace Player
 
         void OnTriggerStay(Collider other)
         {
-            if (other.tag == "OccupationArea")
+            if (photonView.IsMine)
             {
-                Debug.Log("점령중...");
-                isOccupying = true;
+                if (other.tag == "OccupationArea")
+                {
+                    Debug.Log("점령중...");
+                    isOccupying = true;
+                }
             }
         }
 
@@ -306,6 +330,7 @@ namespace Player
             }
             Debug.Log("맞는것 확인");
         }
+
 
         //public void PlayerDead(PlayerData data)
         //{

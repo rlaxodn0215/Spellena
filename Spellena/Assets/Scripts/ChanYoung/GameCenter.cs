@@ -5,6 +5,7 @@ using Photon.Pun.Demo.PunBasics;
 using System.Collections.Generic;
 using Player;
 using UnityEngine.UI;
+using System;
 
 public class GameCenter : MonoBehaviourPunCallbacks, IPunObservable
 {
@@ -32,8 +33,9 @@ public class GameCenter : MonoBehaviourPunCallbacks, IPunObservable
 
     GameState gameState;
 
-    List<GameObject> playersA = new List<GameObject>();
-    List<GameObject> playersB = new List<GameObject>();
+
+    public List<GameObject> playersA = new List<GameObject>();
+    public List<GameObject> playersB = new List<GameObject>();
 
     struct OccupyingTeam
     {
@@ -82,96 +84,110 @@ public class GameCenter : MonoBehaviourPunCallbacks, IPunObservable
 
     void Update()
     {
-        timerTextUI.text = ((int)globalTimer).ToString();
-        if (gameState == GameState.WaitingAllPlayer)
+        if (PhotonNetwork.IsMasterClient)
         {
-            gameStateTextUI.text = "Waiting Player";
-
-            /*
-            if (PhotonNetwork.PlayerList.Length >= maxPlayers)
+            photonView.RPC("SyncronizeList", RpcTarget.Others, playersA, playersB);
+            timerTextUI.text = ((int)globalTimer).ToString();
+            if (gameState == GameState.WaitingAllPlayer)
             {
-                //짝수는 A팀 홀수는 B팀으로 구성된다.
-                for (int i = 0; i < PhotonNetwork.PlayerList.Length; i++)
+                gameStateTextUI.text = "Waiting Player";
+
+                /*
+                if (PhotonNetwork.PlayerList.Length >= maxPlayers)
                 {
-                    GameObject _temp = PhotonNetwork.PlayerList[i].TagObject as GameObject;
-                    if (i % 2 == 0)
+                    //짝수는 A팀 홀수는 B팀으로 구성된다.
+                    for (int i = 0; i < PhotonNetwork.PlayerList.Length; i++)
                     {
-                        _temp.tag = "TeamA";
-                        playersA.Add(_temp);
+                        GameObject _temp = PhotonNetwork.PlayerList[i].TagObject as GameObject;
+                        if (i % 2 == 0)
+                        {
+                            _temp.tag = "TeamA";
+                            playersA.Add(_temp);
+                        }
+                        else
+                        {
+                            _temp.tag = "TeamB";
+                            playersB.Add(_temp);
+                        }
                     }
-                    else
-                    {
-                        _temp.tag = "TeamB";
-                        playersB.Add(_temp);
-                    }
-                }
-            */
-            if(playersA.Count + playersB.Count >= maxPlayers)
-                gameState = GameState.MatchStart;
-        }
-        else if (gameState == GameState.MatchStart)
-        {
-            gameStateTextUI.text = "Match Start";
-            gameState = GameState.CharacterSelect;
-        }
-        else if (gameState == GameState.CharacterSelect)
-        {
-            gameStateTextUI.text = "Character Select";
-            globalTimer += Time.deltaTime;
-            if (globalTimer >= characterSelectTime)
-            {
-                globalTimer = 0;
-                gameState = GameState.Ready;
+                */
+                if (playersA.Count + playersB.Count >= maxPlayers)
+                    gameState = GameState.MatchStart;
             }
-        }
-        else if (gameState == GameState.Ready)
-        {
-            gameStateTextUI.text = "Ready";
-            globalTimer += Time.deltaTime;
-            if (globalTimer >= readyTime)
+            else if (gameState == GameState.MatchStart)
             {
-                gameState = GameState.Round;
-                ResetRound();
-            }
-        }
-        else if (gameState == GameState.Round)
-        {
-            teamAOccupyingTextUI.text = ((int)occupyingA.rate).ToString();
-            teamBOccupyingTextUI.text = ((int)occupyingB.rate).ToString();
-            occupyingGaugeTextUI.text = occupyingTeam.name + " : " + ((int)occupyingTeam.rate).ToString();
-
-            gameStateTextUI.text = "Round";
-            //지역이 점령되어있으면 점령한 팀의 점령비율이 높아진다.
-            if (currentOccupationTeam == teamA)
-                occupyingA.rate += Time.deltaTime * occupyingRate;//약 1.8초당 1씩 오름
-            else if (currentOccupationTeam == teamB)
-                occupyingB.rate += Time.deltaTime * occupyingRate;
-
-            OccupyAreaCounts();
-            CheckRoundEnd();
-        }
-        else if (gameState == GameState.RoundEnd)
-        {
-            gameStateTextUI.text = "Round End";
-            if (roundA >= 2 || roundB >= 2)
-            {
-                gameState = GameState.MatchEnd;
-            }
-            else
-            {
+                gameStateTextUI.text = "Match Start";
                 gameState = GameState.CharacterSelect;
-                ResetRound();
+            }
+            else if (gameState == GameState.CharacterSelect)
+            {
+                gameStateTextUI.text = "Character Select";
+                globalTimer += Time.deltaTime;
+                if (globalTimer >= characterSelectTime)
+                {
+                    globalTimer = 0;
+                    gameState = GameState.Ready;
+                }
+            }
+            else if (gameState == GameState.Ready)
+            {
+                gameStateTextUI.text = "Ready";
+                globalTimer += Time.deltaTime;
+                if (globalTimer >= readyTime)
+                {
+                    gameState = GameState.Round;
+                    ResetRound();
+                }
+            }
+            else if (gameState == GameState.Round)
+            {
+                teamAOccupyingTextUI.text = ((int)occupyingA.rate).ToString();
+                teamBOccupyingTextUI.text = ((int)occupyingB.rate).ToString();
+                occupyingGaugeTextUI.text = occupyingTeam.name + " : " + ((int)occupyingTeam.rate).ToString();
+
+                gameStateTextUI.text = "Round";
+                //지역이 점령되어있으면 점령한 팀의 점령비율이 높아진다.
+                if (currentOccupationTeam == teamA)
+                    occupyingA.rate += Time.deltaTime * occupyingRate;//약 1.8초당 1씩 오름
+                else if (currentOccupationTeam == teamB)
+                    occupyingB.rate += Time.deltaTime * occupyingRate;
+
+                OccupyAreaCounts();
+                CheckRoundEnd();
+            }
+            else if (gameState == GameState.RoundEnd)
+            {
+                gameStateTextUI.text = "Round End";
+                if (roundA >= 2 || roundB >= 2)
+                {
+                    gameState = GameState.MatchEnd;
+                }
+                else
+                {
+                    gameState = GameState.CharacterSelect;
+                    ResetRound();
+                }
+            }
+            else if (gameState == GameState.MatchEnd)
+            {
+                gameStateTextUI.text = "Match End";
+                gameState = GameState.Result;
+            }
+            else if (gameState == GameState.Result)
+            {
+                gameStateTextUI.text = "Result";
+                //종료
             }
         }
-        else if (gameState == GameState.MatchEnd)
+
+        for(int i = 0; i < playersA.Count; i++)
         {
-            gameStateTextUI.text = "Match End";
-            gameState = GameState.Result;
+            Debug.Log(playersA[i].name);
         }
-        else if (gameState == GameState.Result)
+
+        for(int i = 0; i < playersB.Count; i++)
         {
-            gameStateTextUI.text = "Result";
-            //종료
+            Debug.Log(playersB[i].name);
         }
     }
 
@@ -321,7 +337,24 @@ public class GameCenter : MonoBehaviourPunCallbacks, IPunObservable
     string teamA = "A";
     string teamB = "B";
 
+
+
+
+
+    [PunRPC]
+    void SyncronizeList(List<GameObject> playersListA, List<GameObject> playersListB)
+    {
+        playersA = playersListA;
+        playersB = playersListB;
+    }
+
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
+        if (stream.IsWriting)
+        {
+        }
+        else
+        {
+        }
     }
 }
