@@ -13,6 +13,10 @@ namespace Player
         public GameObject DimensionDoor;
         public GameObject DimensionDoorGUI;
 
+        private DimensionSword dimensionSword;
+        private DimensionOpen dimensionOpen;
+        private DimensionIO dimensionIO;
+
         [HideInInspector]
         public int skillButton = -1;
         [HideInInspector]
@@ -36,16 +40,18 @@ namespace Player
 
         void Initialize()
         {
-            DimensionSword dimensionSword = this.gameObject.AddComponent<DimensionSword>();
+            DimensionSword.tag = tag;
+
+            dimensionSword = this.gameObject.AddComponent<DimensionSword>();
             dimensionSword.AddPlayer(this);
             Skills["BasicAttack"] = dimensionSword;
 
-            DimensionOpen dimensionOpen = this.gameObject.AddComponent<DimensionOpen>();
+            dimensionOpen = this.gameObject.AddComponent<DimensionOpen>();
             dimensionOpen.AddPlayer(this);
-            dimensionOpen.maxDistance = 100;
+            dimensionOpen.maxDistance = AeternaData.skill1DoorRange;
             Skills["Skill1"] = dimensionOpen;
 
-            DimensionIO dimensionIO = this.gameObject.AddComponent<DimensionIO>();
+            dimensionIO = this.gameObject.AddComponent<DimensionIO>();
             dimensionIO.AddPlayer(this);
             Skills["Skill2"] = dimensionIO;
 
@@ -64,6 +70,12 @@ namespace Player
 
         void OnSkill1()
         {
+            foreach (KeyValuePair<string, Ability> keyValue in Skills)
+            {
+                Ability ability = keyValue.Value;
+                ability.IsDisActive();
+            }
+
             if (skillTimer[1] <= 0.0f)
             {
                 if (skillButton == 1)
@@ -89,6 +101,12 @@ namespace Player
 
         void OnSkill2()
         {
+            foreach (KeyValuePair<string, Ability> keyValue in Skills)
+            {
+                Ability ability = keyValue.Value;
+                ability.IsDisActive();
+            }
+
             if (skillTimer[2] <= 0.0f)
             {
                 if (skillButton == 2)
@@ -113,38 +131,53 @@ namespace Player
 
         void OnSkill3()
         {
-
+            foreach (KeyValuePair<string, Ability> keyValue in Skills)
+            {
+                Ability ability = keyValue.Value;
+                ability.IsDisActive();
+            }
         }
 
         void OnSkill4()
         {
-
+            foreach (KeyValuePair<string, Ability> keyValue in Skills)
+            {
+                Ability ability = keyValue.Value;
+                ability.IsDisActive();
+            }
         }
 
-        private void OnMouseButton()
+        void OnMouseButton()
         {
             if (skillButton == 1 && skillTimer[1] <= 0.0f)
             {
                 Skills["Skill1"].Execution();
-                //playerActionDatas[(int)PlayerActionState.Skill1].isExecuting = true;
-                skillTimer[1] = AeternaData.skillTimer[1];
+                playerActionDatas[(int)PlayerActionState.Skill1].isExecuting = true;
+                skillTimer[1] = AeternaData.skill1Time;
                 StartCoroutine(SkillTimer(1));
             }
 
-            else if (skillButton == 2 && skillTimer[2] <= 0.0f)
+            else if (skillButton == 2)
             {
-                Skills["Skill2"].Execution();
-                //playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = true;
-                skillTimer[2] = AeternaData.skillTimer[2];
-                StartCoroutine(SkillTimer(2));
-            }
+                if (skillTimer[2] <= 0.0f)
+                {
+                    //skillTimer[2] = 1.0f;
+                    Skills["Skill2"].Execution();
+                    playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = true;
+                    StartCoroutine(ShowTimer(2));
+                }
 
+                else
+                {
+                    skillButton = 1;
+                }
+            }
             else
             {
-                if (skillButton == -1 && skillTimer[0]<=0.0f)
+                if (skillButton == -1 && skillTimer[0] <= 0.0f)
                 {
                     Skills["BasicAttack"].Execution();
-                    skillTimer[0] = AeternaData.skillTimer[0];
+                    skillTimer[0] = AeternaData.basicAttackTime;
                     StartCoroutine(SkillTimer(0));
                 }
             }
@@ -159,10 +192,19 @@ namespace Player
             }
         }
 
+        IEnumerator ShowTimer(int index)
+        {
+            while(skillButton ==index)
+            {
+                skillTimer[index] = dimensionIO.timerForShow;
+                yield return null;
+            }
+        }
+
         private void OnGUI()
         {
-            GUI.TextField(new Rect(10, 10, 100, 30), skillTimer[1].ToString());
-            GUI.TextField(new Rect(10, 30, 100, 50), skillTimer[2].ToString());
+            GUI.TextField(new Rect(10, 10, 100, 30), skillTimer[2].ToString());
+            //GUI.TextField(new Rect(10, 30, 100, 50), skillTimer[2].ToString());
         }
 
     }

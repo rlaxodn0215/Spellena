@@ -465,7 +465,9 @@ MonoBehaviour:
   isOccupying: 0
   AeternaData: {fileID: 11400000, guid: 68088471f050fa74fb68919ed9133893, type: 2}
   DimensionSword: {fileID: 0}
-  DimensionDoor: {fileID: 0}
+  DimensionSlash: {fileID: 2629910554034382192, guid: 228c79d47d0dc73499bfe6cff4b252eb, type: 3}
+  DimensionDoor: {fileID: 100898, guid: a25b3d9a8119bf047b7609dba7f57302, type: 3}
+  DimensionDoorGUI: {fileID: 185454, guid: ade1f0bfc938f694ab4f3bc05fc5c55b, type: 3}
   skillButton: -1
   skillTimer: []
 --- !u!135 &2395857016148720671

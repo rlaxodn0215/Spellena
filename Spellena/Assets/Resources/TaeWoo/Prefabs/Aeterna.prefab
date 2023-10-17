@@ -209,7 +209,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1844791844}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.516, z: 0.052}
+  m_LocalPosition: {x: 0, y: 1.661, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -464,7 +464,7 @@ GameObject:
   - component: {fileID: 683120009}
   m_Layer: 0
   m_Name: Aeterna
-  m_TagString: Untagged
+  m_TagString: TeamA
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -535,7 +535,7 @@ MonoBehaviour:
     SynchronizeType: 1
     Name: HorizontalSpeed
   - Type: 9
-    SynchronizeType: 0
+    SynchronizeType: 1
     Name: Jump
   - Type: 4
     SynchronizeType: 1
@@ -792,6 +792,19 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.07376048, y: 0.34645072, z: 1.3599435}
   m_Center: {x: 0.00006037699, y: -0.018258013, z: 0.7914515}
+--- !u!114 &7590443342187405175
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 919132148892307835}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94858b27a56c5e6499d569c0b4bec39a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  contactObject: {fileID: 0}
 --- !u!1001 &5624648683022572001
 PrefabInstance:
   m_ObjectHideFlags: 0
