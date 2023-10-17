@@ -183,6 +183,8 @@ namespace Player
 
         void OnJump()
         {
+            if (playerActionDatas[(int)PlayerActionState.Jump].isExecuting) return;
+
             if (grounded)
             {
                 rigidbody.velocity = new Vector3(rigidbody.velocity.x, jumpHeight, rigidbody.velocity.z);

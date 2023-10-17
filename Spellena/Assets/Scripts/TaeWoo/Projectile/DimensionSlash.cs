@@ -60,12 +60,12 @@ namespace Player
 
         private void OnTriggerEnter(Collider other)
         {
-            if (owner.tag == null || other.tag == null) return; 
+            if (owner.tag == null || other.tag == null) return;
 
-            if (gameObject.layer.ToString()== "ProjectileA" && other.tag == "TeamB" ||
+            if (gameObject.layer.ToString() == "ProjectileA" && other.tag == "TeamB" ||
                 gameObject.layer.ToString() == "ProjectileB" && other.tag == "TeamA")
             {
-                other.gameObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBuffered,owner,damage);
+                other.gameObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBuffered, owner, damage);
                 Debug.Log("검기 맞음");
                 Destroy(gameObject);
             }
