@@ -306,13 +306,14 @@ namespace Player
         {
             GetComponent<PlayerInput>().enabled = true;
             camera.SetActive(true);
-            Transform _temp = transform.GetChild(0).GetChild(0);// = LayerMask.NameToLayer("Me");
+            Transform _temp = transform.GetChild(0).GetChild(0);
             for(int i =0; i < _temp.childCount;i++)
             {
                 _temp.GetChild(i).gameObject.layer = LayerMask.NameToLayer("Me");
             }
-            //.layer = LayerMask.NameToLayer("Me");
+
             UI.SetActive(true);
+
         }
 
         [PunRPC]

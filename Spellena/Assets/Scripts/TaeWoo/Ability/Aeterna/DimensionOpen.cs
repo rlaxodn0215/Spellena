@@ -8,11 +8,12 @@ namespace Player
 {
     public class DimensionOpen : Ability
     {
-        public int maxDistance;
+        public float maxDistance;
 
         private Aeterna Player;
         private GameObject dimensionDoor;
         private GameObject dimensionDoorGUI;
+        private Animator animator;
 
         private Ray ray;
         private RaycastHit hit;
@@ -22,6 +23,8 @@ namespace Player
         public override void AddPlayer(Character player)
         {
             Player = (Aeterna)player;
+            animator = Player.GetComponent<Animator>();
+
             dimensionDoorGUI = PhotonNetwork.Instantiate("TaeWoo/Prefabs/" + Player.DimensionDoorGUI.name, transform.position , Quaternion.identity);
             dimensionDoor = PhotonNetwork.Instantiate("TaeWoo/Prefabs/" + Player.DimensionDoor.name, transform.position, Quaternion.identity);
             dimensionDoor.GetComponent<DimensionDoor>().owner = Player;
@@ -36,16 +39,25 @@ namespace Player
 
         public override void Execution()
         {
-            if (Physics.Raycast(ray, out hit, maxDistance) && dimensionDoor)
+            animator.SetTrigger("BasicAttack");
+
+            dimensionDoorGUI.SetActive(false);
+            Vector3 temp;
+
+            if (Physics.Raycast(ray, out hit, maxDistance, layerMask) && dimensionDoor)
             {
-                dimensionDoorGUI.SetActive(false);
-                Vector3 temp = hit.point;
-                temp.y += 1;
-                dimensionDoor.SetActive(true);
-                dimensionDoor.transform.position = temp;
-                isShowGUI = false;
+                temp = hit.point;
             }
 
+            else
+            {
+                temp = ray.GetPoint(maxDistance);
+            }
+
+            temp.y += 1;
+            dimensionDoor.SetActive(true);
+            dimensionDoor.transform.position = temp;
+            isShowGUI = false;
             Debug.Log("DimensionOpen");
         }
 

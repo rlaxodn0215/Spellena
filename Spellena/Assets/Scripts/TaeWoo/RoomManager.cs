@@ -43,8 +43,6 @@ public class RoomManager : MonoBehaviourPunCallbacks
         };
 
         PhotonNetwork.JoinOrCreateRoom(roomName: "test", roomOptions: roomOption, typedLobby: null);
-
-
     }
 
     public override void OnJoinedRoom()
@@ -53,7 +51,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
         GameObject _gameCenter;
         if (PhotonNetwork.IsMasterClient)
         {
-            _gameCenter = PhotonNetwork.Instantiate("ChanYoung/Prefabs/GameCenter", spawnPoint.position, Quaternion.identity);
+            //_gameCenter = PhotonNetwork.Instantiate("ChanYoung/Prefabs/GameCenter", spawnPoint.position, Quaternion.identity);
         }
 
         player = PhotonNetwork.Instantiate("TaeWoo/Prefabs/Aeterna", spawnPoint.position, Quaternion.identity);
@@ -67,7 +65,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
         if(isFirstSetting == true)
         {
             GameObject _temp = GameObject.Find("GameCenter(Clone)");
-            Debug.Log(_temp);
+            //Debug.Log(_temp);
             if(_temp != null)
             {
                 isFirstSetting = false;
