@@ -123,10 +123,8 @@ namespace Player
         protected virtual void Update()
         {
             RayCasting();
-            if (photonView.IsMine)
-            {
+            if (PhotonNetwork.IsMasterClient)
                 isOccupying = false;
-            }
         }
 
         protected virtual void FixedUpdate()
@@ -292,7 +290,7 @@ namespace Player
 
         void OnTriggerStay(Collider other)
         {
-            if (photonView.IsMine)
+            if (PhotonNetwork.IsMasterClient)
             {
                 if (other.tag == "OccupationArea")
                 {
@@ -313,6 +311,17 @@ namespace Player
             }
             //.layer = LayerMask.NameToLayer("Me");
             UI.SetActive(true);
+        }
+
+        public void SetTagServer(string team)
+        {
+            photonView.RPC("SetTag", RpcTarget.All, team);
+        }
+
+        [PunRPC]
+        protected void SetTag(string team)
+        {
+            this.gameObject.tag = team;
         }
 
         [PunRPC]

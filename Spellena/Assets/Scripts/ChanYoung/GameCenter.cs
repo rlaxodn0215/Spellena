@@ -66,7 +66,7 @@ public class GameCenter : MonoBehaviourPunCallbacks, IPunObservable
     OccupyingTeam occupyingTeam;//점령 게이지 바
 
     int maxPlayers = 2;// 대 플레이어 수
-
+    Character[] players;
     void Awake()
     {
         gameState = GameState.WaitingAllPlayer;
@@ -86,37 +86,29 @@ public class GameCenter : MonoBehaviourPunCallbacks, IPunObservable
     {
         if (PhotonNetwork.IsMasterClient)
         {
-            photonView.RPC("SyncronizeList", RpcTarget.Others, playersA, playersB);
             timerTextUI.text = ((int)globalTimer).ToString();
             if (gameState == GameState.WaitingAllPlayer)
             {
                 gameStateTextUI.text = "Waiting Player";
-
-                /*
-                if (PhotonNetwork.PlayerList.Length >= maxPlayers)
-                {
-                    //짝수는 A팀 홀수는 B팀으로 구성된다.
-                    for (int i = 0; i < PhotonNetwork.PlayerList.Length; i++)
-                    {
-                        GameObject _temp = PhotonNetwork.PlayerList[i].TagObject as GameObject;
-                        if (i % 2 == 0)
-                        {
-                            _temp.tag = "TeamA";
-                            playersA.Add(_temp);
-                        }
-                        else
-                        {
-                            _temp.tag = "TeamB";
-                            playersB.Add(_temp);
-                        }
-                    }
-                */
-                if (playersA.Count + playersB.Count >= maxPlayers)
+                players = FindObjectsOfType<Character>();
+                if(players.Length >= maxPlayers)
                     gameState = GameState.MatchStart;
             }
             else if (gameState == GameState.MatchStart)
             {
                 gameStateTextUI.text = "Match Start";
+
+                for(int i = 0; i < maxPlayers / 2; i++)
+                {
+                    playersA.Add(players[i].gameObject);
+                    players[i].gameObject.GetComponent<Character>().SetTagServer("TeamA");
+                }
+
+                for(int i = maxPlayers / 2; i < maxPlayers; i++)
+                {
+                    playersB.Add(players[i].gameObject);
+                    players[i].gameObject.GetComponent<Character>().SetTagServer("TeamB");
+                }
                 gameState = GameState.CharacterSelect;
             }
             else if (gameState == GameState.CharacterSelect)
@@ -338,23 +330,25 @@ public class GameCenter : MonoBehaviourPunCallbacks, IPunObservable
     string teamB = "B";
 
 
-
-
-
-    [PunRPC]
-    void SyncronizeList(List<GameObject> playersListA, List<GameObject> playersListB)
-    {
-        playersA = playersListA;
-        playersB = playersListB;
-    }
-
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         if (stream.IsWriting)
         {
+            stream.SendNext(gameState);
+            stream.SendNext(gameStateTextUI.text);
+            stream.SendNext(timerTextUI.text);
+            stream.SendNext(teamAOccupyingTextUI.text);
+            stream.SendNext(teamBOccupyingTextUI.text);
+            stream.SendNext(occupyingGaugeTextUI.text);
         }
         else
         {
+            gameState = (GameState)stream.ReceiveNext();
+            gameStateTextUI.text = (string)stream.ReceiveNext();
+            timerTextUI.text = (string)stream.ReceiveNext();
+            teamAOccupyingTextUI.text = (string)stream.ReceiveNext();
+            teamBOccupyingTextUI.text = (string)stream.ReceiveNext();
+            occupyingGaugeTextUI.text =(string)stream.ReceiveNext();
         }
     }
 }
