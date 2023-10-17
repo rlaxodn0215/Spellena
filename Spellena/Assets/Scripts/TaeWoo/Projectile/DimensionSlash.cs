@@ -6,8 +6,12 @@ using Photon.Realtime;
 
 namespace Player
 {
-    public class DimensionSlash : Projectile
+    public class DimensionSlash : MonoBehaviour
     {
+        public int damage;
+        public int lifeTime;
+        public int Speed;
+
         [HideInInspector]
         public Aeterna owner;
         [HideInInspector]

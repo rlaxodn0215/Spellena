@@ -9,6 +9,7 @@ namespace Player
 {
     public class Ability : MonoBehaviourPunCallbacks
     {
+        public virtual void IsActive() { }
         public virtual void AddPlayer(Character player) { }
         public virtual void Execution() { }
     }

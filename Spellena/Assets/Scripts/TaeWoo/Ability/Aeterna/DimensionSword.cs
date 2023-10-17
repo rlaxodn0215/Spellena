@@ -32,9 +32,7 @@ namespace Player
         IEnumerator ShootSlash()
         {
             yield return new WaitForSeconds(animator.GetCurrentAnimatorClipInfo(1).Length/2);
-
             dimensionSlash.GetComponent<DimensionSlash>().owner = Player;
-
             PhotonNetwork.Instantiate("TaeWoo/Prefabs/Effect/" + dimensionSlash.name, Player.camera.transform.position, Player.transform.localRotation);
             Debug.Log("검기 소환");
         }
