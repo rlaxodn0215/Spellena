@@ -6,19 +6,13 @@ using Photon.Realtime;
 
 namespace Player
 {
-    public class DimensionSlash : MonoBehaviour
+    public class DimensionSlash : Projectile
     {
-        public int damage;
-        public int lifeTime;
-        public int Speed;
-
         [HideInInspector]
         public Aeterna owner;
-        [HideInInspector]
-        public Vector3 dir;
 
         // Start is called before the first frame update
-        IEnumerator Start()
+        void OnEnable()
         {
             if(owner !=null)
             {
@@ -34,11 +28,16 @@ namespace Player
             }
 
             if(owner.camera !=null)
-                dir = owner.camera.transform.localRotation*Vector3.forward;
+                direction = owner.camera.transform.localRotation*Vector3.forward;
 
+            StartCoroutine(Gone());
+
+        }
+
+        IEnumerator Gone()
+        {
             yield return new WaitForSeconds(lifeTime);
             GetComponent<PhotonView>().RPC("Disappear", RpcTarget.AllBuffered);
-
         }
 
         // Update is called once per frame
@@ -49,7 +48,7 @@ namespace Player
 
         private void Move()
         {
-            transform.Translate(dir * Speed * Time.deltaTime);
+            transform.Translate(direction * Speed * Time.deltaTime);
         }
 
         [PunRPC]

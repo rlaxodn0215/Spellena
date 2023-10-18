@@ -7,4 +7,5 @@ public class Projectile : MonoBehaviour
     public int damage;
     public int lifeTime;
     public int Speed;
+    public Vector3 direction;
 }

@@ -652,10 +652,7 @@ MonoBehaviour:
   DimensionDoor: {fileID: 100898, guid: a25b3d9a8119bf047b7609dba7f57302, type: 3}
   DimensionDoorGUI: {fileID: 185454, guid: ade1f0bfc938f694ab4f3bc05fc5c55b, type: 3}
   skillButton: -1
-  basicAttackTimer: -1
-  skill1Timer: -1
-  skill2Timer: -1
-  skill3Timer: -1
+  skillTimer: []
 --- !u!114 &1254214872
 MonoBehaviour:
   m_ObjectHideFlags: 0

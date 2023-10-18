@@ -13,9 +13,12 @@ namespace Player
         public GameObject DimensionDoor;
         public GameObject DimensionDoorGUI;
 
-        private DimensionSword dimensionSword;
-        private DimensionOpen dimensionOpen;
-        private DimensionIO dimensionIO;
+        [HideInInspector]
+        public DimensionSword dimensionSword;
+        [HideInInspector]
+        public DimensionOpen dimensionOpen;
+        [HideInInspector]
+        public DimensionIO dimensionIO;
 
         [HideInInspector]
         public int skillButton = -1;
@@ -28,9 +31,8 @@ namespace Player
         // 3 : ½ºÅ³ 3
         // 4 : ½ºÅ³ 4 (±Ã±Ø±â)
 
-        private int skill2Phase = 0; // 0: duration, 1: hold, 2: cool
-        private bool isSkill2InPhase = false;
-
+        public int skill2Phase = 0; // 0: duration, 1: hold, 2: cool
+        private bool isDoing = false;
 
         protected override void Start() 
         {
@@ -171,29 +173,39 @@ namespace Player
             {
                 if (playerActionDatas[(int)PlayerActionState.Skill2].isExecuting == false)
                 {
-                    //if(skill2Phase==0)
-                    //    ChooseSkill2State();
-
                     switch (skill2Phase)
                     {
                         case 0:
                             skillTimer[2] = AeternaData.skill2DurationTime;
+                            playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = true;
+                            isDoing = true;
+                            StartCoroutine(SkillTimer(2));
                             break;
                         case 1:
-                            skillTimer[2] = AeternaData.skill2HoldTime;
+                            if(skillTimer[2] >= 0.0f)
+                                Skills["Skill2"].Execution(ref skill2Phase);
+                            else
+                                skillTimer[2] = AeternaData.skill2CoolTime;
+                                playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = true;
+                                StartCoroutine(SkillTimer(2));
                             break;
                         case 2:
                             skillTimer[2] = AeternaData.skill2CoolTime;
+                            playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = true;
+                            StartCoroutine(SkillTimer(2));
                             break;
                     }
-
-                    playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = true;
-                    StartCoroutine(SkillTimer(2));
                 }
 
-                Skills["Skill2"].Execution(ref skill2Phase);
+                if (skill2Phase==0 && skillTimer[0] <= 0.0f)
+                {
+                    Skills["Skill2"].Execution(ref skill2Phase);
+                    skillTimer[0] = AeternaData.basicAttackTime;
+                    StartCoroutine(SkillTimer(0));
+                }
 
             }
+
             else
             {
                 if (skillButton == 0 && skillTimer[0] <= 0.0f)
@@ -205,7 +217,7 @@ namespace Player
             }
         }
 
-        IEnumerator SkillTimer(int index)
+        public IEnumerator SkillTimer(int index)
         {
             while (skillTimer[index] > 0.0f)
             {
@@ -214,23 +226,25 @@ namespace Player
             }
 
             playerActionDatas[(int)PlayerActionState.BasicAttack + index].isExecuting = false;
-        }
 
-        void ChooseSkill2State()
-        {
-            dimensionIO.GetComponent<AeternaSword>().contactObject = null;
-            DimensionSword.GetComponent<BoxCollider>().enabled = false;
+            //if(index == 2 && isDoing)
+            //{
+            //    if (skill2Phase == 0)
+            //    {
+            //        skill2Phase = 2;
+            //    }
 
-            if (dimensionIO.enemyProjectile)
-            {
-                skill2Phase = 1;
-            }
+            //    else if(skill2Phase==1)
+            //    {
+            //        skillTimer[2] = AeternaData.skill2CoolTime;
+            //        playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = true;
+            //        skill2Phase =2
+            //        StartCoroutine(SkillTimer(2));
+            //    }
 
-            else
-            {
-                skill2Phase = 2;
-            }
-            
+            //    isDoing = !isDoing;
+            //}
+
         }
 
         private void OnGUI()

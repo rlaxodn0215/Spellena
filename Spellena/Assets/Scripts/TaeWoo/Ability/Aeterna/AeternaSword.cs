@@ -2,30 +2,40 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AeternaSword : MonoBehaviour
+namespace Player
 {
-    [HideInInspector]
-    public GameObject contactObject;
 
-    private LayerMask layerMask;
-    private void Start()
+    public class AeternaSword : MonoBehaviour
     {
-        if(CompareTag("TeamA"))
+        [HideInInspector]
+        public GameObject contactObject;
+        [HideInInspector]
+        public Aeterna player;
+
+        private LayerMask layerMask;
+        private void Start()
         {
-            layerMask = 1 << LayerMask.NameToLayer("ProjectileB");
+            player = transform.root.gameObject.GetComponent<Aeterna>();
+
+            if (CompareTag("TeamA"))
+            {
+                layerMask = 1 << LayerMask.NameToLayer("ProjectileB");
+            }
+
+            else if (CompareTag("TeamB"))
+            {
+                layerMask = 1 << LayerMask.NameToLayer("ProjectileA");
+            }
         }
 
-        else if(CompareTag("TeamB"))
+        public void OnTriggerEnter(Collider other)
         {
-            layerMask = 1 << LayerMask.NameToLayer("ProjectileA");
-        }
-    }
-
-    public void OnTriggerEnter(Collider other)
-    {
-        if(other.gameObject.layer == layerMask)
-        {
-            contactObject = other.gameObject;
+            if (other.gameObject.layer == layerMask)
+            {
+                contactObject = other.gameObject;
+                player.dimensionIO.CheckHold();
+                Debug.Log("적 투사체 충돌");
+            }
         }
     }
 }
