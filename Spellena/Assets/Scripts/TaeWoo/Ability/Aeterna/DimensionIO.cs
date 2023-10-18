@@ -13,12 +13,8 @@ namespace Player
         [HideInInspector]
         public GameObject enemyProjectile;
 
-        [HideInInspector]
-        public float timerForShow = 0.0f;
+        private int phase = 0; //0 : none, 1: duration, 2: hold, 3: cool
 
-        // 1. duration
-        // 2. hold
-        // 3. cool
 
         public override void AddPlayer(Character player)
         {
@@ -29,8 +25,27 @@ namespace Player
 
         public override void Execution()
         {
-            Debug.Log("DimensionIO");                       
-            StartCoroutine(DurationTimer(timerForShow));
+            Debug.Log("DimensionIO");
+
+            switch (phase)
+            {
+                case 0:
+                    break;
+                case 1:
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    break;
+
+            }
+
+
+
+            animator.SetTrigger("BasicAttack");
+
+
+
         }
 
         IEnumerator DurationTimer(float time)
@@ -40,12 +55,6 @@ namespace Player
 
             while (timerForShow > 0.0f)
             {
-                if(Input.GetMouseButtonDown(0))
-                {
-                    animator.SetTrigger("BasicAttack");
-                    Debug.Log("mouseinput");
-                }
-
                 if (enemyProjectile == null)
                 {
                     enemyProjectile = sword.GetComponent<AeternaSword>().contactObject;
@@ -68,8 +77,6 @@ namespace Player
             {
                 StartCoroutine(CoolTimer(Player.AeternaData.skill2CoolTime));
             }
-
-            Debug.Log("duration finish");
 
         }
 

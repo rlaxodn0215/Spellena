@@ -10,7 +10,7 @@ namespace Player
 {
     public enum PlayerActionState
     {
-        Move, Jump, Run, Sit, Interaction, Skill1, Skill2, Skill3, Skill4
+        Move, Jump, Run, Sit, Interaction, BasicAttack, Skill1, Skill2, Skill3, Skill4
     }
 
     public class PlayerActionData
@@ -101,6 +101,7 @@ namespace Player
             SetPlayerKeys(PlayerActionState.Run, "Run");
             SetPlayerKeys(PlayerActionState.Sit, "Sit");
             SetPlayerKeys(PlayerActionState.Interaction, "Interaction");
+            SetPlayerKeys(PlayerActionState.BasicAttack, "BasicAttack");
             SetPlayerKeys(PlayerActionState.Skill1, "Skill1");
             SetPlayerKeys(PlayerActionState.Skill2, "Skill2");
             SetPlayerKeys(PlayerActionState.Skill3, "Skill3");
@@ -122,7 +123,6 @@ namespace Player
         }
         protected virtual void Update()
         {
-            RayCasting();
             if (PhotonNetwork.IsMasterClient)
                 isOccupying = false;
         }
@@ -132,10 +132,6 @@ namespace Player
             PlayerMove();
         }
 
-        // 캐릭터에 따른 초기화
-        // 캐릭터에 따른 Update
-        //gameObject.tag = "Friendly";
-
         void Initialize()
         {
             animator = GetComponent<Animator>();
@@ -144,17 +140,10 @@ namespace Player
             playerData = new PlayerData(playerName, "");
         }
 
-        void RayCasting()
-        {
-            Ray ray = new Ray(camera.transform.position,camera.transform.forward);
-            Physics.Raycast(ray,out hit);
-        }
-
         void OnMove(InputValue value)
         {
             moveVec = new Vector3(value.Get<Vector2>().x, 0, value.Get<Vector2>().y);
 
-            //List<int> _temp = new List<int>();
             if (moveVec.magnitude <= 0)
                 playerActionDatas[(int)PlayerActionState.Move].isExecuting = false;
             else
@@ -271,22 +260,6 @@ namespace Player
 
         }
 
-        private void OnCollisionStay(Collision collision)
-        {
-            //if(collision.gameObject.tag == "탑")
-
-            //if (Input.GetKey(KeyCode.F))
-            //{
-            //    Debug.Log("Healing");
-            //}
-
-        }
-
-
-        private void OnTriggerEnter(Collider other)
-        {
-
-        }
 
         void OnTriggerStay(Collider other)
         {
@@ -340,12 +313,6 @@ namespace Player
             }
             Debug.Log("맞는것 확인");
         }
-
-
-        //public void PlayerDead(PlayerData data)
-        //{
-        //    Debug.Log("player dead");
-        //}
 
     }
 }
