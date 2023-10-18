@@ -8,4 +8,13 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/TawWooTestScene.unity
     guid: 9f2a2c1ca614d914291f2ae8a131df7a
+  - enabled: 1
+    path: Assets/Scenes/SiHyun Login Test.unity
+    guid: b6209292cf19b6b4c877a24a5ddd4406
+  - enabled: 1
+    path: Assets/Scenes/SiHyun MainLobby Test.unity
+    guid: e9d9afacce50a2f4984253d1a18c2817
+  - enabled: 1
+    path: Assets/Scenes/SiHyun Register Test.unity
+    guid: f39248672fb921d4fb67ee864dceaf6d
   m_configObjects: {}
