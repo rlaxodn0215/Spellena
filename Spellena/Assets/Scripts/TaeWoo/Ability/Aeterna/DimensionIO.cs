@@ -12,14 +12,6 @@ namespace Player
 
         [HideInInspector]
         public GameObject enemyProjectile;
-
-        [HideInInspector]
-        public float timerForShow = 0.0f;
-
-        // 1. duration
-        // 2. hold
-        // 3. cool
-
         public override void AddPlayer(Character player)
         {
             Player = (Aeterna)player;
@@ -27,84 +19,78 @@ namespace Player
             sword = Player.DimensionSword;
         }
 
-        public override void Execution()
+        public override void Execution(ref int phase)
         {
-            Debug.Log("DimensionIO");                       
-            StartCoroutine(DurationTimer(timerForShow));
-        }
-
-        IEnumerator DurationTimer(float time)
-        {
-            sword.GetComponent<BoxCollider>().enabled = true;
-            timerForShow = Player.AeternaData.skill2DurationTime;
-
-            while (timerForShow > 0.0f)
+            switch (phase)
             {
-                if(Input.GetMouseButtonDown(0))
-                {
-                    animator.SetTrigger("BasicAttack");
-                    Debug.Log("mouseinput");
-                }
+                case 0:
+                    OnDuration();
+                    break;
+                case 1:
+                    OnHoldShoot();
+                    break;
+                case 2:
+                    OnCooling();
+                    break;
 
-                if (enemyProjectile == null)
-                {
-                    enemyProjectile = sword.GetComponent<AeternaSword>().contactObject;
-                }
-
-                timerForShow -= Time.deltaTime;
-                yield return null;
             }
-
-            sword.GetComponent<AeternaSword>().contactObject = null;
-            sword.GetComponent<BoxCollider>().enabled = false;
-
-            if(enemyProjectile)
-            {
-                enemyProjectile.layer = LayerMask.NameToLayer("Projectile" + Player.tag[4]);
-                StartCoroutine(CoolTimer(Player.AeternaData.skill2HoldTime));
-            }
-
-            else
-            {
-                StartCoroutine(CoolTimer(Player.AeternaData.skill2CoolTime));
-            }
-
-            Debug.Log("duration finish");
-
-        }
-
-        IEnumerator HoldTimer(float time)
-        {
-            timerForShow = Player.AeternaData.skill2HoldTime;
-
-            while (timerForShow > 0.0f)
-            {
-
-
-
-
-
-
-                timerForShow -= Time.deltaTime;
-                yield return null;
-            }
-        }
-
-        IEnumerator CoolTimer(float time)
-        {
-            timerForShow = Player.AeternaData.skill2CoolTime;
-            bool finish = false;
-            while (timerForShow > 0.0f)
-            {
-                timerForShow -= Time.deltaTime;
-                yield return null;
-            }
-            yield return finish;
         }
 
         private void Update()
         {
-            
+
+        }
+
+        private void OnDuration()
+        {
+            animator.SetTrigger("BasicAttack");
+            sword.GetComponent<BoxCollider>().enabled = true;
+            StartCoroutine(EndAttack());
+        }
+
+        IEnumerator EndAttack()
+        {
+            yield return new WaitForSeconds(animator.GetCurrentAnimatorClipInfo(1).Length);
+            sword.GetComponent<BoxCollider>().enabled = false;
+        }
+
+        public void CheckHold()
+        {
+            sword.GetComponent<BoxCollider>().enabled = false;
+
+            enemyProjectile = sword.GetComponent<AeternaSword>().contactObject;
+            sword.GetComponent<AeternaSword>().contactObject = null;
+            enemyProjectile.layer = LayerMask.NameToLayer("Projectile" + Player.tag[4]); // 태그 이름 편하게 수정
+            enemyProjectile.SetActive(false);
+
+            StopCoroutine(Player.SkillTimer(2));
+
+            Player.skill2Phase = 1;
+            Player.playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = false;
+
+            Player.skillTimer[2] = Player.AeternaData.skill2HoldTime;
+            StartCoroutine(Player.SkillTimer(2));
+        }
+
+        private void OnHoldShoot()
+        {
+            enemyProjectile.transform.position = Player.camera.transform.position;
+            if (Player.camera != null)
+            {
+                enemyProjectile.GetComponent<Projectile>().direction = Player.camera.transform.localRotation * Vector3.forward;
+            }
+            enemyProjectile.SetActive(true);
+            enemyProjectile = null;
+
+            Player.skillButton = 0;
+
+            Player.skillTimer[2] = Player.AeternaData.skill2CoolTime;
+            StartCoroutine(Player.SkillTimer(2));
+        }
+
+        private void OnCooling()
+        {
+
         }
     }
 }

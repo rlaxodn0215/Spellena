@@ -19,6 +19,11 @@ public class GameCenter : MonoBehaviourPunCallbacks, IPunObservable
     Text teamBOccupyingTextUI;
     GameObject occupyingGaugeText;
     Text occupyingGaugeTextUI;
+    GameObject roundAText;
+    GameObject roundBText;
+    Text roundATextUI;
+    Text roundBTextUI;
+
     enum GameState
     {
         WaitingAllPlayer,
@@ -80,6 +85,10 @@ public class GameCenter : MonoBehaviourPunCallbacks, IPunObservable
         teamBOccupyingTextUI = teamBOccupyingText.GetComponent<Text>();
         occupyingGaugeText = GameObject.Find("OccupyingGauge");
         occupyingGaugeTextUI = occupyingGaugeText.GetComponent<Text>();
+        roundAText = GameObject.Find("RoundA");
+        roundBText = GameObject.Find("RoundB");
+        roundATextUI = roundAText.GetComponent<Text>();
+        roundBTextUI = roundBText.GetComponent<Text>();
     }
 
     void Update()
@@ -87,6 +96,10 @@ public class GameCenter : MonoBehaviourPunCallbacks, IPunObservable
         if (PhotonNetwork.IsMasterClient)
         {
             timerTextUI.text = ((int)globalTimer).ToString();
+            roundATextUI.text = roundA.ToString();
+            roundBTextUI.text = roundB.ToString();
+
+
             if (gameState == GameState.WaitingAllPlayer)
             {
                 gameStateTextUI.text = "Waiting Player";
@@ -136,13 +149,23 @@ public class GameCenter : MonoBehaviourPunCallbacks, IPunObservable
                 teamAOccupyingTextUI.text = ((int)occupyingA.rate).ToString();
                 teamBOccupyingTextUI.text = ((int)occupyingB.rate).ToString();
                 occupyingGaugeTextUI.text = occupyingTeam.name + " : " + ((int)occupyingTeam.rate).ToString();
+                timerTextUI.text = ((int)roundEndTimer).ToString();
 
                 gameStateTextUI.text = "Round";
                 //지역이 점령되어있으면 점령한 팀의 점령비율이 높아진다.
                 if (currentOccupationTeam == teamA)
+                {
                     occupyingA.rate += Time.deltaTime * occupyingRate;//약 1.8초당 1씩 오름
+                    if (occupyingA.rate >= occupyingComplete)
+                        occupyingA.rate = occupyingComplete;
+                }
                 else if (currentOccupationTeam == teamB)
+                {
                     occupyingB.rate += Time.deltaTime * occupyingRate;
+                    if (occupyingB.rate >= occupyingComplete)
+                        occupyingB.rate = occupyingComplete;
+                }
+
 
                 OccupyAreaCounts();
                 CheckRoundEnd();
@@ -174,12 +197,12 @@ public class GameCenter : MonoBehaviourPunCallbacks, IPunObservable
 
         for(int i = 0; i < playersA.Count; i++)
         {
-            Debug.Log(playersA[i].name);
+            //Debug.Log(playersA[i].name);
         }
 
         for(int i = 0; i < playersB.Count; i++)
         {
-            Debug.Log(playersB[i].name);
+            //Debug.Log(playersB[i].name);
         }
     }
 
@@ -276,10 +299,10 @@ public class GameCenter : MonoBehaviourPunCallbacks, IPunObservable
     }
     void ChangeOccupyingRate(int num, string name) //점령 게이지 변화
     {
-        if (currentOccupationTeam == name)
-            return;
         if (occupyingTeam.name == name)
         {
+            if (currentOccupationTeam == name)
+                return;
             occupyingTeam.rate += occupyingGaugeRate * Time.deltaTime * num;
             if (occupyingTeam.rate >= 100)
             {
@@ -290,6 +313,8 @@ public class GameCenter : MonoBehaviourPunCallbacks, IPunObservable
         }
         else if (occupyingTeam.name == "")
         {
+            if (currentOccupationTeam == name)
+                return;
             occupyingTeam.name = name;
             occupyingTeam.rate += occupyingGaugeRate * Time.deltaTime * num;
         }
@@ -298,8 +323,8 @@ public class GameCenter : MonoBehaviourPunCallbacks, IPunObservable
             occupyingTeam.rate -= occupyingGaugeRate * Time.deltaTime * num;
             if (occupyingTeam.rate < 0)
             {
-                occupyingTeam.name = name;
-                occupyingTeam.rate = -occupyingTeam.rate;
+                occupyingTeam.name = "";
+                occupyingTeam.rate = 0;
             }
         }
     }
@@ -315,13 +340,15 @@ public class GameCenter : MonoBehaviourPunCallbacks, IPunObservable
         globalTimer = 0f;
         teamAOccupying = 0;
         teamBOccupying = 0;
+        teamAOccupyingTextUI.text = "0";
+        teamBOccupyingTextUI.text = "0";
     }
     //이 이하는 테스트용 일시적 정보이다.
 
     float characterSelectTime = 5f; //나중에 데이터 매니저에서 값을 가져오도록한다.
     float occupyingGaugeRate = 100f;
     float occupyingReturnTime = 3f;
-    float occupyingRate = 0.556f;
+    float occupyingRate = 5f;
     float occupyingComplete = 100f;
 
     float readyTime = 5f;
@@ -340,6 +367,8 @@ public class GameCenter : MonoBehaviourPunCallbacks, IPunObservable
             stream.SendNext(teamAOccupyingTextUI.text);
             stream.SendNext(teamBOccupyingTextUI.text);
             stream.SendNext(occupyingGaugeTextUI.text);
+            stream.SendNext(roundATextUI.text);
+            stream.SendNext(roundBTextUI.text);
         }
         else
         {
@@ -349,6 +378,8 @@ public class GameCenter : MonoBehaviourPunCallbacks, IPunObservable
             teamAOccupyingTextUI.text = (string)stream.ReceiveNext();
             teamBOccupyingTextUI.text = (string)stream.ReceiveNext();
             occupyingGaugeTextUI.text =(string)stream.ReceiveNext();
+            roundATextUI.text = (string)stream.ReceiveNext();
+            roundBTextUI.text = (string)stream.ReceiveNext();
         }
     }
 }

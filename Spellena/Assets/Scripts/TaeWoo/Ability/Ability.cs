@@ -13,5 +13,6 @@ namespace Player
         public virtual void IsDisActive() { }
         public virtual void AddPlayer(Character player) { }
         public virtual void Execution() { }
+        public virtual void Execution(ref int time) { }
     }
 }

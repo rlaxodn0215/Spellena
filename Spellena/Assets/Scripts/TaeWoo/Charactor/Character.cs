@@ -8,11 +8,13 @@ using Photon.Realtime;
 
 namespace Player
 {
+    // 플레이어의 동작 상태
     public enum PlayerActionState
     {
-        Move, Jump, Run, Sit, Interaction, Skill1, Skill2, Skill3, Skill4
+        Move, Jump, Run, Sit, Interaction, BasicAttack, Skill1, Skill2, Skill3, Skill4
     }
 
+    // 플레이어 동작 데이터
     public class PlayerActionData
     {
         public PlayerActionState playerActionState;
@@ -27,38 +29,38 @@ namespace Player
         ElementalOrder
     }
 
-    // 서버에 사망 및 살인자를 알리기 위한 코드
-    public struct PlayerData
-    {
-        public string playerName;
-        public string murder;
-
-        public PlayerData(string name, string murder)
-        {
-            this.playerName = name;
-            this.murder = murder;
-        }
-    }
-
     public class Character : MonoBehaviourPunCallbacks, IPunObservable
     {
         PlayerInput playerInput;
         public List<PlayerActionData> playerActionDatas = new List<PlayerActionData>();
-
-        public string playerName;
-        public int Hp;
         public PlayerCharactor charactor;
-        public GameObject Sight;
-        public GameObject groundRaycast;
+
+        // 능력 넣는 Dictionary   
+        [HideInInspector]
+        public Dictionary<string, Ability> Skills;
+
+        // 플레이어 하위 오브젝트
+        public GameObject sight;
         public GameObject camera;
         public GameObject UI;
 
+        //실시간 갱신 데이터
+        public string playerName;
+        public string murder;
+        public int hp;
+        public bool isOccupying = false;
+
+        //데이터 베이스에서 받는 데이터들
         [HideInInspector]
-        public float moveSpeed;
+        public float sitSpeed;
+        [HideInInspector]
+        public float walkSpeed;
+        [HideInInspector]
+        public float runSpeed;
         [HideInInspector]
         public float jumpHeight;
-        [HideInInspector]
-        public PlayerData playerData;
+
+        // 컴포넌트
         [HideInInspector]
         public Animator animator;
         [HideInInspector]
@@ -66,33 +68,11 @@ namespace Player
         [HideInInspector]
         public RaycastHit hit;
 
-        // 능력 넣는 Dictionary   
-        [HideInInspector]
-        public Dictionary<string, Ability> Skills;
-
+        //임시 사용 데이터
         private Vector3 moveVec;
         private bool grounded;
 
-        public bool isOccupying = false;
-
-        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
-        {
-            if (stream.IsWriting)
-            {
-                // 데이터를 보내는 부분
-                stream.SendNext(isOccupying);
-                stream.SendNext(playerName);
-                stream.SendNext(Hp);
-            }
-            else
-            {
-                // 데이터를 받는 부분
-                isOccupying = (bool)stream.ReceiveNext();
-                playerName = (string)stream.ReceiveNext();
-                Hp = (int)stream.ReceiveNext();
-            }
-        }
-
+        // 체력 이나, 데미지, 죽음 같은 데이터는 마스터 클라인트만 처리하기. PhotonNetwork.isMasterClient
         private void Awake()
         {
             playerInput = GetComponent<PlayerInput>();
@@ -101,6 +81,7 @@ namespace Player
             SetPlayerKeys(PlayerActionState.Run, "Run");
             SetPlayerKeys(PlayerActionState.Sit, "Sit");
             SetPlayerKeys(PlayerActionState.Interaction, "Interaction");
+            SetPlayerKeys(PlayerActionState.BasicAttack, "BasicAttack");
             SetPlayerKeys(PlayerActionState.Skill1, "Skill1");
             SetPlayerKeys(PlayerActionState.Skill2, "Skill2");
             SetPlayerKeys(PlayerActionState.Skill3, "Skill3");
@@ -120,9 +101,15 @@ namespace Player
         {
             Initialize();
         }
+
+        void Initialize()
+        {
+            animator = GetComponent<Animator>();
+            rigidbody = GetComponent<Rigidbody>();
+            Skills = new Dictionary<string, Ability>();
+        }
         protected virtual void Update()
         {
-            RayCasting();
             if (PhotonNetwork.IsMasterClient)
                 isOccupying = false;
         }
@@ -130,48 +117,6 @@ namespace Player
         protected virtual void FixedUpdate()
         {
             PlayerMove();
-        }
-
-        // 캐릭터에 따른 초기화
-        // 캐릭터에 따른 Update
-        //gameObject.tag = "Friendly";
-
-        void Initialize()
-        {
-            animator = GetComponent<Animator>();
-            rigidbody = GetComponent<Rigidbody>();
-            Skills = new Dictionary<string, Ability>();
-            playerData = new PlayerData(playerName, "");
-        }
-
-        void RayCasting()
-        {
-            Ray ray = new Ray(camera.transform.position,camera.transform.forward);
-            Physics.Raycast(ray,out hit);
-        }
-
-        void OnMove(InputValue value)
-        {
-            moveVec = new Vector3(value.Get<Vector2>().x, 0, value.Get<Vector2>().y);
-
-            //List<int> _temp = new List<int>();
-            if (moveVec.magnitude <= 0)
-                playerActionDatas[(int)PlayerActionState.Move].isExecuting = false;
-            else
-                playerActionDatas[(int)PlayerActionState.Move].isExecuting = true;
-        }
-
-        private void OnAnimatorIK()
-        {
-            SetLookAtObj();
-        }
-
-        void SetLookAtObj()
-        {
-            if (animator == null) return;
-
-            animator.SetLookAtWeight(1f,0.9f);
-            animator.SetLookAtPosition(Sight.transform.position);
         }
 
         protected void PlayerMove()
@@ -201,8 +146,8 @@ namespace Player
 
                 _temp.Normalize();
 
-                rigidbody.MovePosition(rigidbody.transform.position + _temp* moveSpeed * Time.deltaTime);
-                
+                rigidbody.MovePosition(rigidbody.transform.position + _temp * walkSpeed * Time.deltaTime);
+
             }
 
             _temp = transform.InverseTransformVector(_temp);
@@ -211,6 +156,16 @@ namespace Player
             animator.SetFloat("HorizontalSpeed", _temp.x);
         }
 
+
+        void OnMove(InputValue value)
+        {
+            moveVec = new Vector3(value.Get<Vector2>().x, 0, value.Get<Vector2>().y);
+
+            if (moveVec.magnitude <= 0)
+                playerActionDatas[(int)PlayerActionState.Move].isExecuting = false;
+            else
+                playerActionDatas[(int)PlayerActionState.Move].isExecuting = true;
+        }
         void OnJump()
         {
             if (grounded)
@@ -225,8 +180,6 @@ namespace Player
 
         void OnRun()
         {
-            Debug.Log("Run!");
-
             if (!playerActionDatas[(int)PlayerActionState.Run].isExecuting)
             {
                 animator.SetBool("Run", true);
@@ -271,22 +224,6 @@ namespace Player
 
         }
 
-        private void OnCollisionStay(Collision collision)
-        {
-            //if(collision.gameObject.tag == "탑")
-
-            //if (Input.GetKey(KeyCode.F))
-            //{
-            //    Debug.Log("Healing");
-            //}
-
-        }
-
-
-        private void OnTriggerEnter(Collider other)
-        {
-
-        }
 
         void OnTriggerStay(Collider other)
         {
@@ -341,11 +278,40 @@ namespace Player
             Debug.Log("맞는것 확인");
         }
 
+        private void OnAnimatorIK()
+        {
+            SetLookAtObj();
+        }
 
-        //public void PlayerDead(PlayerData data)
-        //{
-        //    Debug.Log("player dead");
-        //}
+        void SetLookAtObj()
+        {
+            if (animator == null) return;
+
+            animator.SetLookAtWeight(1f, 0.9f);
+            animator.SetLookAtPosition(sight.transform.position);
+        }
+
+
+        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+        {
+            if (stream.IsWriting)
+            {
+                // 데이터를 보내는 부분
+                stream.SendNext(playerName);
+                stream.SendNext(murder);
+                stream.SendNext(hp);
+                stream.SendNext(isOccupying);
+            }
+            else
+            {
+                // 데이터를 받는 부분
+                playerName = (string)stream.ReceiveNext();
+                murder = (string)stream.ReceiveNext();
+                hp = (int)stream.ReceiveNext();
+                isOccupying = (bool)stream.ReceiveNext();
+            }
+        }
+
 
     }
 }

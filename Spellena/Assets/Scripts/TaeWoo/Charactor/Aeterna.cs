@@ -13,14 +13,25 @@ namespace Player
         public GameObject DimensionDoor;
         public GameObject DimensionDoorGUI;
 
-        private DimensionSword dimensionSword;
-        private DimensionOpen dimensionOpen;
-        private DimensionIO dimensionIO;
-
         [HideInInspector]
-        public int skillButton = -1;
+        public DimensionSword dimensionSword;
+        [HideInInspector]
+        public DimensionOpen dimensionOpen;
+        [HideInInspector]
+        public DimensionIO dimensionIO;
+        [HideInInspector]
+        public int skillButton = 0;
         [HideInInspector]
         public float[] skillTimer;
+
+        // 0 : 기본 공격
+        // 1 : 스킬 1
+        // 2 : 스킬 2
+        // 3 : 스킬 3
+        // 4 : 스킬 4 (궁극기)
+
+        public int skill2Phase = 0; // 0: duration, 1: hold, 2: cool
+        private bool isDoing = false;
 
         protected override void Start() 
         {
@@ -57,7 +68,7 @@ namespace Player
 
             skillTimer = new float[Skills.Count];
 
-            for(int i = 0; i < Skills.Count; i++)
+            for(int i = 0; i < Skills.Count;i++)
             {
                 skillTimer[i] = -1;
             }
@@ -80,7 +91,7 @@ namespace Player
             {
                 if (skillButton == 1)
                 {
-                    skillButton = -1;
+                    skillButton = 0;
                     Debug.Log("BasicAttack Ready");
                 }
 
@@ -92,9 +103,9 @@ namespace Player
                 }
             }
 
-            else if(skillTimer[0] <=0.0f)
+            else if(skillTimer[0] <= 0.0f)
             {
-                skillButton = -1;
+                skillButton = 0;
                 Debug.Log("BasicAttack Ready");
             }
         }
@@ -111,7 +122,7 @@ namespace Player
             {
                 if (skillButton == 2)
                 {
-                    skillButton = -1;
+                    skillButton = 0;
                     Debug.Log("BasicAttack Ready");
                 }
 
@@ -124,7 +135,7 @@ namespace Player
 
             else if(skillTimer[0] <= 0.0f)
             {
-                skillButton = -1;
+                skillButton = 0;
                 Debug.Log("BasicAttack Ready");
             }
         }
@@ -159,22 +170,44 @@ namespace Player
 
             else if (skillButton == 2)
             {
-                if (skillTimer[2] <= 0.0f)
+                if (playerActionDatas[(int)PlayerActionState.Skill2].isExecuting == false)
                 {
-                    //skillTimer[2] = 1.0f;
-                    Skills["Skill2"].Execution();
-                    playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = true;
-                    StartCoroutine(ShowTimer(2));
+                    switch (skill2Phase)
+                    {
+                        case 0:
+                            skillTimer[2] = AeternaData.skill2DurationTime;
+                            playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = true;
+                            isDoing = true;
+                            StartCoroutine(SkillTimer(2));
+                            break;
+                        case 1:
+                            if(skillTimer[2] >= 0.0f)
+                                Skills["Skill2"].Execution(ref skill2Phase);
+                            else
+                                skillTimer[2] = AeternaData.skill2CoolTime;
+                                playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = true;
+                                StartCoroutine(SkillTimer(2));
+                            break;
+                        case 2:
+                            skillTimer[2] = AeternaData.skill2CoolTime;
+                            playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = true;
+                            StartCoroutine(SkillTimer(2));
+                            break;
+                    }
                 }
 
-                else
+                if (skill2Phase==0 && skillTimer[0] <= 0.0f)
                 {
-                    skillButton = 1;
+                    Skills["Skill2"].Execution(ref skill2Phase);
+                    skillTimer[0] = AeternaData.basicAttackTime;
+                    StartCoroutine(SkillTimer(0));
                 }
+
             }
+
             else
             {
-                if (skillButton == -1 && skillTimer[0] <= 0.0f)
+                if (skillButton == 0 && skillTimer[0] <= 0.0f)
                 {
                     Skills["BasicAttack"].Execution();
                     skillTimer[0] = AeternaData.basicAttackTime;
@@ -183,29 +216,35 @@ namespace Player
             }
         }
 
-        IEnumerator SkillTimer(int skillIndex)
+        public IEnumerator SkillTimer(int index)
         {
-            while (skillTimer[skillIndex] > 0.0f)
+            while (skillTimer[index] > 0.0f)
             {
-                skillTimer[skillIndex] -= Time.deltaTime;
+                skillTimer[index] -= Time.deltaTime;
                 yield return null;
+            }
+
+            playerActionDatas[(int)PlayerActionState.BasicAttack + index].isExecuting = false;
+
+            Skill2TimeOut(index);
+        }
+
+        void Skill2TimeOut(int index)
+        {
+            if(index == 2 && isDoing)
+            {
+                skillTimer[2] = AeternaData.skill2CoolTime;
+                playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = true;
+                StartCoroutine(SkillTimer(2));
+
+                isDoing = !isDoing;
             }
         }
 
-        IEnumerator ShowTimer(int index)
-        {
-            while(skillButton ==index)
-            {
-                skillTimer[index] = dimensionIO.timerForShow;
-                yield return null;
-            }
-        }
-
-        private void OnGUI()
-        {
-            GUI.TextField(new Rect(10, 10, 100, 30), skillTimer[2].ToString());
-            //GUI.TextField(new Rect(10, 30, 100, 50), skillTimer[2].ToString());
-        }
+        //private void OnGUI()
+        //{
+        //    GUI.TextField(new Rect(10, 10, 100, 30), skillTimer[2].ToString());
+        //}
 
     }
 }

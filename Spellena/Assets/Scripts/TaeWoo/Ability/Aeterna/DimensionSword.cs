@@ -26,22 +26,19 @@ namespace Player
             Sword.GetComponent<BoxCollider>().enabled = true;
             StartCoroutine(EndAttack());
             StartCoroutine(ShootSlash());
-            //Debug.Log("DimensionSword!");
         }
 
         IEnumerator ShootSlash()
         {
-            yield return new WaitForSeconds(animator.GetCurrentAnimatorClipInfo(1).Length/2);
+            yield return new WaitForSeconds(animator.GetCurrentAnimatorClipInfo(1).Length/1.5f);
             dimensionSlash.GetComponent<DimensionSlash>().owner = Player;
             PhotonNetwork.Instantiate("TaeWoo/Prefabs/Effect/" + dimensionSlash.name, Player.camera.transform.position, Player.transform.localRotation);
-            //Debug.Log("검기 소환");
         }
 
         IEnumerator EndAttack()
         {
             yield return new WaitForSeconds(animator.GetCurrentAnimatorClipInfo(1).Length);
             Sword.GetComponent<BoxCollider>().enabled = false;
-            //Debug.Log("DimensionSword finish");
         }
     }
 }
