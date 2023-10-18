@@ -49,6 +49,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
     {
         base.OnJoinedRoom();
         GameObject _gameCenter;
+
         if (PhotonNetwork.IsMasterClient)
         {
             _gameCenter = PhotonNetwork.Instantiate("ChanYoung/Prefabs/GameCenter", spawnPoint.position, Quaternion.identity);

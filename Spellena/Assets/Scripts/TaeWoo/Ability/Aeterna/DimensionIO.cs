@@ -13,9 +13,6 @@ namespace Player
         [HideInInspector]
         public GameObject enemyProjectile;
 
-        private int skill2Phase = 0; //0 : none, 1: duration, 2: hold, 3: cool
-
-
         public override void AddPlayer(Character player)
         {
             Player = (Aeterna)player;
@@ -23,25 +20,44 @@ namespace Player
             sword = Player.DimensionSword;
         }
 
-        public override void Execution()
+        public override void Execution(ref int phase)
         {
-            //Debug.Log("DimensionIO");
-
-            switch (skill2Phase)
+            switch (phase)
             {
                 case 0:
-                    animator.SetTrigger("BasicAttack");
-
+                    OnDuration(ref phase);
                     break;
                 case 1:
+                    OnHold();
                     break;
                 case 2:
-                    break;
-                case 3:
+                    OnCooling();
                     break;
 
             }
+        }
 
+        private void OnDuration(ref int phase)
+        {
+            animator.SetTrigger("BasicAttack");
+
+            if (enemyProjectile == null)
+            {
+                sword.GetComponent<BoxCollider>().enabled = true;
+                enemyProjectile = sword.GetComponent<AeternaSword>().contactObject;
+                enemyProjectile.layer = LayerMask.NameToLayer("Projectile" + Player.tag[4]);
+                enemyProjectile.SetActive(false);
+            }   
+
+        }
+
+        private void OnHold()
+        {
+
+        }
+
+        private void OnCooling()
+        {
 
         }
 
