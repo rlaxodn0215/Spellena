@@ -51,28 +51,30 @@ public class RoomManager : MonoBehaviourPunCallbacks
         GameObject _gameCenter;
         if (PhotonNetwork.IsMasterClient)
         {
-            //_gameCenter = PhotonNetwork.Instantiate("ChanYoung/Prefabs/GameCenter", spawnPoint.position, Quaternion.identity);
+            _gameCenter = PhotonNetwork.Instantiate("ChanYoung/Prefabs/GameCenter", spawnPoint.position, Quaternion.identity);
         }
 
         player = PhotonNetwork.Instantiate("TaeWoo/Prefabs/Aeterna", spawnPoint.position, Quaternion.identity);
         player.GetComponent<Player.Character>().IsLocalPlayer();
+<<<<<<< HEAD
+=======
 
-//<<<<<<< HEAD
-//=======
-//    void Update()
-//    {
-//        if(isFirstSetting == true)
-//        {
-//            GameObject _temp = GameObject.Find("GameCenter(Clone)");
-//            //Debug.Log(_temp);
-//            if(_temp != null)
-//            {
-//                isFirstSetting = false;
-//                _temp.GetComponent<GameCenter>().AddPlayer(player);
-//            }
-//        }
-//>>>>>>> a4b25233a3d05e17e5fb4a6706677b7156d515e6
+/*<<<<<<< HEAD
+=======
+    void Update()
+    {
+        if(isFirstSetting == true)
+        {
+            GameObject _temp = GameObject.Find("GameCenter(Clone)");
+            //Debug.Log(_temp);
+            if(_temp != null)
+            {
+                isFirstSetting = false;
+                _temp.GetComponent<GameCenter>().AddPlayer(player);
+            }
+        }
+>>>>>>> a4b25233a3d05e17e5fb4a6706677b7156d515e6*/
+>>>>>>> 20c334131e01d851d79ba9cace2c7440dea74943
     }
-
 }
 
