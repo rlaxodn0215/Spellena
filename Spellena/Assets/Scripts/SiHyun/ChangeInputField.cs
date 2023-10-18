@@ -8,19 +8,47 @@ using UnityEngine.SceneManagement;
 public class ChangeInputField : MonoBehaviour
 {
     EventSystem system;
-    public Selectable firstInput;
-    public Button submitButton;
+    public Selectable firstInputLogin;
+    public Selectable firstInputRegister;
+    public Selectable firstInputNickname;
+    public Button submitLoginButton;
+    public Button submitRegisterButton;
+    public Button submitOkButton;
+    public GameObject loginPanel;
+    public GameObject registerPanel;
+    public GameObject authPanel;
+    Button _submitButton = null;
+
+    public InputField nickNameField;
 
     // Start is called before the first frame update
     void Start()
     {
         system = EventSystem.current;
-        firstInput.Select();
+        firstInputLogin.Select();
+        _submitButton = submitLoginButton;
+        registerPanel.SetActive(false);
+        authPanel.SetActive(false);
     }
 
     // Update is called once per frame
     void Update()
     {
+        
+
+       /* if (loginPanel.activeSelf)
+        {
+            _submitButton = submitLoginButton;
+        }
+        else if (registerPanel.activeSelf)
+        {
+            _submitButton = submitRegisterButton;
+        }
+        else if (authPanel.activeSelf)
+        {
+            _submitButton = submitOkButton;
+        }*/
+
         if (Input.GetKeyDown(KeyCode.Tab) && Input.GetKey(KeyCode.LeftShift))
         {
             Selectable next =
@@ -41,13 +69,38 @@ public class ChangeInputField : MonoBehaviour
         }
         else if(Input.GetKeyDown(KeyCode.Return))
         {
-            Debug.Log(submitButton.name);
-            submitButton.onClick.Invoke();
+            _submitButton.onClick.Invoke();
         }
     }
-
-    public void LoadRegisterScene()
+    
+    public void SigninPanelActvie()
     {
-        SceneManager.LoadScene("SiHyun Register Test");
+        loginPanel.SetActive(true);
+        authPanel.SetActive(false);
+        _submitButton = submitLoginButton;
+        firstInputLogin.Select();
+
     }
+
+    public void RegisterPanelActive()
+    {
+        registerPanel.SetActive(true);
+        loginPanel.SetActive(false);
+        _submitButton = submitRegisterButton;
+        firstInputRegister.Select();
+    }
+    
+    public void AuthPanelActive()
+    {
+        authPanel.SetActive(true);
+        registerPanel.SetActive(false);
+        _submitButton = submitOkButton;
+        firstInputNickname.Select();
+    }
+
+    public void OkBtnClick()
+    {
+        FirebaseLoginManager.Instance.SetNickname(nickNameField.text);
+    }
+
 }

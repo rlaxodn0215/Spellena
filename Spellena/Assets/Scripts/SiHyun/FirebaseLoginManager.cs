@@ -10,6 +10,8 @@ public class FirebaseLoginManager
 {
     private static FirebaseLoginManager instance = null;
 
+    private string nickname;
+
     public static FirebaseLoginManager Instance
     {
         get
@@ -47,8 +49,37 @@ public class FirebaseLoginManager
             user = auth.CurrentUser;
             if(signed)
             {
+                Firebase.Auth.FirebaseUser currentUser = auth.CurrentUser;
                 Debug.Log("·Î±×ÀÎ");
-                SceneManager.LoadScene("SiHyun MainLobby Test");
+                if(currentUser.DisplayName != null)
+                {
+                    SceneManager.LoadScene("SiHyun MainLobby Test");
+                }
+                else
+                {
+                    if (currentUser != null)
+                    {
+                        Firebase.Auth.UserProfile profile = new Firebase.Auth.UserProfile
+                        {
+                            DisplayName = nickname,
+                            PhotoUrl = new System.Uri("https://example.com/jane-q-user/profile.jpg"),
+                        };
+                        currentUser.UpdateUserProfileAsync(profile).ContinueWith(task => {
+                            if (task.IsCanceled)
+                            {
+                                Debug.LogError("UpdateUserProfileAsync was canceled.");
+                                return;
+                            }
+                            if (task.IsFaulted)
+                            {
+                                Debug.LogError("UpdateUserProfileAsync encountered an error: " + task.Exception);
+                                return;
+                            }
+
+                            Debug.Log("User profile updated successfully.");
+                        });
+                    }
+                }
             }
         }
     }
@@ -113,4 +144,8 @@ public class FirebaseLoginManager
         return user;
     }
 
+    public void SetNickname(string s)
+    {
+        nickname = s;
+    }
 }

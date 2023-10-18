@@ -9,6 +9,9 @@ public class LoginSystem : MonoBehaviour
     public InputField email;
     public InputField passward;
 
+    public InputField registerEmail;
+    public InputField registerPassward;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -19,10 +22,7 @@ public class LoginSystem : MonoBehaviour
 
     public void Register()
     {
-        string e = email.text;
-        string p = passward.text;
-
-        FirebaseLoginManager.Instance.Register(e, p);
+        FirebaseLoginManager.Instance.Register(registerEmail.text, registerPassward.text);
     }
 
     public void SignIn()

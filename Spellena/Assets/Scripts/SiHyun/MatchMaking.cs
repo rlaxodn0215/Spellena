@@ -4,13 +4,16 @@ using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Realtime;
+using Firebase.Auth;
 
 public class MatchMaking : MonoBehaviourPunCallbacks
 {
     public GameObject loadingPanel;
     public Text currentPlayerCount;
-
+    public Text playerNameText;
     private LoadBalancingClient loadBalancingClient;
+
+    EnterRoomParams enterRoomParams = new EnterRoomParams();
 
     private void Awake()
     {
@@ -24,12 +27,21 @@ public class MatchMaking : MonoBehaviourPunCallbacks
     {
         Debug.Log("서버 연결 시도");
         PhotonNetwork.ConnectUsingSettings();
+
+        if (FirebaseLoginManager.Instance.GetUser().DisplayName != null)
+        {
+            playerNameText.text = FirebaseLoginManager.Instance.GetUser().DisplayName;
+        }
+        else
+        {
+            playerNameText.text = FirebaseLoginManager.Instance.GetUser().UserId;
+        }
     }
 
     public void JoinRandomOrCreateRoom()
     {
         Debug.Log("랜덤 매칭 시작.");
-        PhotonNetwork.LocalPlayer.NickName = FirebaseLoginManager.Instance.GetUser().DisplayName;
+        PhotonNetwork.LocalPlayer.NickName = FirebaseLoginManager.Instance.GetUser().UserId;
 
         byte _maxPlayers = 10;
 
