@@ -13,7 +13,7 @@ namespace Player
         [HideInInspector]
         public GameObject enemyProjectile;
 
-        private int phase = 0; //0 : none, 1: duration, 2: hold, 3: cool
+        private int skill2Phase = 0; //0 : none, 1: duration, 2: hold, 3: cool
 
 
         public override void AddPlayer(Character player)
@@ -25,11 +25,13 @@ namespace Player
 
         public override void Execution()
         {
-            Debug.Log("DimensionIO");
+            //Debug.Log("DimensionIO");
 
-            switch (phase)
+            switch (skill2Phase)
             {
                 case 0:
+                    animator.SetTrigger("BasicAttack");
+
                     break;
                 case 1:
                     break;
@@ -39,11 +41,6 @@ namespace Player
                     break;
 
             }
-
-
-
-            animator.SetTrigger("BasicAttack");
-
 
 
         }
