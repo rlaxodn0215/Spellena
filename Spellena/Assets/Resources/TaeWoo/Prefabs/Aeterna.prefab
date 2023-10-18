@@ -651,11 +651,12 @@ MonoBehaviour:
   DimensionSlash: {fileID: 2629910554034382192, guid: 228c79d47d0dc73499bfe6cff4b252eb, type: 3}
   DimensionDoor: {fileID: 100898, guid: a25b3d9a8119bf047b7609dba7f57302, type: 3}
   DimensionDoorGUI: {fileID: 185454, guid: ade1f0bfc938f694ab4f3bc05fc5c55b, type: 3}
-  skillButton: -1
-  basicAttackTimer: -1
-  skill1Timer: -1
-  skill2Timer: -1
-  skill3Timer: -1
+  dimensionSword: {fileID: 0}
+  dimensionOpen: {fileID: 0}
+  dimensionIO: {fileID: 0}
+  skillButton: 0
+  skillTimer: []
+  skill2Phase: 0
 --- !u!114 &1254214872
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -808,6 +809,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   contactObject: {fileID: 0}
+  player: {fileID: 0}
 --- !u!1001 &5624648683022572001
 PrefabInstance:
   m_ObjectHideFlags: 0

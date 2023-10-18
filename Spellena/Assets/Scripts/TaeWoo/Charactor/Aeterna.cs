@@ -19,9 +19,8 @@ namespace Player
         public DimensionOpen dimensionOpen;
         [HideInInspector]
         public DimensionIO dimensionIO;
-
         [HideInInspector]
-        public int skillButton = -1;
+        public int skillButton = 0;
         [HideInInspector]
         public float[] skillTimer;
 
@@ -71,7 +70,7 @@ namespace Player
 
             for(int i = 0; i < Skills.Count;i++)
             {
-                skillTimer[i] = 0;
+                skillTimer[i] = -1;
             }
 
             Hp = AeternaData.Hp;
@@ -92,7 +91,7 @@ namespace Player
             {
                 if (skillButton == 1)
                 {
-                    skillButton = -1;
+                    skillButton = 0;
                     Debug.Log("BasicAttack Ready");
                 }
 
@@ -106,7 +105,7 @@ namespace Player
 
             else if(skillTimer[0] <= 0.0f)
             {
-                skillButton = -1;
+                skillButton = 0;
                 Debug.Log("BasicAttack Ready");
             }
         }
@@ -123,7 +122,7 @@ namespace Player
             {
                 if (skillButton == 2)
                 {
-                    skillButton = -1;
+                    skillButton = 0;
                     Debug.Log("BasicAttack Ready");
                 }
 
@@ -136,7 +135,7 @@ namespace Player
 
             else if(skillTimer[0] <= 0.0f)
             {
-                skillButton = -1;
+                skillButton = 0;
                 Debug.Log("BasicAttack Ready");
             }
         }
@@ -227,30 +226,25 @@ namespace Player
 
             playerActionDatas[(int)PlayerActionState.BasicAttack + index].isExecuting = false;
 
-            //if(index == 2 && isDoing)
-            //{
-            //    if (skill2Phase == 0)
-            //    {
-            //        skill2Phase = 2;
-            //    }
-
-            //    else if(skill2Phase==1)
-            //    {
-            //        skillTimer[2] = AeternaData.skill2CoolTime;
-            //        playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = true;
-            //        skill2Phase =2
-            //        StartCoroutine(SkillTimer(2));
-            //    }
-
-            //    isDoing = !isDoing;
-            //}
-
+            Skill2TimeOut(index);
         }
 
-        private void OnGUI()
+        void Skill2TimeOut(int index)
         {
-            GUI.TextField(new Rect(10, 10, 100, 30), skillTimer[2].ToString());
+            if(index == 2 && isDoing)
+            {
+                skillTimer[2] = AeternaData.skill2CoolTime;
+                playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = true;
+                StartCoroutine(SkillTimer(2));
+
+                isDoing = !isDoing;
+            }
         }
+
+        //private void OnGUI()
+        //{
+        //    GUI.TextField(new Rect(10, 10, 100, 30), skillTimer[2].ToString());
+        //}
 
     }
 }
