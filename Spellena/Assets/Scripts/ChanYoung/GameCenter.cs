@@ -276,10 +276,10 @@ public class GameCenter : MonoBehaviourPunCallbacks, IPunObservable
     }
     void ChangeOccupyingRate(int num, string name) //점령 게이지 변화
     {
-        if (currentOccupationTeam == name)
-            return;
         if (occupyingTeam.name == name)
         {
+            if (currentOccupationTeam == name)
+                return;
             occupyingTeam.rate += occupyingGaugeRate * Time.deltaTime * num;
             if (occupyingTeam.rate >= 100)
             {
@@ -298,8 +298,8 @@ public class GameCenter : MonoBehaviourPunCallbacks, IPunObservable
             occupyingTeam.rate -= occupyingGaugeRate * Time.deltaTime * num;
             if (occupyingTeam.rate < 0)
             {
-                occupyingTeam.name = name;
-                occupyingTeam.rate = -occupyingTeam.rate;
+                occupyingTeam.name = "";
+                occupyingTeam.rate = 0;
             }
         }
     }
