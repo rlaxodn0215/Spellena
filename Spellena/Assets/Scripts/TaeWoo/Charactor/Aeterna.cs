@@ -150,7 +150,7 @@ namespace Player
                 Skills["Skill1"].Execution();
                 playerActionDatas[(int)PlayerActionState.Skill1].isExecuting = true;
                 skill1Timer = AeternaData.skill1Time;
-                StartCoroutine(SkillTimer(1));
+                //StartCoroutine(SkillTimer(1));
             }
 
             else if (skillButton == 2)
@@ -180,30 +180,30 @@ namespace Player
                 {
                     Skills["BasicAttack"].Execution();
                     basicAttackTimer = AeternaData.basicAttackTime;
-                    StartCoroutine(SkillTimer(0));
+                    //StartCoroutine(SkillTimer(0));
                 }
             }
         }
 
-        IEnumerator SkillTimer(int skillIndex)
-        {
-            while (skillTimer[skillIndex] > 0.0f)
-            {
-                skillTimer[skillIndex] -= Time.deltaTime;
-                yield return null;
-            }
+        //IEnumerator SkillTimer(int skillIndex)
+        //{
+        //    while (skillTimer[skillIndex] > 0.0f)
+        //    {
+        //        skillTimer[skillIndex] -= Time.deltaTime;
+        //        yield return null;
+        //    }
 
-            playerActionDatas[(int)PlayerActionState.Skill1].isExecuting = false;
-        }
+        //    playerActionDatas[(int)PlayerActionState.Skill1].isExecuting = false;
+        //}
 
-        IEnumerator ShowTimer(int index)
-        {
-            while(skillButton ==index)
-            {
-                skillTimer[index] = dimensionIO.timerForShow;
-                yield return null;
-            }
-        }
+        //IEnumerator ShowTimer(int index)
+        //{
+        //    while(skillButton ==index)
+        //    {
+        //        skillTimer[index] = dimensionIO.timerForShow;
+        //        yield return null;
+        //    }
+        //}
 
         private void OnGUI()
         {

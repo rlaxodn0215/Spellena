@@ -45,66 +45,66 @@ namespace Player
 
         }
 
-        IEnumerator DurationTimer(float time)
-        {
-            sword.GetComponent<BoxCollider>().enabled = true;
-            timerForShow = Player.AeternaData.skill2DurationTime;
+        //IEnumerator DurationTimer(float time)
+        //{
+        //    sword.GetComponent<BoxCollider>().enabled = true;
+        //    timerForShow = Player.AeternaData.skill2DurationTime;
 
-            while (timerForShow > 0.0f)
-            {
-                if (enemyProjectile == null)
-                {
-                    enemyProjectile = sword.GetComponent<AeternaSword>().contactObject;
-                }
+        //    while (timerForShow > 0.0f)
+        //    {
+        //        if (enemyProjectile == null)
+        //        {
+        //            enemyProjectile = sword.GetComponent<AeternaSword>().contactObject;
+        //        }
 
-                timerForShow -= Time.deltaTime;
-                yield return null;
-            }
+        //        timerForShow -= Time.deltaTime;
+        //        yield return null;
+        //    }
 
-            sword.GetComponent<AeternaSword>().contactObject = null;
-            sword.GetComponent<BoxCollider>().enabled = false;
+        //    sword.GetComponent<AeternaSword>().contactObject = null;
+        //    sword.GetComponent<BoxCollider>().enabled = false;
 
-            if(enemyProjectile)
-            {
-                enemyProjectile.layer = LayerMask.NameToLayer("Projectile" + Player.tag[4]);
-                StartCoroutine(CoolTimer(Player.AeternaData.skill2HoldTime));
-            }
+        //    if(enemyProjectile)
+        //    {
+        //        enemyProjectile.layer = LayerMask.NameToLayer("Projectile" + Player.tag[4]);
+        //        StartCoroutine(CoolTimer(Player.AeternaData.skill2HoldTime));
+        //    }
 
-            else
-            {
-                StartCoroutine(CoolTimer(Player.AeternaData.skill2CoolTime));
-            }
+        //    else
+        //    {
+        //        StartCoroutine(CoolTimer(Player.AeternaData.skill2CoolTime));
+        //    }
 
-        }
+        //}
 
-        IEnumerator HoldTimer(float time)
-        {
-            timerForShow = Player.AeternaData.skill2HoldTime;
+        //IEnumerator HoldTimer(float time)
+        //{
+        //    timerForShow = Player.AeternaData.skill2HoldTime;
 
-            while (timerForShow > 0.0f)
-            {
-
-
+        //    while (timerForShow > 0.0f)
+        //    {
 
 
 
 
-                timerForShow -= Time.deltaTime;
-                yield return null;
-            }
-        }
 
-        IEnumerator CoolTimer(float time)
-        {
-            timerForShow = Player.AeternaData.skill2CoolTime;
-            bool finish = false;
-            while (timerForShow > 0.0f)
-            {
-                timerForShow -= Time.deltaTime;
-                yield return null;
-            }
-            yield return finish;
-        }
+
+        //        timerForShow -= Time.deltaTime;
+        //        yield return null;
+        //    }
+        //}
+
+        //IEnumerator CoolTimer(float time)
+        //{
+        //    timerForShow = Player.AeternaData.skill2CoolTime;
+        //    bool finish = false;
+        //    while (timerForShow > 0.0f)
+        //    {
+        //        timerForShow -= Time.deltaTime;
+        //        yield return null;
+        //    }
+        //    yield return finish;
+        //}
 
         private void Update()
         {
