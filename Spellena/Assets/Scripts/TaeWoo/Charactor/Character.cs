@@ -116,7 +116,10 @@ namespace Player
 
         protected virtual void FixedUpdate()
         {
-            PlayerMove();
+            if (PhotonNetwork.IsMasterClient)
+            {
+                PlayerMove();
+            }
         }
 
         protected void PlayerMove()
@@ -159,39 +162,46 @@ namespace Player
 
         void OnMove(InputValue value)
         {
-            moveVec = new Vector3(value.Get<Vector2>().x, 0, value.Get<Vector2>().y);
+            if (photonView.IsMine)
+            {
+                moveVec = new Vector3(value.Get<Vector2>().x, 0, value.Get<Vector2>().y);
 
-            if (moveVec.magnitude <= 0)
-                playerActionDatas[(int)PlayerActionState.Move].isExecuting = false;
-            else
-                playerActionDatas[(int)PlayerActionState.Move].isExecuting = true;
+                if (moveVec.magnitude <= 0)
+                    playerActionDatas[(int)PlayerActionState.Move].isExecuting = false;
+                else
+                    playerActionDatas[(int)PlayerActionState.Move].isExecuting = true;
+            }
         }
         void OnJump()
         {
-            if (grounded)
+            if (photonView.IsMine)
             {
-                rigidbody.velocity = new Vector3(rigidbody.velocity.x, jumpHeight, rigidbody.velocity.z);
-                playerActionDatas[(int)PlayerActionState.Jump].isExecuting = true;
-                animator.SetTrigger("Jump");
-                grounded = false;
-                animator.SetBool("Grounded", grounded);
+                if (grounded)
+                {
+                    rigidbody.velocity = new Vector3(rigidbody.velocity.x, jumpHeight, rigidbody.velocity.z);
+                    playerActionDatas[(int)PlayerActionState.Jump].isExecuting = true;
+                    animator.SetTrigger("Jump");
+                    grounded = false;
+                    animator.SetBool("Grounded", grounded);
+                }
             }
         }
-
         void OnRun()
         {
-            if (!playerActionDatas[(int)PlayerActionState.Run].isExecuting)
+            if (photonView.IsMine)
             {
-                animator.SetBool("Run", true);
-                playerActionDatas[(int)PlayerActionState.Run].isExecuting = true;
-            }
+                if (!playerActionDatas[(int)PlayerActionState.Run].isExecuting)
+                {
+                    animator.SetBool("Run", true);
+                    playerActionDatas[(int)PlayerActionState.Run].isExecuting = true;
+                }
 
-            else
-            {
-                animator.SetBool("Run", false);
-                playerActionDatas[(int)PlayerActionState.Run].isExecuting = false;
+                else
+                {
+                    animator.SetBool("Run", false);
+                    playerActionDatas[(int)PlayerActionState.Run].isExecuting = false;
+                }
             }
-
         }
 
         void OnSit()
@@ -201,25 +211,31 @@ namespace Player
 
         void OnInteraction()
         {
-            Debug.Log("Interaction");
+            if (photonView.IsMine)
+            {
+                Debug.Log("Interaction");
+            }
         }
 
         private void OnCollisionEnter(Collision collision)
         {
-            if (animator == null) return;
-
-            if (collision.gameObject.tag == "Enemy")
+            if (PhotonNetwork.IsMasterClient)
             {
-                //투척무기
-                //PlayerDamaged(collision.gameObject.playerName,10);
-                //destory
-            }
+                if (animator == null) return;
 
-            if (collision.gameObject.tag == "Ground")
-            {
-                grounded = true;
-                playerActionDatas[(int)PlayerActionState.Jump].isExecuting = false;
-                animator.SetBool("Grounded", grounded);
+                if (collision.gameObject.tag == "Enemy")
+                {
+                    //투척무기
+                    //PlayerDamaged(collision.gameObject.playerName,10);
+                    //destory
+                }
+
+                if (collision.gameObject.tag == "Ground")
+                {
+                    grounded = true;
+                    playerActionDatas[(int)PlayerActionState.Jump].isExecuting = false;
+                    animator.SetBool("Grounded", grounded);
+                }
             }
 
         }
@@ -248,7 +264,6 @@ namespace Player
             }
 
             UI.SetActive(true);
-
         }
 
         public void SetTagServer(string team)
@@ -262,14 +277,13 @@ namespace Player
             this.gameObject.tag = team;
         }
 
-        [PunRPC]
         public void PlayerDamaged(string enemy ,int damage)
         {
-            Hp-=damage;
-            if (Hp <= 0)
+            hp-=damage;
+            if (hp <= 0)
             {
                 // 투척 무기에 쏜 사람 이름 저장
-                playerData.murder = enemy;
+                murder = enemy;
                 // 히트 스캔일 경우 RPC에 쏜 사람 이름 매개변수로 전달
                 Debug.Log("죽는것 확인");
                 // 죽은 것 서버에 연락 
@@ -301,6 +315,12 @@ namespace Player
                 stream.SendNext(murder);
                 stream.SendNext(hp);
                 stream.SendNext(isOccupying);
+                for(int i = 0; i < playerActionDatas.Count; i++)
+                {
+                    stream.SendNext(playerActionDatas[i].isExecuting);
+                }
+                stream.SendNext(moveVec);
+                stream.SendNext(grounded);
             }
             else
             {
@@ -309,6 +329,12 @@ namespace Player
                 murder = (string)stream.ReceiveNext();
                 hp = (int)stream.ReceiveNext();
                 isOccupying = (bool)stream.ReceiveNext();
+                for(int i = 0; i < playerActionDatas.Count; i++)
+                {
+                    playerActionDatas[i].isExecuting = (bool)stream.ReceiveNext();
+                }
+                moveVec = (Vector3)stream.ReceiveNext();
+                grounded = (bool)stream.ReceiveNext();
             }
         }
 
