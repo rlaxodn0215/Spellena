@@ -29,6 +29,7 @@ namespace Player
         protected override void Update()
         {
             base.Update();
+            ChangeAnimationParameter();
             PlayerSkillInput();
         }
 
@@ -36,6 +37,19 @@ namespace Player
         {
             base.FixedUpdate();
         }
+
+        protected void ChangeAnimationParameter()
+        {
+            if(moveVec.z == 0 && moveVec.x > 0)
+            {
+                animator.SetBool("Mirror", true);
+            }
+            else if(moveVec.z == 0 && moveVec.x < 0)
+            {
+                animator.SetBool("Mirror", false);
+            }
+        }
+
 
         private void Initialize()
         {
@@ -50,7 +64,7 @@ namespace Player
             }
 
             hp = elementalOrderData.Hp;
-            runSpeed = elementalOrderData.moveSpeed;
+            walkSpeed = elementalOrderData.moveSpeed;
             jumpHeight = elementalOrderData.jumpHeight;
         }
 

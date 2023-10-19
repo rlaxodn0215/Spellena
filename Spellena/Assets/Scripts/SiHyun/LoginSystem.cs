@@ -12,6 +12,7 @@ public class LoginSystem : MonoBehaviour
     public InputField registerEmail;
     public InputField registerPassward;
 
+    public InputField nickNameField;
     // Start is called before the first frame update
     void Start()
     {
@@ -33,5 +34,11 @@ public class LoginSystem : MonoBehaviour
     public void SignOut()
     {
         FirebaseLoginManager.Instance.SignOut();
+    }
+
+    public void OkBtnClick()
+    {
+        Register();
+        FirebaseLoginManager.Instance.SetNickname(nickNameField.text);
     }
 }
