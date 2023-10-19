@@ -34,21 +34,6 @@ public class ChangeInputField : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
-
-       /* if (loginPanel.activeSelf)
-        {
-            _submitButton = submitLoginButton;
-        }
-        else if (registerPanel.activeSelf)
-        {
-            _submitButton = submitRegisterButton;
-        }
-        else if (authPanel.activeSelf)
-        {
-            _submitButton = submitOkButton;
-        }*/
-
         if (Input.GetKeyDown(KeyCode.Tab) && Input.GetKey(KeyCode.LeftShift))
         {
             Selectable next =
@@ -98,9 +83,5 @@ public class ChangeInputField : MonoBehaviour
         firstInputNickname.Select();
     }
 
-    public void OkBtnClick()
-    {
-        FirebaseLoginManager.Instance.SetNickname(nickNameField.text);
-    }
 
 }

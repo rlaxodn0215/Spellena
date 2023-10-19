@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Realtime;
 using Firebase.Auth;
+using UnityEngine.SceneManagement;
 
 public class MatchMaking : MonoBehaviourPunCallbacks
 {
@@ -12,7 +13,6 @@ public class MatchMaking : MonoBehaviourPunCallbacks
     public Text currentPlayerCount;
     public Text playerNameText;
     private LoadBalancingClient loadBalancingClient;
-
     EnterRoomParams enterRoomParams = new EnterRoomParams();
 
     private void Awake()
@@ -27,21 +27,20 @@ public class MatchMaking : MonoBehaviourPunCallbacks
     {
         Debug.Log("서버 연결 시도");
         PhotonNetwork.ConnectUsingSettings();
-
-        if (FirebaseLoginManager.Instance.GetUser().DisplayName != null)
+        var _user = FirebaseLoginManager.Instance.GetUser();
+        if (_user != null)
         {
-            playerNameText.text = FirebaseLoginManager.Instance.GetUser().DisplayName;
-        }
-        else
-        {
-            playerNameText.text = FirebaseLoginManager.Instance.GetUser().UserId;
+            if(_user.DisplayName != null)
+                playerNameText.text = _user.DisplayName;
+            else
+                playerNameText.text = _user.UserId;
         }
     }
 
     public void JoinRandomOrCreateRoom()
     {
         Debug.Log("랜덤 매칭 시작.");
-        PhotonNetwork.LocalPlayer.NickName = FirebaseLoginManager.Instance.GetUser().UserId;
+        PhotonNetwork.LocalPlayer.NickName = FirebaseLoginManager.Instance.GetUser().DisplayName;
 
         byte _maxPlayers = 10;
 
@@ -66,6 +65,11 @@ public class MatchMaking : MonoBehaviourPunCallbacks
     private void UpdatePlayerCounts()
     {
         currentPlayerCount.text = $"{PhotonNetwork.CurrentRoom.PlayerCount} / {PhotonNetwork.CurrentRoom.MaxPlayers}";
+    }
+
+    public void OnClickLoad()
+    {
+        SceneManager.LoadScene("SiHyun RoomLobby Test");
     }
 
     //포톤 콜백 함수
