@@ -255,15 +255,18 @@ namespace Player
 
         public void IsLocalPlayer()
         {
-            GetComponent<PlayerInput>().enabled = true;
-            camera.SetActive(true);
-            Transform _temp = transform.GetChild(0).GetChild(0);
-            for(int i =0; i < _temp.childCount;i++)
+            if (photonView.IsMine)
             {
-                _temp.GetChild(i).gameObject.layer = LayerMask.NameToLayer("Me");
-            }
+                GetComponent<PlayerInput>().enabled = true;
+                camera.SetActive(true);
+                Transform _temp = transform.GetChild(0).GetChild(0);
+                for (int i = 0; i < _temp.childCount; i++)
+                {
+                    _temp.GetChild(i).gameObject.layer = LayerMask.NameToLayer("Me");
+                }
 
-            UI.SetActive(true);
+                UI.SetActive(true);
+            }
         }
 
         public void SetTagServer(string team)

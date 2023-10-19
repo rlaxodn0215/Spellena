@@ -49,8 +49,8 @@ namespace Player
                 skillTimer[i] = -1;
             }
 
-            Hp = elementalOrderData.Hp;
-            moveSpeed = elementalOrderData.moveSpeed;
+            hp = elementalOrderData.Hp;
+            walkSpeed = elementalOrderData.moveSpeed;
             jumpHeight = elementalOrderData.jumpHeight;
         }
 

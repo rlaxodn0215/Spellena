@@ -73,145 +73,163 @@ namespace Player
                 skillTimer[i] = -1;
             }
 
-            Hp = AeternaData.Hp;
-            moveSpeed = AeternaData.moveSpeed;
+            hp = AeternaData.Hp;
+            walkSpeed = AeternaData.moveSpeed;
             jumpHeight = AeternaData.jumpHeight;
         }
 
 
         void OnSkill1()
         {
-            foreach (KeyValuePair<string, Ability> keyValue in Skills)
+            if (photonView.IsMine)
             {
-                Ability ability = keyValue.Value;
-                ability.IsDisActive();
-            }
 
-            if (skillTimer[1] <= 0.0f)
-            {
-                if (skillButton == 1)
+                foreach (KeyValuePair<string, Ability> keyValue in Skills)
+                {
+                    Ability ability = keyValue.Value;
+                    ability.IsDisActive();
+                }
+
+                if (skillTimer[1] <= 0.0f)
+                {
+                    if (skillButton == 1)
+                    {
+                        skillButton = 0;
+                        Debug.Log("BasicAttack Ready");
+                    }
+
+                    else
+                    {
+                        skillButton = 1;
+                        Skills["Skill1"].IsActive();
+                        Debug.Log("Skill1 Ready");
+                    }
+                }
+
+                else if (skillTimer[0] <= 0.0f)
                 {
                     skillButton = 0;
                     Debug.Log("BasicAttack Ready");
                 }
-
-                else
-                {
-                    skillButton = 1;
-                    Skills["Skill1"].IsActive();
-                    Debug.Log("Skill1 Ready");
-                }
-            }
-
-            else if(skillTimer[0] <= 0.0f)
-            {
-                skillButton = 0;
-                Debug.Log("BasicAttack Ready");
             }
         }
 
         void OnSkill2()
         {
-            foreach (KeyValuePair<string, Ability> keyValue in Skills)
+            if (photonView.IsMine)
             {
-                Ability ability = keyValue.Value;
-                ability.IsDisActive();
-            }
+                foreach (KeyValuePair<string, Ability> keyValue in Skills)
+                {
+                    Ability ability = keyValue.Value;
+                    ability.IsDisActive();
+                }
 
-            if (skillTimer[2] <= 0.0f)
-            {
-                if (skillButton == 2)
+                if (skillTimer[2] <= 0.0f)
+                {
+                    if (skillButton == 2)
+                    {
+                        skillButton = 0;
+                        Debug.Log("BasicAttack Ready");
+                    }
+
+                    else
+                    {
+                        skillButton = 2;
+                        Debug.Log("Skill2 Ready");
+                    }
+                }
+
+                else if (skillTimer[0] <= 0.0f)
                 {
                     skillButton = 0;
                     Debug.Log("BasicAttack Ready");
                 }
-
-                else
-                {
-                    skillButton = 2;
-                    Debug.Log("Skill2 Ready");
-                }
-            }
-
-            else if(skillTimer[0] <= 0.0f)
-            {
-                skillButton = 0;
-                Debug.Log("BasicAttack Ready");
             }
         }
 
         void OnSkill3()
         {
-            foreach (KeyValuePair<string, Ability> keyValue in Skills)
+            if (photonView.IsMine)
             {
-                Ability ability = keyValue.Value;
-                ability.IsDisActive();
+
+                foreach (KeyValuePair<string, Ability> keyValue in Skills)
+                {
+                    Ability ability = keyValue.Value;
+                    ability.IsDisActive();
+                }
             }
         }
 
         void OnSkill4()
         {
-            foreach (KeyValuePair<string, Ability> keyValue in Skills)
+            if (photonView.IsMine)
             {
-                Ability ability = keyValue.Value;
-                ability.IsDisActive();
+                foreach (KeyValuePair<string, Ability> keyValue in Skills)
+                {
+                    Ability ability = keyValue.Value;
+                    ability.IsDisActive();
+                }
             }
         }
 
         void OnMouseButton()
         {
-            if (skillButton == 1 && skillTimer[1] <= 0.0f)
+            if (photonView.IsMine)
             {
-                Skills["Skill1"].Execution();
-                playerActionDatas[(int)PlayerActionState.Skill1].isExecuting = true;
-                skillTimer[1] = AeternaData.skill1Time;
-                StartCoroutine(SkillTimer(1));
-            }
 
-            else if (skillButton == 2)
-            {
-                if (playerActionDatas[(int)PlayerActionState.Skill2].isExecuting == false)
+                if (skillButton == 1 && skillTimer[1] <= 0.0f)
                 {
-                    switch (skill2Phase)
+                    Skills["Skill1"].Execution();
+                    playerActionDatas[(int)PlayerActionState.Skill1].isExecuting = true;
+                    skillTimer[1] = AeternaData.skill1Time;
+                    StartCoroutine(SkillTimer(1));
+                }
+
+                else if (skillButton == 2)
+                {
+                    if (playerActionDatas[(int)PlayerActionState.Skill2].isExecuting == false)
                     {
-                        case 0:
-                            skillTimer[2] = AeternaData.skill2DurationTime;
-                            playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = true;
-                            isDoing = true;
-                            StartCoroutine(SkillTimer(2));
-                            break;
-                        case 1:
-                            if(skillTimer[2] >= 0.0f)
-                                Skills["Skill2"].Execution(ref skill2Phase);
-                            else
+                        switch (skill2Phase)
+                        {
+                            case 0:
+                                skillTimer[2] = AeternaData.skill2DurationTime;
+                                playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = true;
+                                isDoing = true;
+                                StartCoroutine(SkillTimer(2));
+                                break;
+                            case 1:
+                                if (skillTimer[2] >= 0.0f)
+                                    Skills["Skill2"].Execution(ref skill2Phase);
+                                else
+                                    skillTimer[2] = AeternaData.skill2CoolTime;
+                                playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = true;
+                                StartCoroutine(SkillTimer(2));
+                                break;
+                            case 2:
                                 skillTimer[2] = AeternaData.skill2CoolTime;
                                 playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = true;
                                 StartCoroutine(SkillTimer(2));
-                            break;
-                        case 2:
-                            skillTimer[2] = AeternaData.skill2CoolTime;
-                            playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = true;
-                            StartCoroutine(SkillTimer(2));
-                            break;
+                                break;
+                        }
                     }
+
+                    if (skill2Phase == 0 && skillTimer[0] <= 0.0f)
+                    {
+                        Skills["Skill2"].Execution(ref skill2Phase);
+                        skillTimer[0] = AeternaData.basicAttackTime;
+                        StartCoroutine(SkillTimer(0));
+                    }
+
                 }
 
-                if (skill2Phase==0 && skillTimer[0] <= 0.0f)
+                else
                 {
-                    Skills["Skill2"].Execution(ref skill2Phase);
-                    skillTimer[0] = AeternaData.basicAttackTime;
-                    StartCoroutine(SkillTimer(0));
-                }
-
-            }
-
-            else
-            {
-                if (skillButton == 0 && skillTimer[0] <= 0.0f)
-                {
-                    Skills["BasicAttack"].Execution();
-                    skillTimer[0] = AeternaData.basicAttackTime;
-                    StartCoroutine(SkillTimer(0));
+                    if (skillButton == 0 && skillTimer[0] <= 0.0f)
+                    {
+                        Skills["BasicAttack"].Execution();
+                        skillTimer[0] = AeternaData.basicAttackTime;
+                        StartCoroutine(SkillTimer(0));
+                    }
                 }
             }
         }
