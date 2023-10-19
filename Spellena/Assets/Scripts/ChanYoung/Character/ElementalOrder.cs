@@ -50,7 +50,7 @@ namespace Player
             }
 
             hp = elementalOrderData.Hp;
-            walkSpeed = elementalOrderData.moveSpeed;
+            runSpeed = elementalOrderData.moveSpeed;
             jumpHeight = elementalOrderData.jumpHeight;
         }
 
