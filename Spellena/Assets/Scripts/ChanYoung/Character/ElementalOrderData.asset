@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ElementalOrderData
   m_EditorClassIdentifier: 
   Hp: 100
-  moveSpeed: 2
+  moveSpeed: 4
   jumpHeight: 8
   basicAttackTime: 1
   skill1Time: 20

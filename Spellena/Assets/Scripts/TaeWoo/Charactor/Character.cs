@@ -69,7 +69,7 @@ namespace Player
         public RaycastHit hit;
 
         //임시 사용 데이터
-        private Vector3 moveVec;
+        protected Vector3 moveVec;
         private bool grounded;
 
         // 체력 이나, 데미지, 죽음 같은 데이터는 마스터 클라인트만 처리하기. PhotonNetwork.isMasterClient
@@ -150,13 +150,14 @@ namespace Player
                 _temp.Normalize();
 
                 rigidbody.MovePosition(rigidbody.transform.position + _temp * walkSpeed * Time.deltaTime);
-
+                Debug.Log(_temp.x);
+                Debug.Log(_temp.z);
             }
 
             _temp = transform.InverseTransformVector(_temp);
 
-            animator.SetFloat("VerticalSpeed", _temp.z);
-            animator.SetFloat("HorizontalSpeed", _temp.x);
+            animator.SetInteger("VerticalSpeed", (int)moveVec.z);
+            animator.SetInteger("HorizontalSpeed", (int)moveVec.x);
         }
 
 
@@ -305,7 +306,7 @@ namespace Player
             if (animator == null) return;
 
             animator.SetLookAtWeight(1f, 0.9f);
-            animator.SetLookAtPosition(sight.transform.position);
+            animator.SetLookAtPosition(sight.transform.position - new Vector3(0, 0.1f, 0));
         }
 
 
