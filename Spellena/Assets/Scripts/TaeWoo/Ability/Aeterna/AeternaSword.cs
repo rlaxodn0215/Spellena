@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
 namespace Player
 {
@@ -30,11 +31,14 @@ namespace Player
 
         public void OnTriggerEnter(Collider other)
         {
-            if (other.gameObject.layer == layerMask)
+            if (PhotonNetwork.IsMasterClient)
             {
-                contactObject = other.gameObject;
-                player.dimensionIO.CheckHold();
-                Debug.Log("적 투사체 충돌");
+                if (other.gameObject.layer == layerMask)
+                {
+                    contactObject = other.gameObject;
+                    player.dimensionIO.CheckHold();
+                    Debug.Log("적 투사체 충돌");
+                }
             }
         }
     }

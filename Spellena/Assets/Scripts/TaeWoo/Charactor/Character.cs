@@ -45,9 +45,12 @@ namespace Player
         public GameObject UI;
 
         //실시간 갱신 데이터
+        public int ID;              // view ID로 설정, Projectile 경우 해당 주인의 view ID로 설정
         public string playerName;
+        public string playerObjName;
         public string murder;
         public int hp;
+        //public int maxHp;
         public bool isOccupying = false;
 
         //데이터 베이스에서 받는 데이터들
@@ -104,6 +107,9 @@ namespace Player
 
         void Initialize()
         {
+            ID = GetComponent<PhotonView>().ViewID;
+            playerObjName = "Player_" + ID;
+            gameObject.name = playerObjName;
             animator = GetComponent<Animator>();
             rigidbody = GetComponent<Rigidbody>();
             Skills = new Dictionary<string, Ability>();
@@ -111,7 +117,9 @@ namespace Player
         protected virtual void Update()
         {
             if (PhotonNetwork.IsMasterClient)
+            {
                 isOccupying = false;
+            }
         }
 
         protected virtual void FixedUpdate()
@@ -174,6 +182,8 @@ namespace Player
         }
         void OnJump()
         {
+            if (playerActionDatas[(int)PlayerActionState.Jump].isExecuting) return;
+
             if (photonView.IsMine)
             {
                 if (grounded)
@@ -314,6 +324,7 @@ namespace Player
             if (stream.IsWriting)
             {
                 // 데이터를 보내는 부분
+                stream.SendNext(ID);
                 stream.SendNext(playerName);
                 stream.SendNext(murder);
                 stream.SendNext(hp);
@@ -328,6 +339,7 @@ namespace Player
             else
             {
                 // 데이터를 받는 부분
+                ID = (int)stream.ReceiveNext();
                 playerName = (string)stream.ReceiveNext();
                 murder = (string)stream.ReceiveNext();
                 hp = (int)stream.ReceiveNext();

@@ -1,15 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
-public class Test : MonoBehaviour
+public class Test : MonoBehaviourPunCallbacks,IPunObservable
 {
-    public GameObject temp;
 
-    private void OnEnable()
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
-        Debug.Log("Ω√¿€");
-        temp = null;
+        
     }
-
 }

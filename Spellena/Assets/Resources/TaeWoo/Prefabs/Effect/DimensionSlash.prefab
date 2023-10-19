@@ -112,11 +112,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 08393aa31b600e84da70ceed614d97e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ID: 0
+  direction: {x: 0, y: 0, z: 0}
+  owner: {fileID: 0}
   damage: 10
   lifeTime: 5
   Speed: 10
-  direction: {x: 0, y: 0, z: 0}
-  owner: {fileID: 0}
 --- !u!114 &67063335449727586
 MonoBehaviour:
   m_ObjectHideFlags: 0

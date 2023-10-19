@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Aeterna
   m_EditorClassIdentifier: 
   Hp: 100
-  moveSpeed: 0
+  moveSpeed: 3
   jumpHeight: 7
   basicAttackTime: 1
   skill1Time: 20

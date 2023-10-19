@@ -634,18 +634,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e622913e5114a5349b3b231a055f812f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerName: rlaxodn
-  Hp: 0
   charactor: 0
-  Sight: {fileID: 1420116632908713199}
-  groundRaycast: {fileID: 0}
+  sight: {fileID: 1420116632908713199}
   camera: {fileID: 1844791844}
   UI: {fileID: 338266740}
-  moveSpeed: 0
+  ID: 0
+  playerName: rlaxodn
+  playerObjName: 
+  murder: 
+  hp: 0
+  isOccupying: 0
+  sitSpeed: 0
+  walkSpeed: 0
+  runSpeed: 0
   jumpHeight: 0
   animator: {fileID: 0}
   rigidbody: {fileID: 0}
-  isOccupying: 0
   AeternaData: {fileID: 11400000, guid: 68088471f050fa74fb68919ed9133893, type: 2}
   DimensionSword: {fileID: 919132148892307835}
   DimensionSlash: {fileID: 2629910554034382192, guid: 228c79d47d0dc73499bfe6cff4b252eb, type: 3}
