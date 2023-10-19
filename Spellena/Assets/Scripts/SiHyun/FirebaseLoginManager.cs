@@ -2,15 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Firebase;
 using Firebase.Auth;
+using Firebase.Extensions;
 using UnityEngine.SceneManagement;
 using System;
 
 public class FirebaseLoginManager
 {
     private static FirebaseLoginManager instance = null;
-
     private string nickname;
+    private FirebaseAuth auth;
+    private FirebaseUser user;
 
     public static FirebaseLoginManager Instance
     {
@@ -24,8 +27,6 @@ public class FirebaseLoginManager
             return instance;
         }
     }
-    private FirebaseAuth auth;
-    private FirebaseUser user;
 
     public void Init()
     {
@@ -46,40 +47,36 @@ public class FirebaseLoginManager
             {
                 Debug.Log("로그아웃");
             }
-            user = auth.CurrentUser;
             if(signed)
             {
-                Firebase.Auth.FirebaseUser currentUser = auth.CurrentUser;
                 Debug.Log("로그인");
-                if(currentUser.DisplayName != null)
+                Firebase.Auth.FirebaseUser currentUser = auth.CurrentUser;
+                if (currentUser != null)
                 {
-                    SceneManager.LoadScene("SiHyun MainLobby Test");
-                }
-                else
-                {
-                    if (currentUser != null)
+                    Firebase.Auth.UserProfile profile = new Firebase.Auth.UserProfile
                     {
-                        Firebase.Auth.UserProfile profile = new Firebase.Auth.UserProfile
+                        DisplayName = nickname,
+                        PhotoUrl = new System.Uri("https://example.com/jane-q-user/profile.jpg"),
+                    };
+                    currentUser.UpdateUserProfileAsync(profile).ContinueWith(task =>
+                    {
+                        if (task.IsCanceled)
                         {
-                            DisplayName = nickname,
-                            PhotoUrl = new System.Uri("https://example.com/jane-q-user/profile.jpg"),
-                        };
-                        currentUser.UpdateUserProfileAsync(profile).ContinueWith(task => {
-                            if (task.IsCanceled)
-                            {
-                                Debug.LogError("UpdateUserProfileAsync was canceled.");
-                                return;
-                            }
-                            if (task.IsFaulted)
-                            {
-                                Debug.LogError("UpdateUserProfileAsync encountered an error: " + task.Exception);
-                                return;
-                            }
+                            Debug.LogError("UpdateUserProfileAsync was canceled.");
+                            return;
+                        }
+                        if (task.IsFaulted)
+                        {
+                            Debug.LogError("UpdateUserProfileAsync encountered an error: " + task.Exception);
+                            return;
+                        }
 
-                            Debug.Log("User profile updated successfully.");
-                        });
-                    }
+                        Debug.Log("User profile updated successfully.");
+                    });
                 }
+
+                SceneManager.LoadScene("SiHyun MainLobby Test");
+                   
             }
         }
     }
@@ -141,6 +138,7 @@ public class FirebaseLoginManager
 
     public FirebaseUser GetUser()
     {
+        user = auth.CurrentUser;
         return user;
     }
 
