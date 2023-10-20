@@ -65,12 +65,12 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": ""Sit"",
-                    ""type"": ""Button"",
+                    ""type"": ""Value"",
                     ""id"": ""fac7d23a-a706-4d21-89a4-f1497b9704f5"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
-                    ""initialStateCheck"": false
+                    ""initialStateCheck"": true
                 },
                 {
                     ""name"": ""Interaction"",

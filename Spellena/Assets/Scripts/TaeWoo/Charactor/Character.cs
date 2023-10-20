@@ -158,8 +158,6 @@ namespace Player
                 _temp.Normalize();
 
                 rigidbody.MovePosition(rigidbody.transform.position + _temp * walkSpeed * Time.deltaTime);
-                Debug.Log(_temp.x);
-                Debug.Log(_temp.z);
             }
 
             _temp = transform.InverseTransformVector(_temp);
@@ -217,7 +215,20 @@ namespace Player
 
         void OnSit()
         {
-
+            if(photonView.IsMine)
+            {
+                if (!playerActionDatas[(int)PlayerActionState.Sit].isExecuting)
+                {
+                    animator.SetBool("Sit", true);
+                    playerActionDatas[(int)PlayerActionState.Sit].isExecuting = true;
+                    animator.SetTrigger("SitTrigger");
+                }
+                else
+                {
+                    animator.SetBool("Sit", false);
+                    playerActionDatas[(int)PlayerActionState.Sit].isExecuting = false;
+                }
+            }
         }
 
         void OnInteraction()
