@@ -6,22 +6,44 @@ using Photon.Realtime;
 
 namespace Player
 {
-    public class DimensionSlash : Projectile
+    public class DimensionSlash : SpawnObject
     {
-        [HideInInspector]
         public Aeterna owner;
+        public int damage;
+        public int lifeTime;
+        public int Speed;
 
-        // Start is called before the first frame update
-        void OnEnable()
+        //public override void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+        //{
+        //    base.OnPhotonSerializeView(stream, info);
+
+        //    if (stream.IsWriting)
+        //    {
+        //        // 데이터를 보내는 부분
+        //        ID = (int)stream.ReceiveNext();
+        //        stream.SendNext(direction);
+        //    }
+
+        //    else
+        //    {
+        //        // 데이터를 받는 부분
+        //        ID = (int)stream.ReceiveNext();
+        //        direction = (Vector3)stream.ReceiveNext();
+        //    }
+        //}
+
+        void Start()
         {
-            if(owner !=null)
+            if (owner != null)
             {
-                if(owner.tag == "TeamA")
+                ID = owner.GetComponent<PhotonView>().ViewID;
+
+                if (owner.tag == "TeamA")
                 {
                     this.gameObject.layer = LayerMask.NameToLayer("ProjectileA");
                 }
 
-                else if(owner.tag == "TeamB")
+                else if (owner.tag == "TeamB")
                 {
                     this.gameObject.layer = LayerMask.NameToLayer("ProjectileB");
                 }
@@ -41,7 +63,7 @@ namespace Player
         }
 
         // Update is called once per frame
-        void Update()
+        public void Update()
         {
             Move();
         }
@@ -59,16 +81,18 @@ namespace Player
 
         private void OnTriggerEnter(Collider other)
         {
-            if (owner.tag == null || other.tag == null) return;
-
-            if (gameObject.layer.ToString() == "ProjectileA" && other.tag == "TeamB" ||
-                gameObject.layer.ToString() == "ProjectileB" && other.tag == "TeamA")
+            if (PhotonNetwork.IsMasterClient)
             {
-                other.gameObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBuffered, owner, damage);
-                Debug.Log("검기 맞음");
-                Destroy(gameObject);
-            }
+                if (owner.tag == null || other.tag == null) return;
 
+                if (gameObject.layer.ToString() == "ProjectileA" && other.tag == "TeamB" ||
+                    gameObject.layer.ToString() == "ProjectileB" && other.tag == "TeamA")
+                {
+                    other.gameObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBuffered, owner, damage);
+                    Debug.Log("검기 맞음");
+                    Destroy(gameObject);
+                }
+            }
         }
     }
 }

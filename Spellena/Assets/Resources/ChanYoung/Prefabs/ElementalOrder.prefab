@@ -4398,7 +4398,9 @@ MonoBehaviour:
   sight: {fileID: 3885861666223021207}
   camera: {fileID: 6490809957353702864}
   UI: {fileID: 1576312012722347700}
+  ID: 0
   playerName: ElementalOrderTester
+  playerObjName: 
   murder: 
   hp: 0
   isOccupying: 0

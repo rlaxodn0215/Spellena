@@ -638,7 +638,9 @@ MonoBehaviour:
   sight: {fileID: 1420116632908713199}
   camera: {fileID: 1844791844}
   UI: {fileID: 338266740}
+  ID: 0
   playerName: rlaxodn
+  playerObjName: 
   murder: 
   hp: 0
   isOccupying: 0

@@ -77,7 +77,7 @@ namespace Player
             enemyProjectile.transform.position = Player.camera.transform.position;
             if (Player.camera != null)
             {
-                enemyProjectile.GetComponent<Projectile>().direction = Player.camera.transform.localRotation * Vector3.forward;
+                enemyProjectile.GetComponent<SpawnObject>().direction = Player.camera.transform.localRotation * Vector3.forward;
             }
             enemyProjectile.SetActive(true);
             enemyProjectile = null;

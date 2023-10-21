@@ -226,6 +226,7 @@ namespace Player
                 {
                     if (skillButton == 0 && skillTimer[0] <= 0.0f)
                     {
+                        playerActionDatas[(int)PlayerActionState.BasicAttack].isExecuting = true;
                         Skills["BasicAttack"].Execution();
                         skillTimer[0] = AeternaData.basicAttackTime;
                         StartCoroutine(SkillTimer(0));
