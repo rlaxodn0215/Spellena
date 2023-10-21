@@ -71,8 +71,10 @@ namespace Player
         public RaycastHit hit;
 
         //임시 사용 데이터
-        protected Vector3 moveVec;
-        private bool grounded;
+        public Vector3 moveVec;
+        private bool isGrounded = false;
+        private bool isSitting = false;
+        private Vector3 cameraPos;
 
         // 체력 이나, 데미지, 죽음 같은 데이터는 마스터 클라인트만 처리하기. PhotonNetwork.isMasterClient
         private void Awake()
@@ -102,6 +104,7 @@ namespace Player
         protected virtual void Start()
         {
             Initialize();
+            cameraPos = camera.transform.position;
         }
 
         void Initialize()
@@ -116,13 +119,75 @@ namespace Player
         {
             if (PhotonNetwork.IsMasterClient)
             {
+                Debug.Log(name + " : " + isOccupying);
                 isOccupying = false;
+            }
+
+            if(photonView.IsMine)
+            {
+                animator.SetBool("Grounded", isGrounded);
+                if(isGrounded == true)
+                {
+                    if (playerActionDatas[(int)PlayerActionState.Sit].isExecuting == true)//땅에 있고 앉아있으면
+                    {
+                        if (animator.GetLayerWeight(2) < 0)
+                        {
+                            animator.SetLayerWeight(2, 0);
+                        }
+
+                        animator.SetLayerWeight(2, animator.GetLayerWeight(2) + Time.deltaTime * 8);
+                        animator.SetLayerWeight(1, animator.GetLayerWeight(1) - Time.deltaTime * 8);
+                        animator.SetLayerWeight(3, animator.GetLayerWeight(3) - Time.deltaTime * 8);
+
+                        if (animator.GetLayerWeight(2) > 1)
+                        {
+                            animator.SetLayerWeight(2, 1);
+                        }
+
+                    }
+                    else//땅에 있고 서있을 때
+                    {
+                        if (animator.GetLayerWeight(1) < 0)
+                        {
+                            animator.SetLayerWeight(1, 0);
+                        }
+
+                        animator.SetLayerWeight(1, animator.GetLayerWeight(1) + Time.deltaTime * 8);
+                        animator.SetLayerWeight(2, animator.GetLayerWeight(2) - Time.deltaTime * 8);
+                        animator.SetLayerWeight(3, animator.GetLayerWeight(3) - Time.deltaTime * 8);
+
+                        if (animator.GetLayerWeight(1) > 1)
+                        {
+                            animator.SetLayerWeight(1, 1);
+                        }
+
+                        
+                    }
+
+                }
+                else//공중에 있을 때
+                {
+                    if(animator.GetLayerWeight(3) < 0)
+                    {
+                        animator.SetLayerWeight(3, 0);
+                    }
+
+                    animator.SetLayerWeight(3, animator.GetLayerWeight(3) + Time.deltaTime * 8);
+                    animator.SetLayerWeight(2, animator.GetLayerWeight(2) - Time.deltaTime * 8);
+                    animator.SetLayerWeight(1, animator.GetLayerWeight(1) - Time.deltaTime * 8);
+
+                    if(animator.GetLayerWeight(3) > 1)
+                    {
+                        animator.SetLayerWeight(3, 1);
+                    }
+                }
+                Debug.Log(animator.GetLayerWeight(2));
             }
         }
 
         protected virtual void FixedUpdate()
         {
-            if (PhotonNetwork.IsMasterClient)
+            if(photonView.IsMine)
             {
                 PlayerMove();
             }
@@ -152,7 +217,6 @@ namespace Player
                 {
                     _temp -= transform.right;
                 }
-
                 _temp.Normalize();
 
                 rigidbody.MovePosition(rigidbody.transform.position + _temp * walkSpeed * Time.deltaTime);
@@ -163,7 +227,6 @@ namespace Player
             animator.SetInteger("VerticalSpeed", (int)moveVec.z);
             animator.SetInteger("HorizontalSpeed", (int)moveVec.x);
         }
-
 
         void OnMove(InputValue value)
         {
@@ -183,13 +246,9 @@ namespace Player
 
             if (photonView.IsMine)
             {
-                if (grounded)
+                if (isGrounded)
                 {
                     rigidbody.velocity = new Vector3(rigidbody.velocity.x, jumpHeight, rigidbody.velocity.z);
-                    playerActionDatas[(int)PlayerActionState.Jump].isExecuting = true;
-                    animator.SetTrigger("Jump");
-                    grounded = false;
-                    animator.SetBool("Grounded", grounded);
                 }
             }
         }
@@ -217,13 +276,10 @@ namespace Player
             {
                 if (!playerActionDatas[(int)PlayerActionState.Sit].isExecuting)
                 {
-                    animator.SetBool("Sit", true);
                     playerActionDatas[(int)PlayerActionState.Sit].isExecuting = true;
-                    animator.SetTrigger("SitTrigger");
                 }
                 else
                 {
-                    animator.SetBool("Sit", false);
                     playerActionDatas[(int)PlayerActionState.Sit].isExecuting = false;
                 }
             }
@@ -249,18 +305,28 @@ namespace Player
                     //PlayerDamaged(collision.gameObject.playerName,10);
                     //destory
                 }
+            }
+            
 
+            if(photonView.IsMine)
+            {
                 if (collision.gameObject.tag == "Ground")
                 {
-                    grounded = true;
-                    playerActionDatas[(int)PlayerActionState.Jump].isExecuting = false;
-                    animator.SetBool("Grounded", grounded);
+                    isGrounded = true;
                 }
             }
-
         }
 
-
+        private void OnCollisionExit(Collision collision)
+        {
+            if(photonView.IsMine)
+            {
+                if (collision.gameObject.tag == "Ground")
+                {
+                    isGrounded = false;
+                }
+            }
+        }
         void OnTriggerStay(Collider other)
         {
             if (PhotonNetwork.IsMasterClient)
@@ -291,7 +357,7 @@ namespace Player
 
         public void SetTagServer(string team)
         {
-            photonView.RPC("SetTag", RpcTarget.All, team);
+            photonView.RPC("SetTag", RpcTarget.AllBufferedViaServer, team);
         }
 
         [PunRPC]
@@ -333,7 +399,7 @@ namespace Player
             if (animator == null) return;
 
             animator.SetLookAtWeight(1f, 0.9f);
-            animator.SetLookAtPosition(sight.transform.position - new Vector3(0, 0.1f, 0));
+            animator.SetLookAtPosition(sight.transform.position);
         }
 
 
@@ -352,7 +418,7 @@ namespace Player
                     stream.SendNext(playerActionDatas[i].isExecuting);
                 }
                 stream.SendNext(moveVec);
-                stream.SendNext(grounded);
+                stream.SendNext(isGrounded);
             }
             else
             {
@@ -367,7 +433,7 @@ namespace Player
                     playerActionDatas[i].isExecuting = (bool)stream.ReceiveNext();
                 }
                 moveVec = (Vector3)stream.ReceiveNext();
-                grounded = (bool)stream.ReceiveNext();
+                isGrounded = (bool)stream.ReceiveNext();
             }
         }
 
