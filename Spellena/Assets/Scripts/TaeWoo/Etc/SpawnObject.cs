@@ -5,15 +5,21 @@ using Photon.Pun;
 
 namespace Player
 {
-    public class SpawnObject : MonoBehaviourPunCallbacks, IPunObservable
+    public class SpawnObject : MonoBehaviourPunCallbacks
     {
-        public int ID;                      // «ÿ¥Á player¿« viewID
-        public string objName;
+        protected object[] data;
         public Vector3 direction;
 
-        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+        public virtual void Start()
         {
-            
+            Init();
+        }
+
+        void Init()
+        {
+            data = GetComponent<PhotonView>().InstantiationData;
+            name = (string)data[0];
+            tag = (string)data[1];
         }
     }
 }

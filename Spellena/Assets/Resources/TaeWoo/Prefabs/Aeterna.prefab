@@ -528,10 +528,10 @@ MonoBehaviour:
   ShowLayerWeightsInspector: 1
   ShowParameterInspector: 1
   m_SynchronizeParameters:
-  - Type: 1
+  - Type: 3
     SynchronizeType: 1
     Name: VerticalSpeed
-  - Type: 1
+  - Type: 3
     SynchronizeType: 1
     Name: HorizontalSpeed
   - Type: 9
@@ -546,6 +546,15 @@ MonoBehaviour:
   - Type: 4
     SynchronizeType: 1
     Name: Run
+  - Type: 4
+    SynchronizeType: 1
+    Name: Mirror
+  - Type: 4
+    SynchronizeType: 1
+    Name: Sit
+  - Type: 9
+    SynchronizeType: 1
+    Name: SitTrigger
   m_SynchronizeLayers:
   - SynchronizeType: 1
     LayerIndex: 0
@@ -611,7 +620,7 @@ Animator:
   m_GameObject: {fileID: 5624648683831435768}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 023d5bc4dbea7a846b00a72ad279bb14, type: 3}
-  m_Controller: {fileID: 9100000, guid: cc5943cd540d99a4b9441bf3346feaec, type: 2}
+  m_Controller: {fileID: 9100000, guid: 4c705644af25be84a9c62a98e7b7199c, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0

@@ -30,9 +30,36 @@ namespace Player
 
         IEnumerator ShootSlash()
         {
-            yield return new WaitForSeconds(animator.GetCurrentAnimatorClipInfo(1).Length/1.5f);
-            dimensionSlash.GetComponent<DimensionSlash>().owner = Player;
-            PhotonNetwork.Instantiate("TaeWoo/Prefabs/Effect/" + dimensionSlash.name, Player.camera.transform.position, Player.transform.localRotation);
+            yield return new WaitForSeconds(animator.GetCurrentAnimatorClipInfo(1).Length / 1.5f);
+
+            if (PhotonNetwork.IsMasterClient)
+            {
+                SpawnSlash();
+            }
+
+            else
+            {
+                photonView.RPC("RequestSpawnSlash", RpcTarget.MasterClient);
+            }
+        }
+
+        [PunRPC]
+        public void RequestSpawnSlash()
+        {
+            if(PhotonNetwork.IsMasterClient)
+            {
+                SpawnSlash();
+            }
+        }
+
+        void SpawnSlash()
+        {
+            object[] data = new object[3];
+            data[0] = "Player_" + Player.ID +"_DimensionSlash";
+            data[1] = gameObject.tag;
+            data[2] = Player.camera.transform.localRotation;
+            PhotonNetwork.Instantiate("TaeWoo/Prefabs/Effect/" + dimensionSlash.name,
+                Player.camera.transform.position, Player.transform.localRotation, 0, data);
         }
 
         IEnumerator EndAttack()

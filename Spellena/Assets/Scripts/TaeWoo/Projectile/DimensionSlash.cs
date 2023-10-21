@@ -8,58 +8,30 @@ namespace Player
 {
     public class DimensionSlash : SpawnObject
     {
-        public Aeterna owner;
         public int damage;
         public int lifeTime;
         public int Speed;
 
-        //public override void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
-        //{
-        //    base.OnPhotonSerializeView(stream, info);
-
-        //    if (stream.IsWriting)
-        //    {
-        //        // 데이터를 보내는 부분
-        //        ID = (int)stream.ReceiveNext();
-        //        stream.SendNext(direction);
-        //    }
-
-        //    else
-        //    {
-        //        // 데이터를 받는 부분
-        //        ID = (int)stream.ReceiveNext();
-        //        direction = (Vector3)stream.ReceiveNext();
-        //    }
-        //}
-
-        void Start()
+        public override void Start()
         {
-            if (owner != null)
-            {
-                ID = owner.GetComponent<PhotonView>().ViewID;
-
-                if (owner.tag == "TeamA")
-                {
-                    this.gameObject.layer = LayerMask.NameToLayer("ProjectileA");
-                }
-
-                else if (owner.tag == "TeamB")
-                {
-                    this.gameObject.layer = LayerMask.NameToLayer("ProjectileB");
-                }
-            }
-
-            if(owner.camera !=null)
-                direction = owner.camera.transform.localRotation*Vector3.forward;
-
-            StartCoroutine(Gone());
-
+            base.Start();
+            direction = (Quaternion)data[2]*Vector3.forward;
         }
 
         IEnumerator Gone()
         {
             yield return new WaitForSeconds(lifeTime);
-            GetComponent<PhotonView>().RPC("Disappear", RpcTarget.AllBuffered);
+
+            if(PhotonNetwork.IsMasterClient)
+            {
+
+            }
+
+            else
+            {
+
+            }
+
         }
 
         // Update is called once per frame
@@ -74,9 +46,10 @@ namespace Player
         }
 
         [PunRPC]
-        public void Disappear()
+        public void DestorySlash()
         {
-            Destroy(gameObject);
+            if(PhotonNetwork.IsMasterClient)
+                Destroy(gameObject);
         }
 
         private void OnTriggerEnter(Collider other)

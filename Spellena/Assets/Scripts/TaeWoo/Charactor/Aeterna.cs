@@ -83,7 +83,6 @@ namespace Player
         {
             if (photonView.IsMine)
             {
-
                 foreach (KeyValuePair<string, Ability> keyValue in Skills)
                 {
                     Ability ability = keyValue.Value;

@@ -113,6 +113,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ID: 0
+  objName: 
   direction: {x: 0, y: 0, z: 0}
   owner: {fileID: 0}
   damage: 10

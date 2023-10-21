@@ -8,171 +8,207 @@ namespace Player
 {
     public class DimensionOpen : Ability
     {
+        //public enum Skill2State
+        //{
+        //    None,
+        //    IsActive,
+        //    IsDisActive,
+        //    Execution
+        //}
+
         public float maxDistance;
 
         private Aeterna Player;
-
-        private GameObject dimensionDoor;
-        public string dimensionDoorName;
-        private GameObject dimensionDoorGUI;
-        public string dimensionDoorGUIName;
-
         private Animator animator;
+        private GameObject dimensionDoor;
+        private GameObject dimensionDoorGUI;
+        //public Skill2State curState = Skill2State.None;
+        //public Skill2State updateState = Skill2State.None;
 
+        public Vector3 spawnPoint;
         private Ray ray;
         private RaycastHit hit;
         private bool isShowGUI = false;
         int layerMask;
 
-        public override void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
-        {
-            base.OnPhotonSerializeView(stream, info);
+        //public override void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+        //{
+        //    base.OnPhotonSerializeView(stream, info);
 
-            if (stream.IsWriting)
-            {
-                // 데이터를 보내는 부분
-                stream.SendNext(dimensionDoorName);
-                stream.SendNext(dimensionDoorGUIName);
-            }
+        //    if (stream.IsWriting)
+        //    {
+        //        //데이터를 보내는 부분
+        //        Debug.Log("Writing..");
+        //         stream.SendNext(spawnPoint);
+        //         stream.SendNext(curState);
+        //    }
 
-            else
-            {
-                // 데이터를 받는 부분
-                dimensionDoorName = (string)stream.ReceiveNext();
-                dimensionDoorGUIName = (string)stream.ReceiveNext();
-            }
-        }
+        //    else
+        //    {
+        //        // 데이터를 받는 부분
+        //        Debug.Log("Receiving..");
+        //        spawnPoint = (Vector3)stream.ReceiveNext();
+                
+        //        Skill2State updateState = (Skill2State)stream.ReceiveNext();
+        //        if(curState !=updateState)
+        //        {
+        //            switch (updateState)
+        //            {
+        //                case Skill2State.None:
+        //                    break;
+        //                case Skill2State.IsActive:
+        //                    photonView.RPC("IsActive",RpcTarget.AllBuffered);
+        //                    break;
+        //                case Skill2State.IsDisActive:
+        //                    photonView.RPC("IsDisActive", RpcTarget.AllBuffered);
+        //                    break;
+        //                case Skill2State.Execution:
+        //                    photonView.RPC("Execution", RpcTarget.AllBuffered);
+        //                    break;
+        //            }
+
+        //            curState = updateState;
+        //        }
+
+        //    }
+        //}
 
         public override void AddPlayer(Character player)
         {
             Player = (Aeterna)player;
-            ID = Player.ID;
-
-            if(photonView.IsMine)
-            {
-                dimensionDoorGUI = PhotonNetwork.Instantiate("TaeWoo/Prefabs/" + Player.DimensionDoorGUI.name, transform.position, Quaternion.identity);
-                
-                dimensionDoor = PhotonNetwork.Instantiate("TaeWoo/Prefabs/" + Player.DimensionDoor.name, transform.position, Quaternion.identity);
-            }
-
-            photonView.RPC("InitSkill", RpcTarget.All,ID);
-        }
-
-
-        [PunRPC]
-        void InitSkill(int id)
-        {
-            if (dimensionDoor == null || dimensionDoorGUI == null)
-            {
-                dimensionDoorGUI = GameObject.Find("Player_" + Player.ID + "_PortalGUI");
-                dimensionDoor = GameObject.Find("Player_" + Player.ID + "_Portal");
-            }
-
-            else
-            {
-                dimensionDoorGUIName = "Player_" + Player.ID + "_PortalGUI";
-                dimensionDoorName = "Player_" + Player.ID + "_Portal";
-            }
-
-            dimensionDoorGUI.GetComponent<SpawnObject>().ID =id;
-            dimensionDoor.GetComponent<SpawnObject>().ID = id;
 
             animator = Player.GetComponent<Animator>();
-            dimensionDoorGUI.tag = Player.gameObject.tag;
-            dimensionDoor.tag = Player.gameObject.tag;
-            dimensionDoor.GetComponent<DimensionDoor>().owner = Player;
-            //dimensionDoor.SetActive(false);
-            //dimensionDoorGUI.SetActive(false);
 
-            layerMask = ((1 << LayerMask.NameToLayer("Me")) |
-                        (1 << LayerMask.NameToLayer("Other")));  // Everything에서 Me, Other 레이어만 제외하고 충돌 체크함
-            layerMask = ~layerMask;
-        }
-
-
-        public override void Execution()
-        {
-            animator.SetTrigger("BasicAttack");
-
-            dimensionDoorGUI.SetActive(false);
-            Vector3 temp;
-
-            if (Physics.Raycast(ray, out hit, maxDistance, layerMask) && dimensionDoor)
+            if (photonView.IsMine)
             {
-                temp = hit.point;
+                layerMask = 1 << LayerMask.NameToLayer("Other");
             }
 
             else
             {
-                temp = ray.GetPoint(maxDistance);
+                layerMask = 1 << LayerMask.NameToLayer("Me");
             }
 
-            temp.y += 1;
+            layerMask = ~layerMask;
 
-            dimensionDoor.transform.parent = transform.parent;
-            dimensionDoor.SetActive(true);
-            dimensionDoor.transform.position = temp;
+        }
+
+        [PunRPC]
+        public override void Execution()
+        {
+            //updateState = Skill2State.Execution;
+
+            if (photonView.IsMine)
+            {
+                IsDisActive();
+
+
+                animator.SetTrigger("BasicAttack");
+
+                if (Physics.Raycast(ray, out hit, maxDistance, layerMask))
+                {
+                    spawnPoint = hit.point;
+                }
+
+                else
+                {
+                    spawnPoint = ray.GetPoint(maxDistance);
+                }
+
+                spawnPoint.y += 1;
+
+            }
+
+            object[] temp = new object[1];
+            temp[0] = "Player_" + ID + "_Potal";
+            dimensionDoor = PhotonNetwork.Instantiate("TaeWoo/Prefabs/Portal", spawnPoint, Quaternion.identity,0,temp);
+            dimensionDoor.tag = Player.gameObject.tag;
+            dimensionDoor.GetComponent<DimensionDoor>().owner = Player;
+            //PhotonNetwork.Instantiate()
+
             isShowGUI = false;
-            Debug.Log("DimensionOpen");
         }
 
         private void Update()
         {
             ShowGUI();
-            dimensionDoor.name = dimensionDoorName;
-            dimensionDoorGUI.name = dimensionDoorGUIName;
+
+            //if (curState == updateState) return;
+            //else
+            //{
+            //    switch (updateState)
+            //    {
+            //        case Skill2State.None:
+            //            break;
+            //        case Skill2State.IsActive:
+            //            IsActive();
+            //            break;
+            //        case Skill2State.IsDisActive:
+            //            IsDisActive();
+            //            break;
+            //        case Skill2State.Execution:
+            //            photonView.RPC("Execution", RpcTarget.AllBuffered);
+            //            break;
+            //    }
+            //    curState = updateState;
+            //}
         }
 
         public override void IsActive()
         {
-            if (dimensionDoorGUI)
+            //updateState = Skill2State.IsActive;
+
+            if (photonView.IsMine)
             {
+
                 ray = new Ray(Player.camera.transform.position, Player.camera.transform.forward);
-                Vector3 temp;
                 if (Physics.Raycast(ray, out hit, maxDistance,layerMask))
                 {
-                    temp = hit.point;
+                    spawnPoint = hit.point;
                 }
 
                 else
                 {
-                    temp = ray.GetPoint(maxDistance);
+                    spawnPoint = ray.GetPoint(maxDistance);
                 }
 
-                temp.y += 1;
-                dimensionDoorGUI.SetActive(true);
-                dimensionDoorGUI.transform.position = temp;
+                spawnPoint.y += 1;
+                dimensionDoorGUI = Instantiate(Player.DimensionDoorGUI, spawnPoint, Quaternion.identity);
+                dimensionDoorGUI.name = "Player_" + ID + "_PotalGUI";
+                dimensionDoorGUI.tag = Player.gameObject.tag;
+                isShowGUI = true;
             }
 
-            isShowGUI = true;
         }
 
         public override void IsDisActive()
         {
+            //updateState = Skill2State.IsDisActive;
+
             isShowGUI = false;
-            dimensionDoorGUI.SetActive(false);
+            Destroy(dimensionDoorGUI);
+            dimensionDoorGUI = null;
         }
 
 
         public void ShowGUI()
         {
-            if(isShowGUI && dimensionDoorGUI)
+            if(isShowGUI && photonView.IsMine)
             {
                 ray = new Ray(Player.camera.transform.position, Player.camera.transform.forward);
-                Vector3 temp;
 
                 if (Physics.Raycast(ray, out hit, maxDistance,layerMask))
                 {
-                    temp = hit.point;
+                    spawnPoint = hit.point;
                 }
 
                 else
                 {
-                    temp = ray.GetPoint(maxDistance);
+                    spawnPoint = ray.GetPoint(maxDistance);
                 }
 
-                temp.y += 1;
-                dimensionDoorGUI.transform.position = temp;
+                spawnPoint.y += 1;
+                dimensionDoorGUI.transform.position = spawnPoint;
             }
         }
 

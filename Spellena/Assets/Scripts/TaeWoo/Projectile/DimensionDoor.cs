@@ -16,7 +16,9 @@ namespace Player
 
         IEnumerator Start()
         {
-            ID = owner.GetComponent<PhotonView>().ViewID;
+            //ID = owner.GetComponent<PhotonView>().ViewID;
+            object[] data = GetComponent<PhotonView>().InstantiationData;
+            name = (string)data[0];
 
             layerMask = ((1 << LayerMask.NameToLayer("Me")) |
                         (1 << LayerMask.NameToLayer("Other")));
