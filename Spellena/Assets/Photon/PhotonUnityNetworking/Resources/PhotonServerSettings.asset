@@ -47,6 +47,11 @@ MonoBehaviour:
   - Initalize
   - InitSkill
   - MakeParent
+  - PlayerMove
+  - PlayerJump
+  - UseJumpAnimationTrigger
+  - SetJumpTrigger
+  - SetTriggerRPC
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

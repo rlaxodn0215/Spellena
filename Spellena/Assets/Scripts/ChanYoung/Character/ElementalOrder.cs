@@ -53,16 +53,6 @@ namespace Player
 
         private void Initialize()
         {
-            RagnaEdge ragnaEdge = this.gameObject.AddComponent<RagnaEdge>();
-            Skills["RagnaEdge"] = ragnaEdge;
-
-            skillTimer = new float[Skills.Count];
-
-            for(int i = 0; i < Skills.Count; i++)
-            {
-                skillTimer[i] = -1;
-            }
-
             hp = elementalOrderData.Hp;
             walkSpeed = elementalOrderData.moveSpeed;
             jumpHeight = elementalOrderData.jumpHeight;
