@@ -20,8 +20,8 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     public float timeBetweenUpdates = 1.5f;
     float nextUpdateTime;
 
-    public List<PlayerItem> playerItemList = new List<PlayerItem>();
     public PlayerItem playerItemPrefab;
+    List<PlayerItem> playerItemList = new List<PlayerItem>();
     public Transform playerItemParent;
 
     private void Start()
@@ -109,6 +109,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         foreach(KeyValuePair<int, Photon.Realtime.Player> player in PhotonNetwork.CurrentRoom.Players)
         {
             PlayerItem newPlayerItem = Instantiate(playerItemPrefab, playerItemParent);
+            newPlayerItem.SetPlayerInfo(player.Value);
             playerItemList.Add(newPlayerItem);
         }
 
