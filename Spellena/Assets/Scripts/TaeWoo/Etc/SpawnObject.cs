@@ -7,6 +7,7 @@ namespace Player
 {
     public class SpawnObject : MonoBehaviourPunCallbacks
     {
+        public int ID;
         protected object[] data;
         public Vector3 direction;
 
@@ -18,8 +19,34 @@ namespace Player
         void Init()
         {
             data = GetComponent<PhotonView>().InstantiationData;
-            name = (string)data[0];
-            tag = (string)data[1];
+
+            if (data != null)
+            {
+                ID = (int)data[0];
+                tag = (string)data[1];
+            }
+
+            if(CompareTag("TeamA") || CompareTag("TeamB"))
+            {
+                gameObject.layer = LayerMask.NameToLayer(tag);
+            }
+
+            gameObject.name = "Player_" + ID + "_Portal";
+        }
+
+        [PunRPC]
+        public void RequestDestorySpawnObject()
+        {
+            if (PhotonNetwork.IsMasterClient)
+            {
+                DestorySpawnObject();
+            }
+        }
+
+        public void DestorySpawnObject()
+        {
+            if(gameObject !=null)
+                PhotonNetwork.Destroy(gameObject);
         }
     }
 }

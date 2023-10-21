@@ -17,7 +17,7 @@ MonoBehaviour:
   jumpHeight: 7
   basicAttackTime: 1
   skill1Time: 20
-  skill1DoorRange: 5
+  skill1DoorRange: 10
   skill2DurationTime: 5
   skill2HoldTime: 10
   skill2CoolTime: 15

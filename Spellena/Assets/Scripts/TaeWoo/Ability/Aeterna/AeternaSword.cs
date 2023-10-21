@@ -5,7 +5,6 @@ using Photon.Pun;
 
 namespace Player
 {
-
     public class AeternaSword : MonoBehaviour
     {
         [HideInInspector]
@@ -13,32 +12,46 @@ namespace Player
         [HideInInspector]
         public Aeterna player;
 
-        private LayerMask layerMask;
+        public int damage;
+        private LayerMask enemyLayerMask;
+
         private void Start()
         {
             player = transform.root.gameObject.GetComponent<Aeterna>();
 
-            if (CompareTag("TeamA"))
+            if(CompareTag("TeamA"))
             {
-                layerMask = 1 << LayerMask.NameToLayer("ProjectileB");
+                enemyLayerMask = LayerMask.NameToLayer("TeamB");
             }
 
-            else if (CompareTag("TeamB"))
+            else if(CompareTag("TeamB"))
             {
-                layerMask = 1 << LayerMask.NameToLayer("ProjectileA");
+                enemyLayerMask = LayerMask.NameToLayer("TeamA");
             }
+            
         }
 
         public void OnTriggerEnter(Collider other)
         {
             if (PhotonNetwork.IsMasterClient)
             {
-                if (other.gameObject.layer == layerMask)
-                {
-                    contactObject = other.gameObject;
-                    player.dimensionIO.CheckHold();
-                    Debug.Log("적 투사체 충돌");
-                }
+                //player.GetComponent<PhotonView>().RPC("PlayerDamaged",)
+
+                //if(player.skill2Phase==0)
+                //{
+
+                //}
+                //if (other.gameObject.layer == layerMask)
+                //{
+                //    contactObject = other.gameObject;
+                //    player.dimensionIO.CheckHold();
+                //    Debug.Log("적 투사체 충돌");
+                //}
+            }
+
+            else
+            {
+
             }
         }
     }

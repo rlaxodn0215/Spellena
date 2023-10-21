@@ -24,12 +24,14 @@ namespace Player
             switch (phase)
             {
                 case 0:
-                    OnDuration();
                     break;
                 case 1:
-                    OnHoldShoot();
+                    OnDuration();
                     break;
                 case 2:
+                    OnHoldShoot();
+                    break;
+                case 3:
                     OnCooling();
                     break;
 
@@ -65,7 +67,7 @@ namespace Player
 
             StopCoroutine(Player.SkillTimer(2));
 
-            Player.skill2Phase = 1;
+            Player.skill2Phase = 2;
             Player.playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = false;
 
             Player.skillTimer[2] = Player.AeternaData.skill2HoldTime;

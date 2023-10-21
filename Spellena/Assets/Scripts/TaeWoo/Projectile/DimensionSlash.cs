@@ -15,7 +15,9 @@ namespace Player
         public override void Start()
         {
             base.Start();
+            name = "Player_" + ID + "_DimensionSlash";
             direction = (Quaternion)data[2]*Vector3.forward;
+            StartCoroutine(Gone());
         }
 
         IEnumerator Gone()
@@ -24,15 +26,16 @@ namespace Player
 
             if(PhotonNetwork.IsMasterClient)
             {
-
+                DestorySpawnObject();
             }
 
             else
             {
-
+                photonView.RPC("RequestDestorySpawnObject", RpcTarget.MasterClient);
             }
 
         }
+        
 
         // Update is called once per frame
         public void Update()
@@ -45,25 +48,20 @@ namespace Player
             transform.Translate(direction * Speed * Time.deltaTime);
         }
 
-        [PunRPC]
-        public void DestorySlash()
-        {
-            if(PhotonNetwork.IsMasterClient)
-                Destroy(gameObject);
-        }
-
         private void OnTriggerEnter(Collider other)
         {
             if (PhotonNetwork.IsMasterClient)
             {
-                if (owner.tag == null || other.tag == null) return;
-
-                if (gameObject.layer.ToString() == "ProjectileA" && other.tag == "TeamB" ||
-                    gameObject.layer.ToString() == "ProjectileB" && other.tag == "TeamA")
+                if(CompareTag("TeamA") && other.CompareTag("TeamB") || CompareTag("TeamB") && other.CompareTag("TeamA"))
                 {
-                    other.gameObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBuffered, owner, damage);
-                    Debug.Log("검기 맞음");
-                    Destroy(gameObject);
+                    if(other.GetComponent<Character>())
+                        other.gameObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBuffered, ID.ToString(), damage);
+                    DestorySpawnObject();
+                }
+
+                else if(CompareTag("Ground"))
+                {
+                    DestorySpawnObject();
                 }
             }
         }

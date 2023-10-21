@@ -7,69 +7,127 @@ namespace Player
 {
     public class DimensionDoor : SpawnObject
     {
-        public Aeterna owner;
         public int lifeTime;
-        public int range;
+        public float range;
         public int deBuffNum;
+        private LayerMask enemyLayerMask;
+        private List<string> playerInArea;
 
-        private LayerMask layerMask;
-
-        IEnumerator Start()
+        public override void Start()
         {
-            //ID = owner.GetComponent<PhotonView>().ViewID;
-            object[] data = GetComponent<PhotonView>().InstantiationData;
-            name = (string)data[0];
+            base.Start();
 
-            layerMask = ((1 << LayerMask.NameToLayer("Me")) |
-                        (1 << LayerMask.NameToLayer("Other")));
-            layerMask = ~layerMask;
+            if(CompareTag("TeamA"))
+                enemyLayerMask = LayerMask.NameToLayer("TeamB");
+            else if(CompareTag("TeamB"))
+                enemyLayerMask = LayerMask.NameToLayer("TeamA");
 
-            yield return new WaitForSeconds(lifeTime);
-
-            //transform.parent = owner.transform;
-            //gameObject.SetActive(false);
+            playerInArea = new List<string>();
+            GetComponent<SphereCollider>().radius = range;
         }
 
-        // Update is called once per frame
-        void Update()
+        public void OnTriggerEnter(Collider other)
         {
-            Collider[] objs = Physics.OverlapSphere(transform.position, range,layerMask);
+            Debug.Log("Portal_Enter");
 
-            if (objs == null || owner == null) return;
-            
-            if (owner.CompareTag("TeamA"))
+            if (other.tag == LayerMask.LayerToName(enemyLayerMask))
             {
-                foreach(Collider obj in objs)
+                if (other.gameObject.layer == enemyLayerMask)
                 {
-                   if(obj.CompareTag("TeamB"))
-                   {
-                        obj.GetComponent<PhotonView>().RPC("Disappear", RpcTarget.AllBuffered);
-                   }
-
-                   if(obj.gameObject.layer == LayerMask.NameToLayer("ProjectileB"))
-                   {
-                        obj.GetComponent<PhotonView>().RPC("SlowDown", RpcTarget.AllBuffered,deBuffNum);
-                   }
-                }
-
-            }
-
-            else if (owner.CompareTag("TeamB"))
-            {
-                foreach (Collider obj in objs)
-                {
-                    if (obj.CompareTag("TeamA"))
+                    if (PhotonNetwork.IsMasterClient)
                     {
-                        obj.GetComponent<PhotonView>().RPC("Disappear", RpcTarget.AllBuffered);
+                        //other.gameObject.GetComponent<SpawnObject>().DestorySpawnObject();
                     }
 
-                    if (obj.gameObject.layer == LayerMask.NameToLayer("ProjectileA"))
+                    else
                     {
-                        obj.GetComponent<PhotonView>().RPC("SlowDown", RpcTarget.AllBuffered,deBuffNum);
+                        //other.gameObject.GetComponent<PhotonView>().RPC("DestorySpawnObject", RpcTarget.MasterClient);
+                    }
+                }
+
+                else
+                {
+                    if (PhotonNetwork.IsMasterClient)
+                    {
+                        DeBuff(ID);
+                    }
+
+                    else
+                    {
+                        photonView.RPC("RequestDeBuff", RpcTarget.MasterClient, ID);
                     }
                 }
             }
-            
+        }
+
+        public void OnTriggerExit(Collider other)
+        {
+            Debug.Log("Portal_Exit");
+
+            if (other.tag == LayerMask.LayerToName(enemyLayerMask))
+            {
+                  if (PhotonNetwork.IsMasterClient)
+                  {
+                      EnBuff(ID);
+                  }
+
+                  else
+                  {
+                      photonView.RPC("RequestEnBuff", RpcTarget.MasterClient, ID);
+                  }
+                
+            }
+        }
+
+        [PunRPC]
+        public void RequestDeBuff(int Id)
+        {
+            if (PhotonNetwork.IsMasterClient)
+            {
+                DeBuff(Id);
+            }
+        }
+
+        [PunRPC]
+        public void RequestEnBuff(int Id)
+        {
+            if (PhotonNetwork.IsMasterClient)
+            {
+                EnBuff(Id);
+            }
+        }
+
+        void DeBuff(int Id)
+        {
+            GameObject temp = GameObject.Find("Player_" + Id);
+            if (temp == null) return;
+
+            foreach(string player in playerInArea)
+            {
+                if (player == temp.name) return;
+            }
+
+            playerInArea.Add(temp.name);
+            temp.GetComponent<Character>().walkSpeed -= deBuffNum;
+            temp.GetComponent<Character>().runSpeed -= deBuffNum;
+            temp.GetComponent<Character>().jumpHeight -= deBuffNum;
+        }
+
+        void EnBuff(int Id)
+        {
+            GameObject temp = GameObject.Find("Player_" + Id);
+            if (temp == null) return;
+
+            foreach (string player in playerInArea)
+            {
+                if (player == temp.name)
+                {
+                    temp.GetComponent<Character>().walkSpeed += deBuffNum;
+                    temp.GetComponent<Character>().runSpeed += deBuffNum;
+                    temp.GetComponent<Character>().jumpHeight += deBuffNum;
+                    playerInArea.Remove(player);
+                }
+            }
         }
 
     }

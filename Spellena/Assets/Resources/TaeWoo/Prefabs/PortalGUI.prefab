@@ -9696,9 +9696,8 @@ GameObject:
   - component: {fileID: 448824}
   - component: {fileID: 5570573069764848385}
   - component: {fileID: 7871675074033849233}
-  - component: {fileID: 4788258608476216749}
-  - component: {fileID: 5894710109240806410}
   - component: {fileID: 2898652959592210285}
+  - component: {fileID: -2236781018202080305}
   m_Layer: 0
   m_Name: PortalGUI
   m_TagString: Untagged
@@ -14583,7 +14582,21 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     vectorLabel1_3: W
---- !u!114 &4788258608476216749
+--- !u!114 &2898652959592210285
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 185454}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0991fddd19f60a47ae271fafc9ea47a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ID: 0
+  direction: {x: 0, y: 0, z: 0}
+--- !u!114 &-2236781018202080305
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -14601,43 +14614,10 @@ MonoBehaviour:
   Synchronization: 3
   OwnershipTransfer: 0
   observableSearch: 2
-  ObservedComponents:
-  - {fileID: 5894710109240806410}
-  - {fileID: 2898652959592210285}
+  ObservedComponents: []
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
---- !u!114 &5894710109240806410
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 185454}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SynchronizePosition: 1
-  m_SynchronizeRotation: 1
-  m_SynchronizeScale: 0
-  m_UseLocal: 1
---- !u!114 &2898652959592210285
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 185454}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b0991fddd19f60a47ae271fafc9ea47a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ID: 0
-  objName: 
-  direction: {x: 0, y: 0, z: 0}
 --- !u!1 &1831460624577221402
 GameObject:
   m_ObjectHideFlags: 0

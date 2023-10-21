@@ -464,7 +464,7 @@ GameObject:
   - component: {fileID: 683120009}
   m_Layer: 0
   m_Name: Aeterna
-  m_TagString: TeamA
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -649,7 +649,6 @@ MonoBehaviour:
   UI: {fileID: 338266740}
   ID: 0
   playerName: rlaxodn
-  playerObjName: 
   murder: 
   hp: 0
   isOccupying: 0
@@ -823,6 +822,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   contactObject: {fileID: 0}
   player: {fileID: 0}
+  damage: 0
 --- !u!1001 &5624648683022572001
 PrefabInstance:
   m_ObjectHideFlags: 0

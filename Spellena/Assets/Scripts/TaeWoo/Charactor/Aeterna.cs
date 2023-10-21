@@ -30,7 +30,7 @@ namespace Player
         // 3 : ½ºÅ³ 3
         // 4 : ½ºÅ³ 4 (±Ã±Ø±â)
 
-        public int skill2Phase = 0; // 0: duration, 1: hold, 2: cool
+        public int skill2Phase = 0; // 0: None 1: duration, 2: hold, 3: cool
         private bool isDoing = false;
 
         protected override void Start() 
@@ -175,7 +175,6 @@ namespace Player
         {
             if (photonView.IsMine)
             {
-
                 if (skillButton == 1 && skillTimer[1] <= 0.0f)
                 {
                     Skills["Skill1"].Execution();
@@ -191,12 +190,14 @@ namespace Player
                         switch (skill2Phase)
                         {
                             case 0:
+                                break;
+                            case 1:
                                 skillTimer[2] = AeternaData.skill2DurationTime;
                                 playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = true;
                                 isDoing = true;
                                 StartCoroutine(SkillTimer(2));
                                 break;
-                            case 1:
+                            case 2:
                                 if (skillTimer[2] >= 0.0f)
                                     Skills["Skill2"].Execution(ref skill2Phase);
                                 else
@@ -204,7 +205,7 @@ namespace Player
                                 playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = true;
                                 StartCoroutine(SkillTimer(2));
                                 break;
-                            case 2:
+                            case 3:
                                 skillTimer[2] = AeternaData.skill2CoolTime;
                                 playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = true;
                                 StartCoroutine(SkillTimer(2));

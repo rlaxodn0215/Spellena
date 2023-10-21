@@ -47,7 +47,6 @@ namespace Player
         //실시간 갱신 데이터
         public int ID;              // view ID로 설정, Projectile 경우 해당 주인의 view ID로 설정
         public string playerName;
-        public string playerObjName;
         public string murder;
         public int hp;
         //public int maxHp;
@@ -108,8 +107,7 @@ namespace Player
         void Initialize()
         {
             ID = GetComponent<PhotonView>().ViewID;
-            playerObjName = "Player_" + ID;
-            gameObject.name = playerObjName;
+            gameObject.name = "Player_" + ID;
             animator = GetComponent<Animator>();
             rigidbody = GetComponent<Rigidbody>();
             Skills = new Dictionary<string, Ability>();
@@ -299,12 +297,19 @@ namespace Player
         [PunRPC]
         protected void SetTag(string team)
         {
-            this.gameObject.tag = team;
+            Transform[] allChildren = GetComponentsInChildren<Transform>();
+
+            foreach (Transform child in allChildren)
+            {
+                child.gameObject.tag = team;
+            }
         }
 
+        [PunRPC]
         public void PlayerDamaged(string enemy ,int damage)
         {
             hp-=damage;
+
             if (hp <= 0)
             {
                 // 투척 무기에 쏜 사람 이름 저장
@@ -314,7 +319,8 @@ namespace Player
                 // 죽은 것 서버에 연락 
                 //GetComponent<PhotonView>().RPC("TakeDamage", RpcTarget.AllBuffered, );
             }
-            Debug.Log("맞는것 확인");
+
+            Debug.Log("Player Damaged_EnemyID: " + enemy);
         }
 
         private void OnAnimatorIK()
