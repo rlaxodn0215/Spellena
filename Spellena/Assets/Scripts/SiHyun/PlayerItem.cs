@@ -14,14 +14,22 @@ public class PlayerItem : MonoBehaviour
     public GameObject leftArrowButton;
     public GameObject rightArrowButton;
 
+    // Start is called before the first frame update
+    void Start()
+    {
+        backgroundImage = GetComponent<Image>();   
+        
+    }
     public void SetPlayerInfo(Photon.Realtime.Player _player)
     {
         playerName.text = _player.NickName;
     }
-    // Start is called before the first frame update
-    void Start()
+
+    public void ApplyLocalChanges()
     {
-        
+        backgroundImage.color = highlightColor;
+        leftArrowButton.SetActive(true);
+        rightArrowButton.SetActive(false);
     }
 
     // Update is called once per frame
