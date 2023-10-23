@@ -37,10 +37,8 @@ namespace Player
         [PunRPC]
         public void RequestDestorySpawnObject()
         {
-            if (PhotonNetwork.IsMasterClient)
-            {
-                DestorySpawnObject();
-            }
+            if(PhotonNetwork.IsMasterClient)
+                DestorySpawnObject(); 
         }
 
         public void DestorySpawnObject()

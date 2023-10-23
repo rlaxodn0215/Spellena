@@ -46,10 +46,7 @@ namespace Player
         [PunRPC]
         public void RequestSpawnSlash()
         {
-            if(PhotonNetwork.IsMasterClient)
-            {
-                SpawnSlash();
-            }
+            SpawnSlash(); 
         }
 
         void SpawnSlash()

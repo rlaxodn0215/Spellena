@@ -55,7 +55,7 @@ namespace Player
         //데이터 베이스에서 받는 데이터들
         [HideInInspector]
         public float sitSpeed;
-        [HideInInspector]
+        //[HideInInspector]
         public float walkSpeed;
         [HideInInspector]
         public float runSpeed;
@@ -119,8 +119,9 @@ namespace Player
         {
             if (PhotonNetwork.IsMasterClient)
             {
-                Debug.Log(name + " : " + isOccupying);
+                //Debug.Log(name + " : " + isOccupying);
                 isOccupying = false;
+                //Debug.Log("walkSpeed : " + walkSpeed);
             }
 
             if(photonView.IsMine)
@@ -181,7 +182,7 @@ namespace Player
                         animator.SetLayerWeight(3, 1);
                     }
                 }
-                Debug.Log(animator.GetLayerWeight(2));
+                //Debug.Log(animator.GetLayerWeight(2));
             }
         }
 
