@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Realtime;
+using UnityEngine.SceneManagement;
 
 public class LobbyManager : MonoBehaviourPunCallbacks
 
@@ -13,15 +14,16 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     public GameObject roomPanel;
     public Text roomName;
 
-    public RoomItem roomItemPrefab;
     List<RoomItem> roomItemList = new List<RoomItem>();
+    public RoomItem roomItemPrefab;
     public Transform contentObjects;
 
     public float timeBetweenUpdates = 1.5f;
     float nextUpdateTime;
 
+    List<PlayerItem> playerItemListA = new List<PlayerItem>();
+    List<PlayerItem> playerItemListB = new List<PlayerItem>();
     public PlayerItem playerItemPrefab;
-    List<PlayerItem> playerItemList = new List<PlayerItem>();
     public Transform playerItemParent;
 
     private void Start()
@@ -95,31 +97,87 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
     void UpdatePlayerList()
     {
-        foreach(PlayerItem item in playerItemList)
+        foreach (PlayerItem item in playerItemListA)
+        {
+            Destroy(item.gameObject);
+        }
+        playerItemListA.Clear();
+
+        if (PhotonNetwork.CurrentRoom == null)
+        {
+            return;
+        }
+
+        foreach (KeyValuePair<int, Photon.Realtime.Player> player in PhotonNetwork.CurrentRoom.Players)
+        {
+            PlayerItem newPlayerItem = Instantiate(playerItemPrefab, playerItemParent);
+            newPlayerItem.SetPlayerInfo(player.Value);
+
+            if (player.Value == PhotonNetwork.LocalPlayer)
+            {
+                newPlayerItem.ApplyLocalChanges();
+            }
+
+            playerItemListA.Add(newPlayerItem);
+        }
+
+    }
+
+    enum Team
+    {
+        TeamA,
+        TeamB
+    }
+
+
+    void UpdatePlayerListTest()
+    {
+        List<PlayerItem> playerItemList;
+        Transform playerItemParent;
+
+        if (teamToUpdate == Team.TeamA)
+        {
+            playerItemList = playerItemListA;
+            playerItemParent = playerItemParentA;
+        }
+        else if (teamToUpdate == Team.TeamB)
+        {
+            playerItemList = playerItemListB;
+            playerItemParent = playerItemParentB;
+        }
+        else
+        {
+            Debug.LogError("유효하지 않은 팀입니다.");
+            return;
+        }
+
+        // 이동할 팀의 기존 아이템 삭제
+        foreach (PlayerItem item in playerItemList)
         {
             Destroy(item.gameObject);
         }
         playerItemList.Clear();
 
-        if(PhotonNetwork.CurrentRoom == null)
+        if (PhotonNetwork.CurrentRoom == null)
         {
             return;
         }
 
-        foreach(KeyValuePair<int, Photon.Realtime.Player> player in PhotonNetwork.CurrentRoom.Players)
+        // PhotonNetwork.CurrentRoom.Players를 기반으로 팀 A 또는 팀 B의 아이템 생성
+        foreach (KeyValuePair<int, Photon.Realtime.Player> player in PhotonNetwork.CurrentRoom.Players)
         {
             PlayerItem newPlayerItem = Instantiate(playerItemPrefab, playerItemParent);
             newPlayerItem.SetPlayerInfo(player.Value);
 
-            if(player.Value == PhotonNetwork.LocalPlayer)
+            if (player.Value == PhotonNetwork.LocalPlayer)
             {
                 newPlayerItem.ApplyLocalChanges();
             }
 
             playerItemList.Add(newPlayerItem);
         }
-
     }
+
 
     public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
     {
@@ -131,4 +189,25 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         UpdatePlayerList();
     }
 
+
+    private void Update()
+    {
+        if (lobbyPanel.activeSelf)
+        {
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                SceneManager.LoadScene("SiHyun MainLobby Test");
+            }
+        }
+    }
+
+    public List<PlayerItem> GetListA()
+    {
+        return playerItemListA;
+    }
+
+    public List<PlayerItem> GetListB()
+    {
+        return playerItemListB;
+    }
 }

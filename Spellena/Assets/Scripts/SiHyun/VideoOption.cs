@@ -77,17 +77,18 @@ public class VideoOption : MonoBehaviour
         resolutionCheckPanel.SetActive(true);
     }
 
-    public void FullScreenBtn(int x)
+    public void FullScreenBtn()
     {
-        if(x == 0)
+        int _x = fullScreenDropdown.value;
+        if (_x == 0)
         {
             screenMode = FullScreenMode.FullScreenWindow;
         }
-        else if(x == 1)
+        else if(_x == 1)
         {
             screenMode = FullScreenMode.Windowed;
         }
-        else if(x == 2)
+        else if(_x == 2)
         {
             screenMode = FullScreenMode.ExclusiveFullScreen;
         }

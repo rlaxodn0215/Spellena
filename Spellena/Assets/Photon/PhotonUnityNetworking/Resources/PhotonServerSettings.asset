@@ -52,6 +52,12 @@ MonoBehaviour:
   - UseJumpAnimationTrigger
   - SetJumpTrigger
   - SetTriggerRPC
+  - Execution
+  - RequestDeBuff
+  - RequestDestorySpawnObject
+  - RequestEnBuff
+  - RequestSpawnPortal
+  - RequestSpawnSlash
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1
