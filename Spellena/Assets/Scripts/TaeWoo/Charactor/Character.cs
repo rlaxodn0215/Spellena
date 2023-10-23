@@ -75,6 +75,8 @@ namespace Player
         private bool isGrounded = false;
         private bool isSitting = false;
         private Vector3 cameraPos;
+        private Transform avatarForOther;
+        private Transform avatarForMe;
 
         // 체력 이나, 데미지, 죽음 같은 데이터는 마스터 클라인트만 처리하기. PhotonNetwork.isMasterClient
         private void Awake()
@@ -119,7 +121,6 @@ namespace Player
         {
             if (PhotonNetwork.IsMasterClient)
             {
-                Debug.Log(name + " : " + isOccupying);
                 isOccupying = false;
             }
 
@@ -181,7 +182,6 @@ namespace Player
                         animator.SetLayerWeight(3, 1);
                     }
                 }
-                Debug.Log(animator.GetLayerWeight(2));
             }
         }
 
@@ -345,10 +345,17 @@ namespace Player
             {
                 GetComponent<PlayerInput>().enabled = true;
                 camera.SetActive(true);
-                Transform _temp = transform.GetChild(0).GetChild(0);
-                for (int i = 0; i < _temp.childCount; i++)
+                avatarForOther = transform.GetChild(0).GetChild(0);//다른 사람들이 보는 자신의 아바타
+                avatarForMe = transform.GetChild(1).GetChild(0);//자신이 보는 자신의 아바타
+                for (int i = 0; i < avatarForOther.childCount; i++)
                 {
-                    _temp.GetChild(i).gameObject.layer = LayerMask.NameToLayer("Me");
+                    avatarForOther.GetChild(i).gameObject.layer = LayerMask.NameToLayer("Me");
+                    avatarForOther.GetChild(i).gameObject.GetComponent<SkinnedMeshRenderer>().enabled = false;
+                }
+
+                for(int i = 0; i < avatarForMe.childCount; i++)
+                {
+                    avatarForMe.GetChild(i).gameObject.layer = LayerMask.NameToLayer("OverlayCamera");
                 }
 
                 UI.SetActive(true);

@@ -47,12 +47,12 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": ""MouseButton"",
-                    ""type"": ""Button"",
+                    ""type"": ""Value"",
                     ""id"": ""c688387f-6e32-457f-b9d8-80f705424874"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
-                    ""initialStateCheck"": false
+                    ""initialStateCheck"": true
                 },
                 {
                     ""name"": ""Run"",
