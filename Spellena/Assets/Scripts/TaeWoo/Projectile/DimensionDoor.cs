@@ -16,6 +16,7 @@ namespace Player
         public override void Start()
         {
             base.Start();
+            Debug.Log(tag);
 
             if(CompareTag("TeamA"))
                 enemyLayerMask = LayerMask.NameToLayer("TeamB");
@@ -49,12 +50,13 @@ namespace Player
                 {
                     if (PhotonNetwork.IsMasterClient)
                     {
-                        DeBuff(ID);
+                        DeBuff(other.transform.root.GetComponent<Character>().ID);
                     }
 
                     else
                     {
-                        photonView.RPC("RequestDeBuff", RpcTarget.MasterClient, ID);
+                        Debug.Log("DeBuff_RPC");
+                        photonView.RPC("RequestDeBuff", RpcTarget.AllBuffered, other.transform.root.GetComponent<Character>().ID);
                     }
                 }
             }
@@ -66,14 +68,16 @@ namespace Player
 
             if (other.tag == LayerMask.LayerToName(enemyLayerMask))
             {
+                    Debug.Log("EnBuff_RPC");
+
                   if (PhotonNetwork.IsMasterClient)
                   {
-                      EnBuff(ID);
+                      EnBuff(other.transform.root.GetComponent<Character>().ID);
                   }
 
                   else
                   {
-                      photonView.RPC("RequestEnBuff", RpcTarget.MasterClient, ID);
+                    photonView.RPC("RequestEnBuff", RpcTarget.AllBuffered, other.transform.root.GetComponent<Character>().ID);
                   }
                 
             }
@@ -82,23 +86,18 @@ namespace Player
         [PunRPC]
         public void RequestDeBuff(int Id)
         {
-            if (PhotonNetwork.IsMasterClient)
-            {
-                DeBuff(Id);
-            }
+            DeBuff(Id);
         }
 
         [PunRPC]
         public void RequestEnBuff(int Id)
         {
-            if (PhotonNetwork.IsMasterClient)
-            {
-                EnBuff(Id);
-            }
+            EnBuff(Id);
         }
 
         void DeBuff(int Id)
         {
+            Debug.Log("DeBuff");
             GameObject temp = GameObject.Find("Player_" + Id);
             if (temp == null) return;
 
@@ -115,6 +114,7 @@ namespace Player
 
         void EnBuff(int Id)
         {
+            Debug.Log("EnBuff");
             GameObject temp = GameObject.Find("Player_" + Id);
             if (temp == null) return;
 
@@ -126,6 +126,7 @@ namespace Player
                     temp.GetComponent<Character>().runSpeed += deBuffNum;
                     temp.GetComponent<Character>().jumpHeight += deBuffNum;
                     playerInArea.Remove(player);
+                    if (playerInArea.Count == 0) return;
                 }
             }
         }

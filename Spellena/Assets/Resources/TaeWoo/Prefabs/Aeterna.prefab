@@ -529,39 +529,37 @@ MonoBehaviour:
   ShowParameterInspector: 1
   m_SynchronizeParameters:
   - Type: 3
-    SynchronizeType: 1
+    SynchronizeType: 2
     Name: VerticalSpeed
   - Type: 3
-    SynchronizeType: 1
+    SynchronizeType: 2
     Name: HorizontalSpeed
-  - Type: 9
-    SynchronizeType: 1
-    Name: Jump
   - Type: 4
-    SynchronizeType: 1
+    SynchronizeType: 2
     Name: Grounded
   - Type: 9
-    SynchronizeType: 1
+    SynchronizeType: 2
     Name: BasicAttack
   - Type: 4
-    SynchronizeType: 1
+    SynchronizeType: 2
     Name: Run
   - Type: 4
-    SynchronizeType: 1
+    SynchronizeType: 2
     Name: Mirror
   - Type: 4
-    SynchronizeType: 1
+    SynchronizeType: 2
     Name: Sit
-  - Type: 9
-    SynchronizeType: 1
-    Name: SitTrigger
   m_SynchronizeLayers:
-  - SynchronizeType: 1
+  - SynchronizeType: 2
     LayerIndex: 0
-  - SynchronizeType: 1
+  - SynchronizeType: 2
     LayerIndex: 1
-  - SynchronizeType: 1
+  - SynchronizeType: 2
     LayerIndex: 2
+  - SynchronizeType: 2
+    LayerIndex: 3
+  - SynchronizeType: 2
+    LayerIndex: 4
 --- !u!114 &1517351799
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -620,7 +618,7 @@ Animator:
   m_GameObject: {fileID: 5624648683831435768}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 023d5bc4dbea7a846b00a72ad279bb14, type: 3}
-  m_Controller: {fileID: 9100000, guid: 4c705644af25be84a9c62a98e7b7199c, type: 2}
+  m_Controller: {fileID: 9100000, guid: 6ecf39ab69975924dbb8c3023a5c773e, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -658,9 +656,10 @@ MonoBehaviour:
   jumpHeight: 0
   animator: {fileID: 0}
   rigidbody: {fileID: 0}
+  moveVec: {x: 0, y: 0, z: 0}
   AeternaData: {fileID: 11400000, guid: 68088471f050fa74fb68919ed9133893, type: 2}
   DimensionSword: {fileID: 919132148892307835}
-  DimensionSlash: {fileID: 2629910554034382192, guid: 228c79d47d0dc73499bfe6cff4b252eb, type: 3}
+  DimensionSlash: {fileID: 1646871050452766, guid: 95b3ea755bc01f344a99fccc5f4702f8, type: 3}
   DimensionDoor: {fileID: 100898, guid: a25b3d9a8119bf047b7609dba7f57302, type: 3}
   DimensionDoorGUI: {fileID: 185454, guid: ade1f0bfc938f694ab4f3bc05fc5c55b, type: 3}
   dimensionSword: {fileID: 0}
