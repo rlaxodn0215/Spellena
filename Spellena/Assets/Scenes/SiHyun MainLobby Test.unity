@@ -1190,7 +1190,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 
+  m_Text: "\uC804\uCCB4\uD654\uBA74"
 --- !u!222 &199907079
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -5044,7 +5044,7 @@ MonoBehaviour:
   resolutionCheckPanel: {fileID: 1593154783}
   settingPanel: {fileID: 982119021}
   resolutionDropdown: {fileID: 1965868380}
-  fullScreenModeDropdown: {fileID: 1951356315}
+  fullScreenDropdown: {fileID: 1951356315}
 --- !u!1 &993748909
 GameObject:
   m_ObjectHideFlags: 0
@@ -9772,14 +9772,20 @@ MonoBehaviour:
   m_ItemImage: {fileID: 0}
   m_Value: 0
   m_Options:
-    m_Options: []
+    m_Options:
+    - m_Text: "\uC804\uCCB4\uD654\uBA74"
+      m_Image: {fileID: 0}
+    - m_Text: "\uCC3D \uBAA8\uB4DC"
+      m_Image: {fileID: 0}
+    - m_Text: "\uD14C\uB450\uB9AC \uC5C6\uB294 \uCC3D \uBAA8\uB4DC"
+      m_Image: {fileID: 0}
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 982786245}
         m_TargetAssemblyTypeName: VideoOption, Assembly-CSharp
-        m_MethodName: FullScreenDropdown
-        m_Mode: 3
+        m_MethodName: FullScreenBtn
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
