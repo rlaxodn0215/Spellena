@@ -30,7 +30,7 @@ namespace Player
 
         IEnumerator ShootSlash()
         {
-            yield return new WaitForSeconds(animator.GetCurrentAnimatorClipInfo(1).Length / 1.5f);
+            yield return new WaitForSeconds(animator.GetCurrentAnimatorClipInfo(1).Length / 2.0f);
 
             if (PhotonNetwork.IsMasterClient)
             {
@@ -55,6 +55,8 @@ namespace Player
             data[0] = Player.ID;
             data[1] = gameObject.tag;
             data[2] = Player.camera.transform.localRotation;
+            Vector3 spawnPoint = Player.camera.transform.position;
+            spawnPoint.x += 1;
             PhotonNetwork.Instantiate("TaeWoo/Prefabs/Effect/" + dimensionSlash.name,
                 Player.camera.transform.position, Player.transform.localRotation, 0, data);
         }
