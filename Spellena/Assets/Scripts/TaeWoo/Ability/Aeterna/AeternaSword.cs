@@ -54,5 +54,15 @@ namespace Player
 
             }
         }
+
+        public void Attack()
+        {
+
+        }
+
+        public void CatchProjectile()
+        {
+
+        }
     }
 }

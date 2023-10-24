@@ -5,7 +5,7 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/TaeWooScene.unity
     guid: 162c27ec71a1e374db38d50017f10416
   - enabled: 0

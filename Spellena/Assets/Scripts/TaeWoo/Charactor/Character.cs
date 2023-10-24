@@ -42,6 +42,7 @@ namespace Player
         // 플레이어 하위 오브젝트
         public GameObject sight;
         public GameObject camera;
+        public GameObject enemyCam;
         public GameObject UI;
 
         //실시간 갱신 데이터
@@ -106,7 +107,6 @@ namespace Player
         protected virtual void Start()
         {
             Initialize();
-            cameraPos = camera.transform.position;
         }
 
         void Initialize()
@@ -116,6 +116,7 @@ namespace Player
             animator = GetComponent<Animator>();
             rigidbody = GetComponent<Rigidbody>();
             Skills = new Dictionary<string, Ability>();
+            cameraPos = camera.transform.position;
         }
         protected virtual void Update()
         {
@@ -375,8 +376,30 @@ namespace Player
             foreach (Transform child in allChildren)
             {
                 child.gameObject.tag = team;
+                child.gameObject.layer = LayerMask.NameToLayer(team);
             }
+
+            if (enemyCam == null) return;
+
+            if(team == "TeamA")
+            {
+                camera.GetComponent<Camera>().cullingMask |= 1 << LayerMask.NameToLayer("SpawnObjectA");
+                if (!photonView.IsMine)
+                    camera.GetComponent<Camera>().cullingMask |= 1 << LayerMask.NameToLayer("TeamA");
+                enemyCam.GetComponent<Camera>().cullingMask |= (1 << LayerMask.NameToLayer("TeamB") | 1 << LayerMask.NameToLayer("SpawnObjectB"));
+            }
+
+            else if(team =="TeamB")
+            {
+                camera.GetComponent<Camera>().cullingMask |= 1 << LayerMask.NameToLayer("SpawnObjectB");
+                if (!photonView.IsMine)
+                    camera.GetComponent<Camera>().cullingMask |= 1 << LayerMask.NameToLayer("TeamB");
+                enemyCam.GetComponent<Camera>().cullingMask |= (1 << LayerMask.NameToLayer("TeamA") | 1 << LayerMask.NameToLayer("SpawnObjectA"));
+            }
+            
         }
+
+
 
         [PunRPC]
         public void PlayerDamaged(string enemy ,int damage)
