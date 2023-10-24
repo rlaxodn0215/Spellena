@@ -14,10 +14,11 @@ public class PlayerItem : MonoBehaviourPunCallbacks
     public GameObject leftArrowButton;
     public GameObject rightArrowButton;
     LobbyManager lobbyManagerScript;
+    public GameObject playerItem;
 
-    ExitGames.Client.Photon.Hashtable playerProperties = new ExitGames.Client.Photon.Hashtable();
+    public ExitGames.Client.Photon.Hashtable playerProperties = new ExitGames.Client.Photon.Hashtable();
 
-    Photon.Realtime.Player player;
+    public Photon.Realtime.Player player;
 
     enum Team
     {
@@ -55,6 +56,7 @@ public class PlayerItem : MonoBehaviourPunCallbacks
 
     public void OnClickLeftArrow()
     {
+        playerItem.tag = "TeamA";
         leftArrowButton.SetActive(false);
         rightArrowButton.SetActive(true);
         playerProperties["playerTeam"] = (int)Team.TeamA;
@@ -64,6 +66,7 @@ public class PlayerItem : MonoBehaviourPunCallbacks
 
     public void OnClickRightArrow()
     {
+        playerItem.tag = "TeamB";
         leftArrowButton.SetActive(true);
         rightArrowButton.SetActive(false);
         playerProperties["playerTeam"] = (int)Team.TeamB;
@@ -79,7 +82,7 @@ public class PlayerItem : MonoBehaviourPunCallbacks
         }
     }
 
-    void UpdatePlayerItem(Photon.Realtime.Player player)
+    public void UpdatePlayerItem(Photon.Realtime.Player player)
     {
         if (player != null && player.CustomProperties.ContainsKey("playerTeam"))
         {
@@ -87,15 +90,11 @@ public class PlayerItem : MonoBehaviourPunCallbacks
             leftArrowButton.SetActive(team == (int)Team.TeamB);
             rightArrowButton.SetActive(team == (int)Team.TeamA);
         }
-        else
-        {
-            leftArrowButton.SetActive(false);
-            rightArrowButton.SetActive(false);
-        }
     }
 
     public PlayerItem GetPlayerItem()
     {
         return this;
     }
+
 }

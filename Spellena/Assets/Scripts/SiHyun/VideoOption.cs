@@ -10,6 +10,7 @@ public class VideoOption : MonoBehaviour
     int previousNum;     // 이전 드롭박스 인덱스 번호
     public GameObject resolutionCheckPanel;
     public GameObject settingPanel;
+    public GameObject friendsPanel;
     FullScreenMode screenMode;
     public Dropdown resolutionDropdown;
     public Dropdown fullScreenDropdown;
@@ -24,6 +25,7 @@ public class VideoOption : MonoBehaviour
         previousNum = resolutionDropdown.value;
         resolutionCheckPanel.SetActive(false);
         settingPanel.SetActive(false);
+        friendsPanel.SetActive(false);
 
     }
 
@@ -34,6 +36,10 @@ public class VideoOption : MonoBehaviour
             if (settingPanel.activeSelf)
             {
                 settingPanel.SetActive(false);
+            }
+            else if(friendsPanel.activeSelf)
+            {
+                friendsPanel.SetActive(false);
             }
             else
             {
