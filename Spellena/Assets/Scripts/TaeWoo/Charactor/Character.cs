@@ -42,6 +42,7 @@ namespace Player
         // 플레이어 하위 오브젝트
         public GameObject sight;
         public GameObject camera;
+        public GameObject enemyCam;
         public GameObject UI;
 
         //실시간 갱신 데이터
@@ -378,6 +379,23 @@ namespace Player
                 child.gameObject.layer = LayerMask.NameToLayer(team);
             }
 
+            if (enemyCam == null) return;
+
+            if(team == "TeamA")
+            {
+                camera.GetComponent<Camera>().cullingMask |= 1 << LayerMask.NameToLayer("SpawnObjectA");
+                if (!photonView.IsMine)
+                    camera.GetComponent<Camera>().cullingMask |= 1 << LayerMask.NameToLayer("TeamA");
+                enemyCam.GetComponent<Camera>().cullingMask |= 1 << LayerMask.NameToLayer("TeamB") | 1 << LayerMask.NameToLayer("SpawnObjectB");
+            }
+
+            else if(team =="TeamB")
+            {
+                camera.GetComponent<Camera>().cullingMask |= 1 << LayerMask.NameToLayer("SpawnObjectB");
+                if (!photonView.IsMine)
+                    camera.GetComponent<Camera>().cullingMask |= 1 << LayerMask.NameToLayer("TeamB");
+                enemyCam.GetComponent<Camera>().cullingMask |= 1 << LayerMask.NameToLayer("TeamA") | 1 << LayerMask.NameToLayer("SpawnObjectA");
+            }
             
         }
 

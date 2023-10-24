@@ -55,8 +55,6 @@ namespace Player
             data[0] = Player.ID;
             data[1] = gameObject.tag;
             data[2] = Player.camera.transform.localRotation;
-            Vector3 spawnPoint = Player.camera.transform.position;
-            spawnPoint.x += 1;
             PhotonNetwork.Instantiate("TaeWoo/Prefabs/Effect/" + dimensionSlash.name,
                 Player.camera.transform.position, Player.transform.localRotation, 0, data);
         }

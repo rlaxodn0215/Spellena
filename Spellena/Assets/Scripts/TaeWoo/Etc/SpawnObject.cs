@@ -29,7 +29,6 @@ namespace Player
             if(CompareTag("TeamA") || CompareTag("TeamB"))
             {
                 gameObject.layer = LayerMask.NameToLayer("SpawnObject" + tag[4]); // tag[4] => A,B
-                //gameObject.AddComponent<Camera>().
             }
 
             gameObject.name = "Player_" + ID + "_Portal";
