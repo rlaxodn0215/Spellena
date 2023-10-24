@@ -339,7 +339,7 @@ namespace Player
             }
         }
 
-        public void IsLocalPlayer()
+        public virtual void IsLocalPlayer()
         {
             if (photonView.IsMine)
             {
@@ -350,7 +350,7 @@ namespace Player
                 for (int i = 0; i < avatarForOther.childCount; i++)
                 {
                     avatarForOther.GetChild(i).gameObject.layer = LayerMask.NameToLayer("Me");
-                    //avatarForOther.GetChild(i).gameObject.GetComponent<SkinnedMeshRenderer>().enabled = false;
+                    avatarForOther.GetChild(i).gameObject.GetComponent<SkinnedMeshRenderer>().enabled = false;
                 }
 
                 for(int i = 0; i < avatarForMe.childCount; i++)

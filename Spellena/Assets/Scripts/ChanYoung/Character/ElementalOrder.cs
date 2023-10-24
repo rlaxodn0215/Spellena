@@ -1,4 +1,3 @@
-using Palmmedia.ReportGenerator.Core.Parser.Analysis;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -18,7 +17,6 @@ namespace Player
         public float[] skillTimer;
         public GameObject overlayCamera;
         Vector3 overlayCameraDefaultPos;
-        public GameObject TestCube;
         public GameObject Aim;
 
         Animator overlayAnimator;
@@ -48,10 +46,12 @@ namespace Player
         protected override void Update()
         {
             base.Update();
-            PlayerSkillInput();
-            CheckOverlayAnimator();  
+            if (photonView.IsMine)
+            {
+                PlayerSkillInput();
+            }
+            CheckOverlayAnimator();
             CheckPoint();
-            Debug.Log(animator.GetBool("Spell2"));
         }
 
         void CheckPoint()
@@ -59,7 +59,9 @@ namespace Player
             Ray _tempRay = camera.GetComponent<Camera>().ScreenPointToRay(Aim.transform.position);
             handPoint = _tempRay.origin + _tempRay.direction * 0.5f;
         }
-        float currentWeight = 0f;
+
+        float rightCurrentWeight = 0f;
+        float leftCurrentWeight = 0f;
         float targetWeight = 0.3f;
         protected override void OnAnimatorIK()
         {
@@ -68,28 +70,51 @@ namespace Player
             animator.SetIKPosition(AvatarIKGoal.RightHand, handPoint);
             if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Spell1"))
             {
-                if (currentWeight < targetWeight)
+                if (rightCurrentWeight < targetWeight)
                 {
-                    currentWeight += Time.deltaTime;
-                    if(currentWeight > targetWeight)
+                    rightCurrentWeight += Time.deltaTime;
+                    leftCurrentWeight += Time.deltaTime;
+                    if(rightCurrentWeight > targetWeight)
                     {
-                        currentWeight = targetWeight;
+                        rightCurrentWeight = targetWeight;
+                        leftCurrentWeight = targetWeight;
                     }
                 }
             }
+            
+            else if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Spell5"))
+            {
+                if (rightCurrentWeight < targetWeight)
+                {
+                    rightCurrentWeight += Time.deltaTime / 4;
+                    leftCurrentWeight -= Time.deltaTime / 4;
+                    if (rightCurrentWeight > targetWeight)
+                    {
+                        rightCurrentWeight = targetWeight; 
+                    }
+                    if (leftCurrentWeight < 0f)
+                    {
+                        leftCurrentWeight = 0;
+                    }
+
+                }
+            }
+            
             else
             {
-                if(currentWeight > 0f)
+                if(rightCurrentWeight > 0f)
                 {
-                    currentWeight -= Time.deltaTime;
-                    if(currentWeight < 0f)
+                    rightCurrentWeight -= Time.deltaTime;
+                    leftCurrentWeight -= Time.deltaTime;
+                    if(rightCurrentWeight < 0f)
                     {
-                        currentWeight = 0;
+                        rightCurrentWeight = 0;
+                        leftCurrentWeight = 0;
                     }
                 }
             }
-            animator.SetIKPositionWeight(AvatarIKGoal.LeftHand, currentWeight);
-            animator.SetIKPositionWeight(AvatarIKGoal.RightHand, currentWeight);
+            animator.SetIKPositionWeight(AvatarIKGoal.LeftHand, leftCurrentWeight);
+            animator.SetIKPositionWeight(AvatarIKGoal.RightHand, rightCurrentWeight);
 
         }
 
@@ -154,75 +179,95 @@ namespace Player
 
         }
 
+        public override void IsLocalPlayer()
+        {
+            base.IsLocalPlayer();
+            overlayCamera.SetActive(true);
+        }
+
         void OnSkill1()
         {
-            if(commands.Count < 2)
+            if (photonView.IsMine)
             {
-                commands.Add(1);
+                if (commands.Count < 2)
+                {
+                    commands.Add(1);
+                }
             }
         }
 
         void OnSkill2()
         {
-            if (commands.Count < 2)
+            if (photonView.IsMine)
             {
-                commands.Add(2);
+                if (commands.Count < 2)
+                {
+                    commands.Add(2);
+                }
             }
         }
-
         void OnSkill3()
         {
-            if (commands.Count < 2)
+            if (photonView.IsMine)
             {
-                commands.Add(3);
+                if (commands.Count < 2)
+                {
+                    commands.Add(3);
+                }
             }
         }
 
         void OnSkill4()
         {
-            if(commands.Count >= 2)
+            if (photonView.IsMine)
             {
-                isReadyToUseSkill = true;
+                if (commands.Count >= 2)
+                {
+                    isReadyToUseSkill = true;
+                }
             }
         }
         void OnMouseButton()
         {
-            if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Idle")
-                && isReadyToUseSkill == true)
+            if (photonView.IsMine)
             {
-                if (commands.Count == 2)
+                if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Idle")
+                    && isReadyToUseSkill == true)
                 {
-                    if (commands[0] == 1 && commands[1] == 1)
+                    if (commands.Count == 2)
                     {
-                        reverseAnimatorBool("Spell1");
-                        isSpell1 = true;
-                    }
-                    else if ((commands[0] == 1 && commands[1] == 2)
-                        || (commands[0] == 2 && commands[1] == 1))
-                    {
-                        reverseAnimatorBool("Spell2");
-                        isSpell2 = true;
-                    }
-                    else if ((commands[0] == 1 && commands[1] == 3)
-                        || (commands[0] == 3 && commands[1] == 1))
-                    {
-                        reverseAnimatorBool("Spell3");
-                        isSpell3 = true;
-                    }
-                    else if (commands[0] == 2 && commands[1] == 2)
-                    {
-                        reverseAnimatorBool("Spell4");
-                        isSpell4 = true;
-                    }
-                    else if ((commands[0] == 2 && commands[1] == 3) || (commands[0] == 3 && commands[1] == 2))
-                    {
-                        reverseAnimatorBool("Spell5");
-                        isSpell5 = true;
-                    }
-                    else if (commands[0] == 3 && commands[1] == 3)
-                    {
-                        reverseAnimatorBool("Spell6");
-                        isSpell6 = true;
+                        if (commands[0] == 1 && commands[1] == 1)
+                        {
+                            reverseAnimatorBool("Spell1");
+                            isSpell1 = true;
+                        }
+                        else if ((commands[0] == 1 && commands[1] == 2)
+                            || (commands[0] == 2 && commands[1] == 1))
+                        {
+                            reverseAnimatorBool("Spell2");
+                            isSpell2 = true;
+                        }
+                        else if ((commands[0] == 1 && commands[1] == 3)
+                            || (commands[0] == 3 && commands[1] == 1))
+                        {
+                            reverseAnimatorBool("Spell3");
+                            isSpell3 = true;
+                        }
+                        else if (commands[0] == 2 && commands[1] == 2)
+                        {
+                            reverseAnimatorBool("Spell4");
+                            isSpell4 = true;
+                        }
+                        else if ((commands[0] == 2 && commands[1] == 3) || (commands[0] == 3 && commands[1] == 2))
+                        {
+                            reverseAnimatorBool("Spell5");
+                            isSpell5 = true;
+                        }
+                        else if (commands[0] == 3 && commands[1] == 3)
+                        {
+                            reverseAnimatorBool("Spell6");
+                            isSpell6 = true;
+                        }
                     }
                 }
             }
