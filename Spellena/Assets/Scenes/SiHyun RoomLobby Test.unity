@@ -6860,6 +6860,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 346238391}
     m_Modifications:
+    - target: {fileID: -2925321569376258684, guid: 8822e5fe475e5d94b8b8d65ed3d3a913, type: 3}
+      propertyPath: sceneViewId
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2348458300079429452, guid: 8822e5fe475e5d94b8b8d65ed3d3a913, type: 3}
       propertyPath: m_Name
       value: PlayerItem

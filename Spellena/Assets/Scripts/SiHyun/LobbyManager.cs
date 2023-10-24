@@ -27,12 +27,6 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     public Transform playerItemParentA;
     public Transform playerItemParentB;
 
-    enum Team
-    {
-        TeamA,
-        TeamB
-    }
-
     private void Start()
     {
         PhotonNetwork.JoinLobby();
@@ -104,11 +98,18 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
     void UpdatePlayerList()
     {
+        // 기존의 플레이어 아이템을 삭제하고 리스트를 초기화
         foreach (PlayerItem item in playerItemListA)
         {
             Destroy(item.gameObject);
         }
         playerItemListA.Clear();
+
+        foreach (PlayerItem item in playerItemListB)
+        {
+            Destroy(item.gameObject);
+        }
+        playerItemListB.Clear();
 
         if (PhotonNetwork.CurrentRoom == null)
         {
@@ -125,19 +126,16 @@ public class LobbyManager : MonoBehaviourPunCallbacks
                 newPlayerItem.ApplyLocalChanges();
             }
 
-            playerItemListA.Add(newPlayerItem);
+            // 플레이어의 태그를 확인하여 해당 리스트에 추가
+            if (newPlayerItem.tag == "TeamA")
+            {
+                playerItemListA.Add(newPlayerItem);
+            }
+            else if (newPlayerItem.tag == "TeamB")
+            {
+                playerItemListB.Add(newPlayerItem);
+            }
         }
-
-    }
-
-    List<PlayerItem> GetPlayerList(Team team)
-    {
-        return team == Team.TeamA ? playerItemListA : playerItemListB;
-    }
-
-    Transform GetPlayerItemParent(Team team)
-    {
-        return team == Team.TeamA ? playerItemParentA : playerItemParentB;
     }
 
     public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
@@ -167,7 +165,6 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         playerItemListA.Remove(_playerItem);
         playerItemListB.Add(_playerItem);
         _playerItem.transform.SetParent(playerItemParentB);
-        SyncTeamChange(_playerItem.playerName.ToString(), (int)Team.TeamA, (int)Team.TeamB);
     }
 
     public void TeamChangedBToA(PlayerItem _playerItem)
@@ -175,27 +172,5 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         playerItemListB.Remove(_playerItem);
         playerItemListA.Add(_playerItem);
         _playerItem.transform.SetParent(playerItemParentA);
-        SyncTeamChange(_playerItem.playerName.ToString(), (int)Team.TeamB, (int)Team.TeamA);
-    }
-
-    private void SyncTeamChange(string userID, int oldTeam, int newTeam)
-    {
-        ExitGames.Client.Photon.Hashtable _customProperties = new ExitGames.Client.Photon.Hashtable();
-        _customProperties["playerTeam"] = newTeam;
-        PhotonNetwork.CurrentRoom.SetCustomProperties(_customProperties);
-
-        RaiseEventOptions _raiseEventOptions = new RaiseEventOptions { CachingOption = EventCaching.DoNotCache };
-        /*PhotonNetwork.RaiseEvent(1, new object[] { userID, oldTeam, newTeam },
-                                 _raiseEventOptions, SendOptions.SendReliable);*/
-    }
-
-    public List<PlayerItem> GetListA()
-    {
-        return playerItemListA;
-    }
-
-    public List<PlayerItem> GetListB()
-    {
-        return playerItemListB;
     }
 }
