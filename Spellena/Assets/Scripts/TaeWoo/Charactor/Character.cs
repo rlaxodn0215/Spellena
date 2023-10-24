@@ -386,7 +386,7 @@ namespace Player
                 camera.GetComponent<Camera>().cullingMask |= 1 << LayerMask.NameToLayer("SpawnObjectA");
                 if (!photonView.IsMine)
                     camera.GetComponent<Camera>().cullingMask |= 1 << LayerMask.NameToLayer("TeamA");
-                enemyCam.GetComponent<Camera>().cullingMask |= 1 << LayerMask.NameToLayer("TeamB") | 1 << LayerMask.NameToLayer("SpawnObjectB");
+                enemyCam.GetComponent<Camera>().cullingMask |= (1 << LayerMask.NameToLayer("TeamB") | 1 << LayerMask.NameToLayer("SpawnObjectB"));
             }
 
             else if(team =="TeamB")
@@ -394,7 +394,7 @@ namespace Player
                 camera.GetComponent<Camera>().cullingMask |= 1 << LayerMask.NameToLayer("SpawnObjectB");
                 if (!photonView.IsMine)
                     camera.GetComponent<Camera>().cullingMask |= 1 << LayerMask.NameToLayer("TeamB");
-                enemyCam.GetComponent<Camera>().cullingMask |= 1 << LayerMask.NameToLayer("TeamA") | 1 << LayerMask.NameToLayer("SpawnObjectA");
+                enemyCam.GetComponent<Camera>().cullingMask |= (1 << LayerMask.NameToLayer("TeamA") | 1 << LayerMask.NameToLayer("SpawnObjectA"));
             }
             
         }
