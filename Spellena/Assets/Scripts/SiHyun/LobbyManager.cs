@@ -129,12 +129,12 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         TeamB
     }
 
-
+    /*
     void UpdatePlayerListTest()
     {
         List<PlayerItem> playerItemList;
         Transform playerItemParent;
-
+        
         if (teamToUpdate == Team.TeamA)
         {
             playerItemList = playerItemListA;
@@ -177,7 +177,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
             playerItemList.Add(newPlayerItem);
         }
     }
-
+    */
 
     public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
     {

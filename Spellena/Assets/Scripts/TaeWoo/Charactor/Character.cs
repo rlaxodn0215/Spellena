@@ -350,7 +350,7 @@ namespace Player
                 for (int i = 0; i < avatarForOther.childCount; i++)
                 {
                     avatarForOther.GetChild(i).gameObject.layer = LayerMask.NameToLayer("Me");
-                    avatarForOther.GetChild(i).gameObject.GetComponent<SkinnedMeshRenderer>().enabled = false;
+                    //avatarForOther.GetChild(i).gameObject.GetComponent<SkinnedMeshRenderer>().enabled = false;
                 }
 
                 for(int i = 0; i < avatarForMe.childCount; i++)
@@ -396,7 +396,7 @@ namespace Player
             Debug.Log("Player Damaged_EnemyID: " + enemy);
         }
 
-        private void OnAnimatorIK()
+        protected virtual void OnAnimatorIK()
         {
             SetLookAtObj();
         }

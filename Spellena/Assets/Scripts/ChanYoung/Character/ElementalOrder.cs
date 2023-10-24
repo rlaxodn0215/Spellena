@@ -1,3 +1,4 @@
+using Palmmedia.ReportGenerator.Core.Parser.Analysis;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -17,8 +18,11 @@ namespace Player
         public float[] skillTimer;
         public GameObject overlayCamera;
         Vector3 overlayCameraDefaultPos;
+        public GameObject TestCube;
+        public GameObject Aim;
 
         Animator overlayAnimator;
+        Vector3 handPoint;
 
 
         //스킬 순서 11, 12, 13, 22, 23, 33 총 6개
@@ -45,8 +49,48 @@ namespace Player
         {
             base.Update();
             PlayerSkillInput();
-            CheckOverlayAnimator();
-            Debug.Log(commands.Count);
+            CheckOverlayAnimator();  
+            CheckPoint();
+            Debug.Log(animator.GetBool("Spell2"));
+        }
+
+        void CheckPoint()
+        {
+            Ray _tempRay = camera.GetComponent<Camera>().ScreenPointToRay(Aim.transform.position);
+            handPoint = _tempRay.origin + _tempRay.direction * 0.5f;
+        }
+        float currentWeight = 0f;
+        float targetWeight = 0.3f;
+        protected override void OnAnimatorIK()
+        {
+            base.OnAnimatorIK();
+            animator.SetIKPosition(AvatarIKGoal.LeftHand, handPoint);
+            animator.SetIKPosition(AvatarIKGoal.RightHand, handPoint);
+            if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Spell1"))
+            {
+                if (currentWeight < targetWeight)
+                {
+                    currentWeight += Time.deltaTime;
+                    if(currentWeight > targetWeight)
+                    {
+                        currentWeight = targetWeight;
+                    }
+                }
+            }
+            else
+            {
+                if(currentWeight > 0f)
+                {
+                    currentWeight -= Time.deltaTime;
+                    if(currentWeight < 0f)
+                    {
+                        currentWeight = 0;
+                    }
+                }
+            }
+            animator.SetIKPositionWeight(AvatarIKGoal.LeftHand, currentWeight);
+            animator.SetIKPositionWeight(AvatarIKGoal.RightHand, currentWeight);
+
         }
 
         protected override void FixedUpdate()
@@ -62,32 +106,45 @@ namespace Player
             overlayAnimator = transform.GetChild(1).GetComponent<Animator>();
         }
 
+
+
         void CheckOverlayAnimator()
         {
             if(overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Spell1"))
             {
                 overlayCamera.transform.localPosition = overlayCameraDefaultPos + new Vector3(0, 0.383f, 0);
                 overlayAnimator.SetBool("Spell1", false);
+                animator.SetBool("Spell1", false);
             }
             else if(overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Spell2"))
             {
                 overlayCamera.transform.localPosition = overlayCameraDefaultPos + new Vector3(0, 0.1f, 0);
                 overlayAnimator.SetBool("Spell2", false);
+                animator.SetBool("Spell2", false);
             }
             else if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Spell3"))
             {
                 overlayCamera.transform.localPosition = overlayCameraDefaultPos + new Vector3(0, 0.1f, 0);
                 overlayAnimator.SetBool("Spell3", false);
+                animator.SetBool("Spell3", false);
             }
             else if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Spell4"))
             {
                 overlayCamera.transform.localPosition = overlayCameraDefaultPos + new Vector3(0, 0.1f, 0);
                 overlayAnimator.SetBool("Spell4", false);
+                animator.SetBool("Spell4", false);
             }
             else if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Spell5"))
             {
                 overlayCamera.transform.localPosition = Vector3.Lerp(overlayCamera.transform.localPosition, overlayCameraDefaultPos + new Vector3(0, 0.383f, 0), Time.deltaTime / 2);
                 overlayAnimator.SetBool("Spell5", false);
+                animator.SetBool("Spell5", false);
+            }
+            else if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Spell6"))
+            {
+                //overlayCamera.transform.localPosition = overlayCameraDefaultPos + new Vector3(0, 0.1f, 0);
+                overlayAnimator.SetBool("Spell6", false);
+                animator.SetBool("Spell6", false);
             }
             else
             {
@@ -162,6 +219,11 @@ namespace Player
                         reverseAnimatorBool("Spell5");
                         isSpell5 = true;
                     }
+                    else if (commands[0] == 3 && commands[1] == 3)
+                    {
+                        reverseAnimatorBool("Spell6");
+                        isSpell6 = true;
+                    }
                 }
             }
         }
@@ -200,12 +262,19 @@ namespace Player
                     isSpell5 = false;
                     isReadyToUseSkill = false;
                 }
+                else if (isSpell6 == true)
+                {
+                    commands.Clear();
+                    isSpell6 = false;
+                    isReadyToUseSkill = false;
+                }
             }
         }
 
         private void reverseAnimatorBool(string parameter)
         {
             overlayAnimator.SetBool(parameter, !overlayAnimator.GetBool(parameter));
+            animator.SetBool(parameter, !animator.GetBool(parameter));
         }
 
     }
