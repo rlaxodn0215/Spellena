@@ -24,7 +24,14 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     List<PlayerItem> playerItemListA = new List<PlayerItem>();
     List<PlayerItem> playerItemListB = new List<PlayerItem>();
     public PlayerItem playerItemPrefab;
-    public Transform playerItemParent;
+    public Transform playerItemParentA;
+    public Transform playerItemParentB;
+
+    enum Team
+    {
+        TeamA,
+        TeamB
+    }
 
     private void Start()
     {
@@ -110,7 +117,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
         foreach (KeyValuePair<int, Photon.Realtime.Player> player in PhotonNetwork.CurrentRoom.Players)
         {
-            PlayerItem newPlayerItem = Instantiate(playerItemPrefab, playerItemParent);
+            PlayerItem newPlayerItem = Instantiate(playerItemPrefab, playerItemParentA);
             newPlayerItem.SetPlayerInfo(player.Value);
 
             if (player.Value == PhotonNetwork.LocalPlayer)
@@ -123,61 +130,15 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
     }
 
-    enum Team
+    List<PlayerItem> GetPlayerList(Team team)
     {
-        TeamA,
-        TeamB
+        return team == Team.TeamA ? playerItemListA : playerItemListB;
     }
 
-
-    void UpdatePlayerListTest()
+    Transform GetPlayerItemParent(Team team)
     {
-        List<PlayerItem> playerItemList;
-        Transform playerItemParent;
-
-        if (teamToUpdate == Team.TeamA)
-        {
-            playerItemList = playerItemListA;
-            playerItemParent = playerItemParentA;
-        }
-        else if (teamToUpdate == Team.TeamB)
-        {
-            playerItemList = playerItemListB;
-            playerItemParent = playerItemParentB;
-        }
-        else
-        {
-            Debug.LogError("유효하지 않은 팀입니다.");
-            return;
-        }
-
-        // 이동할 팀의 기존 아이템 삭제
-        foreach (PlayerItem item in playerItemList)
-        {
-            Destroy(item.gameObject);
-        }
-        playerItemList.Clear();
-
-        if (PhotonNetwork.CurrentRoom == null)
-        {
-            return;
-        }
-
-        // PhotonNetwork.CurrentRoom.Players를 기반으로 팀 A 또는 팀 B의 아이템 생성
-        foreach (KeyValuePair<int, Photon.Realtime.Player> player in PhotonNetwork.CurrentRoom.Players)
-        {
-            PlayerItem newPlayerItem = Instantiate(playerItemPrefab, playerItemParent);
-            newPlayerItem.SetPlayerInfo(player.Value);
-
-            if (player.Value == PhotonNetwork.LocalPlayer)
-            {
-                newPlayerItem.ApplyLocalChanges();
-            }
-
-            playerItemList.Add(newPlayerItem);
-        }
+        return team == Team.TeamA ? playerItemParentA : playerItemParentB;
     }
-
 
     public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
     {
@@ -199,6 +160,33 @@ public class LobbyManager : MonoBehaviourPunCallbacks
                 SceneManager.LoadScene("SiHyun MainLobby Test");
             }
         }
+    }
+
+    public void TeamChangedAToB(PlayerItem _playerItem)
+    {
+        playerItemListA.Remove(_playerItem);
+        playerItemListB.Add(_playerItem);
+        _playerItem.transform.SetParent(playerItemParentB);
+        SyncTeamChange(_playerItem.playerName.ToString(), (int)Team.TeamA, (int)Team.TeamB);
+    }
+
+    public void TeamChangedBToA(PlayerItem _playerItem)
+    {
+        playerItemListB.Remove(_playerItem);
+        playerItemListA.Add(_playerItem);
+        _playerItem.transform.SetParent(playerItemParentA);
+        SyncTeamChange(_playerItem.playerName.ToString(), (int)Team.TeamB, (int)Team.TeamA);
+    }
+
+    private void SyncTeamChange(string userID, int oldTeam, int newTeam)
+    {
+        ExitGames.Client.Photon.Hashtable _customProperties = new ExitGames.Client.Photon.Hashtable();
+        _customProperties["playerTeam"] = newTeam;
+        PhotonNetwork.CurrentRoom.SetCustomProperties(_customProperties);
+
+        RaiseEventOptions _raiseEventOptions = new RaiseEventOptions { CachingOption = EventCaching.DoNotCache };
+        /*PhotonNetwork.RaiseEvent(1, new object[] { userID, oldTeam, newTeam },
+                                 _raiseEventOptions, SendOptions.SendReliable);*/
     }
 
     public List<PlayerItem> GetListA()
