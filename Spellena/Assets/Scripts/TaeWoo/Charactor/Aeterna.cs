@@ -53,6 +53,7 @@ namespace Player
         void Initialize()
         {
             DimensionSword.tag = tag;
+            camera.GetComponent<Camera>().cullingMask |= 1 << LayerMask.NameToLayer(tag);
 
             dimensionSword = this.gameObject.AddComponent<DimensionSword>();
             dimensionSword.AddPlayer(this);

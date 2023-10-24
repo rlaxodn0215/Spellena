@@ -106,7 +106,6 @@ namespace Player
         protected virtual void Start()
         {
             Initialize();
-            cameraPos = camera.transform.position;
         }
 
         void Initialize()
@@ -116,6 +115,7 @@ namespace Player
             animator = GetComponent<Animator>();
             rigidbody = GetComponent<Rigidbody>();
             Skills = new Dictionary<string, Ability>();
+            cameraPos = camera.transform.position;
         }
         protected virtual void Update()
         {
@@ -375,8 +375,13 @@ namespace Player
             foreach (Transform child in allChildren)
             {
                 child.gameObject.tag = team;
+                child.gameObject.layer = LayerMask.NameToLayer(team);
             }
+
+            
         }
+
+
 
         [PunRPC]
         public void PlayerDamaged(string enemy ,int damage)

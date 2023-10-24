@@ -18,9 +18,9 @@ namespace Player
             base.Start();
 
             if(CompareTag("TeamA"))
-                enemyLayerMask = LayerMask.NameToLayer("TeamB");
+                enemyLayerMask = LayerMask.NameToLayer("TeamB") | LayerMask.NameToLayer("SpawnObjectB");
             else if(CompareTag("TeamB"))
-                enemyLayerMask = LayerMask.NameToLayer("TeamA");
+                enemyLayerMask = LayerMask.NameToLayer("TeamA") | LayerMask.NameToLayer("SpawnObjectA");
 
             playerInArea = new List<string>();
             GetComponent<SphereCollider>().radius = range;
@@ -30,11 +30,10 @@ namespace Player
 
         public void OnTriggerEnter(Collider other)
         {
-            Debug.Log("Portal_Enter");
-
-            if (other.tag == LayerMask.LayerToName(enemyLayerMask))
+            if ((LayerMask.NameToLayer(other.tag) & enemyLayerMask)
+                == LayerMask.NameToLayer(other.tag))
             {
-                if (other.gameObject.layer == enemyLayerMask)
+                if ((other.gameObject.layer & enemyLayerMask) == other.gameObject.layer)
                 {
                     if (PhotonNetwork.IsMasterClient)
                     {
@@ -56,7 +55,6 @@ namespace Player
 
                     else
                     {
-                        Debug.Log("DeBuff_RPC");
                         photonView.RPC("RequestDeBuff", RpcTarget.AllBuffered, other.transform.root.GetComponent<Character>().ID);
                     }
                 }
@@ -65,12 +63,9 @@ namespace Player
 
         public void OnTriggerExit(Collider other)
         {
-            Debug.Log("Portal_Exit");
-
-            if (other.tag == LayerMask.LayerToName(enemyLayerMask))
+            if ((LayerMask.NameToLayer(other.tag) & enemyLayerMask)
+                == LayerMask.NameToLayer(other.tag))
             {
-                    Debug.Log("EnBuff_RPC");
-
                   if (PhotonNetwork.IsMasterClient)
                   {
                       EnBuff(other.transform.root.GetComponent<Character>().ID);
