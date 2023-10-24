@@ -5,16 +5,16 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/TaeWooScene.unity
     guid: 162c27ec71a1e374db38d50017f10416
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/SiHyun Login Test.unity
     guid: b6209292cf19b6b4c877a24a5ddd4406
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/SiHyun MainLobby Test.unity
     guid: e9d9afacce50a2f4984253d1a18c2817
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/SiHyun RoomLobby Test.unity
     guid: 5ac601c64d5cbcd419b6dddc645a9456
   - enabled: 0

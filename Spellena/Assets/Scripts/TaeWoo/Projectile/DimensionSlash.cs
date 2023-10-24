@@ -16,10 +16,12 @@ namespace Player
         {
             base.Start();
             name = "Player_" + ID + "_DimensionSlash";
-            direction = (Quaternion)data[2]*Vector3.forward;
+            if(data !=null)
+                direction = (Quaternion)data[2]*Vector3.forward;
             //transform.localRotation = (Quaternion)data[2];
             StartCoroutine(Gone());
         }
+
 
         IEnumerator Gone()
         {

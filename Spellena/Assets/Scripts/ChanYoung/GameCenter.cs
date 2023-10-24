@@ -70,7 +70,7 @@ public class GameCenter : MonoBehaviourPunCallbacks, IPunObservable
     Occupation occupyingB;//B팀의 점령도
     OccupyingTeam occupyingTeam;//점령 게이지 바
 
-    int maxPlayers = 2;// 대 플레이어 수
+    public int maxPlayers = 2;// 대 플레이어 수
     Character[] players;
     void Awake()
     {

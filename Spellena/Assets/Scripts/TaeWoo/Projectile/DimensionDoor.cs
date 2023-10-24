@@ -16,7 +16,6 @@ namespace Player
         public override void Start()
         {
             base.Start();
-            Debug.Log(tag);
 
             if(CompareTag("TeamA"))
                 enemyLayerMask = LayerMask.NameToLayer("TeamB");
@@ -25,6 +24,8 @@ namespace Player
 
             playerInArea = new List<string>();
             GetComponent<SphereCollider>().radius = range;
+
+
         }
 
         public void OnTriggerEnter(Collider other)

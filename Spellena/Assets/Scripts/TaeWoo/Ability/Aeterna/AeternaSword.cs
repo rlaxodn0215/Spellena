@@ -33,6 +33,10 @@ namespace Player
 
         public void OnTriggerEnter(Collider other)
         {
+
+
+
+
             if (PhotonNetwork.IsMasterClient)
             {
                 //player.GetComponent<PhotonView>().RPC("PlayerDamaged",)
@@ -53,6 +57,16 @@ namespace Player
             {
 
             }
+        }
+
+        public void Attack()
+        {
+
+        }
+
+        public void CatchProjectile()
+        {
+
         }
     }
 }

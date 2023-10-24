@@ -30,7 +30,8 @@ namespace Player
         // 3 : ½ºÅ³ 3
         // 4 : ½ºÅ³ 4 (±Ã±Ø±â)
 
-        public int skill2Phase = 0; // 0: None 1: duration, 2: hold, 3: cool
+        [HideInInspector]
+        public int skill2Phase; // 0: None 1: duration, 2: hold, 3: cool
         private bool isDoing = false;
 
         protected override void Start() 
@@ -72,6 +73,8 @@ namespace Player
             {
                 skillTimer[i] = -1;
             }
+
+            skill2Phase = 1;
 
             hp = AeternaData.Hp;
             walkSpeed = AeternaData.moveSpeed;
@@ -200,8 +203,6 @@ namespace Player
                             case 2:
                                 if (skillTimer[2] >= 0.0f)
                                     Skills["Skill2"].Execution(ref skill2Phase);
-                                else
-                                    skillTimer[2] = AeternaData.skill2CoolTime;
                                 playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = true;
                                 StartCoroutine(SkillTimer(2));
                                 break;
@@ -213,12 +214,35 @@ namespace Player
                         }
                     }
 
-                    if (skill2Phase == 0 && skillTimer[0] <= 0.0f)
+                    else
                     {
-                        Skills["Skill2"].Execution(ref skill2Phase);
-                        skillTimer[0] = AeternaData.basicAttackTime;
-                        StartCoroutine(SkillTimer(0));
+                        if (skill2Phase == 1 && skillTimer[0] <= 0.0f)
+                        {
+                            Skills["Skill2"].Execution(ref skill2Phase);
+                            skillTimer[0] = AeternaData.basicAttackTime;
+                            StartCoroutine(SkillTimer(0));
+                        }
+
+                        //switch (skill2Phase)
+                        //{
+                        //    case 0:
+                        //        break;
+                        //    case 1:
+                        //        Debug.Log("Absorb_Attack");
+                        //        break;
+                        //    case 2:
+                        //        break;
+                        //    case 3:
+                        //        break;
+                        //}
                     }
+
+                    //if (skill2Phase == 1 && skillTimer[0] <= 0.0f)
+                    //{
+                    //    Skills["Skill2"].Execution(ref skill2Phase);
+                    //    skillTimer[0] = AeternaData.basicAttackTime;
+                    //    StartCoroutine(SkillTimer(0));
+                    //}
 
                 }
 
@@ -260,10 +284,10 @@ namespace Player
             }
         }
 
-        //private void OnGUI()
-        //{
-        //    GUI.TextField(new Rect(10, 10, 100, 30), skillTimer[2].ToString());
-        //}
+        private void OnGUI()
+        {
+            GUI.TextField(new Rect(10, 10, 100, 30), skillTimer[2].ToString());
+        }
 
     }
 }
