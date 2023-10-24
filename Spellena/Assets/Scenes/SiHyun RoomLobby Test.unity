@@ -6109,7 +6109,8 @@ MonoBehaviour:
   contentObjects: {fileID: 888688695}
   timeBetweenUpdates: 1.5
   playerItemPrefab: {fileID: 469654411988540401, guid: 8822e5fe475e5d94b8b8d65ed3d3a913, type: 3}
-  playerItemParent: {fileID: 346238391}
+  playerItemParentA: {fileID: 346238391}
+  playerItemParentB: {fileID: 231196980}
 --- !u!4 &1718209580
 Transform:
   m_ObjectHideFlags: 0

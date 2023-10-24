@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Realtime;
 
-public class PlayerItem : MonoBehaviour
+public class PlayerItem : MonoBehaviourPunCallbacks
 {
     public Text playerName;
 
@@ -17,40 +17,81 @@ public class PlayerItem : MonoBehaviour
 
     ExitGames.Client.Photon.Hashtable playerProperties = new ExitGames.Client.Photon.Hashtable();
 
+    Photon.Realtime.Player player;
+
+    enum Team
+    {
+        TeamA = 1,
+        TeamB
+    }
+
     // Start is called before the first frame update
     private void Awake()
     {
         backgroundImage = GetComponent<Image>();
         lobbyManagerScript = FindAnyObjectByType<LobbyManager>();
     }
+
+    private void Update()
+    {
+        if(!PhotonNetwork.IsMasterClient)
+        {
+            leftArrowButton.SetActive(false);
+            rightArrowButton.SetActive(false);
+        }
+    }
+
     public void SetPlayerInfo(Photon.Realtime.Player _player)
     {
         playerName.text = _player.UserId;
+        player = _player;
+        UpdatePlayerItem(player);
     }
 
     public void ApplyLocalChanges()
     {
         backgroundImage.color = highlightColor;
-        leftArrowButton.SetActive(false);
-        rightArrowButton.SetActive(true);
     }
 
     public void OnClickLeftArrow()
     {
-        lobbyManagerScript.GetListA().Remove(this);
-        lobbyManagerScript.GetListB().Add(this);
-        this.transform.SetParent(GameObject.Find("TeamAList").transform);
         leftArrowButton.SetActive(false);
         rightArrowButton.SetActive(true);
+        playerProperties["playerTeam"] = (int)Team.TeamA;
+        player.SetCustomProperties(playerProperties);
+        lobbyManagerScript.TeamChangedBToA(this);
     }
 
     public void OnClickRightArrow()
     {
-        lobbyManagerScript.GetListB().Remove(this);
-        lobbyManagerScript.GetListA().Add(this);
-        this.transform.SetParent(GameObject.Find("TeamBList").transform);
         leftArrowButton.SetActive(true);
         rightArrowButton.SetActive(false);
+        playerProperties["playerTeam"] = (int)Team.TeamB;
+        player.SetCustomProperties(playerProperties);
+        lobbyManagerScript.TeamChangedAToB(this);
+    }
+
+    public override void OnPlayerPropertiesUpdate(Photon.Realtime.Player targetPlayer, ExitGames.Client.Photon.Hashtable changedProps)
+    {
+        if(player == targetPlayer)
+        {
+            UpdatePlayerItem(targetPlayer);
+        }
+    }
+
+    void UpdatePlayerItem(Photon.Realtime.Player player)
+    {
+        if (player != null && player.CustomProperties.ContainsKey("playerTeam"))
+        {
+            int team = (int)player.CustomProperties["playerTeam"];
+            leftArrowButton.SetActive(team == (int)Team.TeamB);
+            rightArrowButton.SetActive(team == (int)Team.TeamA);
+        }
+        else
+        {
+            leftArrowButton.SetActive(false);
+            rightArrowButton.SetActive(false);
+        }
     }
 
     public PlayerItem GetPlayerItem()

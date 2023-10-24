@@ -24,7 +24,14 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     List<PlayerItem> playerItemListA = new List<PlayerItem>();
     List<PlayerItem> playerItemListB = new List<PlayerItem>();
     public PlayerItem playerItemPrefab;
-    public Transform playerItemParent;
+    public Transform playerItemParentA;
+    public Transform playerItemParentB;
+
+    enum Team
+    {
+        TeamA,
+        TeamB
+    }
 
     private void Start()
     {
@@ -110,7 +117,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
         foreach (KeyValuePair<int, Photon.Realtime.Player> player in PhotonNetwork.CurrentRoom.Players)
         {
-            PlayerItem newPlayerItem = Instantiate(playerItemPrefab, playerItemParent);
+            PlayerItem newPlayerItem = Instantiate(playerItemPrefab, playerItemParentA);
             newPlayerItem.SetPlayerInfo(player.Value);
 
             if (player.Value == PhotonNetwork.LocalPlayer)
@@ -123,12 +130,12 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
     }
 
-    enum Team
+    List<PlayerItem> GetPlayerList(Team team)
     {
-        TeamA,
-        TeamB
+        return team == Team.TeamA ? playerItemListA : playerItemListB;
     }
 
+<<<<<<< HEAD
     /*
     void UpdatePlayerListTest()
     {
@@ -178,6 +185,12 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         }
     }
     */
+=======
+    Transform GetPlayerItemParent(Team team)
+    {
+        return team == Team.TeamA ? playerItemParentA : playerItemParentB;
+    }
+>>>>>>> Noh
 
     public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
     {
@@ -199,6 +212,33 @@ public class LobbyManager : MonoBehaviourPunCallbacks
                 SceneManager.LoadScene("SiHyun MainLobby Test");
             }
         }
+    }
+
+    public void TeamChangedAToB(PlayerItem _playerItem)
+    {
+        playerItemListA.Remove(_playerItem);
+        playerItemListB.Add(_playerItem);
+        _playerItem.transform.SetParent(playerItemParentB);
+        SyncTeamChange(_playerItem.playerName.ToString(), (int)Team.TeamA, (int)Team.TeamB);
+    }
+
+    public void TeamChangedBToA(PlayerItem _playerItem)
+    {
+        playerItemListB.Remove(_playerItem);
+        playerItemListA.Add(_playerItem);
+        _playerItem.transform.SetParent(playerItemParentA);
+        SyncTeamChange(_playerItem.playerName.ToString(), (int)Team.TeamB, (int)Team.TeamA);
+    }
+
+    private void SyncTeamChange(string userID, int oldTeam, int newTeam)
+    {
+        ExitGames.Client.Photon.Hashtable _customProperties = new ExitGames.Client.Photon.Hashtable();
+        _customProperties["playerTeam"] = newTeam;
+        PhotonNetwork.CurrentRoom.SetCustomProperties(_customProperties);
+
+        RaiseEventOptions _raiseEventOptions = new RaiseEventOptions { CachingOption = EventCaching.DoNotCache };
+        /*PhotonNetwork.RaiseEvent(1, new object[] { userID, oldTeam, newTeam },
+                                 _raiseEventOptions, SendOptions.SendReliable);*/
     }
 
     public List<PlayerItem> GetListA()
