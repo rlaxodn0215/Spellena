@@ -88,7 +88,7 @@ namespace Player
         void SpawnPortal(Vector3 _spawnPoint)
         {
             object[] temp = new object[2];
-            temp[0] = Player.ID;
+            temp[0] = Player.playerName;
             temp[1] = tag;
             dimensionDoor = PhotonNetwork.Instantiate("TaeWoo/Prefabs/Portal", _spawnPoint, Quaternion.identity, 0, temp);
         }
@@ -116,7 +116,7 @@ namespace Player
 
                 spawnPoint.y += 1;
                 dimensionDoorGUI = Instantiate(Player.DimensionDoorGUI, spawnPoint, Quaternion.identity);
-                dimensionDoorGUI.name = "Player_" + Player.ID + "_PotalGUI";
+                dimensionDoorGUI.name = "Player_" + Player.playerName + "_PotalGUI";
                 dimensionDoorGUI.tag = Player.gameObject.tag;
                 isShowGUI = true;
             }

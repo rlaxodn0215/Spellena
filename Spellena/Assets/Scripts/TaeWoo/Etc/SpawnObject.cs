@@ -8,9 +8,9 @@ namespace Player
 {
     public class SpawnObject : MonoBehaviourPunCallbacks
     {
-        public int ID;
+        public string playerName;
         protected object[] data;
-        public Vector3 direction;
+
         public virtual void Start()
         {
             Init();
@@ -22,22 +22,10 @@ namespace Player
 
             if (data != null)
             {
-                ID = (int)data[0];
+                playerName = (string)data[0];
                 tag = (string)data[1];
             }
 
-            if(CompareTag("TeamA") || CompareTag("TeamB"))
-            {
-                Transform[] temp = GetComponentsInChildren<Transform>();
-
-                foreach(Transform child in temp)
-                {
-                    child.gameObject.layer = LayerMask.NameToLayer("SpawnObject" + tag[4]); // tag[4] => A,B
-                }
-                
-            }
-
-            gameObject.name = "Player_" + ID + "_Portal";
         }
         public void DestorySpawnObject()
         {

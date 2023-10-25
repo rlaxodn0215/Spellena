@@ -8,6 +8,7 @@ namespace Player
 {
     public class DimensionSlash : SpawnObject
     {
+        public Vector3 direction;
         public int damage;
         public int lifeTime;
         public int Speed;
@@ -15,10 +16,9 @@ namespace Player
         public override void Start()
         {
             base.Start();
-            name = "Player_" + ID + "_DimensionSlash";
+            name = playerName + "_DimensionSlash";
             if(data !=null)
                 direction = (Quaternion)data[2]*Vector3.forward;
-            //transform.localRotation = (Quaternion)data[2];
             StartCoroutine(Gone());
         }
 
@@ -32,14 +32,8 @@ namespace Player
                 DestorySpawnObject();
             }
 
-            else
-            {
-                photonView.RPC("RequestDestorySpawnObject", RpcTarget.MasterClient);
-            }
-
         }
         
-
         // Update is called once per frame
         public void Update()
         {
@@ -58,14 +52,10 @@ namespace Player
                 if(CompareTag("TeamA") && other.CompareTag("TeamB") || CompareTag("TeamB") && other.CompareTag("TeamA"))
                 {
                     if(other.GetComponent<Character>())
-                        other.gameObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBuffered, ID.ToString(), damage);
-                    DestorySpawnObject();
+                        other.gameObject.GetComponent<Character>().PlayerDamaged(playerName,damage);
                 }
 
-                else if(CompareTag("Ground"))
-                {
-                    DestorySpawnObject();
-                }
+                DestorySpawnObject();
             }
         }
     }

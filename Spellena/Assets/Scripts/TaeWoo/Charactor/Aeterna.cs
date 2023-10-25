@@ -89,7 +89,6 @@ namespace Player
             DimensionSword.GetComponent<PhotonView>().RPC("SetSwordLayer", RpcTarget.AllBufferedViaServer);
         }
 
-
         void OnSkill1()
         {
             if (photonView.IsMine)

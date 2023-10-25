@@ -11,7 +11,6 @@ namespace Player
         public float range;
         public int deBuffNum;
         private LayerMask enemyLayerMask;
-        private LayerMask enemyProjectileLayerMask;
         private List<string> playerInArea;
 
         public override void Start()
@@ -21,17 +20,28 @@ namespace Player
             if (CompareTag("TeamA"))
             {
                 enemyLayerMask = LayerMask.NameToLayer("TeamB");
-                enemyProjectileLayerMask = LayerMask.NameToLayer("SpawnObjectB");
             }
 
             else if (CompareTag("TeamB"))
             {
                 enemyLayerMask = LayerMask.NameToLayer("TeamA");
-                enemyProjectileLayerMask = LayerMask.NameToLayer("SpawnObjectA");
             }
 
             playerInArea = new List<string>();
             GetComponent<SphereCollider>().radius = range;
+
+            StartCoroutine(Gone());
+        }
+
+        IEnumerator Gone()
+        {
+            yield return new WaitForSeconds(lifeTime);
+
+            if (PhotonNetwork.IsMasterClient)
+            {
+                DestorySpawnObject();
+            }
+
         }
 
         public void OnTriggerEnter(Collider other)
@@ -42,12 +52,7 @@ namespace Player
                 {
                     if (PhotonNetwork.IsMasterClient)
                     {
-                        DeBuff(other.transform.root.GetComponent<Character>().ID);
-                    }
-
-                    else
-                    {
-                        photonView.RPC("RequestDeBuff", RpcTarget.AllBuffered, other.transform.root.GetComponent<Character>().ID);
+                        DeBuff(other.transform.root.GetComponent<Character>().playerName);
                     }
                 }
             }
@@ -60,33 +65,15 @@ namespace Player
             {
                   if (PhotonNetwork.IsMasterClient)
                   {
-                      EnBuff(other.transform.root.GetComponent<Character>().ID);
-                  }
-
-                  else
-                  {
-                    photonView.RPC("RequestEnBuff", RpcTarget.AllBuffered, other.transform.root.GetComponent<Character>().ID);
+                      EnBuff(other.transform.root.GetComponent<Character>().playerName);
                   }
                 
             }
         }
 
-        [PunRPC]
-        public void RequestDeBuff(int Id)
+        void DeBuff(string playerName)
         {
-            DeBuff(Id);
-        }
-
-        [PunRPC]
-        public void RequestEnBuff(int Id)
-        {
-            EnBuff(Id);
-        }
-
-        void DeBuff(int Id)
-        {
-            Debug.Log("DeBuff");
-            GameObject temp = GameObject.Find("Player_" + Id);
+            GameObject temp = GameObject.Find("Player_" + playerName);
             if (temp == null) return;
 
             foreach(string player in playerInArea)
@@ -100,10 +87,10 @@ namespace Player
             temp.GetComponent<Character>().jumpHeight -= deBuffNum;
         }
 
-        void EnBuff(int Id)
+        void EnBuff(string playerName)
         {
             Debug.Log("EnBuff");
-            GameObject temp = GameObject.Find("Player_" + Id);
+            GameObject temp = GameObject.Find("Player_" + playerName);
             if (temp == null) return;
 
             foreach (string player in playerInArea)

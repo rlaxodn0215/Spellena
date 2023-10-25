@@ -46,7 +46,7 @@ namespace Player
         public GameObject UI;
 
         //실시간 갱신 데이터
-        public int ID;              // view ID로 설정, Projectile 경우 해당 주인의 view ID로 설정
+        //public int ID;              // view ID로 설정, Projectile 경우 해당 주인의 view ID로 설정
         public string playerName;
         public string murder;
         public int hp;
@@ -111,8 +111,8 @@ namespace Player
 
         void Initialize()
         {
-            ID = GetComponent<PhotonView>().ViewID;
-            gameObject.name = "Player_" + ID;
+            //ID = GetComponent<PhotonView>().ViewID;
+            gameObject.name = "Player_" + playerName;
             animator = GetComponent<Animator>();
             rigidbody = GetComponent<Rigidbody>();
             Skills = new Dictionary<string, Ability>();
@@ -399,9 +399,6 @@ namespace Player
 
         }
 
-
-
-        [PunRPC]
         public void PlayerDamaged(string enemy ,int damage)
         {
             hp-=damage;
@@ -446,7 +443,7 @@ namespace Player
             if (stream.IsWriting)
             {
                 // 데이터를 보내는 부분
-                stream.SendNext(ID);
+                //stream.SendNext(ID);
                 stream.SendNext(playerName);
                 stream.SendNext(murder);
                 stream.SendNext(hp);
@@ -461,7 +458,7 @@ namespace Player
             else
             {
                 // 데이터를 받는 부분
-                ID = (int)stream.ReceiveNext();
+                //ID = (int)stream.ReceiveNext();
                 playerName = (string)stream.ReceiveNext();
                 murder = (string)stream.ReceiveNext();
                 hp = (int)stream.ReceiveNext();

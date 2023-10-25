@@ -52,7 +52,7 @@ namespace Player
         void SpawnSlash()
         {
             object[] data = new object[3];
-            data[0] = Player.ID;
+            data[0] = Player.playerName;
             data[1] = gameObject.tag;
             data[2] = Player.camera.transform.localRotation;
             PhotonNetwork.Instantiate("TaeWoo/Prefabs/Effect/" + dimensionSlash.name,
