@@ -8606,6 +8606,7 @@ MonoBehaviour:
   charactor: 1
   sight: {fileID: 1143958860369134628}
   camera: {fileID: 5079397655679932578}
+  enemyCam: {fileID: 0}
   UI: {fileID: 1576312012722347700}
   ID: 0
   playerName: ElementalOrderTester
