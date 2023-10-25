@@ -17,6 +17,10 @@ namespace Player
         {
             base.Start();
 
+            name = playerName + "_Portal";
+            type = SpawnObjectType.FixedObject;
+            objectName = "Portal";
+
             if (CompareTag("TeamA"))
             {
                 enemyTag = "TeamB";

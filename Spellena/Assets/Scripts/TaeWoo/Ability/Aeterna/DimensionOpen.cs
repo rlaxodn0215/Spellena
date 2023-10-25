@@ -85,13 +85,13 @@ namespace Player
             }
         }
 
-        void SpawnPortal(Vector3 _spawnPoint)
+        void SpawnPortal(Vector3 spawnPoint)
         {
             object[] temp = new object[3];
             temp[0] = Player.playerName;
             temp[1] = tag;
-            temp[2] = SpawnObjectName.NoDamage;
-            dimensionDoor = PhotonNetwork.Instantiate("TaeWoo/Prefabs/Portal", _spawnPoint, Quaternion.identity, 0, temp);
+            temp[2] = "Portal";
+            dimensionDoor = PhotonNetwork.Instantiate("TaeWoo/Prefabs/Portal", spawnPoint, Quaternion.identity, 0, temp);
         }
 
         private void Update()

@@ -6,16 +6,17 @@ using Photon.Pun;
 
 namespace Player
 {
-    public enum SpawnObjectName
+    public enum SpawnObjectType
     {
-        NoDamage,
-        DimensionSlash,        
+        FixedObject,
+        Projectile,     
     }
 
     public class SpawnObject : MonoBehaviourPunCallbacks
     {
         public string playerName;
-        public SpawnObjectName type;
+        public SpawnObjectType type;
+        public string objectName;
         protected object[] data;
 
         public virtual void Start()
@@ -31,7 +32,7 @@ namespace Player
             {
                 playerName = (string)data[0];
                 tag = (string)data[1];
-                type = (SpawnObjectName)data[2];
+                objectName = (string)data[2];
             }
 
         }

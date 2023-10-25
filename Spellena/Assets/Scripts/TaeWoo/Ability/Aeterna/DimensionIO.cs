@@ -12,7 +12,10 @@ namespace Player
         private GameObject sword;
 
         [HideInInspector]
-        public SpawnObjectName enemyProjectileName;
+        public SpawnObjectType enemyProjectileType;
+        [HideInInspector]
+        public string enemyObjectName;
+
         public override void AddPlayer(Character player)
         {
             Player = (Aeterna)player;
@@ -51,7 +54,7 @@ namespace Player
             sword.GetComponent<BoxCollider>().enabled = false;
             Player.DimensionSword.GetComponent<AeternaSword>().skill2BuffParticle.SetActive(false);
 
-            enemyProjectileName = sword.GetComponent<AeternaSword>().contactObjectName;
+            enemyObjectName = sword.GetComponent<AeternaSword>().contactObjectName;
 
             Player.skill2Phase = 2;
             Player.playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = false;
@@ -86,12 +89,13 @@ namespace Player
         public void ShootProjectile()
         {
             object[] data = new object[4];
+
             data[0] = Player.playerName;
             data[1] = gameObject.tag;
-            data[2] = enemyProjectileName;
+            data[2] = enemyObjectName;
             data[3] = Player.camera.transform.localRotation;
 
-            PhotonNetwork.Instantiate("TaeWoo/Prefabs/Effect/" + enemyProjectileName,
+            PhotonNetwork.Instantiate("TaeWoo/Prefabs/Effect/" + enemyObjectName,
                 Player.camera.transform.position, Player.transform.localRotation, 0, data);
         }
     }

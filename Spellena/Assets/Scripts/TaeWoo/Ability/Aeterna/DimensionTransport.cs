@@ -38,5 +38,16 @@ namespace Player
             yield return new WaitForSeconds(animator.GetCurrentAnimatorClipInfo(1).Length);
             Sword.GetComponent<BoxCollider>().enabled = false;
         }
+        public void Transport(GameObject enemy)
+        {
+            int randomIndex = Random.Range(0, trasportPoints.Count);
+            enemy.transform.position = trasportPoints[randomIndex].position;
+            Sword.GetComponent<BoxCollider>().enabled = false;
+            Player.skillTimer[3] = Player.AeternaData.skill3CoolTime;
+            Player.skill3Phase = 2;
+
+            if(Sword.GetComponent<AeternaSword>().skill3BuffParticle)
+                Sword.GetComponent<AeternaSword>().skill3BuffParticle.SetActive(false);
+        }
     }
 }

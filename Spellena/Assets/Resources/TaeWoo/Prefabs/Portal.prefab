@@ -4892,6 +4892,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerName: 
   type: 0
+  objectName: 
   lifeTime: 5
   range: 2
   deBuffNum: 2

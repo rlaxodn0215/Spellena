@@ -84,6 +84,7 @@ namespace Player
             }
 
             skill2Phase = 1;
+            skill3Phase = 1;
 
             hp = AeternaData.Hp;
             walkSpeed = AeternaData.moveSpeed;
@@ -210,7 +211,7 @@ namespace Player
                     else
                     {
                         skillButton = 3;
-                        Skills["Skill1"].IsActive();
+                        Skills["Skill3"].IsActive();
                         Debug.Log("Skill3 Ready");
                     }
                 }
@@ -292,7 +293,7 @@ namespace Player
                             DimensionSword.GetComponent<AeternaSword>().skill3BuffParticle.SetActive(true);
                             StartCoroutine(SkillTimer(3));
                         }
-                        playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = true;
+                        playerActionDatas[(int)PlayerActionState.Skill3].isExecuting = true;
                     }
 
                     else
@@ -336,6 +337,11 @@ namespace Player
             {
                 Skill2TimeOut(ref skill2Phase);
             }
+
+            else if(index==3)
+            {
+                Skill3TimeOut(ref skill3Phase);
+            }
         }
 
         void Skill2TimeOut(ref int phase)
@@ -353,13 +359,30 @@ namespace Player
             {
                 phase = 1;
             }
+        }
 
-            
+        void Skill3TimeOut(ref int phase)
+        {
+            if (phase == 1)
+            {
+                skillTimer[3] = AeternaData.skill3CoolTime;
+                DimensionSword.GetComponent<AeternaSword>().skill3BuffParticle.SetActive(false);
+                playerActionDatas[(int)PlayerActionState.Skill3].isExecuting = true;
+                phase = 2;
+                StartCoroutine(SkillTimer(3));
+            }
+
+            else if(phase==2)
+            {
+                phase = 1;
+            }
         }
 
         private void OnGUI()
         {
-            GUI.TextField(new Rect(10, 10, 100, 30), skillTimer[2].ToString());
+            GUI.TextField(new Rect(10, 10, 100, 30), "스킬 1 : " + skillTimer[1].ToString());
+            GUI.TextField(new Rect(10, 40, 100, 30), "스킬 2 : " + skillTimer[2].ToString());
+            GUI.TextField(new Rect(10, 70, 100, 30), "스킬 3 : " + skillTimer[3].ToString());
         }
 
     }

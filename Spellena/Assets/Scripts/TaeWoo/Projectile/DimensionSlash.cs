@@ -16,8 +16,12 @@ namespace Player
         public override void Start()
         {
             base.Start();
+
             name = playerName + "_DimensionSlash";
-            if(data !=null)
+            objectName = "DimensionSlash";
+            type = SpawnObjectType.Projectile;
+
+            if (data !=null)
                 direction = (Quaternion)data[3]*Vector3.forward;
             StartCoroutine(Gone());
         }

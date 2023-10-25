@@ -7,10 +7,13 @@ namespace Player
 {
     public class AeternaSword : MonoBehaviour
     {
+        //[HideInInspector]
+        //public SpawnObjectType contactObjectType;
         [HideInInspector]
-        public SpawnObjectName contactObjectName;
+        public string contactObjectName;
         [HideInInspector]
         public Aeterna player;
+
         public GameObject skill2BuffParticle;
         public GameObject skill3BuffParticle;
 
@@ -42,8 +45,8 @@ namespace Player
             {
                 if (player.playerActionDatas[(int)PlayerActionState.Skill2].isExecuting && player.skill2Phase == 1)
                 {
-                    if(other.gameObject.GetComponent<SpawnObject>().type !=SpawnObjectName.NoDamage)
-                        contactObjectName = other.gameObject.GetComponent<SpawnObject>().type;
+                    if(other.gameObject.GetComponent<SpawnObject>().type == SpawnObjectType.Projectile)
+                        contactObjectName = other.gameObject.GetComponent<SpawnObject>().objectName;
 
                    other.gameObject.GetComponent<SpawnObject>().DestorySpawnObject();
                    player.dimensionIO.CheckHold();
@@ -51,7 +54,8 @@ namespace Player
 
                 else if(player.playerActionDatas[(int)PlayerActionState.Skill3].isExecuting && player.skill3Phase==1)
                 {
-
+                    if (other.gameObject.GetComponent<Character>())
+                        player.dimensionTransport.Transport(other.gameObject);
                 }
 
                 else

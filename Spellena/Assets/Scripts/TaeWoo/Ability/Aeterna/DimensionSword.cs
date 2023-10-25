@@ -54,9 +54,9 @@ namespace Player
             object[] data = new object[4];
             data[0] = Player.playerName;
             data[1] = gameObject.tag;
-            data[2] = SpawnObjectName.DimensionSlash;
+            data[2] = "DimensionSlash";
             data[3] = Player.camera.transform.localRotation;
-            PhotonNetwork.Instantiate("TaeWoo/Prefabs/Effect/" + dimensionSlash.name,
+            PhotonNetwork.Instantiate("TaeWoo/Prefabs/Effect/" + (string)data[2],
                 Player.camera.transform.position, Player.transform.localRotation, 0, data);
         }
 

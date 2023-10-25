@@ -783,9 +783,11 @@ MonoBehaviour:
   dimensionSword: {fileID: 0}
   dimensionOpen: {fileID: 0}
   dimensionIO: {fileID: 0}
+  dimensionTransport: {fileID: 0}
   skillButton: 0
   skillTimer: []
   skill2Phase: 0
+  skill3Phase: 0
 --- !u!114 &1254214872
 MonoBehaviour:
   m_ObjectHideFlags: 0
