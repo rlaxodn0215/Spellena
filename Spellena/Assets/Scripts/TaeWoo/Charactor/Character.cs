@@ -423,7 +423,15 @@ namespace Player
         {
             SetLookAtObj();
         }
-
+        /*
+        [PunRPC]
+        void SetLookAtObjRpc(Vector3 obj)
+        {
+            if (animator == null) return;
+            animator.SetLookAtWeight(1f, 0.9f);
+            animator.SetLookAtPosition(obj);
+        }
+        */
         void SetLookAtObj()
         {
             if (animator == null) return;
