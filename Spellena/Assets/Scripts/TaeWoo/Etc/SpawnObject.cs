@@ -39,17 +39,9 @@ namespace Player
 
             gameObject.name = "Player_" + ID + "_Portal";
         }
-
-        [PunRPC]
-        public void RequestDestorySpawnObject()
-        {
-            if(PhotonNetwork.IsMasterClient)
-                DestorySpawnObject(); 
-        }
-
         public void DestorySpawnObject()
         {
-            if(gameObject !=null)
+            if(gameObject != null)
                 PhotonNetwork.Destroy(gameObject);
         }
     }

@@ -17,11 +17,11 @@ TagManager:
   - UI
   - Me
   - Other
-  - TeamA
-  - TeamB
-  - OverlayCamera
-  - SpawnObjectA
-  - SpawnObjectB
+  - OverlayCameraForMe
+  - OverlayCameraForOther
+  - 
+  - 
+  - 
   - 
   - 
   - 

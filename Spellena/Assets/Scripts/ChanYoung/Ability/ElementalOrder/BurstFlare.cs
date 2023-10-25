@@ -4,15 +4,6 @@ using UnityEngine;
 
 public class BurstFlare : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    public int maxBullet = 5;
+    public int currentBullet = 0;
 }
