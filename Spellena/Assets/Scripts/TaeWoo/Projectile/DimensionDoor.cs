@@ -48,7 +48,7 @@ namespace Player
         {
             if (LayerMask.NameToLayer(other.tag) == enemyLayerMask)
             {
-                if(other.gameObject.layer != enemyProjectileLayerMask)
+                //if(other.gameObject.layer != enemyProjectileLayerMask)
                 {
                     if (PhotonNetwork.IsMasterClient)
                     {

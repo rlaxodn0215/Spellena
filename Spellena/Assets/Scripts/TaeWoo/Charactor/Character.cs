@@ -369,7 +369,7 @@ namespace Player
         }
 
         [PunRPC]
-        protected void SetTag(string team)
+        protected virtual void SetTag(string team)
         {
             this.tag = team;
 
