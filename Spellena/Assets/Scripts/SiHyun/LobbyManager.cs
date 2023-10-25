@@ -135,7 +135,6 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         return team == Team.TeamA ? playerItemListA : playerItemListB;
     }
 
-<<<<<<< HEAD
     /*
     void UpdatePlayerListTest()
     {
@@ -185,12 +184,10 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         }
     }
     */
-=======
     Transform GetPlayerItemParent(Team team)
     {
         return team == Team.TeamA ? playerItemParentA : playerItemParentB;
     }
->>>>>>> Noh
 
     public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
     {

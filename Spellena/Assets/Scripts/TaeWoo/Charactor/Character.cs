@@ -369,7 +369,7 @@ namespace Player
         }
 
         [PunRPC]
-        protected void SetTag(string team)
+        protected virtual void SetTag(string team)
         {
             Transform[] allChildren = GetComponentsInChildren<Transform>();
 
@@ -396,7 +396,7 @@ namespace Player
                     camera.GetComponent<Camera>().cullingMask |= 1 << LayerMask.NameToLayer("TeamB");
                 enemyCam.GetComponent<Camera>().cullingMask |= (1 << LayerMask.NameToLayer("TeamA") | 1 << LayerMask.NameToLayer("SpawnObjectA"));
             }
-            
+
         }
 
 

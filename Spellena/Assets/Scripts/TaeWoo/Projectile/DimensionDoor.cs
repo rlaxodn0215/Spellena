@@ -11,42 +11,34 @@ namespace Player
         public float range;
         public int deBuffNum;
         private LayerMask enemyLayerMask;
+        private LayerMask enemyProjectileLayerMask;
         private List<string> playerInArea;
 
         public override void Start()
         {
             base.Start();
 
-            if(CompareTag("TeamA"))
-                enemyLayerMask = LayerMask.NameToLayer("TeamB") | LayerMask.NameToLayer("SpawnObjectB");
-            else if(CompareTag("TeamB"))
-                enemyLayerMask = LayerMask.NameToLayer("TeamA") | LayerMask.NameToLayer("SpawnObjectA");
+            if (CompareTag("TeamA"))
+            {
+                enemyLayerMask = LayerMask.NameToLayer("TeamB");
+                enemyProjectileLayerMask = LayerMask.NameToLayer("SpawnObjectB");
+            }
+
+            else if (CompareTag("TeamB"))
+            {
+                enemyLayerMask = LayerMask.NameToLayer("TeamA");
+                enemyProjectileLayerMask = LayerMask.NameToLayer("SpawnObjectA");
+            }
 
             playerInArea = new List<string>();
             GetComponent<SphereCollider>().radius = range;
-
-
         }
 
         public void OnTriggerEnter(Collider other)
         {
-            if ((LayerMask.NameToLayer(other.tag) & enemyLayerMask)
-                == LayerMask.NameToLayer(other.tag))
+            if (LayerMask.NameToLayer(other.tag) == enemyLayerMask)
             {
-                if ((other.gameObject.layer & enemyLayerMask) == other.gameObject.layer)
-                {
-                    if (PhotonNetwork.IsMasterClient)
-                    {
-                        //other.gameObject.GetComponent<SpawnObject>().DestorySpawnObject();
-                    }
-
-                    else
-                    {
-                        //other.gameObject.GetComponent<PhotonView>().RPC("DestorySpawnObject", RpcTarget.MasterClient);
-                    }
-                }
-
-                else
+                if(other.gameObject.layer != enemyProjectileLayerMask)
                 {
                     if (PhotonNetwork.IsMasterClient)
                     {

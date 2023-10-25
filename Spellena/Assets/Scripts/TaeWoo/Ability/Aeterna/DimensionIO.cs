@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
 namespace Player
 {
@@ -11,7 +12,7 @@ namespace Player
         private GameObject sword;
 
         [HideInInspector]
-        public GameObject enemyProjectile;
+        public string enemyProjectileName;
         public override void AddPlayer(Character player)
         {
             Player = (Aeterna)player;
@@ -38,11 +39,6 @@ namespace Player
             }
         }
 
-        private void Update()
-        {
-
-        }
-
         private void OnDuration()
         {
             animator.SetTrigger("BasicAttack");
@@ -60,10 +56,10 @@ namespace Player
         {
             sword.GetComponent<BoxCollider>().enabled = false;
 
-            enemyProjectile = sword.GetComponent<AeternaSword>().contactObject;
-            sword.GetComponent<AeternaSword>().contactObject = null;
-            enemyProjectile.layer = LayerMask.NameToLayer("Projectile" + Player.tag[4]); // 태그 이름 편하게 수정
-            enemyProjectile.SetActive(false);
+            enemyProjectileName = sword.GetComponent<AeternaSword>().contactObjectName;
+            sword.GetComponent<AeternaSword>().contactObjectName = null;
+            //enemyProjectileName.layer = LayerMask.NameToLayer("SpawnObject" + Player.tag[4]); // 태그 이름 편하게 수정
+            //enemyProjectile.SetActive(false);
 
             StopCoroutine(Player.SkillTimer(2));
 
@@ -76,18 +72,35 @@ namespace Player
 
         private void OnHoldShoot()
         {
-            enemyProjectile.transform.position = Player.camera.transform.position;
-            if (Player.camera != null)
+            if(PhotonNetwork.IsMasterClient)
             {
-                enemyProjectile.GetComponent<SpawnObject>().direction = Player.camera.transform.localRotation * Vector3.forward;
+                RequestShootProjectile();
             }
-            enemyProjectile.SetActive(true);
-            enemyProjectile = null;
 
-            Player.skillButton = 0;
+            else
+            {
+                photonView.RPC("RequestShootProjectile", RpcTarget.AllBuffered);
+            }
 
             Player.skillTimer[2] = Player.AeternaData.skill2CoolTime;
             StartCoroutine(Player.SkillTimer(2));
+        }
+
+        public void RequestShootProjectile()
+        {
+            if(PhotonNetwork.IsMasterClient)
+                ShootProjectile();
+        }
+
+        [PunRPC]
+        public void ShootProjectile()
+        {
+            object[] data = new object[3];
+            data[0] = Player.ID;
+            data[1] = gameObject.tag;
+            data[2] = Player.camera.transform.localRotation;
+            PhotonNetwork.Instantiate("TaeWoo/Prefabs/Effect/" + enemyProjectileName,
+                Player.camera.transform.position, Player.transform.localRotation, 0, data);
         }
 
         private void OnCooling()

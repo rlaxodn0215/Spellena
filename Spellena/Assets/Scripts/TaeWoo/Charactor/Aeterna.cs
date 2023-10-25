@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Photon.Pun;
 
 namespace Player
 {
@@ -32,7 +33,6 @@ namespace Player
 
         [HideInInspector]
         public int skill2Phase; // 0: None 1: duration, 2: hold, 3: cool
-        private bool isDoing = false;
 
         protected override void Start() 
         {
@@ -80,6 +80,13 @@ namespace Player
             hp = AeternaData.Hp;
             walkSpeed = AeternaData.moveSpeed;
             jumpHeight = AeternaData.jumpHeight;
+        }
+
+        [PunRPC]
+        protected override void SetTag(string team)
+        {
+            base.SetTag(team);
+            DimensionSword.GetComponent<PhotonView>().RPC("SetSwordLayer", RpcTarget.AllBufferedViaServer);
         }
 
 
@@ -198,7 +205,6 @@ namespace Player
                             case 1:
                                 skillTimer[2] = AeternaData.skill2DurationTime;
                                 playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = true;
-                                isDoing = true;
                                 StartCoroutine(SkillTimer(2));
                                 break;
                             case 2:
@@ -224,26 +230,7 @@ namespace Player
                             StartCoroutine(SkillTimer(0));
                         }
 
-                        //switch (skill2Phase)
-                        //{
-                        //    case 0:
-                        //        break;
-                        //    case 1:
-                        //        Debug.Log("Absorb_Attack");
-                        //        break;
-                        //    case 2:
-                        //        break;
-                        //    case 3:
-                        //        break;
-                        //}
                     }
-
-                    //if (skill2Phase == 1 && skillTimer[0] <= 0.0f)
-                    //{
-                    //    Skills["Skill2"].Execution(ref skill2Phase);
-                    //    skillTimer[0] = AeternaData.basicAttackTime;
-                    //    StartCoroutine(SkillTimer(0));
-                    //}
 
                 }
 
@@ -275,13 +262,11 @@ namespace Player
 
         void Skill2TimeOut(int index)
         {
-            if(index == 2 && isDoing)
+            if(index == 2)
             {
                 skillTimer[2] = AeternaData.skill2CoolTime;
                 playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = true;
                 StartCoroutine(SkillTimer(2));
-
-                isDoing = !isDoing;
             }
         }
 
