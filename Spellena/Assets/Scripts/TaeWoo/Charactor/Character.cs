@@ -356,7 +356,7 @@ namespace Player
 
                 for(int i = 0; i < avatarForMe.childCount; i++)
                 {
-                    avatarForMe.GetChild(i).gameObject.layer = LayerMask.NameToLayer("OverlayCamera");
+                    avatarForMe.GetChild(i).gameObject.layer = LayerMask.NameToLayer("OverlayCameraForMe");
                 }
 
                 UI.SetActive(true);
@@ -371,6 +371,9 @@ namespace Player
         [PunRPC]
         protected void SetTag(string team)
         {
+            this.tag = team;
+
+            /*
             Transform[] allChildren = GetComponentsInChildren<Transform>();
 
             foreach (Transform child in allChildren)
@@ -396,6 +399,7 @@ namespace Player
                     camera.GetComponent<Camera>().cullingMask |= 1 << LayerMask.NameToLayer("TeamB");
                 enemyCam.GetComponent<Camera>().cullingMask |= (1 << LayerMask.NameToLayer("TeamA") | 1 << LayerMask.NameToLayer("SpawnObjectA"));
             }
+            */
             
         }
 
