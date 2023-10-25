@@ -24,18 +24,12 @@ namespace Player
         {
             switch (phase)
             {
-                case 0:
-                    break;
                 case 1:
                     OnDuration();
                     break;
                 case 2:
                     OnHoldShoot();
                     break;
-                case 3:
-                    OnCooling();
-                    break;
-
             }
         }
 
@@ -58,13 +52,10 @@ namespace Player
 
             enemyProjectileName = sword.GetComponent<AeternaSword>().contactObjectName;
 
-            StopCoroutine(Player.SkillTimer(2));
-
             Player.skill2Phase = 2;
             Player.playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = false;
 
             Player.skillTimer[2] = Player.AeternaData.skill2HoldTime;
-            StartCoroutine(Player.SkillTimer(2));
         }
 
         private void OnHoldShoot()
@@ -79,8 +70,8 @@ namespace Player
                 photonView.RPC("RequestShootProjectile", RpcTarget.AllBuffered);
             }
 
+            Player.skill2Phase = 3;
             Player.skillTimer[2] = Player.AeternaData.skill2CoolTime;
-            StartCoroutine(Player.SkillTimer(2));
         }
 
         public void RequestShootProjectile()
@@ -100,11 +91,6 @@ namespace Player
 
             PhotonNetwork.Instantiate("TaeWoo/Prefabs/Effect/" + enemyProjectileName,
                 Player.camera.transform.position, Player.transform.localRotation, 0, data);
-        }
-
-        private void OnCooling()
-        {
-
         }
     }
 }

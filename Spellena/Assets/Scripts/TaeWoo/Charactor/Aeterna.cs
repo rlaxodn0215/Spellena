@@ -32,7 +32,7 @@ namespace Player
         // 4 : ½ºÅ³ 4 (±Ã±Ø±â)
 
         [HideInInspector]
-        public int skill2Phase; // 0: None 1: duration, 2: hold, 3: cool
+        public int skill2Phase; //1: duration, 2: hold, 3: cool
 
         protected override void Start() 
         {
@@ -198,25 +198,17 @@ namespace Player
                     {
                         switch (skill2Phase)
                         {
-                            case 0:
-                                break;
                             case 1:
                                 skillTimer[2] = AeternaData.skill2DurationTime;
-                                playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = true;
                                 StartCoroutine(SkillTimer(2));
                                 break;
                             case 2:
                                 if (skillTimer[2] >= 0.0f)
                                     Skills["Skill2"].Execution(ref skill2Phase);
-                                playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = true;
-                                StartCoroutine(SkillTimer(2));
-                                break;
-                            case 3:
-                                skillTimer[2] = AeternaData.skill2CoolTime;
-                                playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = true;
-                                StartCoroutine(SkillTimer(2));
                                 break;
                         }
+
+                        playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = true;
                     }
 
                     else
@@ -247,6 +239,7 @@ namespace Player
 
         public IEnumerator SkillTimer(int index)
         {
+
             while (skillTimer[index] > 0.0f)
             {
                 skillTimer[index] -= Time.deltaTime;
@@ -263,27 +256,19 @@ namespace Player
 
         void Skill2TimeOut(ref int phase)
         {
-            switch (phase)
+            if(phase==1 || phase==2)
             {
-                case 0:
-                    break;
-                case 1:
-                    skillTimer[2] = AeternaData.skill2CoolTime;
-                    playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = true;
-                    StartCoroutine(SkillTimer(2));
-                    phase = 3;
-                    break;
-                case 2:
-                    skillTimer[2] = AeternaData.skill2CoolTime;
-                    playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = true;
-                    StartCoroutine(SkillTimer(2));
-                    phase = 3;
-                    break;
-                case 3:
-                    playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = false;
-                    phase = 1;
-                    break;
+                skillTimer[2] = AeternaData.skill2CoolTime;
+                playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = true;
+                StartCoroutine(SkillTimer(2));
+                phase = 3;
             }
+
+            else
+            {
+                phase = 1;
+            }
+
             
         }
 

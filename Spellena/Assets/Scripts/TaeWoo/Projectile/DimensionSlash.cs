@@ -52,8 +52,10 @@ namespace Player
                 if (CompareTag("TeamA") && other.CompareTag("TeamB") || CompareTag("TeamB") && other.CompareTag("TeamA"))
                 {
                     if (other.GetComponent<Character>())
+                    {
                         other.gameObject.GetComponent<Character>().PlayerDamaged(playerName, damage);
-                    DestorySpawnObject();
+                        DestorySpawnObject();
+                    }
                 }
 
                 else if (other.CompareTag("Ground"))
