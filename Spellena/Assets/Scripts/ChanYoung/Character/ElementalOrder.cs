@@ -1,3 +1,4 @@
+using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -7,20 +8,18 @@ using UnityEngine.InputSystem.LowLevel;
 
 namespace Player
 {
-    public class ElementalOrder : Character
+    public class ElementalOrder : Character, IPunObservable
     {
         public CharacterData elementalOrderData;
-
-        [HideInInspector]
-        public int skillButton = -1;
-        [HideInInspector]
-        public float[] skillTimer;
         public GameObject overlayCamera;
         Vector3 overlayCameraDefaultPos;
         public GameObject Aim;
 
         Animator overlayAnimator;
+
         Vector3 handPoint;
+        Vector3 networkHandPoint;
+        Vector3 currentHandPoint;
 
 
         //스킬 순서 11, 12, 13, 22, 23, 33 총 6개
@@ -35,7 +34,14 @@ namespace Player
         bool isSpell5 = false;
         bool isSpell6 = false;
 
-        
+
+        protected override void Awake()
+        {
+            base.Awake();
+            CheckPoint();
+            currentHandPoint = handPoint;
+        }
+
         protected override void Start()
         {
             base.Start();
@@ -49,9 +55,9 @@ namespace Player
             if (photonView.IsMine)
             {
                 PlayerSkillInput();
+                CheckOverlayAnimator();
+                CheckPoint();
             }
-            CheckOverlayAnimator();
-            CheckPoint();
         }
 
         void CheckPoint()
@@ -66,55 +72,57 @@ namespace Player
         protected override void OnAnimatorIK()
         {
             base.OnAnimatorIK();
-            animator.SetIKPosition(AvatarIKGoal.LeftHand, handPoint);
-            animator.SetIKPosition(AvatarIKGoal.RightHand, handPoint);
-            if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Spell1"))
+            if (photonView.IsMine)
             {
-                if (rightCurrentWeight < targetWeight)
+                animator.SetIKPosition(AvatarIKGoal.LeftHand, handPoint);
+                animator.SetIKPosition(AvatarIKGoal.RightHand, handPoint);
+                if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Spell1"))
                 {
-                    rightCurrentWeight += Time.deltaTime;
-                    leftCurrentWeight += Time.deltaTime;
-                    if(rightCurrentWeight > targetWeight)
+                    if (rightCurrentWeight < targetWeight)
                     {
-                        rightCurrentWeight = targetWeight;
-                        leftCurrentWeight = targetWeight;
+                        rightCurrentWeight += Time.deltaTime;
+                        leftCurrentWeight += Time.deltaTime;
+                        if (rightCurrentWeight > targetWeight)
+                        {
+                            rightCurrentWeight = targetWeight;
+                            leftCurrentWeight = targetWeight;
+                        }
                     }
                 }
-            }
-            
-            else if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Spell5"))
-            {
-                if (rightCurrentWeight < targetWeight)
-                {
-                    rightCurrentWeight += Time.deltaTime / 4;
-                    leftCurrentWeight -= Time.deltaTime / 4;
-                    if (rightCurrentWeight > targetWeight)
-                    {
-                        rightCurrentWeight = targetWeight; 
-                    }
-                    if (leftCurrentWeight < 0f)
-                    {
-                        leftCurrentWeight = 0;
-                    }
 
-                }
-            }
-            
-            else
-            {
-                if(rightCurrentWeight > 0f)
+                else if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Spell5"))
                 {
-                    rightCurrentWeight -= Time.deltaTime;
-                    leftCurrentWeight -= Time.deltaTime;
-                    if(rightCurrentWeight < 0f)
+                    if (rightCurrentWeight < targetWeight)
                     {
-                        rightCurrentWeight = 0;
-                        leftCurrentWeight = 0;
+                        rightCurrentWeight += Time.deltaTime / 4;
+                        leftCurrentWeight -= Time.deltaTime / 4;
+                        if (rightCurrentWeight > targetWeight)
+                        {
+                            rightCurrentWeight = targetWeight;
+                        }
+                        if (leftCurrentWeight < 0f)
+                        {
+                            leftCurrentWeight = 0;
+                        }
+
                     }
                 }
+                else
+                {
+                    if (rightCurrentWeight > 0f)
+                    {
+                        rightCurrentWeight -= Time.deltaTime;
+                        leftCurrentWeight -= Time.deltaTime;
+                        if (rightCurrentWeight < 0f)
+                        {
+                            rightCurrentWeight = 0;
+                            leftCurrentWeight = 0;
+                        }
+                    }
+                }
+                animator.SetIKPositionWeight(AvatarIKGoal.LeftHand, leftCurrentWeight);
+                animator.SetIKPositionWeight(AvatarIKGoal.RightHand, rightCurrentWeight);
             }
-            animator.SetIKPositionWeight(AvatarIKGoal.LeftHand, leftCurrentWeight);
-            animator.SetIKPositionWeight(AvatarIKGoal.RightHand, rightCurrentWeight);
 
         }
 
@@ -135,13 +143,13 @@ namespace Player
 
         void CheckOverlayAnimator()
         {
-            if(overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Spell1"))
+            if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Spell1"))
             {
                 overlayCamera.transform.localPosition = overlayCameraDefaultPos + new Vector3(0, 0.383f, 0);
                 overlayAnimator.SetBool("Spell1", false);
                 animator.SetBool("Spell1", false);
             }
-            else if(overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Spell2"))
+            else if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Spell2"))
             {
                 overlayCamera.transform.localPosition = overlayCameraDefaultPos + new Vector3(0, 0.1f, 0);
                 overlayAnimator.SetBool("Spell2", false);
@@ -274,28 +282,28 @@ namespace Player
         }
         protected void PlayerSkillInput()
         {
-            if(isReadyToUseSkill == true)
+            if (isReadyToUseSkill == true)
             {
-                if(isSpell1 == true)
+                if (isSpell1 == true)
                 {
                     commands.Clear();
                     //스킬1이 발사된다.
                     isSpell1 = false;
                     isReadyToUseSkill = false;
                 }
-                else if(isSpell2 == true)
+                else if (isSpell2 == true)
                 {
                     commands.Clear();
                     isSpell2 = false;
                     isReadyToUseSkill = false;
                 }
-                else if(isSpell3 == true)
+                else if (isSpell3 == true)
                 {
                     commands.Clear();
                     isSpell3 = false;
                     isReadyToUseSkill = false;
                 }
-                else if(isSpell4 == true)
+                else if (isSpell4 == true)
                 {
                     commands.Clear();
                     isSpell4 = false;
@@ -322,5 +330,21 @@ namespace Player
             animator.SetBool(parameter, !animator.GetBool(parameter));
         }
 
+        public override void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+        {
+            base.OnPhotonSerializeView(stream, info);
+            if (stream.IsWriting)
+            {
+                stream.SendNext(handPoint);
+                stream.SendNext(rightCurrentWeight);
+                stream.SendNext(leftCurrentWeight);
+            }
+            else
+            {
+                networkHandPoint = (Vector3)stream.ReceiveNext();
+                rightCurrentWeight = (float)stream.ReceiveNext();
+                leftCurrentWeight = (float)stream.ReceiveNext();
+            }
+        }
     }
 }

@@ -1090,7 +1090,7 @@ Camera:
   m_Depth: 1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 1024
+    m_Bits: 1280
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -5803,7 +5803,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 951
+    m_Bits: 183
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -8483,8 +8483,7 @@ GameObject:
   - component: {fileID: -1696381566082884333}
   - component: {fileID: 1355779567499457378}
   - component: {fileID: 7278771829291431468}
-  - component: {fileID: 7023165975753483618}
-  - component: {fileID: -3447278604793527591}
+  - component: {fileID: 1154018797995834573}
   m_Layer: 0
   m_Name: ElementalOrder
   m_TagString: TeamA
@@ -8533,8 +8532,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 492184195756621743}
   - {fileID: -1696381566082884333}
-  - {fileID: 7023165975753483618}
-  - {fileID: -3447278604793527591}
+  - {fileID: 1154018797995834573}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -8621,8 +8619,6 @@ MonoBehaviour:
   rigidbody: {fileID: 0}
   moveVec: {x: 0, y: 0, z: 0}
   elementalOrderData: {fileID: 11400000, guid: 6ed908210d4b790479e2946fd36e5012, type: 2}
-  skillButton: -1
-  skillTimer: []
   overlayCamera: {fileID: 1388734511939268114}
   Aim: {fileID: 7592923223106303855}
 --- !u!114 &1355779567499457378
@@ -8669,23 +8665,7 @@ CapsuleCollider:
   m_Height: 1.8605461
   m_Direction: 1
   m_Center: {x: 0, y: 0.88050747, z: 0}
---- !u!114 &7023165975753483618
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7304456071763099864}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SynchronizePosition: 1
-  m_SynchronizeRotation: 1
-  m_SynchronizeScale: 0
-  m_UseLocal: 1
---- !u!114 &-3447278604793527591
+--- !u!114 &1154018797995834573
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8748,8 +8728,6 @@ MonoBehaviour:
     LayerIndex: 2
   - SynchronizeType: 2
     LayerIndex: 3
-  - SynchronizeType: 2
-    LayerIndex: 4
 --- !u!1 &7306087748092539537
 GameObject:
   m_ObjectHideFlags: 0
