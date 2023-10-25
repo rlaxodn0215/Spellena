@@ -99,7 +99,6 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     void UpdatePlayerList()
     {
         // 기존의 플레이어 아이템을 삭제하고 리스트를 초기화
-        //
         foreach (PlayerItem item in playerItemListA)
         {
             Destroy(item.gameObject);
@@ -158,6 +157,11 @@ public class LobbyManager : MonoBehaviourPunCallbacks
             {
                 SceneManager.LoadScene("SiHyun MainLobby Test");
             }
+        }
+        if (Time.time >= nextUpdateTime)
+        {
+            UpdatePlayerList();
+            nextUpdateTime = Time.time + timeBetweenUpdates;
         }
     }
 
