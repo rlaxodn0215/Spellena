@@ -158,6 +158,11 @@ public class LobbyManager : MonoBehaviourPunCallbacks
                 SceneManager.LoadScene("SiHyun MainLobby Test");
             }
         }
+        if (Time.time >= nextUpdateTime)
+        {
+            UpdatePlayerList();
+            nextUpdateTime = Time.time + timeBetweenUpdates;
+        }
     }
 
     public void TeamChangedAToB(PlayerItem _playerItem)
