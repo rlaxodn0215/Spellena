@@ -51,7 +51,7 @@ namespace Player
 
         void SpawnSlash()
         {
-            object[] data = new object[3];
+            object[] data = new object[4];
             data[0] = Player.playerName;
             data[1] = gameObject.tag;
             data[2] = SpawnObjectName.DimensionSlash;

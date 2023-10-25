@@ -87,7 +87,7 @@ namespace Player
 
         void SpawnPortal(Vector3 _spawnPoint)
         {
-            object[] temp = new object[2];
+            object[] temp = new object[3];
             temp[0] = Player.playerName;
             temp[1] = tag;
             temp[2] = SpawnObjectName.NoDamage;

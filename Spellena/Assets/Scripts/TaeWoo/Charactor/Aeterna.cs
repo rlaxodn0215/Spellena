@@ -23,7 +23,7 @@ namespace Player
         [HideInInspector]
         public int skillButton = 0;
         [HideInInspector]
-        public float[] skillTimer;
+        public float[] skillTimer; //serizeview로 공유
 
         // 0 : 기본 공격
         // 1 : 스킬 1
@@ -255,17 +255,36 @@ namespace Player
 
             playerActionDatas[(int)PlayerActionState.BasicAttack + index].isExecuting = false;
 
-            Skill2TimeOut(index);
+            if (index == 2)
+            {
+                Skill2TimeOut(ref skill2Phase);
+            }
         }
 
-        void Skill2TimeOut(int index)
+        void Skill2TimeOut(ref int phase)
         {
-            if(index == 2)
+            switch (phase)
             {
-                skillTimer[2] = AeternaData.skill2CoolTime;
-                playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = true;
-                StartCoroutine(SkillTimer(2));
+                case 0:
+                    break;
+                case 1:
+                    skillTimer[2] = AeternaData.skill2CoolTime;
+                    playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = true;
+                    StartCoroutine(SkillTimer(2));
+                    phase = 3;
+                    break;
+                case 2:
+                    skillTimer[2] = AeternaData.skill2CoolTime;
+                    playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = true;
+                    StartCoroutine(SkillTimer(2));
+                    phase = 3;
+                    break;
+                case 3:
+                    playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = false;
+                    phase = 1;
+                    break;
             }
+            
         }
 
         private void OnGUI()
