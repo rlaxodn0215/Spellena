@@ -65,12 +65,10 @@ public class GameCenter : MonoBehaviourPunCallbacks, IPunObservable
     float roundEndTimer;
 
     string currentOccupationTeam = "";//현재 점령중인 팀
-
+    protected int maxPlayers = 2;// 최대 플레이어 수
     Occupation occupyingA;//A팀의 점령도
     Occupation occupyingB;//B팀의 점령도
     OccupyingTeam occupyingTeam;//점령 게이지 바
-
-    public int maxPlayers = 2;// 대 플레이어 수
     Character[] players;
     void Awake()
     {
@@ -104,8 +102,12 @@ public class GameCenter : MonoBehaviourPunCallbacks, IPunObservable
             {
                 gameStateTextUI.text = "Waiting Player";
                 players = FindObjectsOfType<Character>();
-                if(players.Length >= maxPlayers)
+
+                if (players.Length >= maxPlayers)
+                {
                     gameState = GameState.MatchStart;
+                }
+                
             }
             else if (gameState == GameState.MatchStart)
             {

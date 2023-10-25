@@ -79,8 +79,11 @@ namespace Player
         private Transform avatarForOther;
         private Transform avatarForMe;
 
+        private Vector3 networkSight;
+        private Vector3 currentSight;
+
         // 체력 이나, 데미지, 죽음 같은 데이터는 마스터 클라인트만 처리하기. PhotonNetwork.isMasterClient
-        private void Awake()
+        protected virtual void Awake()
         {
             playerInput = GetComponent<PlayerInput>();
             SetPlayerKeys(PlayerActionState.Move, "Move");
@@ -93,6 +96,7 @@ namespace Player
             SetPlayerKeys(PlayerActionState.Skill2, "Skill2");
             SetPlayerKeys(PlayerActionState.Skill3, "Skill3");
             SetPlayerKeys(PlayerActionState.Skill4, "Skill4");
+            currentSight = sight.transform.position;
         }
 
         void SetPlayerKeys(PlayerActionState playerActionState, string action)
@@ -124,8 +128,7 @@ namespace Player
             {
                 isOccupying = false;
             }
-
-            if(photonView.IsMine)
+            if (photonView.IsMine)
             {
                 animator.SetBool("Grounded", isGrounded);
                 if(isGrounded == true)
@@ -351,7 +354,7 @@ namespace Player
                 for (int i = 0; i < avatarForOther.childCount; i++)
                 {
                     avatarForOther.GetChild(i).gameObject.layer = LayerMask.NameToLayer("Me");
-                    avatarForOther.GetChild(i).gameObject.GetComponent<SkinnedMeshRenderer>().enabled = false;
+                    //avatarForOther.GetChild(i).gameObject.GetComponent<SkinnedMeshRenderer>().enabled = false;
                 }
 
                 for(int i = 0; i < avatarForMe.childCount; i++)
@@ -427,25 +430,25 @@ namespace Player
         {
             SetLookAtObj();
         }
-        /*
-        [PunRPC]
-        void SetLookAtObjRpc(Vector3 obj)
-        {
-            if (animator == null) return;
-            animator.SetLookAtWeight(1f, 0.9f);
-            animator.SetLookAtPosition(obj);
-        }
-        */
         void SetLookAtObj()
         {
             if (animator == null) return;
-
-            animator.SetLookAtWeight(1f, 0.9f);
-            animator.SetLookAtPosition(sight.transform.position);
+            if (photonView.IsMine)
+            {
+                animator.SetLookAtWeight(1f, 0.9f);
+                animator.SetLookAtPosition(sight.transform.position);
+            }
+            else
+            {
+                Vector3 newVec = Vector3.Lerp(currentSight, networkSight, Time.deltaTime * 10);
+                animator.SetLookAtWeight(1f, 0.9f);
+                animator.SetLookAtPosition(newVec);
+                currentSight = newVec;
+                Debug.Log("current : " + currentSight);
+                Debug.Log("networkSight : " + networkSight);
+            }
         }
-
-
-        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+        public virtual void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
         {
             if (stream.IsWriting)
             {
@@ -455,12 +458,13 @@ namespace Player
                 stream.SendNext(murder);
                 stream.SendNext(hp);
                 stream.SendNext(isOccupying);
-                for(int i = 0; i < playerActionDatas.Count; i++)
+                for (int i = 0; i < playerActionDatas.Count; i++)
                 {
                     stream.SendNext(playerActionDatas[i].isExecuting);
                 }
                 stream.SendNext(moveVec);
                 stream.SendNext(isGrounded);
+                stream.SendNext(sight.transform.position);
             }
             else
             {
@@ -470,15 +474,14 @@ namespace Player
                 murder = (string)stream.ReceiveNext();
                 hp = (int)stream.ReceiveNext();
                 isOccupying = (bool)stream.ReceiveNext();
-                for(int i = 0; i < playerActionDatas.Count; i++)
+                for (int i = 0; i < playerActionDatas.Count; i++)
                 {
                     playerActionDatas[i].isExecuting = (bool)stream.ReceiveNext();
                 }
                 moveVec = (Vector3)stream.ReceiveNext();
                 isGrounded = (bool)stream.ReceiveNext();
+                networkSight = (Vector3)stream.ReceiveNext();
             }
         }
-
-
     }
 }
