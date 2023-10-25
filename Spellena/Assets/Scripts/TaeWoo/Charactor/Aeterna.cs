@@ -86,7 +86,7 @@ namespace Player
         protected override void SetTag(string team)
         {
             base.SetTag(team);
-            DimensionSword.GetComponent<PhotonView>().RPC("SetSwordLayer", RpcTarget.AllBufferedViaServer);
+            DimensionSword.GetComponent<PhotonView>().RPC("SetSwordTag", RpcTarget.AllBufferedViaServer);
         }
 
         void OnSkill1()
@@ -160,7 +160,6 @@ namespace Player
         {
             if (photonView.IsMine)
             {
-
                 foreach (KeyValuePair<string, Ability> keyValue in Skills)
                 {
                     Ability ability = keyValue.Value;

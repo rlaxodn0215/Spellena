@@ -111,8 +111,8 @@ namespace Player
 
         void Initialize()
         {
-            ID = GetComponent<PhotonView>().ViewID;
-            gameObject.name = "Player_" + ID;
+            //ID = GetComponent<PhotonView>().ViewID;
+            gameObject.name = "Player_" + playerName;
             animator = GetComponent<Animator>();
             rigidbody = GetComponent<Rigidbody>();
             Skills = new Dictionary<string, Ability>();
@@ -372,17 +372,15 @@ namespace Player
         protected virtual void SetTag(string team)
         {
             this.tag = team;
-
-            /*
+            
             Transform[] allChildren = GetComponentsInChildren<Transform>();
 
             foreach (Transform child in allChildren)
             {
                 child.gameObject.tag = team;
-                child.gameObject.layer = LayerMask.NameToLayer(team);
             }
 
-            if (enemyCam == null) return;
+            /*if (enemyCam == null) return;
 
             if(team == "TeamA")
             {
@@ -400,6 +398,8 @@ namespace Player
                 enemyCam.GetComponent<Camera>().cullingMask |= (1 << LayerMask.NameToLayer("TeamA") | 1 << LayerMask.NameToLayer("SpawnObjectA"));
             }
             */
+
+
             
         }
 
@@ -420,7 +420,7 @@ namespace Player
                 //GetComponent<PhotonView>().RPC("TakeDamage", RpcTarget.AllBuffered, );
             }
 
-            Debug.Log("Player Damaged_EnemyID: " + enemy);
+            Debug.Log("Player Damaged!!  EnemyName: " + enemy);
         }
 
         protected virtual void OnAnimatorIK()

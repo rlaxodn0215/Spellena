@@ -10,7 +10,7 @@ namespace Player
         public int lifeTime;
         public float range;
         public int deBuffNum;
-        private LayerMask enemyLayerMask;
+        private string enemyTag;
         private List<string> playerInArea;
 
         public override void Start()
@@ -19,12 +19,12 @@ namespace Player
 
             if (CompareTag("TeamA"))
             {
-                enemyLayerMask = LayerMask.NameToLayer("TeamB");
+                enemyTag = "TeamB";
             }
 
             else if (CompareTag("TeamB"))
             {
-                enemyLayerMask = LayerMask.NameToLayer("TeamA");
+                enemyTag = "TeamA";
             }
 
             playerInArea = new List<string>();
@@ -46,9 +46,9 @@ namespace Player
 
         public void OnTriggerEnter(Collider other)
         {
-            if (LayerMask.NameToLayer(other.tag) == enemyLayerMask)
+            if (other.CompareTag(enemyTag))
             {
-                //if(other.gameObject.layer != enemyProjectileLayerMask)
+                if(other.gameObject.GetComponent<Character>())
                 {
                     if (PhotonNetwork.IsMasterClient)
                     {
@@ -60,14 +60,15 @@ namespace Player
 
         public void OnTriggerExit(Collider other)
         {
-            if ((LayerMask.NameToLayer(other.tag) & enemyLayerMask)
-                == LayerMask.NameToLayer(other.tag))
+            if (other.CompareTag(enemyTag))
             {
-                  if (PhotonNetwork.IsMasterClient)
-                  {
-                      EnBuff(other.transform.root.GetComponent<Character>().playerName);
-                  }
-                
+                if (other.gameObject.GetComponent<Character>())
+                { 
+                    if (PhotonNetwork.IsMasterClient)
+                    {
+                        EnBuff(other.transform.root.GetComponent<Character>().playerName);
+                    }
+                }
             }
         }
 

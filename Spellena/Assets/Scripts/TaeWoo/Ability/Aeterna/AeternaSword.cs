@@ -8,13 +8,12 @@ namespace Player
     public class AeternaSword : MonoBehaviour
     {
         [HideInInspector]
-        public string contactObjectName;
+        public SpawnObjectName contactObjectName;
         [HideInInspector]
         public Aeterna player;
 
         public int damage;
-        private LayerMask enemyLayerMask;
-        private LayerMask enemyProjectileLayerMask;
+        private string enemyTag;
 
         private void Start()
         {
@@ -22,59 +21,35 @@ namespace Player
         }
 
         [PunRPC]
-        public void SetSwordLayer()
+        public void SetSwordTag()
         {
             if (CompareTag("TeamA"))
             {
-                enemyLayerMask = LayerMask.NameToLayer("TeamB");
-                enemyProjectileLayerMask = LayerMask.NameToLayer("SpawnObjectB");
+                enemyTag = "TeamB";  
             }
 
             else if (CompareTag("TeamB"))
             {
-                enemyLayerMask = LayerMask.NameToLayer("TeamA");
-                enemyProjectileLayerMask = LayerMask.NameToLayer("SpawnObjectA");
+                enemyTag = "TeamA";
             }
         }
 
         public void OnTriggerEnter(Collider other)
         {
-            if (PhotonNetwork.IsMasterClient)
+            if (PhotonNetwork.IsMasterClient && other.CompareTag(enemyTag))
             {
                 if (player.playerActionDatas[(int)PlayerActionState.Skill2].isExecuting && player.skill2Phase == 1)
                 {
-                    if (other.gameObject.layer == enemyProjectileLayerMask)
-                    {
-                        contactObjectName = other.gameObject.name;
+                    if(other.gameObject.GetComponent<SpawnObject>().type !=SpawnObjectName.NoDamage)
+                        contactObjectName = other.gameObject.GetComponent<SpawnObject>().type;
 
-                        if (PhotonNetwork.IsMasterClient)
-                        {
-                            other.gameObject.GetComponent<SpawnObject>().DestorySpawnObject();
-                        }
-
-                        else
-                        {
-                            gameObject.GetComponent<PhotonView>().RPC("RequestDestorySpawnObject", RpcTarget.MasterClient);
-                        }
-
-                        player.dimensionIO.CheckHold();
-                    }
+                   other.gameObject.GetComponent<SpawnObject>().DestorySpawnObject();
+                   player.dimensionIO.CheckHold();
                 }
 
                 else
                 {
-                    if (other.gameObject.layer == enemyLayerMask)
-                    {
-                        if (PhotonNetwork.IsMasterClient)
-                        {
-                            other.gameObject.GetComponent<Character>().PlayerDamaged(player.playerName, damage);
-                        }
-
-                        else
-                        {
-                            other.gameObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.MasterClient, player.playerName, damage);
-                        }
-                    }
+                   other.gameObject.GetComponent<Character>().PlayerDamaged(player.playerName, damage);
                 }
             }
         }

@@ -959,7 +959,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94858b27a56c5e6499d569c0b4bec39a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  contactObject: {fileID: 0}
+  contactObjectName: 0
   player: {fileID: 0}
   damage: 0
 --- !u!1001 &5624648683022572001

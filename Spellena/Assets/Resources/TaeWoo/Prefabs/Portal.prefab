@@ -4890,8 +4890,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef6868d6b8e9e984db94b03c1dd187b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 0
-  direction: {x: 0, y: 0, z: 0}
+  playerName: 
   lifeTime: 5
   range: 2
   deBuffNum: 2

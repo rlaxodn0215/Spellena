@@ -489,7 +489,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 882234866013968624, guid: c34dedc980cec644bb39c15b490191f5, type: 3}
       propertyPath: m_Layer
-      value: 11
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 882234866013968624, guid: c34dedc980cec644bb39c15b490191f5, type: 3}
       propertyPath: m_TagString
@@ -538,6 +538,14 @@ PrefabInstance:
     - target: {fileID: 1209970477234082214, guid: c34dedc980cec644bb39c15b490191f5, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1253056796034643770, guid: c34dedc980cec644bb39c15b490191f5, type: 3}
+      propertyPath: type
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1253056796034643770, guid: c34dedc980cec644bb39c15b490191f5, type: 3}
+      propertyPath: playerName
+      value: temp
       objectReference: {fileID: 0}
     - target: {fileID: 1750068487480204266, guid: c34dedc980cec644bb39c15b490191f5, type: 3}
       propertyPath: sceneViewId

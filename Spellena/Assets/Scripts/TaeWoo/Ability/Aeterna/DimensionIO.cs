@@ -12,7 +12,7 @@ namespace Player
         private GameObject sword;
 
         [HideInInspector]
-        public string enemyProjectileName;
+        public SpawnObjectName enemyProjectileName;
         public override void AddPlayer(Character player)
         {
             Player = (Aeterna)player;
@@ -57,9 +57,6 @@ namespace Player
             sword.GetComponent<BoxCollider>().enabled = false;
 
             enemyProjectileName = sword.GetComponent<AeternaSword>().contactObjectName;
-            sword.GetComponent<AeternaSword>().contactObjectName = null;
-            //enemyProjectileName.layer = LayerMask.NameToLayer("SpawnObject" + Player.tag[4]); // 태그 이름 편하게 수정
-            //enemyProjectile.SetActive(false);
 
             StopCoroutine(Player.SkillTimer(2));
 
@@ -95,10 +92,12 @@ namespace Player
         [PunRPC]
         public void ShootProjectile()
         {
-            object[] data = new object[3];
+            object[] data = new object[4];
             data[0] = Player.playerName;
             data[1] = gameObject.tag;
-            data[2] = Player.camera.transform.localRotation;
+            data[2] = enemyProjectileName;
+            data[3] = Player.camera.transform.localRotation;
+
             PhotonNetwork.Instantiate("TaeWoo/Prefabs/Effect/" + enemyProjectileName,
                 Player.camera.transform.position, Player.transform.localRotation, 0, data);
         }

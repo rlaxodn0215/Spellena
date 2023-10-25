@@ -90,6 +90,7 @@ namespace Player
             object[] temp = new object[2];
             temp[0] = Player.playerName;
             temp[1] = tag;
+            temp[2] = SpawnObjectName.NoDamage;
             dimensionDoor = PhotonNetwork.Instantiate("TaeWoo/Prefabs/Portal", _spawnPoint, Quaternion.identity, 0, temp);
         }
 
@@ -129,7 +130,6 @@ namespace Player
             Destroy(dimensionDoorGUI);
             dimensionDoorGUI = null;
         }
-
 
         public void ShowGUI()
         {
