@@ -134,53 +134,6 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     {
         return team == Team.TeamA ? playerItemListA : playerItemListB;
     }
-    void UpdatePlayerListTest()
-    {
-        List<PlayerItem> playerItemList;
-        Transform playerItemParent;
-        
-        if (teamToUpdate == Team.TeamA)
-        {
-            playerItemList = playerItemListA;
-            playerItemParent = playerItemParentA;
-        }
-        else if (teamToUpdate == Team.TeamB)
-        {
-            playerItemList = playerItemListB;
-            playerItemParent = playerItemParentB;
-        }
-        else
-        {
-            Debug.LogError("유효하지 않은 팀입니다.");
-            return;
-        }
-
-        // 이동할 팀의 기존 아이템 삭제
-        foreach (PlayerItem item in playerItemList)
-        {
-            Destroy(item.gameObject);
-        }
-        playerItemList.Clear();
-
-        if (PhotonNetwork.CurrentRoom == null)
-        {
-            return;
-        }
-
-        // PhotonNetwork.CurrentRoom.Players를 기반으로 팀 A 또는 팀 B의 아이템 생성
-        foreach (KeyValuePair<int, Photon.Realtime.Player> player in PhotonNetwork.CurrentRoom.Players)
-        {
-            PlayerItem newPlayerItem = Instantiate(playerItemPrefab, playerItemParent);
-            newPlayerItem.SetPlayerInfo(player.Value);
-
-            if (player.Value == PhotonNetwork.LocalPlayer)
-            {
-                newPlayerItem.ApplyLocalChanges();
-            }
-
-            playerItemList.Add(newPlayerItem);
-        }
-    }
     Transform GetPlayerItemParent(Team team)
     {
         return team == Team.TeamA ? playerItemParentA : playerItemParentB;
