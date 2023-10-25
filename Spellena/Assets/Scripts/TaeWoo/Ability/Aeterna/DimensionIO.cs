@@ -56,6 +56,7 @@ namespace Player
             Player.playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = false;
 
             Player.skillTimer[2] = Player.AeternaData.skill2HoldTime;
+            Player.skillButton = 0;
         }
 
         private void OnHoldShoot()

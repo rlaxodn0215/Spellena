@@ -82,6 +82,15 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
+                    ""name"": ""ButtonCancel"",
+                    ""type"": ""Button"",
+                    ""id"": ""3374d651-0ef2-408c-9e35-633cf05bf18e"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
                     ""name"": ""Skill1"",
                     ""type"": ""Button"",
                     ""id"": ""9e48be17-8905-45ba-81b9-fdcfe24d91ec"",
@@ -272,6 +281,17 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
                     ""action"": ""MouseButton"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2f73b243-9d85-4f22-901f-ea0bc3622069"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""PC"",
+                    ""action"": ""ButtonCancel"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -303,6 +323,7 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
         m_PlayerActions_Run = m_PlayerActions.FindAction("Run", throwIfNotFound: true);
         m_PlayerActions_Sit = m_PlayerActions.FindAction("Sit", throwIfNotFound: true);
         m_PlayerActions_Interaction = m_PlayerActions.FindAction("Interaction", throwIfNotFound: true);
+        m_PlayerActions_ButtonCancel = m_PlayerActions.FindAction("ButtonCancel", throwIfNotFound: true);
         m_PlayerActions_Skill1 = m_PlayerActions.FindAction("Skill1", throwIfNotFound: true);
         m_PlayerActions_Skill2 = m_PlayerActions.FindAction("Skill2", throwIfNotFound: true);
         m_PlayerActions_Skill3 = m_PlayerActions.FindAction("Skill3", throwIfNotFound: true);
@@ -374,6 +395,7 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerActions_Run;
     private readonly InputAction m_PlayerActions_Sit;
     private readonly InputAction m_PlayerActions_Interaction;
+    private readonly InputAction m_PlayerActions_ButtonCancel;
     private readonly InputAction m_PlayerActions_Skill1;
     private readonly InputAction m_PlayerActions_Skill2;
     private readonly InputAction m_PlayerActions_Skill3;
@@ -388,6 +410,7 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
         public InputAction @Run => m_Wrapper.m_PlayerActions_Run;
         public InputAction @Sit => m_Wrapper.m_PlayerActions_Sit;
         public InputAction @Interaction => m_Wrapper.m_PlayerActions_Interaction;
+        public InputAction @ButtonCancel => m_Wrapper.m_PlayerActions_ButtonCancel;
         public InputAction @Skill1 => m_Wrapper.m_PlayerActions_Skill1;
         public InputAction @Skill2 => m_Wrapper.m_PlayerActions_Skill2;
         public InputAction @Skill3 => m_Wrapper.m_PlayerActions_Skill3;
@@ -419,6 +442,9 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
             @Interaction.started += instance.OnInteraction;
             @Interaction.performed += instance.OnInteraction;
             @Interaction.canceled += instance.OnInteraction;
+            @ButtonCancel.started += instance.OnButtonCancel;
+            @ButtonCancel.performed += instance.OnButtonCancel;
+            @ButtonCancel.canceled += instance.OnButtonCancel;
             @Skill1.started += instance.OnSkill1;
             @Skill1.performed += instance.OnSkill1;
             @Skill1.canceled += instance.OnSkill1;
@@ -453,6 +479,9 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
             @Interaction.started -= instance.OnInteraction;
             @Interaction.performed -= instance.OnInteraction;
             @Interaction.canceled -= instance.OnInteraction;
+            @ButtonCancel.started -= instance.OnButtonCancel;
+            @ButtonCancel.performed -= instance.OnButtonCancel;
+            @ButtonCancel.canceled -= instance.OnButtonCancel;
             @Skill1.started -= instance.OnSkill1;
             @Skill1.performed -= instance.OnSkill1;
             @Skill1.canceled -= instance.OnSkill1;
@@ -499,6 +528,7 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
         void OnRun(InputAction.CallbackContext context);
         void OnSit(InputAction.CallbackContext context);
         void OnInteraction(InputAction.CallbackContext context);
+        void OnButtonCancel(InputAction.CallbackContext context);
         void OnSkill1(InputAction.CallbackContext context);
         void OnSkill2(InputAction.CallbackContext context);
         void OnSkill3(InputAction.CallbackContext context);

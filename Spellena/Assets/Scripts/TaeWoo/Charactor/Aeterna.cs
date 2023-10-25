@@ -89,6 +89,24 @@ namespace Player
             DimensionSword.GetComponent<PhotonView>().RPC("SetSwordTag", RpcTarget.AllBufferedViaServer);
         }
 
+        void OnButtonCancel()
+        {
+            if (photonView.IsMine)
+            {
+                foreach (KeyValuePair<string, Ability> keyValue in Skills)
+                {
+                    Ability ability = keyValue.Value;
+                    ability.IsDisActive();
+                }
+
+                if (skillTimer[0] <= 0.0f)
+                {
+                    skillButton = 0;
+                    Debug.Log("BasicAttack Ready");
+                }
+            }
+        }
+
         void OnSkill1()
         {
             if (photonView.IsMine)
@@ -131,6 +149,13 @@ namespace Player
                 {
                     Ability ability = keyValue.Value;
                     ability.IsDisActive();
+                }
+
+                if(skill2Phase == 2)
+                {
+                    skillButton = 2;
+                    Debug.Log("Skill2 Ready");
+                    return;
                 }
 
                 if (skillTimer[2] <= 0.0f)
@@ -239,7 +264,6 @@ namespace Player
 
         public IEnumerator SkillTimer(int index)
         {
-
             while (skillTimer[index] > 0.0f)
             {
                 skillTimer[index] -= Time.deltaTime;

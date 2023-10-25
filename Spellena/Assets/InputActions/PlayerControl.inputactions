@@ -60,6 +60,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "ButtonCancel",
+                    "type": "Button",
+                    "id": "3374d651-0ef2-408c-9e35-633cf05bf18e",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Skill1",
                     "type": "Button",
                     "id": "9e48be17-8905-45ba-81b9-fdcfe24d91ec",
@@ -248,6 +257,17 @@
                     "processors": "",
                     "groups": "PC",
                     "action": "MouseButton",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "2f73b243-9d85-4f22-901f-ea0bc3622069",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "PC",
+                    "action": "ButtonCancel",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
