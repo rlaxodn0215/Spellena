@@ -49,6 +49,7 @@ namespace Player
         public void CheckHold()
         {
             sword.GetComponent<BoxCollider>().enabled = false;
+            Player.DimensionSword.GetComponent<AeternaSword>().skill2BuffParticle.SetActive(false);
 
             enemyProjectileName = sword.GetComponent<AeternaSword>().contactObjectName;
 

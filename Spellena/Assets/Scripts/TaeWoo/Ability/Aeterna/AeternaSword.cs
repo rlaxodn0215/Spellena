@@ -11,13 +11,15 @@ namespace Player
         public SpawnObjectName contactObjectName;
         [HideInInspector]
         public Aeterna player;
+        public GameObject skill2BuffParticle;
+        public GameObject skill3BuffParticle;
 
         public int damage;
         private string enemyTag;
 
         private void Start()
         {
-            player = transform.root.gameObject.GetComponent<Aeterna>();   
+            player = transform.root.gameObject.GetComponent<Aeterna>();
         }
 
         [PunRPC]
@@ -45,6 +47,11 @@ namespace Player
 
                    other.gameObject.GetComponent<SpawnObject>().DestorySpawnObject();
                    player.dimensionIO.CheckHold();
+                }
+
+                else if(player.playerActionDatas[(int)PlayerActionState.Skill3].isExecuting && player.skill3Phase==1)
+                {
+
                 }
 
                 else

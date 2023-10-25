@@ -21,3 +21,5 @@ MonoBehaviour:
   skill2DurationTime: 5
   skill2HoldTime: 10
   skill2CoolTime: 15
+  skill3DurationTime: 5
+  skill3CoolTime: 25

@@ -17,4 +17,7 @@ public class CharacterData : ScriptableObject
     public float skill2DurationTime;
     public float skill2HoldTime;
     public float skill2CoolTime;
+
+    public float skill3DurationTime;
+    public float skill3CoolTime;
 }

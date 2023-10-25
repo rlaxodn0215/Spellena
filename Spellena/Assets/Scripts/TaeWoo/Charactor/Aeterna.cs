@@ -21,6 +21,8 @@ namespace Player
         [HideInInspector]
         public DimensionIO dimensionIO;
         [HideInInspector]
+        public DimensionTransport dimensionTransport;
+        [HideInInspector]
         public int skillButton = 0;
         [HideInInspector]
         public float[] skillTimer; //serizeview·Î °øÀ¯
@@ -33,6 +35,8 @@ namespace Player
 
         [HideInInspector]
         public int skill2Phase; //1: duration, 2: hold, 3: cool
+        [HideInInspector]
+        public int skill3Phase; //1: duration, 2: cool
 
         protected override void Start() 
         {
@@ -67,6 +71,10 @@ namespace Player
             dimensionIO = this.gameObject.AddComponent<DimensionIO>();
             dimensionIO.AddPlayer(this);
             Skills["Skill2"] = dimensionIO;
+
+            dimensionTransport = this.gameObject.AddComponent<DimensionTransport>();
+            dimensionTransport.AddPlayer(this);
+            Skills["Skill3"] = dimensionTransport;
 
             skillTimer = new float[Skills.Count];
 
@@ -190,7 +198,31 @@ namespace Player
                     Ability ability = keyValue.Value;
                     ability.IsDisActive();
                 }
+
+                if (skillTimer[3] <= 0.0f)
+                {
+                    if (skillButton == 3)
+                    {
+                        skillButton = 0;
+                        Debug.Log("BasicAttack Ready");
+                    }
+
+                    else
+                    {
+                        skillButton = 3;
+                        Skills["Skill1"].IsActive();
+                        Debug.Log("Skill3 Ready");
+                    }
+                }
+
+                else if (skillTimer[0] <= 0.0f)
+                {
+                    skillButton = 0;
+                    Debug.Log("BasicAttack Ready");
+                }
             }
+
+
         }
 
         void OnSkill4()
@@ -225,6 +257,7 @@ namespace Player
                         {
                             case 1:
                                 skillTimer[2] = AeternaData.skill2DurationTime;
+                                DimensionSword.GetComponent<AeternaSword>().skill2BuffParticle.SetActive(true);
                                 StartCoroutine(SkillTimer(2));
                                 break;
                             case 2:
@@ -246,6 +279,33 @@ namespace Player
                         }
 
                     }
+
+                }
+
+                else if(skillButton==3)
+                {
+                    if (playerActionDatas[(int)PlayerActionState.Skill3].isExecuting == false)
+                    {
+                        if(skill3Phase==1)
+                        {
+                            skillTimer[3] = AeternaData.skill3DurationTime;
+                            DimensionSword.GetComponent<AeternaSword>().skill3BuffParticle.SetActive(true);
+                            StartCoroutine(SkillTimer(3));
+                        }
+                        playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = true;
+                    }
+
+                    else
+                    {
+                        if (skill3Phase == 1 && skillTimer[0] <= 0.0f)
+                        {
+                            Skills["Skill3"].Execution();
+                            skillTimer[0] = AeternaData.basicAttackTime;
+                            StartCoroutine(SkillTimer(0));
+                        }
+
+                    }
+
 
                 }
 
@@ -283,6 +343,7 @@ namespace Player
             if(phase==1 || phase==2)
             {
                 skillTimer[2] = AeternaData.skill2CoolTime;
+                DimensionSword.GetComponent<AeternaSword>().skill2BuffParticle.SetActive(false);
                 playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = true;
                 StartCoroutine(SkillTimer(2));
                 phase = 3;
