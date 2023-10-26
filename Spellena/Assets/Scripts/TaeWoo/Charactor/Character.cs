@@ -423,7 +423,10 @@ namespace Player
                 //GetComponent<PhotonView>().RPC("TakeDamage", RpcTarget.AllBuffered, );
             }
 
-            Debug.Log("Player Damaged!!  EnemyName: " + enemy);
+            if(damage>0)
+                Debug.Log("Player Damaged !!  EnemyName: " + enemy);
+            else
+                Debug.Log("Player Healing !!");
         }
 
         protected virtual void OnAnimatorIK()

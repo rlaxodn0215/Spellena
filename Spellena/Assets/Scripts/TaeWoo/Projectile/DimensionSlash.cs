@@ -17,8 +17,7 @@ namespace Player
         {
             base.Start();
 
-            name = playerName + "_DimensionSlash";
-            objectName = "DimensionSlash";
+            name = playerName + "_" + objectName;
             type = SpawnObjectType.Projectile;
 
             if (data !=null)
@@ -49,7 +48,7 @@ namespace Player
             transform.Translate(direction * Speed * Time.deltaTime);
         }
 
-        private void OnTriggerEnter(Collider other)
+        protected virtual void OnTriggerEnter(Collider other)
         {
             if (PhotonNetwork.IsMasterClient)
             {

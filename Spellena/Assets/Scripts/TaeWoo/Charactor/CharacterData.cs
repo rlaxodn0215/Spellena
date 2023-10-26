@@ -20,4 +20,6 @@ public class CharacterData : ScriptableObject
 
     public float skill3DurationTime;
     public float skill3CoolTime;
+
+    public float skill4DurationTime;
 }

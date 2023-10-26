@@ -23,9 +23,24 @@ namespace Player
         [HideInInspector]
         public DimensionTransport dimensionTransport;
         [HideInInspector]
+        public DimensionCut dimensionCut;
+
+        [HideInInspector]
+        public bool isMouseButton = false;
+        [HideInInspector]
         public int skillButton = 0;
         [HideInInspector]
         public float[] skillTimer; //serizeview로 공유
+
+        [HideInInspector]
+        public int ultimateCount = 0;
+        [HideInInspector]
+        public int doUltimateNum = 0;
+        [HideInInspector]
+        public int chargeCount = 0;
+        [HideInInspector]
+        public float[] chargeCountTime; // index - 0: 3단계 까지 가기위한 총 시간, 1: 1단계, 2: 2단계 (3단계는 0초)
+        private IEnumerator ultimateCoroutine;
 
         // 0 : 기본 공격
         // 1 : 스킬 1
@@ -76,9 +91,13 @@ namespace Player
             dimensionTransport.AddPlayer(this);
             Skills["Skill3"] = dimensionTransport;
 
-            skillTimer = new float[Skills.Count];
+            dimensionCut = this.gameObject.AddComponent<DimensionCut>();
+            dimensionCut.AddPlayer(this);
+            Skills["Skill4"] = dimensionCut;
 
-            for(int i = 0; i < Skills.Count;i++)
+            skillTimer = new float[Skills.Count+1];
+
+            for(int i = 0; i <= Skills.Count;i++)
             {
                 skillTimer[i] = -1;
             }
@@ -89,6 +108,12 @@ namespace Player
             hp = AeternaData.Hp;
             walkSpeed = AeternaData.moveSpeed;
             jumpHeight = AeternaData.jumpHeight;
+
+            chargeCountTime = new float[3];
+
+            chargeCountTime[0] = 5;
+            chargeCountTime[1] = 4;
+            chargeCountTime[2] = 2;
         }
 
         [PunRPC]
@@ -235,6 +260,20 @@ namespace Player
                     Ability ability = keyValue.Value;
                     ability.IsDisActive();
                 }
+
+                if (ultimateCount >= doUltimateNum)
+                {
+                    skillButton = 4;
+                    Skills["Skill4"].IsActive();
+                }
+
+                else if(skillTimer[0] <= 0.0f)
+                {
+                    skillButton = 0;
+                    Debug.Log("BasicAttack Ready");
+                }
+
+
             }
         }
 
@@ -242,85 +281,142 @@ namespace Player
         {
             if (photonView.IsMine)
             {
-                if (skillButton == 1 && skillTimer[1] <= 0.0f)
+                isMouseButton = !isMouseButton;
+
+                switch (skillButton)
                 {
-                    Skills["Skill1"].Execution();
-                    playerActionDatas[(int)PlayerActionState.Skill1].isExecuting = true;
-                    skillTimer[1] = AeternaData.skill1Time;
-                    StartCoroutine(SkillTimer(1));
+                    case 1:
+                        Skill1Execute();
+                        break;
+                    case 2:
+                        Skill2Execute();
+                        break;
+                    case 3:
+                        Skill3Execute();
+                        break;
+                    case 4:
+                        Skill4Execute();
+                        break;
+                    default:
+                        BasicAttackExecute();
+                        break;
                 }
 
-                else if (skillButton == 2)
+            }
+        }
+
+        private void BasicAttackExecute()
+        {
+            if (skillTimer[0] <= 0.0f && isMouseButton)
+            {
+                playerActionDatas[(int)PlayerActionState.BasicAttack].isExecuting = true;
+                Skills["BasicAttack"].Execution();
+                skillTimer[0] = AeternaData.basicAttackTime;
+                StartCoroutine(SkillTimer(0));
+            }
+        }
+
+        private void Skill1Execute()
+        {
+            if (skillTimer[1] <= 0.0f && isMouseButton)
+            {
+                Skills["Skill1"].Execution();
+                playerActionDatas[(int)PlayerActionState.Skill1].isExecuting = true;
+                skillTimer[1] = AeternaData.skill1Time;
+                StartCoroutine(SkillTimer(1));
+            }
+        }
+
+        private void Skill2Execute()
+        {
+            if (isMouseButton)
+            {
+                if (playerActionDatas[(int)PlayerActionState.Skill2].isExecuting == false)
                 {
-                    if (playerActionDatas[(int)PlayerActionState.Skill2].isExecuting == false)
+                    switch (skill2Phase)
                     {
-                        switch (skill2Phase)
-                        {
-                            case 1:
-                                skillTimer[2] = AeternaData.skill2DurationTime;
-                                DimensionSword.GetComponent<AeternaSword>().skill2BuffParticle.SetActive(true);
-                                StartCoroutine(SkillTimer(2));
-                                break;
-                            case 2:
-                                if (skillTimer[2] >= 0.0f)
-                                    Skills["Skill2"].Execution(ref skill2Phase);
-                                break;
-                        }
-
-                        playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = true;
+                        case 1:
+                            skillTimer[2] = AeternaData.skill2DurationTime;
+                            DimensionSword.GetComponent<AeternaSword>().skill2BuffParticle.SetActive(true);
+                            StartCoroutine(SkillTimer(2));
+                            break;
+                        case 2:
+                            if (skillTimer[2] >= 0.0f)
+                                Skills["Skill2"].Execution(ref skill2Phase);
+                            break;
                     }
 
-                    else
-                    {
-                        if (skill2Phase == 1 && skillTimer[0] <= 0.0f)
-                        {
-                            Skills["Skill2"].Execution(ref skill2Phase);
-                            skillTimer[0] = AeternaData.basicAttackTime;
-                            StartCoroutine(SkillTimer(0));
-                        }
-
-                    }
-
-                }
-
-                else if(skillButton==3)
-                {
-                    if (playerActionDatas[(int)PlayerActionState.Skill3].isExecuting == false)
-                    {
-                        if(skill3Phase==1)
-                        {
-                            skillTimer[3] = AeternaData.skill3DurationTime;
-                            DimensionSword.GetComponent<AeternaSword>().skill3BuffParticle.SetActive(true);
-                            StartCoroutine(SkillTimer(3));
-                        }
-                        playerActionDatas[(int)PlayerActionState.Skill3].isExecuting = true;
-                    }
-
-                    else
-                    {
-                        if (skill3Phase == 1 && skillTimer[0] <= 0.0f)
-                        {
-                            Skills["Skill3"].Execution();
-                            skillTimer[0] = AeternaData.basicAttackTime;
-                            StartCoroutine(SkillTimer(0));
-                        }
-
-                    }
-
-
+                    playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = true;
                 }
 
                 else
                 {
-                    if (skillButton == 0 && skillTimer[0] <= 0.0f)
+                    if (skill2Phase == 1 && skillTimer[0] <= 0.0f)
                     {
-                        playerActionDatas[(int)PlayerActionState.BasicAttack].isExecuting = true;
-                        Skills["BasicAttack"].Execution();
+                        Skills["Skill2"].Execution(ref skill2Phase);
                         skillTimer[0] = AeternaData.basicAttackTime;
                         StartCoroutine(SkillTimer(0));
                     }
+
                 }
             }
+        }
+
+        private void Skill3Execute()
+        {
+            if (isMouseButton)
+            {
+                if (playerActionDatas[(int)PlayerActionState.Skill3].isExecuting == false)
+                {
+                    if (skill3Phase == 1)
+                    {
+                        skillTimer[3] = AeternaData.skill3DurationTime;
+                        DimensionSword.GetComponent<AeternaSword>().skill3BuffParticle.SetActive(true);
+                        StartCoroutine(SkillTimer(3));
+                    }
+                    playerActionDatas[(int)PlayerActionState.Skill3].isExecuting = true;
+                }
+
+                else
+                {
+                    if (skill3Phase == 1 && skillTimer[0] <= 0.0f)
+                    {
+                        playerActionDatas[(int)PlayerActionState.Skill3].isExecuting = true;
+                        Skills["Skill3"].Execution();
+                        skillTimer[0] = AeternaData.basicAttackTime;
+                        StartCoroutine(SkillTimer(0));
+                    }
+
+                }
+            }
+        }
+
+        private void Skill4Execute()
+        {
+
+            if(playerActionDatas[(int)PlayerActionState.Skill4].isExecuting == false)
+            {
+                ultimateCount -= doUltimateNum;
+                skillTimer[4] = AeternaData.skill4DurationTime;
+                StartCoroutine(SkillTimer(4));
+            }
+
+            if(isMouseButton)
+            {
+                skillTimer[5] = chargeCountTime[0];
+                ultimateCoroutine = SkillTimer(5);
+                StartCoroutine(ultimateCoroutine);
+            }
+
+            else
+            {
+                StopCoroutine(ultimateCoroutine);
+                skillTimer[5] = chargeCountTime[0];
+                Skills["Skill4"].Execution(ref chargeCount);
+                chargeCount = 0;
+            }
+
+            playerActionDatas[(int)PlayerActionState.Skill4].isExecuting = true;
         }
 
         public IEnumerator SkillTimer(int index)
@@ -328,17 +424,24 @@ namespace Player
             while (skillTimer[index] > 0.0f)
             {
                 skillTimer[index] -= Time.deltaTime;
+
+                if (index == 5)
+                {
+                    Skill4ChargeTimeCheck(skillTimer[index]);
+                }
+
                 yield return null;
             }
-
-            playerActionDatas[(int)PlayerActionState.BasicAttack + index].isExecuting = false;
+            
+            if(index !=5)
+                playerActionDatas[(int)PlayerActionState.BasicAttack + index].isExecuting = false;
 
             if (index == 2)
             {
                 Skill2TimeOut(ref skill2Phase);
             }
 
-            else if(index==3)
+            else if(index == 3)
             {
                 Skill3TimeOut(ref skill3Phase);
             }
@@ -378,11 +481,37 @@ namespace Player
             }
         }
 
+        void Skill4ChargeTimeCheck(float time)
+        {
+
+            if(time > chargeCountTime[2] && time <= chargeCountTime[1])
+            {
+                chargeCount = 1;
+            }
+
+            else if(time <= chargeCountTime[2] && time > 0.0f)
+            {
+                chargeCount = 2;
+            }
+
+            else if(time <= 0.0f)
+            {
+                chargeCount = 3;
+            }
+
+            else
+            {
+                chargeCount = 0;
+            }
+        }
+
         private void OnGUI()
         {
-            GUI.TextField(new Rect(10, 10, 100, 30), "스킬 1 : " + skillTimer[1].ToString());
-            GUI.TextField(new Rect(10, 40, 100, 30), "스킬 2 : " + skillTimer[2].ToString());
-            GUI.TextField(new Rect(10, 70, 100, 30), "스킬 3 : " + skillTimer[3].ToString());
+            GUI.TextField(new Rect(10, 10, 150, 30), "스킬 1 : " + skillTimer[1].ToString());
+            GUI.TextField(new Rect(10, 40, 150, 30), "스킬 2 : " + skillTimer[2].ToString());
+            GUI.TextField(new Rect(10, 70, 150, 30), "스킬 3 : " + skillTimer[3].ToString());
+            GUI.TextField(new Rect(10, 100, 150, 30), "궁 게이지 : " + chargeCount);
+            GUI.TextField(new Rect(10, 130, 150, 30), "궁 시전 시간 : " + skillTimer[4].ToString());
         }
 
     }

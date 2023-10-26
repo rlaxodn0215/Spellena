@@ -14,8 +14,11 @@ namespace Player
         [HideInInspector]
         public Aeterna player;
 
+        public GameObject normalSword;
         public GameObject skill2BuffParticle;
         public GameObject skill3BuffParticle;
+        public GameObject skill4AttackSword;
+        public GameObject skill4HealingSword;
 
         public int damage;
         private string enemyTag;
