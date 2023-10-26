@@ -11,7 +11,7 @@ namespace Player
     // 플레이어의 동작 상태
     public enum PlayerActionState
     {
-        Move, Jump, Run, Sit, Interaction, BasicAttack, Skill1, Skill2, Skill3, Skill4
+        Move, Jump, Run, Sit, Interaction, ButtonCancel ,BasicAttack, Skill1, Skill2, Skill3, Skill4
     }
 
     // 플레이어 동작 데이터
@@ -355,7 +355,7 @@ namespace Player
                 for (int i = 0; i < avatarForOther.childCount; i++)
                 {
                     avatarForOther.GetChild(i).gameObject.layer = LayerMask.NameToLayer("Me");
-                    //avatarForOther.GetChild(i).gameObject.GetComponent<SkinnedMeshRenderer>().enabled = false;
+                    avatarForOther.GetChild(i).gameObject.GetComponent<SkinnedMeshRenderer>().enabled = false;
                 }
 
                 for(int i = 0; i < avatarForMe.childCount; i++)
