@@ -447,8 +447,8 @@ namespace Player
                 animator.SetLookAtWeight(1f, 0.9f);
                 animator.SetLookAtPosition(newVec);
                 currentSight = newVec;
-                Debug.Log("current : " + currentSight);
-                Debug.Log("networkSight : " + networkSight);
+                //Debug.Log("current : " + currentSight);
+                //Debug.Log("networkSight : " + networkSight);
             }
         }
         public virtual void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)

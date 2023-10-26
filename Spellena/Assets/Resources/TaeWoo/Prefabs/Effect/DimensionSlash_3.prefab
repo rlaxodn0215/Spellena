@@ -5026,8 +5026,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 3.1195416, y: 0.32355404, z: 0.6121614}
+  m_Center: {x: 0.079432964, y: 0.027491093, z: 0.9134302}
 --- !u!54 &-5185417775682893652
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -10241,7 +10241,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.6
+      scalar: 1.5
       minScalar: 1
       maxCurve:
         serializedVersion: 2

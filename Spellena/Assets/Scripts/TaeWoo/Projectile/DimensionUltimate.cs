@@ -8,14 +8,32 @@ namespace Player
     public class DimensionUltimate : DimensionSlash
     {
         public int healing;
-        public bool isHealingSword;
-
+        public bool isHealingSword = false;
         public override void Start()
         {
             base.Start();
 
             if (data[4] != null)
+            {
+                ParticleSystem[] system = GetComponentsInChildren<ParticleSystem>();
                 isHealingSword = (bool)data[4];
+
+                foreach(ParticleSystem particle in system)
+                {
+                    Color color;
+
+                    if (isHealingSword)
+                        ColorUtility.TryParseHtmlString("#19FF2B", out color);
+                    else
+                        ColorUtility.TryParseHtmlString("#E700C7", out color);
+
+                    ParticleSystem.MainModule module = particle.main;
+                    module.startColor = color;
+                }
+
+            }
+
+            
         }
 
         protected override void OnTriggerEnter(Collider other)

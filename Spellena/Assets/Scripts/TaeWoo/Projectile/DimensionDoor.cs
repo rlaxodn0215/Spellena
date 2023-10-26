@@ -46,17 +46,27 @@ namespace Player
                 DestorySpawnObject();
             }
 
+            else
+            {
+                photonView.RPC("RequestDestorySpawnObject", RpcTarget.AllBuffered);
+            }
+
         }
 
         public void OnTriggerEnter(Collider other)
         {
-            if (other.CompareTag(enemyTag))
+            if (other.transform.root.CompareTag(enemyTag))
             {
-                if(other.gameObject.GetComponent<Character>())
+                if(other.transform.root.gameObject.GetComponent<Character>())
                 {
                     if (PhotonNetwork.IsMasterClient)
                     {
                         DeBuff(other.transform.root.GetComponent<Character>().playerName);
+                    }
+
+                    else
+                    {
+                        photonView.RPC("RequestDeBuff", RpcTarget.AllBuffered, other.transform.root.GetComponent<Character>().playerName);
                     }
                 }
             }
@@ -64,15 +74,38 @@ namespace Player
 
         public void OnTriggerExit(Collider other)
         {
-            if (other.CompareTag(enemyTag))
+            if (other.transform.root.CompareTag(enemyTag))
             {
-                if (other.gameObject.GetComponent<Character>())
+                if (other.transform.root.gameObject.GetComponent<Character>())
                 { 
                     if (PhotonNetwork.IsMasterClient)
                     {
                         EnBuff(other.transform.root.GetComponent<Character>().playerName);
                     }
+
+                    else
+                    {
+                        photonView.RPC("RequestEnBuff", RpcTarget.AllBuffered, other.transform.root.GetComponent<Character>().playerName);
+                    }
                 }
+            }
+        }
+
+        [PunRPC]
+        public void RequestDeBuff(string playerName)
+        {
+            if(PhotonNetwork.IsMasterClient)
+            {
+                DeBuff(playerName);
+            }    
+        }
+
+        [PunRPC]
+        public void RequestEnBuff(string playerName)
+        {
+            if (PhotonNetwork.IsMasterClient)
+            {
+                EnBuff(playerName);
             }
         }
 
