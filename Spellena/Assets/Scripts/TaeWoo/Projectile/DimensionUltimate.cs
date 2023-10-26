@@ -24,11 +24,11 @@ namespace Player
             {
                 if(isHealingSword)
                 {
-                    if (CompareTag("TeamA") && other.CompareTag("TeamB") || CompareTag("TeamB") && other.CompareTag("TeamA"))
+                    if (CompareTag("TeamA") && other.CompareTag("TeamA") || CompareTag("TeamB") && other.CompareTag("TeamB"))
                     {
-                        if (other.GetComponent<Character>())
+                        if (other.GetComponent<Character>() && other.gameObject.layer == LayerMask.NameToLayer("Other"))
                         {
-                            other.gameObject.GetComponent<Character>().PlayerDamaged(playerName, damage);
+                            other.gameObject.GetComponent<Character>().PlayerDamaged(playerName, -healing);
                             DestorySpawnObject();
                         }
                     }
@@ -37,16 +37,16 @@ namespace Player
                     {
                         DestorySpawnObject();
                     }
-                    
+
                 }
 
                 else
                 {
-                    if (CompareTag("TeamA") && other.CompareTag("TeamA") || CompareTag("TeamB") && other.CompareTag("TeamB"))
+                    if (CompareTag("TeamA") && other.CompareTag("TeamB") || CompareTag("TeamB") && other.CompareTag("TeamA"))
                     {
                         if (other.GetComponent<Character>())
                         {
-                            other.gameObject.GetComponent<Character>().PlayerDamaged(playerName, -healing);
+                            other.gameObject.GetComponent<Character>().PlayerDamaged(playerName, damage);
                             DestorySpawnObject();
                         }
                     }

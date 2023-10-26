@@ -5103,6 +5103,7 @@ MonoBehaviour:
   lifeTime: 5
   Speed: 10
   healing: 10
+  isHealingSword: 0
 --- !u!1 &1846733282166030
 GameObject:
   m_ObjectHideFlags: 0

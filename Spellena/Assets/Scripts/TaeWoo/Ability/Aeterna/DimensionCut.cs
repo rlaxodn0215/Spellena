@@ -68,7 +68,7 @@ namespace Player
             data[1] = gameObject.tag;
             data[2] = "DimensionSlash_" + charge;
             data[3] = Player.camera.transform.localRotation;
-            data[4] = isHealingSword;
+            data[4] = !isHealingSword;
 
             PhotonNetwork.Instantiate("TaeWoo/Prefabs/Effect/" + (string)data[2],
                 Player.camera.transform.position, Player.transform.localRotation, 0, data);
