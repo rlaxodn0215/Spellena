@@ -4893,7 +4893,7 @@ MonoBehaviour:
   playerName: 
   type: 0
   objectName: 
-  lifeTime: 100
+  lifeTime: 5
   range: 2
   deBuffNum: 2
 --- !u!135 &536479597
