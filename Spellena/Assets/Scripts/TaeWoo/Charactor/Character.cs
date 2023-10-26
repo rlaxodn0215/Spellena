@@ -116,6 +116,7 @@ namespace Player
         void Initialize()
         {
             //ID = GetComponent<PhotonView>().ViewID;
+            playerName = GetComponent<PhotonView>().ViewID.ToString();
             gameObject.name = "Player_" + playerName;
             animator = GetComponent<Animator>();
             rigidbody = GetComponent<Rigidbody>();

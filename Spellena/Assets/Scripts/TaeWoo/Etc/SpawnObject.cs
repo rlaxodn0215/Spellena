@@ -38,17 +38,9 @@ namespace Player
         }
 
         [PunRPC]
-        public void RequestDestorySpawnObject()
-        {
-            if(PhotonNetwork.IsMasterClient)
-            {
-                DestorySpawnObject();
-            }
-        }
-
         public void DestorySpawnObject()
         {
-            if(gameObject != null)
+            if(gameObject != null && PhotonNetwork.IsMasterClient)
                 PhotonNetwork.Destroy(gameObject);
         }
     }

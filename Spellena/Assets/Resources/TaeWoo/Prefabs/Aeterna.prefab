@@ -764,7 +764,7 @@ MonoBehaviour:
   enemyCam: {fileID: 1062827018094055243}
   UI: {fileID: 338266740}
   ID: 0
-  playerName: rlaxodn
+  playerName: 
   murder: 
   hp: 0
   isOccupying: 0
@@ -1119,16 +1119,48 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 19860040, guid: 0502286443532c148af28948eecd8216, type: 3}
-      propertyPath: autoRandomSeed
-      value: 0
+      propertyPath: InitialModule.maxNumParticles
+      value: 5000
       objectReference: {fileID: 0}
     - target: {fileID: 19860040, guid: 0502286443532c148af28948eecd8216, type: 3}
-      propertyPath: InitialModule.maxNumParticles
-      value: 1000
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 19997978, guid: 0502286443532c148af28948eecd8216, type: 3}
       propertyPath: m_Materials.Array.size
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 198032863952021804, guid: 0502286443532c148af28948eecd8216, type: 3}
+      propertyPath: InitialModule.maxNumParticles
+      value: 3000
+      objectReference: {fileID: 0}
+    - target: {fileID: 198032863952021804, guid: 0502286443532c148af28948eecd8216, type: 3}
+      propertyPath: InitialModule.startSpeed.scalar
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 198032863952021804, guid: 0502286443532c148af28948eecd8216, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 198930642893481802, guid: 0502286443532c148af28948eecd8216, type: 3}
+      propertyPath: InitialModule.maxNumParticles
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 198930642893481802, guid: 0502286443532c148af28948eecd8216, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 198930642893481802, guid: 0502286443532c148af28948eecd8216, type: 3}
+      propertyPath: InitialModule.startSize.minScalar
+      value: 0.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 198930642893481802, guid: 0502286443532c148af28948eecd8216, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 198930642893481802, guid: 0502286443532c148af28948eecd8216, type: 3}
+      propertyPath: InitialModule.startLifetime.minScalar
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 199194112844425478, guid: 0502286443532c148af28948eecd8216, type: 3}
       propertyPath: m_Materials.Array.size
@@ -2020,6 +2052,38 @@ PrefabInstance:
     - target: {fileID: 19968902, guid: f9dce4312afc1b54abda67c8de777702, type: 3}
       propertyPath: m_Materials.Array.size
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 198317634286207440, guid: f9dce4312afc1b54abda67c8de777702, type: 3}
+      propertyPath: InitialModule.maxNumParticles
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 198317634286207440, guid: f9dce4312afc1b54abda67c8de777702, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 198641920533269132, guid: f9dce4312afc1b54abda67c8de777702, type: 3}
+      propertyPath: InitialModule.maxNumParticles
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 198641920533269132, guid: f9dce4312afc1b54abda67c8de777702, type: 3}
+      propertyPath: InitialModule.startSize.minScalar
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 198641920533269132, guid: f9dce4312afc1b54abda67c8de777702, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 198641920533269132, guid: f9dce4312afc1b54abda67c8de777702, type: 3}
+      propertyPath: InitialModule.startLifetime.minScalar
+      value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 198707748592178942, guid: f9dce4312afc1b54abda67c8de777702, type: 3}
+      propertyPath: InitialModule.maxNumParticles
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 198707748592178942, guid: f9dce4312afc1b54abda67c8de777702, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 0.8
       objectReference: {fileID: 0}
     - target: {fileID: 199037185645682578, guid: f9dce4312afc1b54abda67c8de777702, type: 3}
       propertyPath: m_Materials.Array.size

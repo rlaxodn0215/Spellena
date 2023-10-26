@@ -42,13 +42,15 @@ namespace Player
             {
                 if(isHealingSword)
                 {
-                    if (CompareTag("TeamA") && other.CompareTag("TeamA") || CompareTag("TeamB") && other.CompareTag("TeamB"))
+                    if (CompareTag("TeamA") && other.transform.root.CompareTag("TeamA") ||
+                        CompareTag("TeamB") && other.transform.root.CompareTag("TeamB"))
                     {
-                        if (other.GetComponent<Character>() && other.gameObject.layer == LayerMask.NameToLayer("Other"))
+                        if (other.transform.root.GetComponent<Character>() && other.transform.root.gameObject.layer == LayerMask.NameToLayer("Other"))
                         {
-                            other.gameObject.GetComponent<Character>().PlayerDamaged(playerName, -healing);
-                            DestorySpawnObject();
+                            other.transform.root.GetComponent<Character>().PlayerDamaged(playerName, -healing);
                         }
+
+                        DestorySpawnObject();
                     }
 
                     else if (other.CompareTag("Ground"))
@@ -60,13 +62,15 @@ namespace Player
 
                 else
                 {
-                    if (CompareTag("TeamA") && other.CompareTag("TeamB") || CompareTag("TeamB") && other.CompareTag("TeamA"))
+                    if (CompareTag("TeamA") && other.transform.root.CompareTag("TeamB") ||
+                        CompareTag("TeamB") && other.transform.root.CompareTag("TeamA"))
                     {
                         if (other.GetComponent<Character>())
                         {
-                            other.gameObject.GetComponent<Character>().PlayerDamaged(playerName, damage);
-                            DestorySpawnObject();
+                            other.transform.root.GetComponent<Character>().PlayerDamaged(playerName, damage);
                         }
+
+                        DestorySpawnObject();
                     }
 
                     else if (other.CompareTag("Ground"))

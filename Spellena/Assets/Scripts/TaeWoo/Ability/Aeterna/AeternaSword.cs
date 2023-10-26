@@ -44,28 +44,43 @@ namespace Player
 
         public void OnTriggerEnter(Collider other)
         {
-            if (PhotonNetwork.IsMasterClient && other.CompareTag(enemyTag))
+            if (other.transform.root.CompareTag(enemyTag))
             {
                 if (player.playerActionDatas[(int)PlayerActionState.Skill2].isExecuting && player.skill2Phase == 1)
                 {
-                    if(other.gameObject.GetComponent<SpawnObject>().type == SpawnObjectType.Projectile)
-                        contactObjectName = other.gameObject.GetComponent<SpawnObject>().objectName;
+                    if (other.transform.root.GetComponent<SpawnObject>())
+                    {
+                        if (other.transform.root.GetComponent<SpawnObject>().type == SpawnObjectType.Projectile)
+                            contactObjectName = other.transform.root.GetComponent<SpawnObject>().objectName;
 
-                   other.gameObject.GetComponent<SpawnObject>().DestorySpawnObject();
-                   player.dimensionIO.CheckHold();
+                        if (PhotonNetwork.IsMasterClient)
+                        {
+                            other.transform.root.GetComponent<SpawnObject>().DestorySpawnObject();
+                        }
+
+                        else
+                        {
+                            other.transform.root.GetComponent<PhotonView>().RPC("DestorySpawnObject", RpcTarget.MasterClient);
+                        }
+
+                        player.dimensionIO.CheckHold();
+                    }
+
                 }
 
-                else if(player.playerActionDatas[(int)PlayerActionState.Skill3].isExecuting && player.skill3Phase==1)
+                else if (player.playerActionDatas[(int)PlayerActionState.Skill3].isExecuting && player.skill3Phase == 1)
                 {
-                    if (other.gameObject.GetComponent<Character>())
-                        player.dimensionTransport.Transport(other.gameObject);
+                    if (other.transform.root.GetComponent<Character>())
+                        player.dimensionTransport.Transport(other.transform.root.gameObject);
                 }
 
                 else
                 {
-                   other.gameObject.GetComponent<Character>().PlayerDamaged(player.playerName, damage);
+                    if (other.transform.root.GetComponent<Character>())
+                        other.transform.root.GetComponent<Character>().PlayerDamaged(player.playerName, damage);
                 }
             }
+
         }
     }
 }

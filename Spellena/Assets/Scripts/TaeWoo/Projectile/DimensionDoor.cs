@@ -48,7 +48,7 @@ namespace Player
 
             else
             {
-                photonView.RPC("RequestDestorySpawnObject", RpcTarget.AllBuffered);
+                photonView.RPC("DestorySpawnObject", RpcTarget.MasterClient);
             }
 
         }
@@ -66,7 +66,7 @@ namespace Player
 
                     else
                     {
-                        photonView.RPC("RequestDeBuff", RpcTarget.AllBuffered, other.transform.root.GetComponent<Character>().playerName);
+                        photonView.RPC("DeBuff", RpcTarget.AllBuffered, other.transform.root.GetComponent<Character>().playerName);
                     }
                 }
             }
@@ -85,30 +85,13 @@ namespace Player
 
                     else
                     {
-                        photonView.RPC("RequestEnBuff", RpcTarget.AllBuffered, other.transform.root.GetComponent<Character>().playerName);
+                        photonView.RPC("EnBuff", RpcTarget.AllBuffered, other.transform.root.GetComponent<Character>().playerName);
                     }
                 }
             }
         }
 
         [PunRPC]
-        public void RequestDeBuff(string playerName)
-        {
-            if(PhotonNetwork.IsMasterClient)
-            {
-                DeBuff(playerName);
-            }    
-        }
-
-        [PunRPC]
-        public void RequestEnBuff(string playerName)
-        {
-            if (PhotonNetwork.IsMasterClient)
-            {
-                EnBuff(playerName);
-            }
-        }
-
         void DeBuff(string playerName)
         {
             GameObject temp = GameObject.Find("Player_" + playerName);
@@ -125,9 +108,9 @@ namespace Player
             temp.GetComponent<Character>().jumpHeight -= deBuffNum;
         }
 
+        [PunRPC]
         void EnBuff(string playerName)
         {
-            Debug.Log("EnBuff");
             GameObject temp = GameObject.Find("Player_" + playerName);
             if (temp == null) return;
 

@@ -67,35 +67,37 @@ namespace Player
         {
             if(PhotonNetwork.IsMasterClient)
             {
-                RequestShootProjectile();
+                ShootProjectile(enemyObjectName);
             }
 
             else
             {
-                photonView.RPC("RequestShootProjectile", RpcTarget.AllBuffered);
+                photonView.RPC("RequestShootProjectile", RpcTarget.MasterClient, enemyObjectName);
             }
 
             Player.skill2Phase = 3;
             Player.skillTimer[2] = Player.AeternaData.skill2CoolTime;
         }
 
-        public void RequestShootProjectile()
+        [PunRPC]
+        public void RequestShootProjectile(string objectName)
         {
-            if(PhotonNetwork.IsMasterClient)
-                ShootProjectile();
+            if (PhotonNetwork.IsMasterClient)
+                ShootProjectile(objectName);
         }
 
-        [PunRPC]
-        public void ShootProjectile()
+        void ShootProjectile(string objectName)
         {
-            object[] data = new object[4];
+            Debug.Log("ShootProjectile");
+
+            object[] data = new object[5];
 
             data[0] = Player.playerName;
             data[1] = gameObject.tag;
-            data[2] = enemyObjectName;
+            data[2] = objectName;
             data[3] = Player.camera.transform.localRotation;
 
-            PhotonNetwork.Instantiate("TaeWoo/Prefabs/Effect/" + enemyObjectName,
+            PhotonNetwork.Instantiate("TaeWoo/Prefabs/Effect/" + objectName,
                 Player.camera.transform.position, Player.transform.localRotation, 0, data);
         }
     }

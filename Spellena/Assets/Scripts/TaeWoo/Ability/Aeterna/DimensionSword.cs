@@ -39,17 +39,12 @@ namespace Player
 
             else
             {
-                photonView.RPC("RequestSpawnSlash", RpcTarget.MasterClient);
+                photonView.RPC("SpawnSlash", RpcTarget.MasterClient);
             }
         }
 
         [PunRPC]
-        public void RequestSpawnSlash()
-        {
-            SpawnSlash(); 
-        }
-
-        void SpawnSlash()
+        public void SpawnSlash()
         {
             object[] data = new object[5];
             data[0] = Player.playerName;
