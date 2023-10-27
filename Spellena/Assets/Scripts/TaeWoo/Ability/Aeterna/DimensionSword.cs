@@ -34,23 +34,23 @@ namespace Player
 
             if (PhotonNetwork.IsMasterClient)
             {
-                SpawnSlash();
+                SpawnSlash(Player.camera.transform.localRotation);
             }
 
             else
             {
-                photonView.RPC("SpawnSlash", RpcTarget.MasterClient);
+                photonView.RPC("SpawnSlash", RpcTarget.MasterClient, Player.camera.transform.localRotation);
             }
         }
 
         [PunRPC]
-        public void SpawnSlash()
+        public void SpawnSlash(Quaternion rot)
         {
             object[] data = new object[5];
             data[0] = Player.playerName;
             data[1] = gameObject.tag;
             data[2] = "DimensionSlash_0";
-            data[3] = Player.camera.transform.localRotation;
+            data[3] = rot;
             PhotonNetwork.Instantiate("TaeWoo/Prefabs/Effect/" + (string)data[2],
                 Player.camera.transform.position, Player.transform.localRotation, 0, data);
         }
