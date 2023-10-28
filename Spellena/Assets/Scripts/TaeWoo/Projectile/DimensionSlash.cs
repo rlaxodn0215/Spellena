@@ -8,7 +8,6 @@ namespace Player
 {
     public class DimensionSlash : SpawnObject
     {
-        public Vector3 direction;
         public int damage;
         public int lifeTime;
         public int Speed;
@@ -20,8 +19,11 @@ namespace Player
             name = playerName + "_" + objectName;
             type = SpawnObjectType.Projectile;
 
-            if (data !=null)
-                direction = (Quaternion)data[3]*Vector3.forward;
+            if (data != null)
+            {
+                transform.rotation *= (Quaternion)data[3];     
+            }
+
             StartCoroutine(Gone());
         }
 
@@ -45,7 +47,7 @@ namespace Player
 
         private void Move()
         {
-            transform.Translate(direction * Speed * Time.deltaTime);
+            transform.Translate(Vector3.forward * Speed * Time.deltaTime);
         }
 
         protected virtual void OnTriggerEnter(Collider other)
@@ -58,13 +60,15 @@ namespace Player
                     if (other.transform.root.GetComponent<Character>())
                     {
                         other.transform.root.GetComponent<Character>().PlayerDamaged(playerName, damage);
+                        DestorySpawnObject();
+                        
                     }
 
-                    DestorySpawnObject();
                 }
 
                 else if (other.transform.root.CompareTag("Ground"))
                 {
+                    Debug.Log("Destory Slash");
                     DestorySpawnObject();
                 }
 

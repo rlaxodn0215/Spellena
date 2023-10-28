@@ -91,6 +91,7 @@ namespace Player
             SetPlayerKeys(PlayerActionState.Run, "Run");
             SetPlayerKeys(PlayerActionState.Sit, "Sit");
             SetPlayerKeys(PlayerActionState.Interaction, "Interaction");
+            SetPlayerKeys(PlayerActionState.ButtonCancel, "ButtonCancel");
             SetPlayerKeys(PlayerActionState.BasicAttack, "BasicAttack");
             SetPlayerKeys(PlayerActionState.Skill1, "Skill1");
             SetPlayerKeys(PlayerActionState.Skill2, "Skill2");

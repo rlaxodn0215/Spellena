@@ -5098,7 +5098,6 @@ MonoBehaviour:
   playerName: 
   type: 1
   objectName: 
-  direction: {x: 0, y: 0, z: 0}
   damage: 10
   lifeTime: 5
   Speed: 10

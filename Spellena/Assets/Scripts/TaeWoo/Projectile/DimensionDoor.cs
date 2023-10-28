@@ -40,18 +40,25 @@ namespace Player
         IEnumerator Gone()
         {
             yield return new WaitForSeconds(lifeTime);
+            Debug.Log("Gone _ " + PhotonNetwork.IsMasterClient);
 
             if (PhotonNetwork.IsMasterClient)
             {
+                foreach (string _player in playerInArea)
+                    EnBuffWhenDestory(_player);
                 DestorySpawnObject();
             }
 
             else
             {
+                foreach (string _player in playerInArea)
+                    photonView.RPC("EnBuffWhenDestory", RpcTarget.AllBuffered, _player);
                 photonView.RPC("DestorySpawnObject", RpcTarget.MasterClient);
             }
 
         }
+
+        
 
         public void OnTriggerEnter(Collider other)
         {
@@ -125,6 +132,19 @@ namespace Player
                     if (playerInArea.Count == 0) return;
                 }
             }
+        }
+
+        [PunRPC]
+        void EnBuffWhenDestory(string player)
+        {
+            GameObject temp = GameObject.Find(player);
+            if (temp != null)
+            {
+                temp.GetComponent<Character>().walkSpeed += deBuffNum;
+                temp.GetComponent<Character>().runSpeed += deBuffNum;
+                temp.GetComponent<Character>().jumpHeight += deBuffNum;
+            }
+            
         }
 
     }

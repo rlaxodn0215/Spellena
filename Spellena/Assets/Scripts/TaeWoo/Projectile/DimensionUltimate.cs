@@ -68,9 +68,9 @@ namespace Player
                         if (other.GetComponent<Character>())
                         {
                             other.transform.root.GetComponent<Character>().PlayerDamaged(playerName, damage);
+                            DestorySpawnObject();
                         }
 
-                        DestorySpawnObject();
                     }
 
                     else if (other.CompareTag("Ground"))

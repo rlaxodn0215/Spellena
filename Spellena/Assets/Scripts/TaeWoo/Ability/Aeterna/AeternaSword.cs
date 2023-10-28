@@ -7,8 +7,6 @@ namespace Player
 {
     public class AeternaSword : MonoBehaviour
     {
-        //[HideInInspector]
-        //public SpawnObjectType contactObjectType;
         [HideInInspector]
         public string contactObjectName;
         [HideInInspector]
@@ -44,6 +42,8 @@ namespace Player
 
         public void OnTriggerEnter(Collider other)
         {
+            //Debug.Log("Trigger : "+ other.name );
+
             if (other.transform.root.CompareTag(enemyTag))
             {
                 if (player.playerActionDatas[(int)PlayerActionState.Skill2].isExecuting && player.skill2Phase == 1)
