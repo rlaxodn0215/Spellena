@@ -64,7 +64,7 @@ namespace Player
         {
             if (other.transform.root.CompareTag(enemyTag))
             {
-                if(other.transform.root.gameObject.GetComponent<Character>())
+                if(other.transform.root.GetComponent<Character>())
                 {
                     if (PhotonNetwork.IsMasterClient)
                     {
@@ -74,6 +74,19 @@ namespace Player
                     else
                     {
                         photonView.RPC("DeBuff", RpcTarget.AllBuffered, other.transform.root.GetComponent<Character>().playerName);
+                    }
+                }
+
+                else if(other.transform.root.GetComponent<SpawnObject>())
+                {
+                    if (PhotonNetwork.IsMasterClient)
+                    {
+                        other.transform.root.GetComponent<SpawnObject>().DestorySpawnObject();
+                    }
+
+                    else
+                    {
+                        other.transform.root.GetComponent<PhotonView>().RPC("DestorySpawnObject", RpcTarget.MasterClient);
                     }
                 }
             }
