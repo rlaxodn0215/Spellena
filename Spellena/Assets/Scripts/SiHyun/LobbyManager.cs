@@ -5,10 +5,9 @@ using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine.SceneManagement;
-
-public class LobbyManager : MonoBehaviourPunCallbacks
-
-{
+using Photon.Pun.UtilityScripts;
+public class LobbyManager : MonoBehaviourPunCallbacks, IPunObservable
+{ 
     public InputField roomInputField;
     public GameObject lobbyPanel;
     public GameObject roomPanel;
@@ -140,12 +139,20 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
     public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
     {
-        UpdatePlayerList();
+        //UpdatePlayerList();
+        newPlayer.SetTeam(PunTeams.Team.blue);
+        PlayerItem _playerItem = Instantiate(playerItemPrefab, playerItemParentA);
+        _playerItem.SetPlayerInfo(newPlayer);
+        playerItemListA.Add(_playerItem);
     }
 
     public override void OnPlayerLeftRoom(Photon.Realtime.Player otherPlayer)
     {
-        UpdatePlayerList();
+        //UpdatePlayerList();
+        if(PhotonTeam.Equals(otherPlayer.GetPhotonTeam(), PunTeams.Team.blue))
+        {
+            //playerItemListA.Remove(otherPlayer);
+        }
     }
 
 
@@ -158,24 +165,39 @@ public class LobbyManager : MonoBehaviourPunCallbacks
                 SceneManager.LoadScene("SiHyun MainLobby Test");
             }
         }
-        if (Time.time >= nextUpdateTime)
-        {
-            UpdatePlayerList();
-            nextUpdateTime = Time.time + timeBetweenUpdates;
-        }
     }
 
     public void TeamChangedAToB(PlayerItem _playerItem)
     {
+        PlayerItem _newPlayerItem;
+        _newPlayerItem = _playerItem;
         playerItemListA.Remove(_playerItem);
-        playerItemListB.Add(_playerItem);
+        _playerItem.photonView.TransferOwnership(_newPlayerItem.player);
+        _playerItem.photonView.transform.SetParent(_newPlayerItem.transform);
+        playerItemListB.Add(_newPlayerItem);
         _playerItem.transform.SetParent(playerItemParentB);
     }
 
     public void TeamChangedBToA(PlayerItem _playerItem)
     {
-        playerItemListB.Remove(_playerItem);
-        playerItemListA.Add(_playerItem);
+        PlayerItem _newPlayerItem;
+        _newPlayerItem = _playerItem;
+        playerItemListA.Remove(_playerItem);
+        _playerItem.photonView.TransferOwnership(_newPlayerItem.player);
+        _playerItem.photonView.transform.SetParent(_newPlayerItem.transform);
+        playerItemListB.Add(_newPlayerItem);
         _playerItem.transform.SetParent(playerItemParentA);
+    }
+
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if(stream.IsWriting)
+        {
+
+        }
+        else
+        {
+
+        }
     }
 }

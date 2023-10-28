@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Realtime;
+using Photon.Pun.UtilityScripts;
 
 public class PlayerItem : MonoBehaviourPunCallbacks
 {
@@ -62,16 +63,26 @@ public class PlayerItem : MonoBehaviourPunCallbacks
         playerProperties["playerTeam"] = (int)Team.TeamA;
         player.SetCustomProperties(playerProperties);
         lobbyManagerScript.TeamChangedBToA(this);
+        Debug.Log("ÆÀ ¹Ù²ñ");
     }
 
     public void OnClickRightArrow()
     {
+        string _team = "TeamB";
+        photonView.RPC("ChangedTeam", RpcTarget.AllBuffered, _team);
         playerItem.tag = "TeamB";
         leftArrowButton.SetActive(true);
         rightArrowButton.SetActive(false);
         playerProperties["playerTeam"] = (int)Team.TeamB;
         player.SetCustomProperties(playerProperties);
         lobbyManagerScript.TeamChangedAToB(this);
+        Debug.Log("ÆÀ ¹Ù²ñ");
+    }
+
+    [PunRPC]
+    public void ChangedTeam(string _team)
+    {
+        this.tag = _team;
     }
 
     public override void OnPlayerPropertiesUpdate(Photon.Realtime.Player targetPlayer, ExitGames.Client.Photon.Hashtable changedProps)
