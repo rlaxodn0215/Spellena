@@ -1908,7 +1908,7 @@ ModelImporter:
       takeName: Combat_2H_Attack02
       internalID: 9164210059253638595
       firstFrame: 936
-      lastFrame: 976
+      lastFrame: 977
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -1931,7 +1931,7 @@ ModelImporter:
       transformMask: []
       maskType: 3
       maskSource: {instanceID: 0}
-      additiveReferencePoseFrame: 0
+      additiveReferencePoseFrame: 936
     - serializedVersion: 16
       name: Combat_2H_Attack_Special
       takeName: Combat_2H_Attack_Special
