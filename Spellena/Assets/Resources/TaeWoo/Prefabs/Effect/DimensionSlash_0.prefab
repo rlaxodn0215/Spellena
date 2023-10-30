@@ -16,7 +16,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &4012060819963040
 Transform:
   m_ObjectHideFlags: 0
@@ -39,13 +39,13 @@ Light:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1142708248391764}
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 10
   m_Type: 2
   m_Shape: 0
   m_Color: {r: 0.11764705, g: 0.16024327, b: 1, a: 1}
   m_Intensity: 1
-  m_Range: 30
+  m_Range: 1
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
@@ -4990,7 +4990,7 @@ GameObject:
   - component: {fileID: -5185417775682893652}
   - component: {fileID: -7000105693892043662}
   - component: {fileID: -694527777715104547}
-  - component: {fileID: 8561247790706004763}
+  - component: {fileID: -8999326412204166120}
   m_Layer: 0
   m_Name: DimensionSlash_0
   m_TagString: Untagged
@@ -5083,7 +5083,7 @@ MonoBehaviour:
   m_SynchronizeRotation: 1
   m_SynchronizeScale: 0
   m_UseLocal: 1
---- !u!114 &8561247790706004763
+--- !u!114 &-8999326412204166120
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -5092,16 +5092,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 1646871050452766}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 37e7c18e1f4bd864c9ed1ff4c0e3a119, type: 3}
+  m_Script: {fileID: 11500000, guid: 08393aa31b600e84da70ceed614d97e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   playerName: 
   type: 1
   objectName: 
-  damage: 10
-  lifeTime: 5
-  Speed: 10
-  healing: 10
+  aeternaData: {fileID: 11400000, guid: 3ab088a29565a8742af0c359ef4214cd, type: 2}
+  chargeNum: 0
+  damage: 0
+  lifeTime: 0
+  speed: 0
+  healing: 0
   isHealingSword: 0
 --- !u!1 &1846733282166030
 GameObject:

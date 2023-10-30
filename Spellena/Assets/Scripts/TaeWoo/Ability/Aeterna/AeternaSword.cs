@@ -40,6 +40,42 @@ namespace Player
             }
         }
 
+        [PunRPC]
+        public void ActivateParticle(int skillNum, bool isActive)
+        {
+            if(skillNum==2)
+            {
+               skill2BuffParticle.SetActive(isActive);
+            }
+
+            else if(skillNum==3)
+            {
+                skill3BuffParticle.SetActive(isActive);
+            }
+
+            else
+            {
+                Debug.LogError("No SkillNum");
+                return;
+            }
+        }
+
+        [PunRPC]
+        public void ActivateSkill4Sword(bool isHealingSword)
+        {
+           normalSword.SetActive(false);
+           skill4HealingSword.SetActive(isHealingSword);
+           skill4AttackSword.SetActive(!isHealingSword);
+        }
+
+        [PunRPC]
+        public void DisActivateSkill4Sword()
+        {
+            normalSword.SetActive(true);
+            skill4HealingSword.SetActive(false);
+            skill4AttackSword.SetActive(false);
+        }
+
         public void OnTriggerEnter(Collider other)
         {
             //Debug.Log("Trigger : "+ other.name );

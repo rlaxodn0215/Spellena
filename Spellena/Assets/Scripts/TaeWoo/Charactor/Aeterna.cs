@@ -8,7 +8,7 @@ namespace Player
 {
     public class Aeterna : Character
     {
-        public CharacterData AeternaData;
+        public AeternaData aeternaData;
         public GameObject DimensionSword;
         public GameObject DimensionSlash;
         public GameObject DimensionDoor;
@@ -80,7 +80,6 @@ namespace Player
 
             dimensionOpen = this.gameObject.AddComponent<DimensionOpen>();
             dimensionOpen.AddPlayer(this);
-            dimensionOpen.maxDistance = AeternaData.skill1DoorRange;
             Skills["Skill1"] = dimensionOpen;
 
             dimensionIO = this.gameObject.AddComponent<DimensionIO>();
@@ -105,15 +104,23 @@ namespace Player
             skill2Phase = 1;
             skill3Phase = 1;
 
-            hp = AeternaData.Hp;
-            walkSpeed = AeternaData.moveSpeed;
-            jumpHeight = AeternaData.jumpHeight;
+            dataHp = aeternaData.Hp;
+            dataSitSpeed = aeternaData.sitSpeed;
+            dataWalkSpeed = aeternaData.walkSpeed;
+            dataRunSpeed = aeternaData.runSpeed;
+            dataJumpHeight = aeternaData.jumpHeight;
+
+            hp = dataHp;
+            sitSpeed = dataSitSpeed;
+            walkSpeed = dataWalkSpeed;
+            runSpeed = dataRunSpeed;
+            jumpHeight = dataJumpHeight;
 
             chargeCountTime = new float[3];
 
-            chargeCountTime[0] = 5;
-            chargeCountTime[1] = 4;
-            chargeCountTime[2] = 2;
+            chargeCountTime[0] = aeternaData.skill4Phase3Time;
+            chargeCountTime[1] = aeternaData.skill4Phase2Time;
+            chargeCountTime[2] = aeternaData.skill4Phase1Time;
         }
 
         [PunRPC]
@@ -311,7 +318,7 @@ namespace Player
             {
                 playerActionDatas[(int)PlayerActionState.BasicAttack].isExecuting = true;
                 Skills["BasicAttack"].Execution();
-                skillTimer[0] = AeternaData.basicAttackTime;
+                skillTimer[0] = aeternaData.basicAttackTime;
                 StartCoroutine(SkillTimer(0));
             }
         }
@@ -322,7 +329,7 @@ namespace Player
             {
                 Skills["Skill1"].Execution();
                 playerActionDatas[(int)PlayerActionState.Skill1].isExecuting = true;
-                skillTimer[1] = AeternaData.skill1Time;
+                skillTimer[1] = aeternaData.skill1Time;
                 StartCoroutine(SkillTimer(1));
             }
         }
@@ -336,8 +343,8 @@ namespace Player
                     switch (skill2Phase)
                     {
                         case 1:
-                            skillTimer[2] = AeternaData.skill2DurationTime;
-                            DimensionSword.GetComponent<AeternaSword>().skill2BuffParticle.SetActive(true);
+                            skillTimer[2] = aeternaData.skill2DurationTime;
+                            DimensionSword.GetComponent<PhotonView>().RPC("ActivateParticle", RpcTarget.AllBuffered, 2, true);
                             StartCoroutine(SkillTimer(2));
                             break;
                         case 2:
@@ -354,7 +361,7 @@ namespace Player
                     if (skill2Phase == 1 && skillTimer[0] <= 0.0f)
                     {
                         Skills["Skill2"].Execution(ref skill2Phase);
-                        skillTimer[0] = AeternaData.basicAttackTime;
+                        skillTimer[0] = aeternaData.basicAttackTime;
                         StartCoroutine(SkillTimer(0));
                     }
 
@@ -370,8 +377,8 @@ namespace Player
                 {
                     if (skill3Phase == 1)
                     {
-                        skillTimer[3] = AeternaData.skill3DurationTime;
-                        DimensionSword.GetComponent<AeternaSword>().skill3BuffParticle.SetActive(true);
+                        skillTimer[3] = aeternaData.skill3DurationTime;
+                        DimensionSword.GetComponent<PhotonView>().RPC("ActivateParticle", RpcTarget.AllBuffered, 3, true);
                         StartCoroutine(SkillTimer(3));
                     }
                     playerActionDatas[(int)PlayerActionState.Skill3].isExecuting = true;
@@ -383,7 +390,7 @@ namespace Player
                     {
                         playerActionDatas[(int)PlayerActionState.Skill3].isExecuting = true;
                         Skills["Skill3"].Execution();
-                        skillTimer[0] = AeternaData.basicAttackTime;
+                        skillTimer[0] = aeternaData.basicAttackTime;
                         StartCoroutine(SkillTimer(0));
                     }
 
@@ -397,7 +404,7 @@ namespace Player
             if(playerActionDatas[(int)PlayerActionState.Skill4].isExecuting == false)
             {
                 ultimateCount -= doUltimateNum;
-                skillTimer[4] = AeternaData.skill4DurationTime;
+                skillTimer[4] = aeternaData.skill4DurationTime;
                 StartCoroutine(SkillTimer(4));
             }
 
@@ -451,8 +458,8 @@ namespace Player
         {
             if(phase==1 || phase==2)
             {
-                skillTimer[2] = AeternaData.skill2CoolTime;
-                DimensionSword.GetComponent<AeternaSword>().skill2BuffParticle.SetActive(false);
+                skillTimer[2] = aeternaData.skill2CoolTime;
+                DimensionSword.GetComponent<PhotonView>().RPC("ActivateParticle", RpcTarget.AllBuffered, 2, false);
                 playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = true;
                 StartCoroutine(SkillTimer(2));
                 phase = 3;
@@ -468,8 +475,8 @@ namespace Player
         {
             if (phase == 1)
             {
-                skillTimer[3] = AeternaData.skill3CoolTime;
-                DimensionSword.GetComponent<AeternaSword>().skill3BuffParticle.SetActive(false);
+                skillTimer[3] = aeternaData.skill3CoolTime;
+                DimensionSword.GetComponent<PhotonView>().RPC("ActivateParticle", RpcTarget.AllBuffered, 3, false);
                 playerActionDatas[(int)PlayerActionState.Skill3].isExecuting = true;
                 phase = 2;
                 StartCoroutine(SkillTimer(3));

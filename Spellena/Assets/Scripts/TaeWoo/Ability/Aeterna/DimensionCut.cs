@@ -19,28 +19,13 @@ namespace Player
 
         public override void IsActive()
         {
-            //if (isHealingSword)
-            //{
-            //    Debug.Log("Skill4_HealingSword Ready");  
-            //}
-
-            //else
-            //{
-            //    Debug.Log("Skill4_DamageSword Ready");
-            //}
-
-            Sword.skill4HealingSword.SetActive(isHealingSword);
-            Sword.skill4AttackSword.SetActive(!isHealingSword);
-            Sword.normalSword.SetActive(false);
-
+            Sword.GetComponent<PhotonView>().RPC("ActivateSkill4Sword", RpcTarget.AllBuffered, isHealingSword);
             isHealingSword = !isHealingSword;
         }
 
         public override void IsDisActive()
         {
-            Sword.skill4HealingSword.SetActive(false);
-            Sword.skill4AttackSword.SetActive(false);
-            Sword.normalSword.SetActive(true);
+            Sword.GetComponent<PhotonView>().RPC("DisActivateSkill4Sword", RpcTarget.AllBuffered);
         }
 
         public override void Execution(ref int chargeCount)

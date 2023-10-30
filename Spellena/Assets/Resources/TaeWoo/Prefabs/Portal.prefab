@@ -4893,9 +4893,7 @@ MonoBehaviour:
   playerName: 
   type: 0
   objectName: 
-  lifeTime: 5
-  range: 2
-  deBuffNum: 2
+  aeternaData: {fileID: 11400000, guid: 3ab088a29565a8742af0c359ef4214cd, type: 2}
 --- !u!135 &536479597
 SphereCollider:
   m_ObjectHideFlags: 0

@@ -59,7 +59,7 @@ namespace Player
             Player.skill2Phase = 2;
             Player.playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = false;
 
-            Player.skillTimer[2] = Player.AeternaData.skill2HoldTime;
+            Player.skillTimer[2] = Player.aeternaData.skill2HoldTime;
             Player.skillButton = 0;
         }
 
@@ -76,7 +76,7 @@ namespace Player
             }
 
             Player.skill2Phase = 3;
-            Player.skillTimer[2] = Player.AeternaData.skill2CoolTime;
+            Player.skillTimer[2] = Player.aeternaData.skill2CoolTime;
         }
 
         [PunRPC]
