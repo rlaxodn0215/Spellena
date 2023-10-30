@@ -73,6 +73,9 @@ MonoBehaviour:
   - SpawnSlash
   - EnBuffWhenDestory
   - ChangedTeam
+  - AddCommand
+  - CancelSkill
+  - ClickMouse
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

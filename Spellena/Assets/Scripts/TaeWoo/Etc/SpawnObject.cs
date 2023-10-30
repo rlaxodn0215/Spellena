@@ -12,7 +12,7 @@ namespace Player
         Projectile,     
     }
 
-    public class SpawnObject : MonoBehaviourPunCallbacks
+    public class SpawnObject : MonoBehaviourPunCallbacks, IPunObservable
     {
         public string playerName;
         public SpawnObjectType type;
@@ -45,6 +45,10 @@ namespace Player
                 Debug.Log("DestorySpawnObject");
                 PhotonNetwork.Destroy(gameObject);
             }
+        }
+
+        public virtual void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+        {
         }
     }
 }
