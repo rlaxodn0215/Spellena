@@ -297,10 +297,12 @@ namespace Player
                 if (!playerActionDatas[(int)PlayerActionState.Sit].isExecuting)
                 {
                     playerActionDatas[(int)PlayerActionState.Sit].isExecuting = true;
+                    GetComponent<CapsuleCollider>().height = 1.4f;
                 }
                 else
                 {
                     playerActionDatas[(int)PlayerActionState.Sit].isExecuting = false;
+                    GetComponent<CapsuleCollider>().height = 2.0f;
                 }
             }
         }
@@ -370,7 +372,7 @@ namespace Player
                 for (int i = 0; i < avatarForOther.childCount; i++)
                 {
                     avatarForOther.GetChild(i).gameObject.layer = LayerMask.NameToLayer("Me");
-                    avatarForOther.GetChild(i).gameObject.GetComponent<SkinnedMeshRenderer>().enabled = false;
+                    //avatarForOther.GetChild(i).gameObject.GetComponent<SkinnedMeshRenderer>().enabled = false;
                 }
 
                 for(int i = 0; i < avatarForMe.childCount; i++)

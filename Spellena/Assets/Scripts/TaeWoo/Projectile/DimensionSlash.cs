@@ -74,7 +74,6 @@ namespace Player
                     Light[] lights = GetComponentsInChildren<Light>();
 
                     isHealingSword = (bool)data[4];
-                    Debug.Log(isHealingSword);
 
                     foreach (ParticleSystem particle in systems)
                     {
