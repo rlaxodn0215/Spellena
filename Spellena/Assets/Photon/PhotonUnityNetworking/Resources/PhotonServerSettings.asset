@@ -76,6 +76,7 @@ MonoBehaviour:
   - ActivateParticle
   - ActivateSkill4Sword
   - DisActivateSkill4Sword
+  - SetAttackSpeed
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

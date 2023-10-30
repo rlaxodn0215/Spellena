@@ -438,15 +438,14 @@ namespace Player
             {
                 StopCoroutine(ultimateCoroutine);
                 StopCoroutine(attackPauseCoroutine);
+                photonView.RPC("SetAttackSpeed", RpcTarget.AllBuffered, 1.0f);
 
-                if(!isNormalAttack)
+                if (!isNormalAttack)
                 {
-                    skillTimer[5] = chargeCountTime[0];
                     Skills["Skill4"].Execution(ref chargeCount);
-                    chargeCount = 0;
-                    animator.SetFloat("AttackPause", 1);
                 }
 
+                chargeCount = 0;
             }
             
         }
@@ -458,7 +457,13 @@ namespace Player
             yield return new WaitForSeconds(animator.GetCurrentAnimatorClipInfo(1).Length / 2.5f);
             StopCoroutine(skill4SlashCoroutine);
             isNormalAttack = false;
-            animator.SetFloat("AttackPause", 0);
+            photonView.RPC("SetAttackSpeed", RpcTarget.AllBuffered, 0.0f);
+        }
+
+        [PunRPC]
+        public void SetAttackSpeed(float num)
+        {
+            animator.SetFloat("AttackPause", num);
         }
 
         IEnumerator Skill4ShootSlash()

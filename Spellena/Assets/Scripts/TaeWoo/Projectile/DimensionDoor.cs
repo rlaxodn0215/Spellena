@@ -11,9 +11,9 @@ namespace Player
         private string enemyTag;
         private List<string> playerInArea;
 
-        public override void Start()
+        public override void OnEnable()
         {
-            base.Start();
+            base.OnEnable();
 
             name = playerName + "_Portal";
             type = SpawnObjectType.FixedObject;

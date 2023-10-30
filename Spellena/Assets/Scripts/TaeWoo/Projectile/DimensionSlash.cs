@@ -22,9 +22,9 @@ namespace Player
         [HideInInspector]
         public bool isHealingSword = false;
 
-        public override void Start()
+        public override void OnEnable()
         {
-            base.Start();
+            base.OnEnable();
             Init();     
         }
 
@@ -43,7 +43,6 @@ namespace Player
 
                 if (data[4] != null)
                 {
-
                     switch(chargeNum)
                     {
                         case 0:

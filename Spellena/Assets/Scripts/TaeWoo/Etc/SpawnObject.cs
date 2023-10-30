@@ -19,7 +19,7 @@ namespace Player
         public string objectName;
         protected object[] data;
 
-        public virtual void Start()
+        public virtual void OnEnable()
         {
             Init();
         }
@@ -42,7 +42,6 @@ namespace Player
         {
             if (this != null && PhotonNetwork.IsMasterClient)
             {
-                //Debug.Log("DestorySpawnObject");
                 PhotonNetwork.Destroy(gameObject);
             }
         }

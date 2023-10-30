@@ -13,14 +13,14 @@ MonoBehaviour:
   m_Name: AeternaData
   m_EditorClassIdentifier: 
   Hp: 100
-  sitSpeed: 0
-  walkSpeed: 0
-  runSpeed: 0
+  sitSpeed: 2
+  walkSpeed: 3
+  runSpeed: 5
   jumpHeight: 10
   basicAttackTime: 1
   DimenstionSlash_0_lifeTime: 5
   DimenstionSlash_0_Damage: 10
-  DimenstionSlash_0_Speed: 7
+  DimenstionSlash_0_Speed: 10
   DimenstionSlash_0_Healing: 10
   skill1Time: 5
   skill1DoorCoolTime: 20
@@ -36,15 +36,15 @@ MonoBehaviour:
   skill4Phase1Time: 1
   DimenstionSlash_1_lifeTime: 5
   DimenstionSlash_1_Damage: 10
-  DimenstionSlash_1_Speed: 7
+  DimenstionSlash_1_Speed: 10
   DimenstionSlash_1_Healing: 10
   skill4Phase2Time: 2
   DimenstionSlash_2_lifeTime: 5
   DimenstionSlash_2_Damage: 10
-  DimenstionSlash_2_Speed: 7
+  DimenstionSlash_2_Speed: 10
   DimenstionSlash_2_Healing: 10
   skill4Phase3Time: 5
   DimenstionSlash_3_lifeTime: 5
   DimenstionSlash_3_Damage: 10
-  DimenstionSlash_3_Speed: 7
+  DimenstionSlash_3_Speed: 10
   DimenstionSlash_3_Healing: 10
