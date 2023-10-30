@@ -8,8 +8,6 @@ namespace Player
 {
     public class DimensionOpen : Ability
     {
-        public float maxDistance;
-
         private Aeterna Player;
         private Animator animator;
         private GameObject dimensionDoor;
@@ -50,14 +48,14 @@ namespace Player
 
                 animator.SetTrigger("BasicAttack");
 
-                if (Physics.Raycast(ray, out hit, maxDistance, layerMask))
+                if (Physics.Raycast(ray, out hit, Player.aeternaData.skill1DoorSpawnMaxRange, layerMask))
                 {
                     spawnPoint = hit.point;
                 }
 
                 else
                 {
-                    spawnPoint = ray.GetPoint(maxDistance);
+                    spawnPoint = ray.GetPoint(Player.aeternaData.skill1DoorSpawnMaxRange);
                 }
 
                 spawnPoint.y += 1;
@@ -105,14 +103,14 @@ namespace Player
             {
                 ray = new Ray(Player.camera.transform.position, Player.camera.transform.forward);
 
-                if (Physics.Raycast(ray, out hit, maxDistance,layerMask))
+                if (Physics.Raycast(ray, out hit, Player.aeternaData.skill1DoorSpawnMaxRange, layerMask))
                 {
                     spawnPoint = hit.point;
                 }
 
                 else
                 {
-                    spawnPoint = ray.GetPoint(maxDistance);
+                    spawnPoint = ray.GetPoint(Player.aeternaData.skill1DoorSpawnMaxRange);
                 }
 
                 spawnPoint.y += 1;
@@ -137,14 +135,14 @@ namespace Player
             {
                 ray = new Ray(Player.camera.transform.position, Player.camera.transform.forward);
 
-                if (Physics.Raycast(ray, out hit, maxDistance,layerMask))
+                if (Physics.Raycast(ray, out hit, Player.aeternaData.skill1DoorSpawnMaxRange, layerMask))
                 {
                     spawnPoint = hit.point;
                 }
 
                 else
                 {
-                    spawnPoint = ray.GetPoint(maxDistance);
+                    spawnPoint = ray.GetPoint(Player.aeternaData.skill1DoorSpawnMaxRange);
                 }
 
                 spawnPoint.y += 1;

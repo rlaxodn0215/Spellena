@@ -42,7 +42,7 @@ namespace Player
         {
             if (this != null && PhotonNetwork.IsMasterClient)
             {
-                Debug.Log("DestorySpawnObject");
+                //Debug.Log("DestorySpawnObject");
                 PhotonNetwork.Destroy(gameObject);
             }
         }

@@ -46,22 +46,27 @@ namespace Player
         public GameObject UI;
 
         //실시간 갱신 데이터
-        public int ID;              // view ID로 설정, Projectile 경우 해당 주인의 view ID로 설정
         public string playerName;
         public string murder;
-        public int hp;
-        //public int maxHp;
         public bool isOccupying = false;
 
-        //데이터 베이스에서 받는 데이터들
-        [HideInInspector]
+        public int hp;
         public float sitSpeed;
-        [HideInInspector]
         public float walkSpeed;
-        [HideInInspector]
         public float runSpeed;
-        [HideInInspector]
         public float jumpHeight;
+
+        // 데이터 베이스에서 받는 데이터들
+        [HideInInspector]
+        public int dataHp;
+        [HideInInspector]
+        public float dataSitSpeed;
+        [HideInInspector]
+        public float dataWalkSpeed;
+        [HideInInspector]
+        public float dataRunSpeed;
+        [HideInInspector]
+        public float dataJumpHeight;
 
         // 컴포넌트
         [HideInInspector]
@@ -71,7 +76,7 @@ namespace Player
         [HideInInspector]
         public RaycastHit hit;
 
-        //임시 사용 데이터
+        // 임시 사용 데이터
         public Vector3 moveVec;
         private bool isGrounded = false;
         private bool isSitting = false;
@@ -116,13 +121,15 @@ namespace Player
 
         void Initialize()
         {
-            //ID = GetComponent<PhotonView>().ViewID;
+            //임시적으로 만듬
             playerName = GetComponent<PhotonView>().ViewID.ToString();
+
             gameObject.name = "Player_" + playerName;
             animator = GetComponent<Animator>();
             rigidbody = GetComponent<Rigidbody>();
             Skills = new Dictionary<string, Ability>();
             cameraPos = camera.transform.position;
+
         }
         protected virtual void Update()
         {
@@ -223,9 +230,16 @@ namespace Player
                 {
                     _temp -= transform.right;
                 }
+
                 _temp.Normalize();
 
-                rigidbody.MovePosition(rigidbody.transform.position + _temp * walkSpeed * Time.deltaTime);
+                if(playerActionDatas[(int)PlayerActionState.Sit].isExecuting)
+                    rigidbody.MovePosition(rigidbody.transform.position + _temp * sitSpeed * Time.deltaTime);
+                else if(playerActionDatas[(int)PlayerActionState.Run].isExecuting)
+                    rigidbody.MovePosition(rigidbody.transform.position + _temp * runSpeed * Time.deltaTime);
+                else
+                    rigidbody.MovePosition(rigidbody.transform.position + _temp * walkSpeed * Time.deltaTime);
+
             }
 
             _temp = transform.InverseTransformVector(_temp);
@@ -458,7 +472,6 @@ namespace Player
             if (stream.IsWriting)
             {
                 // 데이터를 보내는 부분
-                stream.SendNext(ID);
                 stream.SendNext(playerName);
                 stream.SendNext(murder);
                 stream.SendNext(hp);
@@ -474,7 +487,6 @@ namespace Player
             else
             {
                 // 데이터를 받는 부분
-                ID = (int)stream.ReceiveNext();
                 playerName = (string)stream.ReceiveNext();
                 murder = (string)stream.ReceiveNext();
                 hp = (int)stream.ReceiveNext();

@@ -7,9 +7,7 @@ namespace Player
 {
     public class DimensionDoor : SpawnObject
     {
-        public int lifeTime;
-        public float range;
-        public int deBuffNum;
+        public AeternaData aeternaData;
         private string enemyTag;
         private List<string> playerInArea;
 
@@ -19,7 +17,7 @@ namespace Player
 
             name = playerName + "_Portal";
             type = SpawnObjectType.FixedObject;
-            objectName = "Portal";
+            objectName = "Portal";  
 
             if (CompareTag("TeamA"))
             {
@@ -32,15 +30,14 @@ namespace Player
             }
 
             playerInArea = new List<string>();
-            GetComponent<SphereCollider>().radius = range;
+            GetComponent<SphereCollider>().radius = aeternaData.skill1DoorRange;
 
             StartCoroutine(Gone());
         }
 
         IEnumerator Gone()
         {
-            yield return new WaitForSeconds(lifeTime);
-            Debug.Log("Gone _ " + PhotonNetwork.IsMasterClient);
+            yield return new WaitForSeconds(aeternaData.skill1Time);
 
             if (PhotonNetwork.IsMasterClient)
             {
@@ -123,9 +120,11 @@ namespace Player
             }
 
             playerInArea.Add(temp.name);
-            temp.GetComponent<Character>().walkSpeed -= deBuffNum;
-            temp.GetComponent<Character>().runSpeed -= deBuffNum;
-            temp.GetComponent<Character>().jumpHeight -= deBuffNum;
+
+            temp.GetComponent<Character>().sitSpeed *= aeternaData.skill1DeBuffRatio;
+            temp.GetComponent<Character>().walkSpeed *= aeternaData.skill1DeBuffRatio;
+            temp.GetComponent<Character>().runSpeed *= aeternaData.skill1DeBuffRatio;
+            temp.GetComponent<Character>().jumpHeight *= aeternaData.skill1DeBuffRatio;
         }
 
         [PunRPC]
@@ -138,9 +137,11 @@ namespace Player
             {
                 if (player == temp.name)
                 {
-                    temp.GetComponent<Character>().walkSpeed += deBuffNum;
-                    temp.GetComponent<Character>().runSpeed += deBuffNum;
-                    temp.GetComponent<Character>().jumpHeight += deBuffNum;
+                    temp.GetComponent<Character>().sitSpeed = temp.GetComponent<Character>().dataSitSpeed;
+                    temp.GetComponent<Character>().walkSpeed = temp.GetComponent<Character>().dataWalkSpeed;
+                    temp.GetComponent<Character>().runSpeed = temp.GetComponent<Character>().dataRunSpeed;
+                    temp.GetComponent<Character>().jumpHeight = temp.GetComponent<Character>().dataJumpHeight;
+
                     playerInArea.Remove(player);
                     if (playerInArea.Count == 0) return;
                 }
@@ -151,11 +152,14 @@ namespace Player
         void EnBuffWhenDestory(string player)
         {
             GameObject temp = GameObject.Find(player);
+
             if (temp != null)
             {
-                temp.GetComponent<Character>().walkSpeed += deBuffNum;
-                temp.GetComponent<Character>().runSpeed += deBuffNum;
-                temp.GetComponent<Character>().jumpHeight += deBuffNum;
+                Debug.Log("EnBuffWhenDestory");
+                temp.GetComponent<Character>().sitSpeed = temp.GetComponent<Character>().dataSitSpeed;
+                temp.GetComponent<Character>().walkSpeed = temp.GetComponent<Character>().dataWalkSpeed;
+                temp.GetComponent<Character>().runSpeed = temp.GetComponent<Character>().dataRunSpeed;
+                temp.GetComponent<Character>().jumpHeight = temp.GetComponent<Character>().dataJumpHeight;
             }
             
         }

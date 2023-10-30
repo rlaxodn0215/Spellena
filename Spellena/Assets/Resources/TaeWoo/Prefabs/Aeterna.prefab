@@ -763,19 +763,23 @@ MonoBehaviour:
   camera: {fileID: 1844791844}
   enemyCam: {fileID: 1062827018094055243}
   UI: {fileID: 338266740}
-  ID: 0
   playerName: 
   murder: 
-  hp: 0
   isOccupying: 0
+  hp: 0
   sitSpeed: 0
   walkSpeed: 0
   runSpeed: 0
   jumpHeight: 0
+  dataHp: 0
+  dataSitSpeed: 0
+  dataWalkSpeed: 0
+  dataRunSpeed: 0
+  dataJumpHeight: 0
   animator: {fileID: 0}
   rigidbody: {fileID: 0}
   moveVec: {x: 0, y: 0, z: 0}
-  AeternaData: {fileID: 11400000, guid: 68088471f050fa74fb68919ed9133893, type: 2}
+  aeternaData: {fileID: 11400000, guid: 3ab088a29565a8742af0c359ef4214cd, type: 2}
   DimensionSword: {fileID: 919132148892307835}
   DimensionSlash: {fileID: 1646871050452766, guid: 95b3ea755bc01f344a99fccc5f4702f8, type: 3}
   DimensionDoor: {fileID: 100898, guid: a25b3d9a8119bf047b7609dba7f57302, type: 3}
