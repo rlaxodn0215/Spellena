@@ -44,8 +44,17 @@ namespace Player
         bool isSpell5 = false;
         bool isSpell6 = false;
 
-        BurstFlare burstFlare;
+        bool isClicked = false;
 
+        public enum SkillState
+        {
+            None, BurstFlare
+        }
+
+        SkillState skillState = SkillState.None;
+
+        BurstFlare burstFlare;
+        float burstFlareCoolDownTime = 0f;
 
 
         protected override void Awake()
@@ -67,7 +76,7 @@ namespace Player
             base.Update();
             if (photonView.IsMine)
             {
-                PlayerSkillInput();
+                CheckCoolDown();
                 CheckOverlayAnimator();
                 CheckPoint();
             }
@@ -92,34 +101,112 @@ namespace Player
             overlayCamera.SetActive(true);
         }
         //스킬
+        void CheckCoolDown()
+        {
+            if(burstFlare != null)
+            {
+                burstFlare.ShootCoolDown();
+            }
 
+            if(burstFlareCoolDownTime > 0f)
+            {
+                burstFlareCoolDownTime -= Time.deltaTime;
+            }
 
+        }
 
+        void UseSkill(Vector3 origin, Vector3 direction)
+        {
+            if(skillState == SkillState.BurstFlare)
+            {
+                if(burstFlare == null)
+                {
+                    burstFlare = new BurstFlare();
+                    burstFlare.Initialize();
+                    overlayAnimator.SetBool("Spell3", true);
+                }
 
+                if(burstFlare.CheckCoolDown() == false)
+                {
+                    Debug.Log("쿨타임");
+                    return;
+                }
 
+                bool _result = burstFlare.ShootBullet();
 
+                object[] _data = new object[5];
+                _data[0] = name;
+                _data[1] = tag;
+                _data[2] = "BurstFlare";
+                _data[3] = origin + direction;
+                _data[4] = direction;
+                PhotonNetwork.Instantiate("ChanYoung/Prefabs/BurstFlare", origin, Quaternion.identity, data: _data);
 
+                if (_result == true)
+                {
+                    skillState = SkillState.None;
+                    burstFlareCoolDownTime = burstFlare.GetSkillCoolDownTime();
+                    burstFlare = null;
+                }
+            }
+        }
 
+        //RPC
+        [PunRPC]
+        public void AddCommand(int command)
+        {
+            if(commands.Count < 2)
+            {
+                commands.Add(command);
+            }
 
+            if(commands.Count >= 2)
+            {
+                isReadyToUseSkill = true;
+            }
+        }
+        [PunRPC]
+        public void CancelSkill()
+        {
+            isReadyToUseSkill = false;
 
+            if(skillState == SkillState.BurstFlare)
+            {
+                burstFlareCoolDownTime = burstFlare.GetSkillCoolDownTime();
+                burstFlare = null;
+            }
 
-
-
+            skillState = SkillState.None;
+            commands.Clear();
+        }
+        [PunRPC]
+        public void ClickMouse(Vector3 origin, Vector3 direction)
+        {
+            if(skillState == SkillState.None)
+            {
+                if(isReadyToUseSkill == true)
+                {
+                    if (((commands[0] == 1 && commands[1] == 3)
+                        || (commands[0] == 3 && commands[1] == 1)) && burstFlareCoolDownTime <= 0f)
+                    {
+                        skillState = SkillState.BurstFlare;
+                        isReadyToUseSkill = false;
+                        UseSkill(origin, direction);
+                    }
+                }
+            }
+            else
+            {
+                UseSkill(origin, direction);
+            }
+        }
 
         //입력
         void OnSkill1()
         {
             if (photonView.IsMine)
             {
-                if (commands.Count < 2)
-                {
-                    commands.Add(1);
-                }
-
-                if(commands.Count >= 2)
-                {
-                    isReadyToUseSkill = true;
-                }
+                photonView.RPC("AddCommand", RpcTarget.MasterClient, 1);
             }
         }
 
@@ -127,40 +214,22 @@ namespace Player
         {
             if (photonView.IsMine)
             {
-                if (commands.Count < 2)
-                {
-                    commands.Add(2);
-                }
-
-                if (commands.Count >= 2)
-                {
-                    isReadyToUseSkill = true;
-                }
+                photonView.RPC("AddCommand", RpcTarget.MasterClient, 2);
             }
         }
         void OnSkill3()
         {
             if (photonView.IsMine)
             {
-                if (commands.Count < 2)
-                {
-                    commands.Add(3);
-                }
-
-                if (commands.Count >= 2)
-                {
-                    isReadyToUseSkill = true;
-                }
+                photonView.RPC("AddCommand", RpcTarget.MasterClient, 3);
             }
         }
-
 
         void OnButtonCancel()
         {
             if(photonView.IsMine)
             {
-                isReadyToUseSkill = false;
-                commands.Clear();
+                photonView.RPC("CancelSkill", RpcTarget.MasterClient);
             }
         }
 
@@ -172,91 +241,15 @@ namespace Player
         {
             if (photonView.IsMine)
             {
-                if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Idle")
-                    && isReadyToUseSkill == true)
+                isClicked = !isClicked;
+                if (isClicked == true)
                 {
-                    if (commands.Count == 2)
-                    {
-                        if (commands[0] == 1 && commands[1] == 1)
-                        {
-                            reverseAnimatorBool("Spell1");
-                            isSpell1 = true;
-                        }
-                        else if ((commands[0] == 1 && commands[1] == 2)
-                            || (commands[0] == 2 && commands[1] == 1))
-                        {
-                            reverseAnimatorBool("Spell2");
-                            isSpell2 = true;
-                        }
-                        else if ((commands[0] == 1 && commands[1] == 3)
-                            || (commands[0] == 3 && commands[1] == 1))
-                        {
-                            reverseAnimatorBool("Spell3");
-                            isSpell3 = true;
-                        }
-                        else if (commands[0] == 2 && commands[1] == 2)
-                        {
-                            reverseAnimatorBool("Spell4");
-                            isSpell4 = true;
-                        }
-                        else if ((commands[0] == 2 && commands[1] == 3) || (commands[0] == 3 && commands[1] == 2))
-                        {
-                            reverseAnimatorBool("Spell5");
-                            isSpell5 = true;
-                        }
-                        else if (commands[0] == 3 && commands[1] == 3)
-                        {
-                            reverseAnimatorBool("Spell6");
-                            isSpell6 = true;
-                        }
-                    }
+                    Ray _ray = camera.GetComponent<Camera>().ScreenPointToRay(Aim.transform.position);
+                    photonView.RPC("ClickMouse", RpcTarget.MasterClient, _ray.origin, _ray.direction);
                 }
             }
         }
 
-        protected void PlayerSkillInput()
-        {
-            if (isReadyToUseSkill == true)
-            {
-                if (isSpell1 == true)
-                {
-                    commands.Clear();
-                    //스킬1이 발사된다.
-                    isSpell1 = false;
-                    isReadyToUseSkill = false;
-                }
-                else if (isSpell2 == true)
-                {
-                    commands.Clear();
-                    isSpell2 = false;
-                    isReadyToUseSkill = false;
-                }
-                else if (isSpell3 == true)
-                {
-                    commands.Clear();
-                    isSpell3 = false;
-                    isReadyToUseSkill = false;
-                }
-                else if (isSpell4 == true)
-                {
-                    commands.Clear();
-                    isSpell4 = false;
-                    isReadyToUseSkill = false;
-                }
-                else if (isSpell5 == true)
-                {
-                    commands.Clear();
-                    isSpell5 = false;
-                    isReadyToUseSkill = false;
-                }
-                else if (isSpell6 == true)
-                {
-                    commands.Clear();
-                    isSpell6 = false;
-                    isReadyToUseSkill = false;
-                }
-            }
-        }
 
         //동기화
         public override void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
