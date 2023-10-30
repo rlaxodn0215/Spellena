@@ -337,7 +337,7 @@ namespace Player
                     {
                         case 1:
                             skillTimer[2] = AeternaData.skill2DurationTime;
-                            DimensionSword.GetComponent<AeternaSword>().skill2BuffParticle.SetActive(true);
+                            DimensionSword.GetComponent<PhotonView>().RPC("ActivateParticle", RpcTarget.AllBuffered, 2, true);
                             StartCoroutine(SkillTimer(2));
                             break;
                         case 2:
@@ -371,7 +371,7 @@ namespace Player
                     if (skill3Phase == 1)
                     {
                         skillTimer[3] = AeternaData.skill3DurationTime;
-                        DimensionSword.GetComponent<AeternaSword>().skill3BuffParticle.SetActive(true);
+                        DimensionSword.GetComponent<PhotonView>().RPC("ActivateParticle", RpcTarget.AllBuffered, 3, true);
                         StartCoroutine(SkillTimer(3));
                     }
                     playerActionDatas[(int)PlayerActionState.Skill3].isExecuting = true;
@@ -452,7 +452,7 @@ namespace Player
             if(phase==1 || phase==2)
             {
                 skillTimer[2] = AeternaData.skill2CoolTime;
-                DimensionSword.GetComponent<AeternaSword>().skill2BuffParticle.SetActive(false);
+                DimensionSword.GetComponent<PhotonView>().RPC("ActivateParticle", RpcTarget.AllBuffered, 2, false);
                 playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = true;
                 StartCoroutine(SkillTimer(2));
                 phase = 3;
@@ -469,7 +469,7 @@ namespace Player
             if (phase == 1)
             {
                 skillTimer[3] = AeternaData.skill3CoolTime;
-                DimensionSword.GetComponent<AeternaSword>().skill3BuffParticle.SetActive(false);
+                DimensionSword.GetComponent<PhotonView>().RPC("ActivateParticle", RpcTarget.AllBuffered, 3, false);
                 playerActionDatas[(int)PlayerActionState.Skill3].isExecuting = true;
                 phase = 2;
                 StartCoroutine(SkillTimer(3));
