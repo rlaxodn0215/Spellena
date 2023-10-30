@@ -32,7 +32,7 @@ MonoBehaviour:
   skill2CoolTime: 15
   skill3DurationTime: 5
   skill3CoolTime: 25
-  skill4DurationTime: 10
+  skill4DurationTime: 100
   skill4Phase1Time: 1
   DimenstionSlash_1_lifeTime: 5
   DimenstionSlash_1_Damage: 10
@@ -43,7 +43,7 @@ MonoBehaviour:
   DimenstionSlash_2_Damage: 10
   DimenstionSlash_2_Speed: 7
   DimenstionSlash_2_Healing: 10
-  skill4Phase3Time: 4
+  skill4Phase3Time: 5
   DimenstionSlash_3_lifeTime: 5
   DimenstionSlash_3_Damage: 10
   DimenstionSlash_3_Speed: 7

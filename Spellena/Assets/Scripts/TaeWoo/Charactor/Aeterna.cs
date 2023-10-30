@@ -40,7 +40,11 @@ namespace Player
         public int chargeCount = 0;
         [HideInInspector]
         public float[] chargeCountTime; // index - 0: 3단계 까지 가기위한 총 시간, 1: 1단계, 2: 2단계 (3단계는 0초)
+
         private IEnumerator ultimateCoroutine;
+        private IEnumerator attackPauseCoroutine;
+        private IEnumerator skill4SlashCoroutine;
+        private bool isNormalAttack = true;
 
         // 0 : 기본 공격
         // 1 : 스킬 1
@@ -62,6 +66,11 @@ namespace Player
         protected override void Update()
         {
             base.Update();
+
+            if(!isMouseButton && animator.GetFloat("AttackPause")<1.0f)
+            {
+                animator.SetFloat("AttackPause", 1);
+            }
         }
 
         protected override void FixedUpdate()
@@ -121,6 +130,8 @@ namespace Player
             chargeCountTime[0] = aeternaData.skill4Phase3Time;
             chargeCountTime[1] = aeternaData.skill4Phase2Time;
             chargeCountTime[2] = aeternaData.skill4Phase1Time;
+
+            animator.SetFloat("AttackPause", 1);
         }
 
         [PunRPC]
@@ -400,30 +411,60 @@ namespace Player
 
         private void Skill4Execute()
         {
-
-            if(playerActionDatas[(int)PlayerActionState.Skill4].isExecuting == false)
+            if (playerActionDatas[(int)PlayerActionState.Skill4].isExecuting == false)
             {
                 ultimateCount -= doUltimateNum;
                 skillTimer[4] = aeternaData.skill4DurationTime;
                 StartCoroutine(SkillTimer(4));
+                playerActionDatas[(int)PlayerActionState.Skill4].isExecuting = true;
             }
 
-            if(isMouseButton)
+            if (isMouseButton && skillTimer[0] <= 0.0f)
             {
                 skillTimer[5] = chargeCountTime[0];
+                skillTimer[0] = aeternaData.basicAttackTime;
+
                 ultimateCoroutine = SkillTimer(5);
+                attackPauseCoroutine = Skill4AttackPause();
+                skill4SlashCoroutine = Skill4ShootSlash();
+
                 StartCoroutine(ultimateCoroutine);
+                StartCoroutine(attackPauseCoroutine);
+                StartCoroutine(skill4SlashCoroutine);
+                StartCoroutine(SkillTimer(0));
             }
 
-            else
+            if(!isMouseButton)
             {
                 StopCoroutine(ultimateCoroutine);
-                skillTimer[5] = chargeCountTime[0];
-                Skills["Skill4"].Execution(ref chargeCount);
-                chargeCount = 0;
-            }
+                StopCoroutine(attackPauseCoroutine);
 
-            playerActionDatas[(int)PlayerActionState.Skill4].isExecuting = true;
+                if(!isNormalAttack)
+                {
+                    skillTimer[5] = chargeCountTime[0];
+                    Skills["Skill4"].Execution(ref chargeCount);
+                    chargeCount = 0;
+                    animator.SetFloat("AttackPause", 1);
+                }
+
+            }
+            
+        }
+
+        IEnumerator Skill4AttackPause()
+        {
+            animator.SetTrigger("BasicAttack");
+            isNormalAttack = true;
+            yield return new WaitForSeconds(animator.GetCurrentAnimatorClipInfo(1).Length / 2.5f);
+            StopCoroutine(skill4SlashCoroutine);
+            isNormalAttack = false;
+            animator.SetFloat("AttackPause", 0);
+        }
+
+        IEnumerator Skill4ShootSlash()
+        {
+            yield return new WaitForSeconds(animator.GetCurrentAnimatorClipInfo(1).Length / 2.0f);
+            Skills["Skill4"].Execution(ref chargeCount);
         }
 
         public IEnumerator SkillTimer(int index)
@@ -490,20 +531,19 @@ namespace Player
 
         void Skill4ChargeTimeCheck(float time)
         {
-
-            if(time > chargeCountTime[2] && time <= chargeCountTime[1])
+            if (time <= 0.0f)
             {
-                chargeCount = 1;
+                chargeCount = 3;
             }
 
-            else if(time <= chargeCountTime[2] && time > 0.0f)
+            else if (time <= chargeCountTime[0] - chargeCountTime[1])
             {
                 chargeCount = 2;
             }
 
-            else if(time <= 0.0f)
+            else if (time <= chargeCountTime[0] - chargeCountTime[2])
             {
-                chargeCount = 3;
+                chargeCount = 1;
             }
 
             else
