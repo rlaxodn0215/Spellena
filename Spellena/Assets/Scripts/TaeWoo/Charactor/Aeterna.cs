@@ -44,7 +44,6 @@ namespace Player
         private IEnumerator ultimateCoroutine;
         private IEnumerator attackPauseCoroutine;
         private IEnumerator skill4SlashCoroutine;
-        private bool isNormalAttack = true;
 
         // 0 : 기본 공격
         // 1 : 스킬 1
@@ -66,11 +65,6 @@ namespace Player
         protected override void Update()
         {
             base.Update();
-
-            if(!isMouseButton && animator.GetFloat("AttackPause")<1.0f)
-            {
-                animator.SetFloat("AttackPause", 1);
-            }
         }
 
         protected override void FixedUpdate()
@@ -130,8 +124,6 @@ namespace Player
             chargeCountTime[0] = aeternaData.skill4Phase3Time;
             chargeCountTime[1] = aeternaData.skill4Phase2Time;
             chargeCountTime[2] = aeternaData.skill4Phase1Time;
-
-            animator.SetFloat("AttackPause", 1);
         }
 
         [PunRPC]
@@ -438,13 +430,13 @@ namespace Player
             {
                 StopCoroutine(ultimateCoroutine);
                 StopCoroutine(attackPauseCoroutine);
-                photonView.RPC("SetAttackSpeed", RpcTarget.AllBuffered, 1.0f);
 
-                if (!isNormalAttack)
+                if (animator.GetBool("isHolding"))
                 {
                     Skills["Skill4"].Execution(ref chargeCount);
                 }
 
+                animator.SetBool("isHolding", false);
                 chargeCount = 0;
             }
             
@@ -453,17 +445,10 @@ namespace Player
         IEnumerator Skill4AttackPause()
         {
             animator.SetTrigger("BasicAttack");
-            isNormalAttack = true;
-            yield return new WaitForSeconds(animator.GetCurrentAnimatorClipInfo(1).Length / 2.5f);
+            animator.SetBool("isHolding", false);
+            yield return new WaitForSeconds(animator.GetCurrentAnimatorClipInfo(1).Length/ 5.0f);
+            animator.SetBool("isHolding", true);
             StopCoroutine(skill4SlashCoroutine);
-            isNormalAttack = false;
-            photonView.RPC("SetAttackSpeed", RpcTarget.AllBuffered, 0.0f);
-        }
-
-        [PunRPC]
-        public void SetAttackSpeed(float num)
-        {
-            animator.SetFloat("AttackPause", num);
         }
 
         IEnumerator Skill4ShootSlash()

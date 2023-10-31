@@ -666,9 +666,9 @@ MonoBehaviour:
   - Type: 4
     SynchronizeType: 2
     Name: Sit
-  - Type: 1
-    SynchronizeType: 0
-    Name: AttackPause
+  - Type: 4
+    SynchronizeType: 2
+    Name: isHolding
   m_SynchronizeLayers:
   - SynchronizeType: 2
     LayerIndex: 0
