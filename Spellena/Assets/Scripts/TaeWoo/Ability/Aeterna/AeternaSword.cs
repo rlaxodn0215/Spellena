@@ -78,7 +78,6 @@ namespace Player
 
         public void OnTriggerEnter(Collider other)
         {
-            //Debug.Log("Trigger : "+ other.name );
 
             if (other.transform.root.CompareTag(enemyTag))
             {

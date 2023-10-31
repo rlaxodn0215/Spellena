@@ -16,7 +16,7 @@ MonoBehaviour:
   sitSpeed: 2
   walkSpeed: 3
   runSpeed: 5
-  jumpHeight: 10
+  jumpHeight: 7
   basicAttackTime: 1
   DimenstionSlash_0_lifeTime: 5
   DimenstionSlash_0_Damage: 10
@@ -26,7 +26,7 @@ MonoBehaviour:
   skill1DoorCoolTime: 20
   skill1DoorSpawnMaxRange: 8
   skill1DoorRange: 3
-  skill1DeBuffRatio: 0.5
+  skill1DeBuffRatio: 0.2
   skill2DurationTime: 5
   skill2HoldTime: 10
   skill2CoolTime: 15

@@ -23,6 +23,15 @@ namespace Player
             sword = Player.DimensionSword;
         }
 
+        public override void IsDisActive()
+        { 
+            if(Player.playerActionDatas[(int)PlayerActionState.Skill2].isExecuting && Player.skill2Phase == 1)
+            {
+                sword.GetComponent<PhotonView>().RPC("ActivateParticle", RpcTarget.AllBuffered, 2, false);
+                Player.skillTimer[2] = 0.1f;
+            }
+        }
+
         public override void Execution(ref int phase)
         {
             switch (phase)

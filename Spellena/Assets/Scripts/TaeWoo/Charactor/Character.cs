@@ -294,16 +294,33 @@ namespace Player
         {
             if(photonView.IsMine)
             {
+                photonView.RPC("Sitting", RpcTarget.AllBuffered);
+
                 if (!playerActionDatas[(int)PlayerActionState.Sit].isExecuting)
                 {
                     playerActionDatas[(int)PlayerActionState.Sit].isExecuting = true;
-                    GetComponent<CapsuleCollider>().height = 1.4f;
                 }
                 else
                 {
                     playerActionDatas[(int)PlayerActionState.Sit].isExecuting = false;
-                    GetComponent<CapsuleCollider>().height = 2.0f;
                 }
+
+            }
+        }
+
+        [PunRPC]
+        public void Sitting()
+        {
+            if (!playerActionDatas[(int)PlayerActionState.Sit].isExecuting)
+            {
+                transform.GetChild(0).localPosition = new Vector3(0, -0.25f, 0);
+                transform.GetChild(1).localPosition += new Vector3(0, -0.25f, 0);
+            }
+            else
+            {
+                transform.GetChild(0).localPosition = new Vector3(0, 0, 0);
+                transform.GetChild(1).localPosition -= new Vector3(0, -0.25f, 0);
+
             }
         }
 
@@ -429,7 +446,8 @@ namespace Player
         [PunRPC]
         public void PlayerDamaged(string enemy ,int damage)
         {
-            hp-=damage;
+            if(hp <= dataHp)
+                hp-=damage;
 
             if (hp <= 0)
             {
@@ -451,6 +469,7 @@ namespace Player
         {
             SetLookAtObj();
         }
+
         void SetLookAtObj()
         {
             if (animator == null) return;

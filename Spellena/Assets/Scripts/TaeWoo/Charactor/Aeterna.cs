@@ -124,6 +124,8 @@ namespace Player
             chargeCountTime[0] = aeternaData.skill4Phase3Time;
             chargeCountTime[1] = aeternaData.skill4Phase2Time;
             chargeCountTime[2] = aeternaData.skill4Phase1Time;
+
+            ultimateCount = aeternaData.skill4Cost;
         }
 
         [PunRPC]
@@ -489,9 +491,9 @@ namespace Player
         {
             if(phase==1 || phase==2)
             {
-                skillTimer[2] = aeternaData.skill2CoolTime;
                 DimensionSword.GetComponent<PhotonView>().RPC("ActivateParticle", RpcTarget.AllBuffered, 2, false);
                 playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = true;
+                skillTimer[2] = aeternaData.skill2CoolTime;
                 StartCoroutine(SkillTimer(2));
                 phase = 3;
             }
@@ -550,6 +552,7 @@ namespace Player
             GUI.TextField(new Rect(10, 100, 150, 30), "궁 게이지 : " + chargeCount);
             GUI.TextField(new Rect(10, 130, 150, 30), "궁 타이머 : " + skillTimer[4].ToString());
             GUI.TextField(new Rect(10, 160, 150, 30), "활성화 된 스킬 : " + skillButton);
+            GUI.TextField(new Rect(10, 190, 150, 30), "체력 : " + hp);
         }
 
     }

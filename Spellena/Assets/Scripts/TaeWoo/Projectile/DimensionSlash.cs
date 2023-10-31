@@ -138,10 +138,10 @@ namespace Player
                     {
                         if (other.transform.root.GetComponent<Character>() && other.transform.root.gameObject.layer == LayerMask.NameToLayer("Other"))
                         {
-                            other.transform.root.GetComponent<Character>().PlayerDamaged(playerName, -healing);
+                            other.transform.root.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBuffered, playerName, -healing);
+                            DestorySpawnObject();
                         }
 
-                        DestorySpawnObject();
                     }
 
                     else if (other.CompareTag("Ground"))
@@ -158,7 +158,7 @@ namespace Player
                     {
                         if (other.GetComponent<Character>())
                         {
-                            other.transform.root.GetComponent<Character>().PlayerDamaged(playerName, damage);
+                            other.transform.root.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBuffered, playerName, damage);
                             DestorySpawnObject();
                         }
 

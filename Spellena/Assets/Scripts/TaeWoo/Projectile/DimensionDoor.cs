@@ -50,12 +50,9 @@ namespace Player
             {
                 foreach (string _player in playerInArea)
                     photonView.RPC("EnBuffWhenDestory", RpcTarget.AllBuffered, _player);
-                photonView.RPC("DestorySpawnObject", RpcTarget.MasterClient);
+                photonView.RPC("DestorySpawnObject", RpcTarget.MasterClient); 
             }
-
         }
-
-        
 
         public void OnTriggerEnter(Collider other)
         {
