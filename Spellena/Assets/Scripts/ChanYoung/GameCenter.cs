@@ -65,7 +65,9 @@ public class GameCenter : MonoBehaviourPunCallbacks, IPunObservable
     float roundEndTimer;
 
     string currentOccupationTeam = "";//현재 점령중인 팀
-    protected int maxPlayers = 1;// 최대 플레이어 수
+
+    public int maxPlayers;// 최대 플레이어 수
+
     Occupation occupyingA;//A팀의 점령도
     Occupation occupyingB;//B팀의 점령도
     OccupyingTeam occupyingTeam;//점령 게이지 바
@@ -111,6 +113,8 @@ public class GameCenter : MonoBehaviourPunCallbacks, IPunObservable
             }
             else if (gameState == GameState.MatchStart)
             {
+                Debug.Log("MatchStart");
+
                 gameStateTextUI.text = "Match Start";
 
                 for(int i = 0; i < maxPlayers / 2; i++)
@@ -119,11 +123,17 @@ public class GameCenter : MonoBehaviourPunCallbacks, IPunObservable
                     players[i].gameObject.GetComponent<Character>().SetTagServer("TeamA");
                 }
 
-                for(int i = maxPlayers / 2; i < maxPlayers; i++)
+                for (int i = maxPlayers / 2; i < maxPlayers; i++)
                 {
                     playersB.Add(players[i].gameObject);
                     players[i].gameObject.GetComponent<Character>().SetTagServer("TeamB");
                 }
+
+                //for(int i = 0; i < maxPlayers; i++)
+                //{
+                //    players[i].gameObject.GetComponent<Character>().SetEnemyLayer();
+                //}
+
                 gameState = GameState.CharacterSelect;
             }
             else if (gameState == GameState.CharacterSelect)

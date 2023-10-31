@@ -39,7 +39,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
         {
             IsVisible = true,
             IsOpen = true,
-            MaxPlayers = 2
+            MaxPlayers = 10
         };
 
         PhotonNetwork.JoinOrCreateRoom(roomName: "test", roomOptions: roomOption, typedLobby: null);
@@ -48,6 +48,9 @@ public class RoomManager : MonoBehaviourPunCallbacks
     public override void OnJoinedRoom()
     {
         base.OnJoinedRoom();
+
+        Debug.Log(message: "We're in the Room");
+
         GameObject _gameCenter;
 
         if (PhotonNetwork.IsMasterClient)
@@ -55,7 +58,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
             _gameCenter = PhotonNetwork.Instantiate("ChanYoung/Prefabs/GameCenter", spawnPoint.position, Quaternion.identity);
         }
 
-        player = PhotonNetwork.Instantiate("ChanYoung/Prefabs/ElementalOrder", spawnPoint.position, Quaternion.identity);
+        player = PhotonNetwork.Instantiate("TaeWoo/Prefabs/Aeterna", spawnPoint.position, Quaternion.identity);
         player.GetComponent<Player.Character>().IsLocalPlayer();
     }
 }

@@ -44,7 +44,6 @@ namespace Player
         private IEnumerator ultimateCoroutine;
         private IEnumerator attackPauseCoroutine;
         private IEnumerator skill4SlashCoroutine;
-        private bool isNormalAttack = true;
 
         // 0 : 기본 공격
         // 1 : 스킬 1
@@ -66,11 +65,6 @@ namespace Player
         protected override void Update()
         {
             base.Update();
-
-            if(!isMouseButton && animator.GetFloat("AttackPause")<1.0f)
-            {
-                animator.SetFloat("AttackPause", 1);
-            }
         }
 
         protected override void FixedUpdate()
@@ -131,7 +125,7 @@ namespace Player
             chargeCountTime[1] = aeternaData.skill4Phase2Time;
             chargeCountTime[2] = aeternaData.skill4Phase1Time;
 
-            animator.SetFloat("AttackPause", 1);
+            ultimateCount = aeternaData.skill4Cost;
         }
 
         [PunRPC]
@@ -438,13 +432,13 @@ namespace Player
             {
                 StopCoroutine(ultimateCoroutine);
                 StopCoroutine(attackPauseCoroutine);
-                photonView.RPC("SetAttackSpeed", RpcTarget.AllBuffered, 1.0f);
 
-                if (!isNormalAttack)
+                if (animator.GetBool("isHolding"))
                 {
                     Skills["Skill4"].Execution(ref chargeCount);
                 }
 
+                animator.SetBool("isHolding", false);
                 chargeCount = 0;
             }
             
@@ -453,17 +447,10 @@ namespace Player
         IEnumerator Skill4AttackPause()
         {
             animator.SetTrigger("BasicAttack");
-            isNormalAttack = true;
-            yield return new WaitForSeconds(animator.GetCurrentAnimatorClipInfo(1).Length / 2.5f);
+            animator.SetBool("isHolding", false);
+            yield return new WaitForSeconds(animator.GetCurrentAnimatorClipInfo(1).Length/ 5.0f);
+            animator.SetBool("isHolding", true);
             StopCoroutine(skill4SlashCoroutine);
-            isNormalAttack = false;
-            photonView.RPC("SetAttackSpeed", RpcTarget.AllBuffered, 0.0f);
-        }
-
-        [PunRPC]
-        public void SetAttackSpeed(float num)
-        {
-            animator.SetFloat("AttackPause", num);
         }
 
         IEnumerator Skill4ShootSlash()
@@ -504,9 +491,9 @@ namespace Player
         {
             if(phase==1 || phase==2)
             {
-                skillTimer[2] = aeternaData.skill2CoolTime;
                 DimensionSword.GetComponent<PhotonView>().RPC("ActivateParticle", RpcTarget.AllBuffered, 2, false);
                 playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = true;
+                skillTimer[2] = aeternaData.skill2CoolTime;
                 StartCoroutine(SkillTimer(2));
                 phase = 3;
             }
@@ -565,6 +552,7 @@ namespace Player
             GUI.TextField(new Rect(10, 100, 150, 30), "궁 게이지 : " + chargeCount);
             GUI.TextField(new Rect(10, 130, 150, 30), "궁 타이머 : " + skillTimer[4].ToString());
             GUI.TextField(new Rect(10, 160, 150, 30), "활성화 된 스킬 : " + skillButton);
+            GUI.TextField(new Rect(10, 190, 150, 30), "체력 : " + hp);
         }
 
     }

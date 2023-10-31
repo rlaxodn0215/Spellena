@@ -7,7 +7,6 @@ public class AeternaData : ScriptableObject
 {
     [Tooltip("에테르나 체력")]
     public int Hp;
-
     [Tooltip("앉아 있을때 걷는 속도")]
     public float sitSpeed;
     [Tooltip("걷는 속도")]
@@ -16,7 +15,7 @@ public class AeternaData : ScriptableObject
     public float runSpeed;
     [Tooltip("점프 높이")]
     public float jumpHeight;
-    
+
     [Tooltip("기본 공격 쿨 타임")]
     public float basicAttackTime;
 
@@ -52,6 +51,8 @@ public class AeternaData : ScriptableObject
     [Tooltip("스킬3 쿨 타임")]
     public float skill3CoolTime;
 
+    [Tooltip("스킬4 궁극기 코스트")]
+    public int skill4Cost;
     [Tooltip("스킬4 지속 시간")]
     public float skill4DurationTime;
 

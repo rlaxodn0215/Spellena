@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
 namespace Player
 {
@@ -33,11 +34,21 @@ namespace Player
             StartCoroutine(EndAttack());
         }
 
+        public override void IsDisActive()
+        {
+            if (Player.playerActionDatas[(int)PlayerActionState.Skill3].isExecuting && Player.skill3Phase == 1)
+            {
+                Sword.GetComponent<PhotonView>().RPC("ActivateParticle", RpcTarget.AllBuffered, 3, false);
+                Player.skillTimer[3] = 0.1f;
+            }
+        }
+
         IEnumerator EndAttack()
         {
             yield return new WaitForSeconds(animator.GetCurrentAnimatorClipInfo(1).Length);
             Sword.GetComponent<BoxCollider>().enabled = false;
         }
+
         public void Transport(GameObject enemy)
         {
             int randomIndex = Random.Range(0, trasportPoints.Count);
