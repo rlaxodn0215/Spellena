@@ -6,6 +6,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using Firebase.Auth;
 using UnityEngine.SceneManagement;
+using System.Threading.Tasks;
 
 public class MatchMaking : MonoBehaviourPunCallbacks
 {
@@ -27,14 +28,13 @@ public class MatchMaking : MonoBehaviourPunCallbacks
     {
         Debug.Log("서버 연결 시도");
         PhotonNetwork.ConnectUsingSettings();
+        GetUserName();
+    }
+
+    async void GetUserName()
+    {
         var _user = FirebaseLoginManager.Instance.GetUser();
-        if (_user != null)
-        {
-            if(_user.DisplayName != null)
-                playerNameText.text = _user.DisplayName;
-            else
-                playerNameText.text = _user.UserId;
-        }
+        playerNameText.text = await FirebaseLoginManager.Instance.ReadUserInfo(_user.UserId);
     }
 
     public void JoinRandomOrCreateRoom()

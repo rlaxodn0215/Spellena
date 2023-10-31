@@ -2,7 +2,8 @@
   "project_info": {
     "project_number": "1083798179250",
     "project_id": "spellena-sample",
-    "storage_bucket": "spellena-sample.appspot.com"
+    "storage_bucket": "spellena-sample.appspot.com",
+    "firebase_url": "https://spellena-sample-default-rtdb.firebaseio.com/"
   },
   "client": [
     {

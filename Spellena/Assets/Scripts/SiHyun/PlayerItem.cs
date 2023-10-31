@@ -45,10 +45,25 @@ public class PlayerItem : MonoBehaviourPunCallbacks
 
     public void SetPlayerInfo(Photon.Realtime.Player _player)
     {
-        playerName.text = _player.UserId;
+        string userId = FirebaseLoginManager.Instance.GetUser().UserId;
+        GetUserName(userId);
+
+        // Firebase에서 가져온 사용자 정보를 Photon.Player의 커스텀 프로퍼티에 저장
+        ExitGames.Client.Photon.Hashtable customProperties = new ExitGames.Client.Photon.Hashtable();
+        customProperties["UserId"] = userId;
+        customProperties["UserName"] = playerName.text;
+
+        _player.SetCustomProperties(customProperties);
+
         player = _player;
         UpdatePlayerItem(player);
     }
+
+    async void GetUserName(string _userId)
+    {
+        playerName.text = await FirebaseLoginManager.Instance.ReadUserInfo(_userId);
+    }
+
 
     public void ApplyLocalChanges()
     {

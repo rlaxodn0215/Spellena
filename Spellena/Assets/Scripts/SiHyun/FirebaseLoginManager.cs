@@ -5,8 +5,10 @@ using UnityEngine.UI;
 using Firebase;
 using Firebase.Auth;
 using Firebase.Extensions;
+using Firebase.Database;
 using UnityEngine.SceneManagement;
 using System;
+using System.Threading.Tasks;
 
 public class FirebaseLoginManager
 {
@@ -14,6 +16,19 @@ public class FirebaseLoginManager
     private string nickname;
     private FirebaseAuth auth;
     private FirebaseUser user;
+    DatabaseReference reference;
+
+
+    public class User
+    {
+        public string userName;
+        public string email;
+        public User(string _userName, string _email)
+        {
+            this.userName = _userName;
+            this.email = _email;
+        }
+    }
 
     public static FirebaseLoginManager Instance
     {
@@ -30,6 +45,7 @@ public class FirebaseLoginManager
 
     public void Init()
     {
+        reference = FirebaseDatabase.DefaultInstance.RootReference;
         auth = FirebaseAuth.DefaultInstance;
         if(auth.CurrentUser != null)
         {
@@ -51,7 +67,7 @@ public class FirebaseLoginManager
             {
                 Debug.Log("·Î±×ÀÎ");
                 Firebase.Auth.FirebaseUser currentUser = auth.CurrentUser;
-                if (currentUser != null)
+                /*if (currentUser != null)
                 {
                     Firebase.Auth.UserProfile profile = new Firebase.Auth.UserProfile
                     {
@@ -73,7 +89,7 @@ public class FirebaseLoginManager
 
                         Debug.Log("User profile updated successfully.");
                     });
-                }
+                }*/
 
                 SceneManager.LoadScene("SiHyun MainLobby Test");
                    
@@ -100,6 +116,7 @@ public class FirebaseLoginManager
             {
                 //Firebase user has been created.
                 Firebase.Auth.AuthResult result = task.Result;
+                SaveUserInfo(result.User.UserId, nickname, result.User.Email);
                 Debug.LogFormat("Firebase user created successfully: {0} ({1})",
                     result.User.DisplayName, result.User.UserId);
             }
@@ -146,4 +163,24 @@ public class FirebaseLoginManager
     {
         nickname = s;
     }
+
+    public void SaveUserInfo(string _uID, string _userName, string _email)
+    {
+        User _user = new User(_userName, _email);
+        string _json = JsonUtility.ToJson(_user);
+        reference.Child(_uID).SetRawJsonValueAsync(_json);
+    }
+
+    public async Task<string> ReadUserInfo(string _uID)
+    {
+        DatabaseReference _userReference = reference.Child(_uID);
+        DataSnapshot _snapShot = await _userReference.GetValueAsync();
+
+        if(_snapShot != null)
+        {
+            return _snapShot.Child("userName").Value.ToString();
+        }
+        return null;
+    }
+
 }
