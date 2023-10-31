@@ -12,12 +12,17 @@ public class BurstFlareObject : SpawnObject, IPunObservable
     float coolDownTime = 4f;
     float currentcoolDownTime = 0f;
 
-    public override void Start()
+    public override void OnEnable()
     {
-        base.Start();
+        base.OnEnable();
+        Init();
+    }
+
+    void Start()
+    {
         if (PhotonNetwork.IsMasterClient)
         {
-            Init();
+            OnEnable();
         }
     }
 

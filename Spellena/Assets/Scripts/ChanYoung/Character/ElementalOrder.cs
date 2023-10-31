@@ -1,9 +1,11 @@
+using ExitGames.Client.Photon.StructWrapping;
 using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data.Common;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
 
 namespace Player
@@ -11,9 +13,13 @@ namespace Player
     public class ElementalOrder : Character, IPunObservable
     {
         public CharacterData elementalOrderData;
+
         public GameObject overlayCamera;
+        public GameObject minimapCamera;
+
         Vector3 overlayCameraDefaultPos;
         public GameObject Aim;
+        public GameObject OverlaySight;
 
         Animator overlayAnimator;
 
@@ -36,26 +42,32 @@ namespace Player
         List<int> commands = new List<int>();
 
         bool isReadyToUseSkill = false;
-
-        bool isSpell1 = false;
-        bool isSpell2 = false;
-        bool isSpell3 = false;
-        bool isSpell4 = false;
-        bool isSpell5 = false;
-        bool isSpell6 = false;
-
         bool isClicked = false;
+
+        Ray screenRay;
 
         public enum SkillState
         {
-            None, BurstFlare
+            None, BurstFlare, GaiaTied, EterialStorm
         }
 
         SkillState skillState = SkillState.None;
 
         BurstFlare burstFlare;
-        float burstFlareCoolDownTime = 0f;
+        GaiaTied gaiaTied;
+        EterialStorm eterialStorm;
 
+        float burstFlareCoolDownTime = 0f;
+        float GaiaTiedCoolDownTime = 0f;
+
+        public GameObject leftHandSpell;
+        public GameObject rightHandSpell;
+
+        public GameObject testCube;
+
+        public Material fireMaterial;
+        public Material landMaterial;
+        public Material stormMaterial;
 
         protected override void Awake()
         {
@@ -70,7 +82,6 @@ namespace Player
             Initialize();
             overlayCameraDefaultPos = overlayCamera.transform.localPosition;
         }
-
         protected override void Update()
         {
             base.Update();
@@ -79,6 +90,7 @@ namespace Player
                 CheckCoolDown();
                 CheckOverlayAnimator();
                 CheckPoint();
+                CheckSkillOnMine();
             }
         }
 
@@ -149,6 +161,61 @@ namespace Player
                     burstFlare = null;
                 }
             }
+            else if(skillState == SkillState.EterialStorm)
+            {
+                if(eterialStorm == null)
+                {
+                    Rect _tempRect = minimapCamera.GetComponent<Camera>().rect;
+                    _tempRect.x = 0;
+                    _tempRect.y = 0;
+                    _tempRect.width = 1;
+                    _tempRect.height = 1;
+                    minimapCamera.GetComponent<Camera>().rect = _tempRect;
+                    camera.GetComponent<MouseControl>().enabled = false;
+                    Cursor.visible = true;
+                    Cursor.lockState = CursorLockMode.None;
+
+                    eterialStorm = new EterialStorm();
+                }
+                else
+                {
+                    Ray _tempRay = minimapCamera.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
+                    RaycastHit _tempHit;
+                    int _tempLayerMask = ~(1 << LayerMask.NameToLayer("Minimap"));
+                    if (Physics.Raycast(_tempRay, out _tempHit, Mathf.Infinity, _tempLayerMask))
+                    {
+                        if (Input.GetMouseButtonDown(0))
+                        {
+                            Vector3 _tempVec = new Vector3(_tempHit.point.x, _tempHit.point.y + 1f, _tempHit.point.z);
+                            Instantiate(testCube, _tempVec, Quaternion.identity);
+
+                            Rect _tempRect = minimapCamera.GetComponent<Camera>().rect;
+                            _tempRect.x = 0.7f;
+                            _tempRect.y = 0.7f;
+                            _tempRect.width = 0.3f;
+                            _tempRect.height = 0.3f;
+                            minimapCamera.GetComponent<Camera>().rect = _tempRect;
+
+                            camera.GetComponent<MouseControl>().enabled = true;
+                            Cursor.visible = false;
+                            Cursor.lockState = CursorLockMode.Locked;
+
+                            skillState = SkillState.None;
+                            eterialStorm = null;
+                        }
+                    }
+                }
+            }
+        }
+
+
+        bool isEterialStorm = false;
+        void CheckSkillOnMine()
+        {
+            if(skillState == SkillState.EterialStorm)
+            {
+
+            }
         }
 
         //RPC
@@ -192,6 +259,23 @@ namespace Player
                         skillState = SkillState.BurstFlare;
                         isReadyToUseSkill = false;
                         UseSkill(origin, direction);
+                        commands.Clear();
+                    }
+                    else if (((commands[0] == 2 && commands[1] == 3)
+                        || (commands[0] == 3 && commands[1] == 2)) && GaiaTiedCoolDownTime <= 0f)
+                    {
+                        skillState = SkillState.GaiaTied;
+                        isReadyToUseSkill = false;
+                        UseSkill(origin, direction);
+                        commands.Clear();
+                    }
+                    else if (((commands[0] == 2 && commands[1] == 3)
+                        || (commands[0] == 3 && commands[1] == 2)) && GaiaTiedCoolDownTime <= 0f)
+                    {
+                        skillState = SkillState.EterialStorm;
+                        isReadyToUseSkill = false;
+                        UseSkill(origin, direction);
+                        commands.Clear();
                     }
                 }
             }
@@ -244,8 +328,7 @@ namespace Player
                 isClicked = !isClicked;
                 if (isClicked == true)
                 {
-                    Ray _ray = camera.GetComponent<Camera>().ScreenPointToRay(Aim.transform.position);
-                    photonView.RPC("ClickMouse", RpcTarget.MasterClient, _ray.origin, _ray.direction);
+                    photonView.RPC("ClickMouse", RpcTarget.MasterClient, screenRay.origin, screenRay.direction);
                 }
             }
         }
@@ -260,12 +343,14 @@ namespace Player
                 stream.SendNext(handPoint);
                 stream.SendNext(rightCurrentWeight);
                 stream.SendNext(leftCurrentWeight);
+                stream.SendNext(skillState);
             }
             else
             {
                 networkHandPoint = (Vector3)stream.ReceiveNext();
                 networkRightCurrentWeight = (float)stream.ReceiveNext();
                 networkLeftCurrentWeight = (float)stream.ReceiveNext();
+                skillState = (SkillState)stream.ReceiveNext();
             }
         }
 
@@ -325,11 +410,72 @@ namespace Player
 
         }
 
+        void SetHandEffectPositionIK(int typeRight, int typeLeft)
+        {
+            if (typeRight == 0)
+                rightHandSpell.GetComponent<MeshRenderer>().enabled = false;
+            else
+            {
+                rightHandSpell.GetComponent<MeshRenderer>().enabled = true;
+                if (typeRight == 1)
+                    rightHandSpell.GetComponent<MeshRenderer>().material = fireMaterial;
+                else if(typeRight == 2)
+                    rightHandSpell.GetComponent<MeshRenderer>().material = landMaterial;
+                else if (typeRight == 3)
+                    rightHandSpell.GetComponent<MeshRenderer>().material = stormMaterial;
+            }
+            if (typeLeft == 0)
+                leftHandSpell.GetComponent<MeshRenderer>().enabled = false;
+            else
+            {
+                leftHandSpell.GetComponent<MeshRenderer>().enabled = true;
+                if (typeLeft == 1)
+                    leftHandSpell.GetComponent<MeshRenderer>().material = fireMaterial;
+                else if (typeLeft == 2)
+                    leftHandSpell.GetComponent<MeshRenderer>().material = landMaterial;
+                else if (typeLeft == 3)
+                    leftHandSpell.GetComponent<MeshRenderer>().material = stormMaterial;
+            }
+
+
+            rightHandSpell.transform.position = overlayAnimator.GetBoneTransform(HumanBodyBones.RightHand).position
+                                                + overlayAnimator.GetBoneTransform(HumanBodyBones.RightHand).right * 0.1f
+                                                - overlayAnimator.GetBoneTransform(HumanBodyBones.RightHand).up * 0.1f;
+
+            Vector3 _tempLeftHand = overlayAnimator.GetBoneTransform(HumanBodyBones.LeftHand).position;
+            Vector3 _tempLeftIKHand = overlayAnimator.GetIKPosition(AvatarIKGoal.LeftHand);
+            float _tempWeight = overlayAnimator.GetIKPositionWeight(AvatarIKGoal.LeftHand);
+
+            Quaternion _tempLeftHandRot = overlayAnimator.GetBoneTransform(HumanBodyBones.LeftHand).rotation;
+            Quaternion _tempLeftIKHandRot = overlayAnimator.GetIKRotation(AvatarIKGoal.LeftHand);
+            Quaternion _tempFinalLeftHandRot = Quaternion.Slerp(_tempLeftIKHandRot, _tempLeftHandRot,
+                overlayAnimator.GetIKRotationWeight(AvatarIKGoal.LeftHand));
+            Vector3 _tempLeftHandDirectionForward = _tempFinalLeftHandRot * Vector3.forward * 0.1f;
+            Vector3 _tempLeftHandDirectionRight = _tempFinalLeftHandRot * Vector3.right * 0.2f;
+            Vector3 _tempLeftHandDirectionUp = _tempFinalLeftHandRot * Vector3.up * 0.25f;
+            leftHandSpell.transform.position = _tempLeftHand * (1 - _tempWeight) + _tempLeftIKHand * _tempWeight
+                - _tempLeftHandDirectionForward + _tempLeftHandDirectionRight - _tempLeftHandDirectionUp;
+        }
+
         protected override void OnAnimatorIK()
         {
             base.OnAnimatorIK();
             if (photonView.IsMine)
             {
+                if (commands.Count <= 0)
+                {
+                    SetHandEffectPositionIK(0, 0);
+                }
+                else if(commands.Count == 1)
+                {
+                    SetHandEffectPositionIK(commands[0], 0);
+                }
+                else
+                {
+                    SetHandEffectPositionIK(commands[0], commands[1]);
+                }
+
+
                 animator.SetIKPosition(AvatarIKGoal.LeftHand, handPoint);
                 animator.SetIKPosition(AvatarIKGoal.RightHand, handPoint);
                 if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Spell1"))
@@ -378,6 +524,13 @@ namespace Player
                 }
                 animator.SetIKPositionWeight(AvatarIKGoal.LeftHand, leftCurrentWeight);
                 animator.SetIKPositionWeight(AvatarIKGoal.RightHand, rightCurrentWeight);
+
+                
+                if(overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Idle"))
+                {
+                    overlayAnimator.SetIKPositionWeight(AvatarIKGoal.LeftHand, 0.2f);
+                    overlayAnimator.SetIKPosition(AvatarIKGoal.LeftHand, OverlaySight.transform.position);
+                }
             }
             else
             {
@@ -403,8 +556,8 @@ namespace Player
 
         void CheckPoint()
         {
-            Ray _tempRay = camera.GetComponent<Camera>().ScreenPointToRay(Aim.transform.position);
-            handPoint = _tempRay.origin + _tempRay.direction;
+            screenRay = camera.GetComponent<Camera>().ScreenPointToRay(Aim.transform.position);
+            handPoint = screenRay.origin + screenRay.direction;
         }
 
     }
