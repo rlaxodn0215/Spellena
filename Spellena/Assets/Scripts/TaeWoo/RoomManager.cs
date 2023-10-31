@@ -39,7 +39,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
         {
             IsVisible = true,
             IsOpen = true,
-            MaxPlayers = gameCenter.GetComponent<GameCenter>().maxPlayers
+            MaxPlayers = 10
         };
 
         PhotonNetwork.JoinOrCreateRoom(roomName: "test", roomOptions: roomOption, typedLobby: null);

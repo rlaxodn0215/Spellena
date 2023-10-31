@@ -334,19 +334,6 @@ namespace Player
 
         private void OnCollisionEnter(Collision collision)
         {
-            if (PhotonNetwork.IsMasterClient)
-            {
-                if (animator == null) return;
-
-                if (collision.gameObject.tag == "Enemy")
-                {
-                    //투척무기
-                    //PlayerDamaged(collision.gameObject.playerName,10);
-                    //destory
-                }
-            }
-            
-
             if(photonView.IsMine)
             {
                 if (collision.gameObject.tag == "Ground")
@@ -397,6 +384,13 @@ namespace Player
                     avatarForMe.GetChild(i).gameObject.layer = LayerMask.NameToLayer("OverlayCameraForMe");
                 }
 
+                //OutlineDrawer[] outlineDrawers = GetComponentsInChildren<OutlineDrawer>();
+
+                //foreach(OutlineDrawer outline in outlineDrawers)
+                //{
+                //    outline.enabled = false;
+                //}
+
                 UI.SetActive(true);
             }
         }
@@ -416,32 +410,30 @@ namespace Player
             foreach (Transform child in allChildren)
             {
                 child.gameObject.tag = team;
-            }
-
-            /*if (enemyCam == null) return;
-
-            if(team == "TeamA")
-            {
-                camera.GetComponent<Camera>().cullingMask |= 1 << LayerMask.NameToLayer("SpawnObjectA");
-                if (!photonView.IsMine)
-                    camera.GetComponent<Camera>().cullingMask |= 1 << LayerMask.NameToLayer("TeamA");
-                enemyCam.GetComponent<Camera>().cullingMask |= (1 << LayerMask.NameToLayer("TeamB") | 1 << LayerMask.NameToLayer("SpawnObjectB"));
-            }
-
-            else if(team =="TeamB")
-            {
-                camera.GetComponent<Camera>().cullingMask |= 1 << LayerMask.NameToLayer("SpawnObjectB");
-                if (!photonView.IsMine)
-                    camera.GetComponent<Camera>().cullingMask |= 1 << LayerMask.NameToLayer("TeamB");
-                enemyCam.GetComponent<Camera>().cullingMask |= (1 << LayerMask.NameToLayer("TeamA") | 1 << LayerMask.NameToLayer("SpawnObjectA"));
-            }
-            */
-
-
-            
+            }       
         }
 
+        public void SetEnemyLayer()
+        {
+            if (photonView.IsMine)
+            {
 
+                Character[] characters = FindObjectsOfType<Character>();
+
+                foreach (Character character in characters)
+                {
+                    if (!character.gameObject.CompareTag(tag))
+                    {
+                        OutlineDrawer[] outlineDrawers = character.gameObject.GetComponentsInChildren<OutlineDrawer>();
+
+                        foreach (OutlineDrawer outline in outlineDrawers)
+                        {
+                            outline.enabled = true;
+                        }
+                    }
+                }
+            }
+        }
 
         [PunRPC]
         public void PlayerDamaged(string enemy ,int damage)
