@@ -39,7 +39,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
         {
             IsVisible = true,
             IsOpen = true,
-            MaxPlayers = 2
+            MaxPlayers = gameCenter.GetComponent<GameCenter>().maxPlayers
         };
 
         PhotonNetwork.JoinOrCreateRoom(roomName: "test", roomOptions: roomOption, typedLobby: null);
@@ -48,6 +48,9 @@ public class RoomManager : MonoBehaviourPunCallbacks
     public override void OnJoinedRoom()
     {
         base.OnJoinedRoom();
+
+        Debug.Log(message: "We're in the Room");
+
         GameObject _gameCenter;
 
         if (PhotonNetwork.IsMasterClient)

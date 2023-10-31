@@ -65,7 +65,7 @@ public class GameCenter : MonoBehaviourPunCallbacks, IPunObservable
     float roundEndTimer;
 
     string currentOccupationTeam = "";//현재 점령중인 팀
-    protected int maxPlayers = 2;// 최대 플레이어 수
+    public int maxPlayers = 4;// 최대 플레이어 수
     Occupation occupyingA;//A팀의 점령도
     Occupation occupyingB;//B팀의 점령도
     OccupyingTeam occupyingTeam;//점령 게이지 바
