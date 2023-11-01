@@ -37,6 +37,8 @@ public class MatchMaking : MonoBehaviourPunCallbacks
         playerNameText.text = await FirebaseLoginManager.Instance.ReadUserInfo(_user.UserId);
     }
 
+
+
     public void JoinRandomOrCreateRoom()
     {
         Debug.Log("·£´ý ¸ÅÄª ½ÃÀÛ.");

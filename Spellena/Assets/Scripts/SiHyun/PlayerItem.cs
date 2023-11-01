@@ -64,7 +64,6 @@ public class PlayerItem : MonoBehaviourPunCallbacks
         playerName.text = await FirebaseLoginManager.Instance.ReadUserInfo(_userId);
     }
 
-
     public void ApplyLocalChanges()
     {
         backgroundImage.color = highlightColor;

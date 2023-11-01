@@ -116,6 +116,7 @@ public class FirebaseLoginManager
             {
                 //Firebase user has been created.
                 Firebase.Auth.AuthResult result = task.Result;
+                SetUserStatus(result.User.UserId, "온라인");
                 SaveUserInfo(result.User.UserId, nickname, result.User.Email);
                 Debug.LogFormat("Firebase user created successfully: {0} ({1})",
                     result.User.DisplayName, result.User.UserId);
@@ -142,6 +143,7 @@ public class FirebaseLoginManager
             else
             {
                 Firebase.Auth.AuthResult result = task.Result;
+                SetUserStatus(result.User.UserId, "온라인");
                 Debug.LogFormat("User signed in successfully: {0} ({1})",
                     result.User.DisplayName, result.User.UserId);
             }
@@ -150,6 +152,7 @@ public class FirebaseLoginManager
 
     public void SignOut()
     {
+        SetUserStatus(user.UserId, "오프라인");
         auth.SignOut();
     }
 
@@ -168,12 +171,12 @@ public class FirebaseLoginManager
     {
         User _user = new User(_userName, _email);
         string _json = JsonUtility.ToJson(_user);
-        reference.Child(_uID).SetRawJsonValueAsync(_json);
+        reference.Child("users").Child(_uID).SetRawJsonValueAsync(_json);
     }
 
     public async Task<string> ReadUserInfo(string _uID)
     {
-        DatabaseReference _userReference = reference.Child(_uID);
+        DatabaseReference _userReference = reference.Child("users").Child(_uID);
         DataSnapshot _snapShot = await _userReference.GetValueAsync();
 
         if(_snapShot != null)
@@ -182,5 +185,30 @@ public class FirebaseLoginManager
         }
         return null;
     }
+
+    public void SetUserStatus(string _userId, string _status)
+    {
+        reference.Child("users").Child(_userId).Child("status").SetValueAsync(_status);
+    }
+
+
+
+    public void SearchUserByName(string _userName)
+    {
+        reference.Child("users").OrderByChild("userName").EqualTo(_userName).GetValueAsync().ContinueWith(task =>
+        {
+            DataSnapshot _snapShot = task.Result;
+            if(_snapShot.HasChildren)
+            {
+
+            }
+        });
+    }
+
+    public void AddFriend(string _userId, string _friendId)
+    {
+
+    }
+
 
 }
