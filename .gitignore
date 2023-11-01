@@ -9,6 +9,7 @@
 [Bb]uilds/
 [Ll]ogs/
 [Uu]ser[Ss]ettings/
+[Aa]ssets/Resources/Extern/
 
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data
@@ -89,3 +90,5 @@ Spellena/Assets/Firebase/Plugins/x86_64/FirebaseCppApp-11_6_0.so
 Spellena/Assets/Firebase/Plugins/x86_64/FirebaseCppApp-11_6_0.so.meta
 Spellena/Assets/Firebase/m2repository/com/google/firebase/firebase-app-unity/11.6.0/firebase-app-unity-11.6.0.srcaar
 Spellena/Assets/Firebase/m2repository/com/google/firebase/firebase-app-unity/11.6.0/firebase-app-unity-11.6.0.srcaar.meta
+Spellena/Assets/Firebase/Plugins/x86_64/FirebaseCppApp-11_5_0.dll
+Spellena/Assets/Firebase/Plugins/x86_64/FirebaseCppApp-11_5_0.dll.meta
