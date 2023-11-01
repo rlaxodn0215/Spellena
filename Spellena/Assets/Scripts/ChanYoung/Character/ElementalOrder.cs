@@ -69,6 +69,8 @@ namespace Player
         public Material landMaterial;
         public Material stormMaterial;
 
+        Vector3 pointStrikePoint;
+
         protected override void Awake()
         {
             base.Awake();
@@ -165,20 +167,11 @@ namespace Player
             {
                 if(eterialStorm == null)
                 {
-                    Rect _tempRect = minimapCamera.GetComponent<Camera>().rect;
-                    _tempRect.x = 0;
-                    _tempRect.y = 0;
-                    _tempRect.width = 1;
-                    _tempRect.height = 1;
-                    minimapCamera.GetComponent<Camera>().rect = _tempRect;
-                    camera.GetComponent<MouseControl>().enabled = false;
-                    Cursor.visible = true;
-                    Cursor.lockState = CursorLockMode.None;
-
                     eterialStorm = new EterialStorm();
                 }
                 else
                 {
+                    /*
                     Ray _tempRay = minimapCamera.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
                     RaycastHit _tempHit;
                     int _tempLayerMask = ~(1 << LayerMask.NameToLayer("Minimap"));
@@ -189,33 +182,53 @@ namespace Player
                             Vector3 _tempVec = new Vector3(_tempHit.point.x, _tempHit.point.y + 1f, _tempHit.point.z);
                             Instantiate(testCube, _tempVec, Quaternion.identity);
 
-                            Rect _tempRect = minimapCamera.GetComponent<Camera>().rect;
-                            _tempRect.x = 0.7f;
-                            _tempRect.y = 0.7f;
-                            _tempRect.width = 0.3f;
-                            _tempRect.height = 0.3f;
-                            minimapCamera.GetComponent<Camera>().rect = _tempRect;
-
-                            camera.GetComponent<MouseControl>().enabled = true;
-                            Cursor.visible = false;
-                            Cursor.lockState = CursorLockMode.Locked;
 
                             skillState = SkillState.None;
                             eterialStorm = null;
                         }
                     }
+                    */
                 }
             }
         }
-
-
         bool isEterialStorm = false;
         void CheckSkillOnMine()
         {
             if(skillState == SkillState.EterialStorm)
             {
-
+                if (isEterialStorm == false)
+                {
+                    Rect _tempRect = minimapCamera.GetComponent<Camera>().rect;
+                    _tempRect.x = 0;
+                    _tempRect.y = 0;
+                    _tempRect.width = 1;
+                    _tempRect.height = 1;
+                    minimapCamera.GetComponent<Camera>().rect = _tempRect;
+                    camera.GetComponent<MouseControl>().enabled = false;
+                    Cursor.visible = true;
+                    Cursor.lockState = CursorLockMode.None;
+                    Debug.Log(isEterialStorm);
+                    isEterialStorm = true;
+                }
             }
+            else if(skillState == SkillState.None)
+            {
+                if(isEterialStorm == true)
+                {
+                    Rect _tempRect = minimapCamera.GetComponent<Camera>().rect;
+                    _tempRect.x = 0.7f;
+                    _tempRect.y = 0.7f;
+                    _tempRect.width = 0.3f;
+                    _tempRect.height = 0.3f;
+                    minimapCamera.GetComponent<Camera>().rect = _tempRect;
+
+                    camera.GetComponent<MouseControl>().enabled = true;
+                    Cursor.visible = false;
+                    Cursor.lockState = CursorLockMode.Locked;
+                    isEterialStorm = false;
+                }
+            }
+            
         }
 
         //RPC
@@ -269,8 +282,7 @@ namespace Player
                         UseSkill(origin, direction);
                         commands.Clear();
                     }
-                    else if (((commands[0] == 2 && commands[1] == 3)
-                        || (commands[0] == 3 && commands[1] == 2)) && GaiaTiedCoolDownTime <= 0f)
+                    else if (commands[0] == 3 && commands[1] == 3)
                     {
                         skillState = SkillState.EterialStorm;
                         isReadyToUseSkill = false;
