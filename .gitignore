@@ -10,6 +10,7 @@
 [Ll]ogs/
 [Uu]ser[Ss]ettings/
 Spellena/[Aa]ssets/Resources/Extern/
+Spellena/[Aa]ssets/Firebase/
 
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data
@@ -74,21 +75,3 @@ crashlytics-build.properties
 
 # Minpark
 [Aa]ssets/Bolt/Bolt_1_4_16_NET4_Source.zip
-<<<<<<< HEAD
-Spellena/Assets/Firebase/Plugins/x86_64/FirebaseCppApp-11_5_0.bundle.meta
-=======
-Spellena/Assets/Firebase/Plugins/x86_64/FirebaseCppApp-11_5_0.bundle
-Spellena/Assets/Firebase/Plugins/x86_64/FirebaseCppApp-11_5_0.bundle.meta
-Spellena/Assets/Firebase/Plugins/x86_64/FirebaseCppApp-11_5_0.so
-Spellena/Assets/Firebase/Plugins/x86_64/FirebaseCppApp-11_5_0.so.meta
->>>>>>> Noh
-Spellena/Assets/Firebase/Plugins/x86_64/FirebaseCppApp-11_6_0.bundle
-Spellena/Assets/Firebase/Plugins/x86_64/FirebaseCppApp-11_6_0.bundle.meta
-Spellena/Assets/Firebase/Plugins/x86_64/FirebaseCppApp-11_6_0.dll
-Spellena/Assets/Firebase/Plugins/x86_64/FirebaseCppApp-11_6_0.dll.meta
-Spellena/Assets/Firebase/Plugins/x86_64/FirebaseCppApp-11_6_0.so
-Spellena/Assets/Firebase/Plugins/x86_64/FirebaseCppApp-11_6_0.so.meta
-Spellena/Assets/Firebase/m2repository/com/google/firebase/firebase-app-unity/11.6.0/firebase-app-unity-11.6.0.srcaar
-Spellena/Assets/Firebase/m2repository/com/google/firebase/firebase-app-unity/11.6.0/firebase-app-unity-11.6.0.srcaar.meta
-Spellena/Assets/Firebase/Plugins/x86_64/FirebaseCppApp-11_5_0.dll
-Spellena/Assets/Firebase/Plugins/x86_64/FirebaseCppApp-11_5_0.dll.meta
