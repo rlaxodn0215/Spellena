@@ -1190,7 +1190,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1490714780
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1203,7 +1203,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a835e95c6b7e7a4898afab943148959, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameCenter: {fileID: 0}
+  player: {fileID: 0}
+  gameCenter: {fileID: 8882842943494006665, guid: e5f594c2b8c71c749ba015b8a40cb1a0, type: 3}
+  spawnPoint: {fileID: 1887134680}
 --- !u!4 &1490714781
 Transform:
   m_ObjectHideFlags: 0
@@ -1235,7 +1237,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1778545689
 MonoBehaviour:
   m_ObjectHideFlags: 0

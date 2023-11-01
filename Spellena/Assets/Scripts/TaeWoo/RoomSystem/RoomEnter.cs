@@ -5,11 +5,15 @@ using Photon.Pun;
 using Photon.Realtime;
 using Photon.Pun.Demo.PunBasics;
 
-public class RoomEnter : MonoBehaviourPunCallbacks
+public class RoomEnter: MonoBehaviourPunCallbacks
 {
     [HideInInspector]
+    public GameObject player;
     public GameObject gameCenter;
 
+    public Transform spawnPoint;
+
+    // Start is called before the first frame update
     void Start()
     {
         Debug.Log(message: "Connecting...");
@@ -48,15 +52,15 @@ public class RoomEnter : MonoBehaviourPunCallbacks
 
         Debug.Log(message: "We're in the Room");
 
-        GameObject gameCenter;
+        GameObject _gameCenter;
 
         if (PhotonNetwork.IsMasterClient)
         {
-            gameCenter = PhotonNetwork.Instantiate("TaeWoo/Prefabs/GameManager", new Vector3(0,0,0), Quaternion.identity);
+            _gameCenter = PhotonNetwork.Instantiate("TaeWoo/Prefabs/GameManager", spawnPoint.position, Quaternion.identity);
         }
 
-        //player = PhotonNetwork.Instantiate("TaeWoo/Prefabs/Aeterna", spawnPoint.position, Quaternion.identity);
-        //player.GetComponent<Player.Character>().IsLocalPlayer();
+        player = PhotonNetwork.Instantiate("TaeWoo/Prefabs/Aeterna", spawnPoint.position, Quaternion.identity);
+        player.GetComponent<Player.Character>().IsLocalPlayer();
     }
 }
 
