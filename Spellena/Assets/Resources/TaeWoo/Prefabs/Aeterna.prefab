@@ -787,6 +787,7 @@ MonoBehaviour:
   DimensionSlash: {fileID: 1646871050452766, guid: 95b3ea755bc01f344a99fccc5f4702f8, type: 3}
   DimensionDoor: {fileID: 100898, guid: a25b3d9a8119bf047b7609dba7f57302, type: 3}
   DimensionDoorGUI: {fileID: 185454, guid: ade1f0bfc938f694ab4f3bc05fc5c55b, type: 3}
+  teleportPoints: {fileID: 1781051546608308338, guid: 827c9c24efd8a704a9905e45c2876a91, type: 3}
   dimensionSword: {fileID: 0}
   dimensionOpen: {fileID: 0}
   dimensionIO: {fileID: 0}

@@ -426,6 +426,11 @@ namespace Player
                 }
             }
         }
+        [PunRPC]
+        public void PlayerTeleport(Vector3 pos)
+        {
+            transform.position = pos;
+        }
 
         [PunRPC]
         public void PlayerDamaged(string enemy ,int damage)

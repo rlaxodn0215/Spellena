@@ -7,8 +7,7 @@ namespace Player
 {
     public class DimensionTransport : Ability
     {
-        public GameObject parentPoint;
-        private List<Transform> trasportPoints;
+        private List<Transform> trasportPoints = new List<Transform>();
         private Aeterna Player;
         private Animator animator;
         private GameObject Sword;
@@ -19,11 +18,9 @@ namespace Player
             animator = player.GetComponent<Animator>();
             Sword = Player.DimensionSword;
 
-            if (parentPoint == null) return;
-
-            for(int i = 0; i < parentPoint.transform.childCount; i++)
+            for(int i = 0; i < Player.teleportPoints.transform.childCount; i++)
             {
-                trasportPoints.Add(parentPoint.transform.GetChild(i));
+                trasportPoints.Add(Player.teleportPoints.transform.GetChild(i));
             }
         }
 
@@ -52,13 +49,18 @@ namespace Player
         public void Transport(GameObject enemy)
         {
             int randomIndex = Random.Range(0, trasportPoints.Count);
-            enemy.transform.position = trasportPoints[randomIndex].position;
+
+            enemy.GetComponent<PhotonView>().RPC("PlayerTeleport", RpcTarget.AllBuffered, trasportPoints[randomIndex].position);
+
+            //enemy.transform.position = trasportPoints[randomIndex].position;
+
             Sword.GetComponent<BoxCollider>().enabled = false;
+
             Player.skillTimer[3] = Player.aeternaData.skill3CoolTime;
             Player.skill3Phase = 2;
 
-            if(Sword.GetComponent<AeternaSword>().skill3BuffParticle)
-                Sword.GetComponent<AeternaSword>().skill3BuffParticle.SetActive(false);
+            if (Sword.GetComponent<AeternaSword>().skill3BuffParticle)
+                Sword.GetComponent<PhotonView>().RPC("ActivateParticle", RpcTarget.AllBuffered, 3, false);
         }
     }
 }

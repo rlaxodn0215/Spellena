@@ -13,6 +13,7 @@ namespace Player
         public GameObject DimensionSlash;
         public GameObject DimensionDoor;
         public GameObject DimensionDoorGUI;
+        public GameObject teleportPoints;
 
         [HideInInspector]
         public DimensionSword dimensionSword;
