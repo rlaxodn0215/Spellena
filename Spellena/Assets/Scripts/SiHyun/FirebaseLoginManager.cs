@@ -23,10 +23,12 @@ public class FirebaseLoginManager
     {
         public string userName;
         public string email;
-        public User(string _userName, string _email)
+        public string status;
+        public User(string _userName, string _email, string _status)
         {
             this.userName = _userName;
             this.email = _email;
+            this.status = _status;
         }
     }
 
@@ -116,7 +118,6 @@ public class FirebaseLoginManager
             {
                 //Firebase user has been created.
                 Firebase.Auth.AuthResult result = task.Result;
-                SetUserStatus(result.User.UserId, "온라인");
                 SaveUserInfo(result.User.UserId, nickname, result.User.Email);
                 Debug.LogFormat("Firebase user created successfully: {0} ({1})",
                     result.User.DisplayName, result.User.UserId);
@@ -152,6 +153,7 @@ public class FirebaseLoginManager
 
     public void SignOut()
     {
+        user = auth.CurrentUser;
         SetUserStatus(user.UserId, "오프라인");
         auth.SignOut();
     }
@@ -169,7 +171,7 @@ public class FirebaseLoginManager
 
     public void SaveUserInfo(string _uID, string _userName, string _email)
     {
-        User _user = new User(_userName, _email);
+        User _user = new User(_userName, _email, "온라인");
         string _json = JsonUtility.ToJson(_user);
         reference.Child("users").Child(_uID).SetRawJsonValueAsync(_json);
     }
@@ -193,22 +195,31 @@ public class FirebaseLoginManager
 
 
 
-    public void SearchUserByName(string _userName)
+    /*public string SearchUserByName(string _userName)
     {
         reference.Child("users").OrderByChild("userName").EqualTo(_userName).GetValueAsync().ContinueWith(task =>
         {
             DataSnapshot _snapShot = task.Result;
             if(_snapShot.HasChildren)
             {
-
+                foreach (var _childSnapshot in _snapShot.Children)
+                {
+                    string _userId = _childSnapshot.Key;
+                    return _userId;
+                }
             }
         });
-    }
+    }*/
 
     public void AddFriend(string _userId, string _friendId)
     {
 
+        reference.Child("users").Child(_userId).Child("friends").Child("friendId").SetValueAsync(_friendId);
     }
 
+    public void FriendList(string _userId)
+    {
+        reference.Child("users").Child(_userId).Child("friends").GetValueAsync();
+    }
 
 }
