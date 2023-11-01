@@ -129,11 +129,6 @@ public class GameCenter : MonoBehaviourPunCallbacks, IPunObservable
                     players[i].gameObject.GetComponent<Character>().SetTagServer("TeamB");
                 }
 
-                //for(int i = 0; i < maxPlayers; i++)
-                //{
-                //    players[i].gameObject.GetComponent<Character>().SetEnemyLayer();
-                //}
-
                 gameState = GameState.CharacterSelect;
             }
             else if (gameState == GameState.CharacterSelect)

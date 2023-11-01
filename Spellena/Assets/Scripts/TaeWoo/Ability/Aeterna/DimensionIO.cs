@@ -13,8 +13,9 @@ namespace Player
 
         [HideInInspector]
         public SpawnObjectType enemyProjectileType;
+
         [HideInInspector]
-        public string enemyObjectName;
+        public object[] enemyObjectData;
 
         public override void AddPlayer(Character player)
         {
@@ -61,9 +62,10 @@ namespace Player
         public void CheckHold()
         {
             sword.GetComponent<BoxCollider>().enabled = false;
-            Player.DimensionSword.GetComponent<AeternaSword>().skill2BuffParticle.SetActive(false);
 
-            enemyObjectName = sword.GetComponent<AeternaSword>().contactObjectName;
+            sword.GetComponent<PhotonView>().RPC("ActivateParticle", RpcTarget.AllBuffered, 2, false);
+
+            enemyObjectData = sword.GetComponent<AeternaSword>().contactObjectData;
 
             Player.skill2Phase = 2;
             Player.playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = false;
@@ -76,37 +78,28 @@ namespace Player
         {
             if(PhotonNetwork.IsMasterClient)
             {
-                ShootProjectile(enemyObjectName);
+                ShootProjectile(enemyObjectData, Player.camera.transform.localRotation);
             }
 
             else
             {
-                photonView.RPC("RequestShootProjectile", RpcTarget.MasterClient, enemyObjectName);
+                photonView.RPC("ShootProjectile", RpcTarget.MasterClient, enemyObjectData, Player.camera.transform.localRotation);
             }
 
             Player.skill2Phase = 3;
             Player.skillTimer[2] = Player.aeternaData.skill2CoolTime;
         }
 
+
         [PunRPC]
-        public void RequestShootProjectile(string objectName)
+        public void ShootProjectile(object[] enemyData, Quaternion rot)
         {
-            if (PhotonNetwork.IsMasterClient)
-                ShootProjectile(objectName);
-        }
-
-        void ShootProjectile(string objectName)
-        {
-            Debug.Log("ShootProjectile");
-
-            object[] data = new object[5];
-
+            object[] data = enemyData;
             data[0] = Player.playerName;
             data[1] = gameObject.tag;
-            data[2] = objectName;
-            data[3] = Player.camera.transform.localRotation;
+            data[3] = rot;
 
-            PhotonNetwork.Instantiate("TaeWoo/Prefabs/Effect/" + objectName,
+            PhotonNetwork.Instantiate("TaeWoo/Prefabs/Effect/" + (string)data[2],
                 Player.camera.transform.position, Player.transform.localRotation, 0, data);
         }
     }

@@ -384,13 +384,6 @@ namespace Player
                     avatarForMe.GetChild(i).gameObject.layer = LayerMask.NameToLayer("OverlayCameraForMe");
                 }
 
-                //OutlineDrawer[] outlineDrawers = GetComponentsInChildren<OutlineDrawer>();
-
-                //foreach(OutlineDrawer outline in outlineDrawers)
-                //{
-                //    outline.enabled = false;
-                //}
-
                 UI.SetActive(true);
             }
         }
@@ -406,6 +399,7 @@ namespace Player
             this.tag = team;
             
             Transform[] allChildren = GetComponentsInChildren<Transform>();
+            if (allChildren == null) return;
 
             foreach (Transform child in allChildren)
             {
@@ -415,21 +409,19 @@ namespace Player
 
         public void SetEnemyLayer()
         {
-            if (photonView.IsMine)
+            Character[] characters = FindObjectsOfType<Character>();
+            if (characters == null) return;
+
+            foreach (Character character in characters)
             {
-
-                Character[] characters = FindObjectsOfType<Character>();
-
-                foreach (Character character in characters)
+                if (!character.gameObject.CompareTag(tag))
                 {
-                    if (!character.gameObject.CompareTag(tag))
-                    {
-                        OutlineDrawer[] outlineDrawers = character.gameObject.GetComponentsInChildren<OutlineDrawer>();
+                    OutlineDrawer[] outlineDrawers = character.gameObject.GetComponentsInChildren<OutlineDrawer>();
+                    if (outlineDrawers == null) return;
 
-                        foreach (OutlineDrawer outline in outlineDrawers)
-                        {
-                            outline.enabled = true;
-                        }
+                    foreach (OutlineDrawer outline in outlineDrawers)
+                    {
+                        outline.enabled = true;
                     }
                 }
             }
@@ -447,8 +439,6 @@ namespace Player
                 murder = enemy;
                 // 히트 스캔일 경우 RPC에 쏜 사람 이름 매개변수로 전달
                 Debug.Log("죽는것 확인");
-                // 죽은 것 서버에 연락 
-                //GetComponent<PhotonView>().RPC("TakeDamage", RpcTarget.AllBuffered, );
             }
 
             if(damage>0)

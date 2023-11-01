@@ -8,7 +8,8 @@ namespace Player
     public class AeternaSword : MonoBehaviour
     {
         [HideInInspector]
-        public string contactObjectName;
+        public object[] contactObjectData;
+
         [HideInInspector]
         public Aeterna player;
 
@@ -86,7 +87,9 @@ namespace Player
                     if (other.transform.root.GetComponent<SpawnObject>())
                     {
                         if (other.transform.root.GetComponent<SpawnObject>().type == SpawnObjectType.Projectile)
-                            contactObjectName = other.transform.root.GetComponent<SpawnObject>().objectName;
+                        {
+                            contactObjectData = other.transform.root.GetComponent<SpawnObject>().data;
+                        }
 
                         if (PhotonNetwork.IsMasterClient)
                         {

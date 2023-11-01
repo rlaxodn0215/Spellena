@@ -32,28 +32,23 @@ namespace Player
         {
             if (PhotonNetwork.IsMasterClient)
             {
-                SpawnDimensionCut(chargeCount);
+                SpawnDimensionCut(chargeCount, Player.camera.transform.localRotation, !isHealingSword);
             }
             else
             {
-                photonView.RPC("RequestSpawnDimensionCut", RpcTarget.MasterClient, chargeCount);
+                photonView.RPC("SpawnDimensionCut", RpcTarget.MasterClient, chargeCount, Player.camera.transform.localRotation, !isHealingSword);
             }
         }
 
         [PunRPC]
-        public void RequestSpawnDimensionCut(int charge)
-        {
-            SpawnDimensionCut(charge);
-        }
-
-        void SpawnDimensionCut(int charge)
+        void SpawnDimensionCut(int charge, Quaternion rot, bool ishealing)
         {
             object[] data = new object[5];
             data[0] = Player.playerName;
             data[1] = gameObject.tag;
             data[2] = "DimensionSlash_" + charge;
-            data[3] = Player.camera.transform.localRotation;
-            data[4] = !isHealingSword;
+            data[3] = rot;
+            data[4] = ishealing;
 
             PhotonNetwork.Instantiate("TaeWoo/Prefabs/Effect/" + (string)data[2],
                 Player.camera.transform.position, Player.transform.localRotation, 0, data);

@@ -17,7 +17,7 @@ namespace Player
         public string playerName;
         public SpawnObjectType type;
         public string objectName;
-        protected object[] data;
+        public object[] data;
 
         public virtual void OnEnable()
         {

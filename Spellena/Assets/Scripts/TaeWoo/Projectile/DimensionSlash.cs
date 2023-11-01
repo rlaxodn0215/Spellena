@@ -127,6 +127,7 @@ namespace Player
         {
             transform.Translate(Vector3.forward * speed * Time.deltaTime);
         }
+
         private void OnTriggerEnter(Collider other)
         {
             if (PhotonNetwork.IsMasterClient)
