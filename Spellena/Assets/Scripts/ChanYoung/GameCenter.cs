@@ -99,7 +99,6 @@ public class GameCenter : MonoBehaviourPunCallbacks, IPunObservable
             roundATextUI.text = roundA.ToString();
             roundBTextUI.text = roundB.ToString();
 
-
             if (gameState == GameState.WaitingAllPlayer)
             {
                 gameStateTextUI.text = "Waiting Player";
@@ -111,6 +110,7 @@ public class GameCenter : MonoBehaviourPunCallbacks, IPunObservable
                 }
                 
             }
+
             else if (gameState == GameState.MatchStart)
             {
                 Debug.Log("MatchStart");
