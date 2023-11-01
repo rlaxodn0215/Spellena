@@ -74,6 +74,12 @@ public class MatchMaking : MonoBehaviourPunCallbacks
         SceneManager.LoadScene("SiHyun RoomLobby Test");
     }
 
+    public void OnClickGameOff()
+    {
+        FirebaseLoginManager.Instance.SignOut();
+        Application.Quit();
+    }
+
     //포톤 콜백 함수
     #region 
 
