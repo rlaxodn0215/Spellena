@@ -9,10 +9,29 @@ using System;
 
 public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
 {
+    public Transform playerSpawnPoints;
+    Transform[] spawnPoint = new Transform[2];
+
+    GameObject occupy;
+    GameObject[] occupyState;
+    GameObject payLoad;
+    Image[] teamPayLoad;
+    GameObject percentage;
+    Text[] teamPercentage;
+    GameObject extraUI;
+    Image[] teamExtraUI;
+    GameObject extraTime;
+    GameObject[] teamExtraTime;
+    GameObject getPoint;
+    GameObject[] teamGetPoint;
     GameObject gameStateText;
     Text gameStateTextUI;
     GameObject timerText;
     Text timerTextUI;
+
+
+
+
     GameObject teamAOccupyingText;
     GameObject teamBOccupyingText;
     Text teamAOccupyingTextUI;
@@ -24,7 +43,8 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
     Text roundATextUI;
     Text roundBTextUI;
 
-    enum GameState
+   
+    public enum GameState
     {
         WaitingAllPlayer,
         MatchStart,
@@ -36,11 +56,8 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
         Result
     }
 
-    GameState gameState;
+    public GameState gameState;
 
-
-    public List<GameObject> playersA = new List<GameObject>();
-    public List<GameObject> playersB = new List<GameObject>();
 
     struct OccupyingTeam
     {
@@ -53,10 +70,11 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
         public float rate;
     }
 
-
+    // 라운드 점수
     int roundA = 0;
     int roundB = 0;
 
+    //
     int teamAOccupying = 0;
     int teamBOccupying = 0;
 
@@ -64,21 +82,80 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
     float occupyingReturnTimer;
     float roundEndTimer;
 
-    string currentOccupationTeam = "";//현재 점령중인 팀
+    string currentOccupationTeam = "";  //현재 점령중인 팀
 
-    public int maxPlayers;// 최대 플레이어 수
+    Occupation occupyingA;              //A팀의 점령도
+    Occupation occupyingB;              //B팀의 점령도
+    OccupyingTeam occupyingTeam;        //점령 게이지 바
 
-    Occupation occupyingA;//A팀의 점령도
-    Occupation occupyingB;//B팀의 점령도
-    OccupyingTeam occupyingTeam;//점령 게이지 바
     Character[] players;
-    void Awake()
+
+    //이 이하는 테스트용 일시적 정보이다.
+
+    float loadingTime = 3f;
+    float characterSelectTime = 5f; //나중에 데이터 매니저에서 값을 가져오도록한다.
+    float readyTime = 5f;
+    //추가 시간
+    float roundEndTime = 5f;
+
+    float occupyingGaugeRate = 100f;
+    float occupyingReturnTime = 3f;
+    float occupyingRate = 5f;
+    float occupyingComplete = 100f;
+
+    string teamA = "A";
+    string teamB = "B";
+
+    public Photon.Realtime.Player[] allPlayers;
+    public List<GameObject> playersA = new List<GameObject>(); // Red
+    public List<GameObject> playersB = new List<GameObject>(); // Blue
+
+    void Start()
     {
         gameState = GameState.WaitingAllPlayer;
         gameStateText = GameObject.Find("GameState");
         gameStateTextUI = gameStateText.GetComponent<Text>();
         timerText = GameObject.Find("Timer");
         timerTextUI = timerText.GetComponent<Text>();
+
+        occupy = GameObject.Find("Occupy");
+        for(int i = 0; i < 3; i++)
+        {
+            occupyState[i] = occupy.transform.GetChild(i).gameObject;
+        }
+
+        payLoad = GameObject.Find("Payload");
+        for (int i = 0; i < 2; i++)
+        {
+            teamPayLoad[i] = payLoad.transform.GetChild(i).gameObject.GetComponent<Image>();
+        }
+
+        percentage = GameObject.Find("Percentage");
+        for(int i = 0; i < 2; i++)
+        {
+            teamPercentage[i] = percentage.transform.GetChild(i).gameObject.GetComponent<Text>();
+        }
+
+        extraUI = GameObject.Find("ExtraUI");
+        for(int i = 0; i < 2; i++)
+        {
+            teamExtraUI[i] = extraUI.transform.GetChild(i).gameObject.GetComponent<Image>();
+        }
+
+        extraTime = GameObject.Find("ExtraTime");
+        for (int i = 0; i < 4; i++)
+        {
+            teamExtraTime[i] = extraTime.transform.GetChild(i).gameObject;
+        }
+
+        getPoint = GameObject.Find("GetPoint");
+        for (int i = 0; i < 3; i++)
+        {
+            teamGetPoint[i] = getPoint.transform.GetChild(i).gameObject;
+        }
+
+
+
         teamAOccupyingText = GameObject.Find("TeamAOccupying");
         teamBOccupyingText = GameObject.Find("TeamBOccupying");
         teamAOccupyingTextUI = teamAOccupyingText.GetComponent<Text>();
@@ -89,6 +166,11 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
         roundBText = GameObject.Find("RoundB");
         roundATextUI = roundAText.GetComponent<Text>();
         roundBTextUI = roundBText.GetComponent<Text>();
+
+        for(int i = 0; i < playerSpawnPoints.childCount; i++)
+        {
+            spawnPoint[i] = playerSpawnPoints.GetChild(i);
+        }
     }
 
     void Update()
@@ -101,11 +183,18 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
 
             if (gameState == GameState.WaitingAllPlayer)
             {
-                gameStateTextUI.text = "Waiting Player";
-                players = FindObjectsOfType<Character>();
+                gameStateTextUI.text = "다른 플레이어 기다리는 중...";
 
-                if (players.Length >= maxPlayers)
+                // 방장이 시작 버튼 누르면 시작
+                // 플레이어와 팀 정보 저장
+                // ActorNumber로 플레이어 식별
+                // allPlayers = PhotonNetwork.PlayerList;
+                // custom property로 값 저장 (ActorNumber, name, team)
+
+                int tempNum = 2;
+                if(PhotonNetwork.CurrentRoom.PlayerCount>=tempNum)
                 {
+                    allPlayers = PhotonNetwork.PlayerList;
                     gameState = GameState.MatchStart;
                 }
 
@@ -113,49 +202,55 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
 
             else if (gameState == GameState.MatchStart)
             {
-                Debug.Log("MatchStart");
+                gameStateTextUI.text = "데이터 불러오는 중...";
 
-                gameStateTextUI.text = "Match Start";
+                // 맵 및 캐릭터 데이터 로딩
 
-                for (int i = 0; i < maxPlayers / 2; i++)
+                globalTimer += Time.deltaTime;
+                if (globalTimer >= loadingTime)
                 {
-                    playersA.Add(players[i].gameObject);
-                    players[i].gameObject.GetComponent<Character>().SetTagServer("TeamA");
+                    globalTimer = 0;
+                    gameState = GameState.CharacterSelect;
                 }
 
-                for (int i = maxPlayers / 2; i < maxPlayers; i++)
-                {
-                    playersB.Add(players[i].gameObject);
-                    players[i].gameObject.GetComponent<Character>().SetTagServer("TeamB");
-                }
-
-                gameState = GameState.CharacterSelect;
             }
             else if (gameState == GameState.CharacterSelect)
             {
                 gameStateTextUI.text = "Character Select";
+
+                // 캐릭터 선택
+
                 globalTimer += Time.deltaTime;
                 if (globalTimer >= characterSelectTime)
                 {
                     globalTimer = 0;
+
+                    // 선택한 캐릭터로 소환 및 태그 설정
+                    // 적 플레이어는 빨강 쉐이더 적용
+                    MakeCharacter();
                     gameState = GameState.Ready;
                 }
+
             }
             else if (gameState == GameState.Ready)
             {
                 gameStateTextUI.text = "Ready";
+
                 globalTimer += Time.deltaTime;
                 if (globalTimer >= readyTime)
                 {
                     gameState = GameState.Round;
+                    gameStateText.SetActive(false);
                     ResetRound();
                 }
             }
             else if (gameState == GameState.Round)
             {
-                teamAOccupyingTextUI.text = ((int)occupyingA.rate).ToString();
-                teamBOccupyingTextUI.text = ((int)occupyingB.rate).ToString();
+                teamPayLoad[0].fillAmount = (int)occupyingA.rate;
+                teamPayLoad[1].fillAmount = (int)occupyingB.rate;
+
                 occupyingGaugeTextUI.text = occupyingTeam.name + " : " + ((int)occupyingTeam.rate).ToString();
+
                 timerTextUI.text = ((int)roundEndTimer).ToString();
 
                 gameStateTextUI.text = "Round";
@@ -172,7 +267,6 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
                     if (occupyingB.rate >= occupyingComplete)
                         occupyingB.rate = occupyingComplete;
                 }
-
 
                 OccupyAreaCounts();
                 CheckRoundEnd();
@@ -201,30 +295,61 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
                 //종료
             }
         }
+    }
 
-        for (int i = 0; i < playersA.Count; i++)
+    //public void AddPlayer(GameObject player)
+    //{
+    //    if (playersA.Count >= playersB.Count)
+    //    {
+    //        player.tag = "TeamB";
+    //        playersB.Add(player);
+    //    }
+    //    else
+    //    {
+    //        player.tag = "TeamA";
+    //        playersA.Add(player);
+    //    }
+    //}
+
+    void MakeCharacter()
+    {
+        for(int i = 0; i < allPlayers.Length; i++)
         {
-            //Debug.Log(playersA[i].name);
+            //ActorNumber로 custom property 접근, 캐릭터 viewID 데이터 추가
+            //현재 캐릭터는 에테르나 고정, 접속 순서에 따라 A,B 팀 나뉨
+
+            if (i % 2 == 1)     // A 팀 (Red)
+            {
+                GameObject playerCharacter = PhotonNetwork.Instantiate("TaeWoo/Prefabs/Aeterna", spawnPoint[0].position, Quaternion.identity);
+                playerCharacter.GetComponent<PhotonView>().TransferOwnership(allPlayers[i].ActorNumber);
+                playerCharacter.GetComponent<PhotonView>().RPC("IsLocalPlayer", allPlayers[i]);
+                playerCharacter.GetComponent<Character>().SetTagServer("TeamA");
+                playersA.Add(playerCharacter);
+            }
+
+            else                // B 팀 (Blue)
+            {
+                GameObject playerCharacter = PhotonNetwork.Instantiate("TaeWoo/Prefabs/Aeterna", spawnPoint[1].position, Quaternion.identity);
+                playerCharacter.GetComponent<PhotonView>().TransferOwnership(allPlayers[i].ActorNumber);
+                playerCharacter.GetComponent<PhotonView>().RPC("IsLocalPlayer", allPlayers[i]);
+                playerCharacter.GetComponent<Character>().SetTagServer("TeamB");
+                playersB.Add(playerCharacter);
+            }
+        }
+
+        for(int i = 0; i < playersA.Count;i++)
+        {
+            PhotonView photonView = PhotonView.Get(playersA[i]);
+            photonView.gameObject.GetComponent<Character>().SetEnemyLayer();
         }
 
         for (int i = 0; i < playersB.Count; i++)
         {
-            //Debug.Log(playersB[i].name);
+            PhotonView photonView = PhotonView.Get(playersB[i]);
+            photonView.gameObject.GetComponent<Character>().SetEnemyLayer();
         }
-    }
 
-    public void AddPlayer(GameObject player)
-    {
-        if (playersA.Count >= playersB.Count)
-        {
-            player.tag = "TeamB";
-            playersB.Add(player);
-        }
-        else
-        {
-            player.tag = "TeamA";
-            playersA.Add(player);
-        }
+
     }
 
     void CheckRoundEnd()
@@ -254,6 +379,7 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
     {
         teamAOccupying = 0;
         teamBOccupying = 0;
+
         for (int i = 0; i < playersA.Count; i++)
         {
             if (playersA[i].GetComponent<Character>().isOccupying == true)
@@ -350,18 +476,6 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
         teamAOccupyingTextUI.text = "0";
         teamBOccupyingTextUI.text = "0";
     }
-    //이 이하는 테스트용 일시적 정보이다.
-
-    float characterSelectTime = 5f; //나중에 데이터 매니저에서 값을 가져오도록한다.
-    float occupyingGaugeRate = 100f;
-    float occupyingReturnTime = 3f;
-    float occupyingRate = 5f;
-    float occupyingComplete = 100f;
-
-    float readyTime = 5f;
-    float roundEndTime = 3f;
-    string teamA = "A";
-    string teamB = "B";
 
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)

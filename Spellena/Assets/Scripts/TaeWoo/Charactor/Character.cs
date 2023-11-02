@@ -365,6 +365,7 @@ namespace Player
             }
         }
 
+        [PunRPC]
         public virtual void IsLocalPlayer()
         {
             if (photonView.IsMine)
@@ -379,12 +380,32 @@ namespace Player
                     //avatarForOther.GetChild(i).gameObject.GetComponent<SkinnedMeshRenderer>().enabled = false;
                 }
 
-                for(int i = 0; i < avatarForMe.childCount; i++)
+                for (int i = 0; i < avatarForMe.childCount; i++)
                 {
                     avatarForMe.GetChild(i).gameObject.layer = LayerMask.NameToLayer("OverlayCameraForMe");
                 }
 
                 UI.SetActive(true);
+            }
+        }
+
+        public void SetEnemyLayer()
+        {
+            Character[] characters = FindObjectsOfType<Character>();
+            if (characters == null) return;
+
+            foreach (Character character in characters)
+            {
+                if (!character.gameObject.CompareTag(tag))
+                {
+                    OutlineDrawer[] outlineDrawers = character.gameObject.GetComponentsInChildren<OutlineDrawer>();
+                    if (outlineDrawers == null) return;
+
+                    foreach (OutlineDrawer outline in outlineDrawers)
+                    {
+                        outline.enabled = true;
+                    }
+                }
             }
         }
 
@@ -407,25 +428,7 @@ namespace Player
             }       
         }
 
-        public void SetEnemyLayer()
-        {
-            Character[] characters = FindObjectsOfType<Character>();
-            if (characters == null) return;
-
-            foreach (Character character in characters)
-            {
-                if (!character.gameObject.CompareTag(tag))
-                {
-                    OutlineDrawer[] outlineDrawers = character.gameObject.GetComponentsInChildren<OutlineDrawer>();
-                    if (outlineDrawers == null) return;
-
-                    foreach (OutlineDrawer outline in outlineDrawers)
-                    {
-                        outline.enabled = true;
-                    }
-                }
-            }
-        }
+        
         [PunRPC]
         public void PlayerTeleport(Vector3 pos)
         {

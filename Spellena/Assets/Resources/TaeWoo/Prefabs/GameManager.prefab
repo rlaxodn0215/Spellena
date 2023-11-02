@@ -45,9 +45,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8227908abc7a81945b97a09a4160d61b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerSpawnPoints: {fileID: 4948464471237355086, guid: efc4a9fe7c8cfa6408c939d0aa44021f, type: 3}
+  gameState: 0
   playersA: []
   playersB: []
-  maxPlayers: 2
 --- !u!114 &-404882153769451898
 MonoBehaviour:
   m_ObjectHideFlags: 0

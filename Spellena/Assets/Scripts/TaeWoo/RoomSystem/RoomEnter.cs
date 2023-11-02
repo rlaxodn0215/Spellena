@@ -56,11 +56,12 @@ public class RoomEnter: MonoBehaviourPunCallbacks
 
         if (PhotonNetwork.IsMasterClient)
         {
+            // 规 积己矫 霸烙 季磐 积己
             _gameCenter = PhotonNetwork.Instantiate("TaeWoo/Prefabs/GameManager", spawnPoint.position, Quaternion.identity);
         }
 
-        player = PhotonNetwork.Instantiate("TaeWoo/Prefabs/Aeterna", spawnPoint.position, Quaternion.identity);
-        player.GetComponent<Player.Character>().IsLocalPlayer();
+        //player = PhotonNetwork.Instantiate("TaeWoo/Prefabs/Aeterna", spawnPoint.position, Quaternion.identity);
+        //player.GetComponent<Player.Character>().IsLocalPlayer();
     }
 }
 

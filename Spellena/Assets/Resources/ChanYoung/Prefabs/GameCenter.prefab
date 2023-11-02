@@ -47,7 +47,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playersA: []
   playersB: []
-  maxPlayers: 2
+  maxPlayers: 1
 --- !u!114 &68809559718150540
 MonoBehaviour:
   m_ObjectHideFlags: 0
