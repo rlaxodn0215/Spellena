@@ -10,12 +10,17 @@ public class PlayerItem : MonoBehaviourPunCallbacks
 {
     public Text playerName;
 
+    public static GameObject localPlayerItemInstance;
+
     Image backgroundImage;
     public Color highlightColor;
     public GameObject leftArrowButton;
     public GameObject rightArrowButton;
     LobbyManager lobbyManagerScript;
     public GameObject playerItem;
+
+    GameObject targetObject;
+    Transform playerItemParent;
 
     public ExitGames.Client.Photon.Hashtable playerProperties = new ExitGames.Client.Photon.Hashtable();
 
@@ -32,6 +37,13 @@ public class PlayerItem : MonoBehaviourPunCallbacks
     {
         backgroundImage = GetComponent<Image>();
         lobbyManagerScript = FindAnyObjectByType<LobbyManager>();
+        if(photonView.IsMine)
+        {
+            localPlayerItemInstance = this.gameObject;
+        }
+        targetObject = GameObject.Find("TeamAList");
+        playerItemParent = targetObject.transform;
+        this.transform.SetParent(playerItemParent);
     }
 
     private void Update()
@@ -45,6 +57,10 @@ public class PlayerItem : MonoBehaviourPunCallbacks
 
     public void SetPlayerInfo(Photon.Realtime.Player _player)
     {
+        Debug.Log(PhotonNetwork.IsMasterClient);
+        Debug.Log(PhotonNetwork.InRoom);
+        Debug.Log(photonView.ViewID);
+
         string userId = FirebaseLoginManager.Instance.GetUser().UserId;
         GetUserName(userId);
 
@@ -62,6 +78,7 @@ public class PlayerItem : MonoBehaviourPunCallbacks
     async void GetUserName(string _userId)
     {
         playerName.text = await FirebaseLoginManager.Instance.ReadUserInfo(_userId);
+        Debug.Log(playerName.text);
     }
 
     public void ApplyLocalChanges()

@@ -197,6 +197,8 @@ public class FirebaseLoginManager
 
     public void SearchUserByName(string _userName)
     {
+        List<string> _resultList = new List<string>();
+
         reference.Child("users").OrderByChild("userName").EqualTo(_userName).GetValueAsync().ContinueWith(task =>
         {
             DataSnapshot _snapShot = task.Result;
@@ -204,7 +206,6 @@ public class FirebaseLoginManager
             {
                 foreach (var _childSnapshot in _snapShot.Children)
                 {
-                    List<string> _resultList = new List<string>();
                     string _userId = _childSnapshot.Key;
                     _resultList.Add(_userId);
                 }

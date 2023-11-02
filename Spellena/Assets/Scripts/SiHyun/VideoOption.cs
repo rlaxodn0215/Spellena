@@ -26,7 +26,7 @@ public class VideoOption : MonoBehaviour
         resolutionCheckPanel.SetActive(false);
         settingPanel.SetActive(false);
         friendsPanel.SetActive(false);
-
+        Screen.SetResolution(780, 500, FullScreenMode.Windowed);
     }
 
     private void Update()
