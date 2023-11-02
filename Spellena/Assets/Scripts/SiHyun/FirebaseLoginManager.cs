@@ -195,21 +195,22 @@ public class FirebaseLoginManager
 
 
 
-    /*public string SearchUserByName(string _userName)
+    public void SearchUserByName(string _userName)
     {
         reference.Child("users").OrderByChild("userName").EqualTo(_userName).GetValueAsync().ContinueWith(task =>
         {
             DataSnapshot _snapShot = task.Result;
-            if(_snapShot.HasChildren)
+            if (_snapShot.HasChildren)
             {
                 foreach (var _childSnapshot in _snapShot.Children)
                 {
+                    List<string> _resultList = new List<string>();
                     string _userId = _childSnapshot.Key;
-                    return _userId;
+                    _resultList.Add(_userId);
                 }
             }
         });
-    }*/
+    }
 
     public void AddFriend(string _userId, string _friendId)
     {
