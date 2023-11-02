@@ -16,6 +16,7 @@ namespace Player
 
         public GameObject overlayCamera;
         public GameObject minimapCamera;
+        RenderTexture minimapRenderTexture;
 
         Vector3 overlayCameraDefaultPos;
         public GameObject Aim;
@@ -46,9 +47,13 @@ namespace Player
 
         Ray screenRay;
 
+        Vector3 pointStrike;
+        bool isPointStrike = false;
+        Vector3 arrivedVec;
+
         public enum SkillState
         {
-            None, BurstFlare, GaiaTied, EterialStorm
+            None, BurstFlare, GaiaTied, EterialStorm, RagnaEdge, TerraBreak, MeteorStrike
         }
 
         SkillState skillState = SkillState.None;
@@ -56,9 +61,16 @@ namespace Player
         BurstFlare burstFlare;
         GaiaTied gaiaTied;
         EterialStorm eterialStorm;
+        MeteorStrike meteorStrike;
+        RagnaEdge ragnaEdge;
+        TerraBreak terraBreak;
 
         float burstFlareCoolDownTime = 0f;
-        float GaiaTiedCoolDownTime = 0f;
+        float gaiaTiedCoolDownTime = 0f;
+        float eterialStormCoolDownTime = 0f;
+        float meteorStrikeCoolDownTime = 0f;
+        float ragnaEdgeCoolDownTime = 0f;
+        float terraBreakCoolDownTime = 0f;
 
         public GameObject leftHandSpell;
         public GameObject rightHandSpell;
@@ -70,6 +82,10 @@ namespace Player
         public Material stormMaterial;
 
         Vector3 pointStrikePoint;
+
+        //로컬 클라이언트에서 접근
+        bool isEterialStorm = false;
+        bool isMeteorStrike = false;
 
         protected override void Awake()
         {
@@ -89,10 +105,14 @@ namespace Player
             base.Update();
             if (photonView.IsMine)
             {
-                CheckCoolDown();
                 CheckOverlayAnimator();
                 CheckPoint();
                 CheckSkillOnMine();
+            }
+
+            if(PhotonNetwork.IsMasterClient)
+            {
+                CheckCoolDown();
             }
         }
 
@@ -107,12 +127,14 @@ namespace Player
             walkSpeed = elementalOrderData.moveSpeed;
             jumpHeight = elementalOrderData.jumpHeight;
             overlayAnimator = transform.GetChild(1).GetComponent<Animator>();
+            minimapRenderTexture = minimapCamera.GetComponent<Camera>().targetTexture;
         }
 
         public override void IsLocalPlayer()
         {
             base.IsLocalPlayer();
             overlayCamera.SetActive(true);
+            minimapCamera.SetActive(true);
         }
         //스킬
         void CheckCoolDown()
@@ -125,6 +147,16 @@ namespace Player
             if(burstFlareCoolDownTime > 0f)
             {
                 burstFlareCoolDownTime -= Time.deltaTime;
+            }
+
+            if(gaiaTiedCoolDownTime > 0f)
+            {
+                gaiaTiedCoolDownTime -= Time.deltaTime;
+            }
+
+            if(eterialStormCoolDownTime > 0f)
+            {
+                eterialStormCoolDownTime -= Time.deltaTime;
             }
 
         }
@@ -169,58 +201,101 @@ namespace Player
                 {
                     eterialStorm = new EterialStorm();
                 }
+                if (isPointStrike == true)
+                {
+                    object[] _data = new object[5];
+                    _data[0] = name;
+                    _data[1] = tag;
+                    _data[2] = "EterialStorm";
+
+                    PhotonNetwork.Instantiate("ChanYoung/Prefabs/Cylinder", pointStrike, Quaternion.identity, data: _data);
+                    eterialStormCoolDownTime = eterialStorm.GetSkillCoolDownTime();
+                    skillState = SkillState.None;
+                    eterialStorm = null;
+                    isPointStrike = false;
+                }
+            }
+            else if(skillState == SkillState.MeteorStrike)
+            {
+                if(meteorStrike == null)
+                {
+                    meteorStrike = new MeteorStrike();
+                }
                 else
                 {
-                    /*
-                    Ray _tempRay = minimapCamera.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
-                    RaycastHit _tempHit;
-                    int _tempLayerMask = ~(1 << LayerMask.NameToLayer("Minimap"));
-                    if (Physics.Raycast(_tempRay, out _tempHit, Mathf.Infinity, _tempLayerMask))
-                    {
-                        if (Input.GetMouseButtonDown(0))
-                        {
-                            Vector3 _tempVec = new Vector3(_tempHit.point.x, _tempHit.point.y + 1f, _tempHit.point.z);
-                            Instantiate(testCube, _tempVec, Quaternion.identity);
 
-
-                            skillState = SkillState.None;
-                            eterialStorm = null;
-                        }
-                    }
-                    */
                 }
             }
         }
-        bool isEterialStorm = false;
+        //로컬 클라이언트에서 확인하는 요소
         void CheckSkillOnMine()
         {
             if(skillState == SkillState.EterialStorm)
             {
                 if (isEterialStorm == false)
                 {
-                    Rect _tempRect = minimapCamera.GetComponent<Camera>().rect;
-                    _tempRect.x = 0;
-                    _tempRect.y = 0;
-                    _tempRect.width = 1;
-                    _tempRect.height = 1;
-                    minimapCamera.GetComponent<Camera>().rect = _tempRect;
+                    minimapCamera.GetComponent<Camera>().targetTexture = null;
+                    minimapCamera.GetComponent<Camera>().clearFlags = CameraClearFlags.Nothing;
                     camera.GetComponent<MouseControl>().enabled = false;
                     Cursor.visible = true;
                     Cursor.lockState = CursorLockMode.None;
                     Debug.Log(isEterialStorm);
                     isEterialStorm = true;
+                }  
+            }
+            else if(skillState == SkillState.MeteorStrike)
+            {
+                if (isMeteorStrike == true)
+                {
+                    Vector3 _arrivedGroundVec;
+                    Ray _tempRay = camera.GetComponent<Camera>().ScreenPointToRay(Aim.transform.position);
+                    RaycastHit _tempRayHit;
+                    LayerMask _tempLayerMask = LayerMask.GetMask("Map");
+                    MeteorShower _localMeteorShower = new MeteorShower();
+                    float _maxDistace = _localMeteorShower.maxDistance;
+                    if (Physics.Raycast(_tempRay, out _tempRayHit, _maxDistace, _tempLayerMask))
+                    {
+                        Vector3 _hitPoint = _tempRayHit.point - _tempRay.direction * 0.05f;
+                        Ray _bottomRay = new Ray(_hitPoint, Vector3.down);
+                        RaycastHit _bottomRayHit;
+                        if(Physics.Raycast(_bottomRay, out _bottomRayHit, Mathf.Infinity, _tempLayerMask))
+                        {
+                            _arrivedGroundVec = _bottomRayHit.point;
+                            testCube.GetComponent<MeshRenderer>().enabled = true;
+                            testCube.transform.position = _arrivedGroundVec;
+
+                        }
+                        else
+                        {
+                            testCube.GetComponent<MeshRenderer>().enabled = false;
+                        }
+                    }
+                    else
+                    {
+                        Vector3 _hitPoint = _tempRay.origin + _tempRay.direction * _maxDistace;
+                        Ray _bottomRay = new Ray(_hitPoint, Vector3.down);
+                        RaycastHit _bottomRayHit;
+
+                        if (Physics.Raycast(_bottomRay, out _bottomRayHit, Mathf.Infinity, _tempLayerMask))
+                        {
+                            _arrivedGroundVec = _bottomRayHit.point;
+                            testCube.GetComponent<MeshRenderer>().enabled = true;
+                            testCube.transform.position = _arrivedGroundVec;
+
+                        }
+                        else
+                        {
+                            testCube.GetComponent<MeshRenderer>().enabled = false;
+                        }
+                    }
                 }
             }
             else if(skillState == SkillState.None)
             {
                 if(isEterialStorm == true)
                 {
-                    Rect _tempRect = minimapCamera.GetComponent<Camera>().rect;
-                    _tempRect.x = 0.7f;
-                    _tempRect.y = 0.7f;
-                    _tempRect.width = 0.3f;
-                    _tempRect.height = 0.3f;
-                    minimapCamera.GetComponent<Camera>().rect = _tempRect;
+                    minimapCamera.GetComponent<Camera>().targetTexture = minimapRenderTexture;
+                    minimapCamera.GetComponent<Camera>().clearFlags = CameraClearFlags.SolidColor;
 
                     camera.GetComponent<MouseControl>().enabled = true;
                     Cursor.visible = false;
@@ -270,26 +345,25 @@ namespace Player
                         || (commands[0] == 3 && commands[1] == 1)) && burstFlareCoolDownTime <= 0f)
                     {
                         skillState = SkillState.BurstFlare;
-                        isReadyToUseSkill = false;
-                        UseSkill(origin, direction);
-                        commands.Clear();
                     }
                     else if (((commands[0] == 2 && commands[1] == 3)
-                        || (commands[0] == 3 && commands[1] == 2)) && GaiaTiedCoolDownTime <= 0f)
+                        || (commands[0] == 3 && commands[1] == 2)) && gaiaTiedCoolDownTime <= 0f)
                     {
                         skillState = SkillState.GaiaTied;
-                        isReadyToUseSkill = false;
-                        UseSkill(origin, direction);
-                        commands.Clear();
                     }
-                    else if (commands[0] == 3 && commands[1] == 3)
+                    else if (commands[0] == 3 && commands[1] == 3 && eterialStormCoolDownTime <= 0f)
                     {
                         skillState = SkillState.EterialStorm;
-                        isReadyToUseSkill = false;
-                        UseSkill(origin, direction);
-                        commands.Clear();
+                    }
+                    else if (commands[0] == 1 && commands[1] == 1 && meteorStrikeCoolDownTime <= 0f)
+                    {
+                        skillState = SkillState.MeteorStrike;
                     }
                 }
+
+                isReadyToUseSkill = false;
+                UseSkill(origin, direction);
+                commands.Clear();
             }
             else
             {
@@ -340,6 +414,21 @@ namespace Player
                 isClicked = !isClicked;
                 if (isClicked == true)
                 {
+                    //로컬 클라이언트 접근
+                    if(isEterialStorm == true)
+                    {
+                        Ray _tempRay = minimapCamera.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
+                        RaycastHit _tempHit;
+                        int _tempLayerMask = ~(1 << LayerMask.NameToLayer("Minimap"));
+                        if (Physics.Raycast(_tempRay, out _tempHit, Mathf.Infinity, _tempLayerMask))
+                        {
+                            pointStrike = new Vector3(_tempHit.point.x, _tempHit.point.y + 1f, _tempHit.point.z);
+                            isPointStrike = true;
+                        }
+                    }
+
+
+
                     photonView.RPC("ClickMouse", RpcTarget.MasterClient, screenRay.origin, screenRay.direction);
                 }
             }
@@ -356,6 +445,10 @@ namespace Player
                 stream.SendNext(rightCurrentWeight);
                 stream.SendNext(leftCurrentWeight);
                 stream.SendNext(skillState);
+                stream.SendNext(pointStrike);
+                stream.SendNext(isPointStrike);
+                stream.SendNext(isMeteorStrike);
+                stream.SendNext(arrivedVec);
             }
             else
             {
@@ -363,6 +456,10 @@ namespace Player
                 networkRightCurrentWeight = (float)stream.ReceiveNext();
                 networkLeftCurrentWeight = (float)stream.ReceiveNext();
                 skillState = (SkillState)stream.ReceiveNext();
+                pointStrike = (Vector3)stream.ReceiveNext();
+                isPointStrike = (bool)stream.ReceiveNext();
+                isMeteorStrike = (bool)stream.ReceiveNext();
+                arrivedVec = (Vector3)stream.ReceiveNext();
             }
         }
 
@@ -471,6 +568,8 @@ namespace Player
 
         protected override void OnAnimatorIK()
         {
+            animator.logWarnings = false;
+            overlayAnimator.logWarnings = false;    
             base.OnAnimatorIK();
             if (photonView.IsMine)
             {

@@ -1,7 +1,5 @@
 using Photon.Pun;
 using Player;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class BurstFlareObject : SpawnObject, IPunObservable
@@ -9,14 +7,10 @@ public class BurstFlareObject : SpawnObject, IPunObservable
     Vector3 direction;
     Rigidbody rigidbody;
 
-    float coolDownTime = 4f;
-    float currentcoolDownTime = 0f;
+    float lifeTime = 4f;
+    float currentLifeTime = 0f;
 
-    public override void OnEnable()
-    {
-        base.OnEnable();
-        Init();
-    }
+
 
     void Start()
     {
@@ -24,6 +18,12 @@ public class BurstFlareObject : SpawnObject, IPunObservable
         {
             OnEnable();
         }
+    }
+
+    public override void OnEnable()
+    {
+        base.OnEnable();
+        Init();
     }
 
     private void Update()
@@ -42,8 +42,8 @@ public class BurstFlareObject : SpawnObject, IPunObservable
 
     void CheckTime()
     {
-        currentcoolDownTime -= Time.deltaTime;
-        if(currentcoolDownTime <= 0f)
+        currentLifeTime -= Time.deltaTime;
+        if(currentLifeTime <= 0f)
         {
             DestorySpawnObject();
         }
@@ -56,7 +56,7 @@ public class BurstFlareObject : SpawnObject, IPunObservable
             this.gameObject.transform.position = (Vector3)data[3];
             direction = (Vector3)data[4];
         }
-        currentcoolDownTime = coolDownTime;
+        currentLifeTime = lifeTime;
         rigidbody = GetComponent<Rigidbody>();
     }
 
