@@ -46,6 +46,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerSpawnPoints: {fileID: 4948464471237355086, guid: efc4a9fe7c8cfa6408c939d0aa44021f, type: 3}
+  inGameUI: {fileID: 8135333902747381375, guid: 6b7cd71dbeeb9a747a12a20c43e338de, type: 3}
+  etcUI: {fileID: 2335043639265398236, guid: b2ad125948d7bb34a8cfe03f2fde77c9, type: 3}
   gameState: 0
   playersA: []
   playersB: []

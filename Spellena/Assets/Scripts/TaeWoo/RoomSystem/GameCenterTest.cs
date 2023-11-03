@@ -10,6 +10,9 @@ using System;
 public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
 {
     public Transform playerSpawnPoints;
+    public GameObject inGameUI;
+    public GameObject etcUI;
+
     Transform[] spawnPoint = new Transform[2];
 
     GameObject occupy;
@@ -24,24 +27,11 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
     GameObject[] teamExtraTime;
     GameObject getPoint;
     GameObject[] teamGetPoint;
+
     GameObject gameStateText;
     Text gameStateTextUI;
     GameObject timerText;
     Text timerTextUI;
-
-
-
-
-    GameObject teamAOccupyingText;
-    GameObject teamBOccupyingText;
-    Text teamAOccupyingTextUI;
-    Text teamBOccupyingTextUI;
-    GameObject occupyingGaugeText;
-    Text occupyingGaugeTextUI;
-    GameObject roundAText;
-    GameObject roundBText;
-    Text roundATextUI;
-    Text roundBTextUI;
 
    
     public enum GameState
@@ -57,7 +47,6 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
     }
 
     public GameState gameState;
-
 
     struct OccupyingTeam
     {
@@ -95,6 +84,7 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
     float loadingTime = 3f;
     float characterSelectTime = 5f; //나중에 데이터 매니저에서 값을 가져오도록한다.
     float readyTime = 5f;
+
     //추가 시간
     float roundEndTime = 5f;
 
@@ -113,61 +103,57 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
     void Start()
     {
         gameState = GameState.WaitingAllPlayer;
+        otherUI = GameObject.Find("OtherUI");
+        inGameUI = GameObject.Find("InGameUI");
+
+
+
         gameStateText = GameObject.Find("GameState");
         gameStateTextUI = gameStateText.GetComponent<Text>();
         timerText = GameObject.Find("Timer");
         timerTextUI = timerText.GetComponent<Text>();
+    }
 
+    void InitInGameUI()
+    {
         occupy = GameObject.Find("Occupy");
-        for(int i = 0; i < 3; i++)
+        payLoad = GameObject.Find("Payload");
+        percentage = GameObject.Find("Percentage");
+        extraUI = GameObject.Find("ExtraUI");
+        extraTime = GameObject.Find("ExtraTime");
+        getPoint = GameObject.Find("GetPoint");
+
+        for (int i = 0; i < 3; i++)
         {
             occupyState[i] = occupy.transform.GetChild(i).gameObject;
         }
 
-        payLoad = GameObject.Find("Payload");
         for (int i = 0; i < 2; i++)
         {
             teamPayLoad[i] = payLoad.transform.GetChild(i).gameObject.GetComponent<Image>();
         }
 
-        percentage = GameObject.Find("Percentage");
-        for(int i = 0; i < 2; i++)
+        for (int i = 0; i < 2; i++)
         {
             teamPercentage[i] = percentage.transform.GetChild(i).gameObject.GetComponent<Text>();
         }
 
-        extraUI = GameObject.Find("ExtraUI");
-        for(int i = 0; i < 2; i++)
+        for (int i = 0; i < 2; i++)
         {
             teamExtraUI[i] = extraUI.transform.GetChild(i).gameObject.GetComponent<Image>();
         }
 
-        extraTime = GameObject.Find("ExtraTime");
         for (int i = 0; i < 4; i++)
         {
             teamExtraTime[i] = extraTime.transform.GetChild(i).gameObject;
         }
 
-        getPoint = GameObject.Find("GetPoint");
         for (int i = 0; i < 3; i++)
         {
             teamGetPoint[i] = getPoint.transform.GetChild(i).gameObject;
         }
 
-
-
-        teamAOccupyingText = GameObject.Find("TeamAOccupying");
-        teamBOccupyingText = GameObject.Find("TeamBOccupying");
-        teamAOccupyingTextUI = teamAOccupyingText.GetComponent<Text>();
-        teamBOccupyingTextUI = teamBOccupyingText.GetComponent<Text>();
-        occupyingGaugeText = GameObject.Find("OccupyingGauge");
-        occupyingGaugeTextUI = occupyingGaugeText.GetComponent<Text>();
-        roundAText = GameObject.Find("RoundA");
-        roundBText = GameObject.Find("RoundB");
-        roundATextUI = roundAText.GetComponent<Text>();
-        roundBTextUI = roundBText.GetComponent<Text>();
-
-        for(int i = 0; i < playerSpawnPoints.childCount; i++)
+        for (int i = 0; i < playerSpawnPoints.childCount; i++)
         {
             spawnPoint[i] = playerSpawnPoints.GetChild(i);
         }
@@ -178,8 +164,6 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
         if (PhotonNetwork.IsMasterClient)
         {
             timerTextUI.text = ((int)globalTimer).ToString();
-            roundATextUI.text = roundA.ToString();
-            roundBTextUI.text = roundB.ToString();
 
             if (gameState == GameState.WaitingAllPlayer)
             {
@@ -249,9 +233,10 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
                 teamPayLoad[0].fillAmount = (int)occupyingA.rate;
                 teamPayLoad[1].fillAmount = (int)occupyingB.rate;
 
-                occupyingGaugeTextUI.text = occupyingTeam.name + " : " + ((int)occupyingTeam.rate).ToString();
+                //occupyingGaugeTextUI.text = occupyingTeam.name + " : " + ((int)occupyingTeam.rate).ToString();
 
-                timerTextUI.text = ((int)roundEndTimer).ToString();
+                teamExtraTime[1].GetComponent<Text>().text = string.Format("{0:F2}", roundEndTimer);
+                //timerTextUI.text = ((int)roundEndTimer).ToString();
 
                 gameStateTextUI.text = "Round";
                 //지역이 점령되어있으면 점령한 팀의 점령비율이 높아진다.
@@ -296,20 +281,6 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
             }
         }
     }
-
-    //public void AddPlayer(GameObject player)
-    //{
-    //    if (playersA.Count >= playersB.Count)
-    //    {
-    //        player.tag = "TeamB";
-    //        playersB.Add(player);
-    //    }
-    //    else
-    //    {
-    //        player.tag = "TeamA";
-    //        playersA.Add(player);
-    //    }
-    //}
 
     void MakeCharacter()
     {
@@ -369,9 +340,17 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
         {
             //라운드 종료
             if (currentOccupationTeam == teamA)
+            {
+                if (roundA == 0) teamGetPoint[1].transform.GetChild(0).gameObject.SetActive(true);
+                else if(roundA==1) teamGetPoint[1].transform.GetChild(1).gameObject.SetActive(true);
                 roundA++;
+            }
             else if (currentOccupationTeam == teamB)
+            {
+                if (roundB == 0) teamGetPoint[2].transform.GetChild(0).gameObject.SetActive(true);
+                else if (roundB == 1) teamGetPoint[2].transform.GetChild(1).gameObject.SetActive(true);
                 roundB++;
+            }
             gameState = GameState.RoundEnd;//라운드 종료
         }
     }
@@ -473,8 +452,6 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
         globalTimer = 0f;
         teamAOccupying = 0;
         teamBOccupying = 0;
-        teamAOccupyingTextUI.text = "0";
-        teamBOccupyingTextUI.text = "0";
     }
 
 
@@ -485,22 +462,13 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
             stream.SendNext(gameState);
             stream.SendNext(gameStateTextUI.text);
             stream.SendNext(timerTextUI.text);
-            stream.SendNext(teamAOccupyingTextUI.text);
-            stream.SendNext(teamBOccupyingTextUI.text);
-            stream.SendNext(occupyingGaugeTextUI.text);
-            stream.SendNext(roundATextUI.text);
-            stream.SendNext(roundBTextUI.text);
+
         }
         else
         {
             gameState = (GameState)stream.ReceiveNext();
             gameStateTextUI.text = (string)stream.ReceiveNext();
             timerTextUI.text = (string)stream.ReceiveNext();
-            teamAOccupyingTextUI.text = (string)stream.ReceiveNext();
-            teamBOccupyingTextUI.text = (string)stream.ReceiveNext();
-            occupyingGaugeTextUI.text = (string)stream.ReceiveNext();
-            roundATextUI.text = (string)stream.ReceiveNext();
-            roundBTextUI.text = (string)stream.ReceiveNext();
         }
     }
 }
