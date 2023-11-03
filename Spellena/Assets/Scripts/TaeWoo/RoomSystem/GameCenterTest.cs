@@ -32,10 +32,10 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
     GameObject blueExtraUI;
     Text redPercentage;
     Text bluePercentage;
-    GameObject extraTimeRed;
-    GameObject extraTimeBlue;
     GameObject extraObj;
     Text extraTimer;
+    GameObject redExtraObj;
+    GameObject blueExtraObj;
     Image redCTF;
     Image blueCTF;
     GameObject redFirstPoint;
@@ -100,7 +100,7 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
 
     float occupyingGaugeRate = 100f;
     float occupyingReturnTime = 3f;
-    float occupyingRate = 5f;
+    float occupyingRate = 10f;
 
     // 추가시간이 발생하는 기준 게이지
     float occupyingComplete = 99f;
@@ -139,14 +139,14 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
         blueFillCircle = FindObject(inGameUI, "BlueOutline").GetComponent<Image>();
         redPayload = FindObject(inGameUI, "RedPayload_Filled").GetComponent<Image>();
         bluePayload = FindObject(inGameUI, "BluePayload_Filled").GetComponent<Image>();
-        redExtraUI = FindObject(inGameUI, "RedCTF_Filled");
-        blueExtraUI = FindObject(inGameUI, "BlueCTF_Filled");
+        redExtraUI = FindObject(inGameUI, "RedCTF");
+        blueExtraUI = FindObject(inGameUI, "BlueCTF");
         redPercentage = FindObject(inGameUI, "RedOccupyingPercent").GetComponent<Text>();
         bluePercentage = FindObject(inGameUI, "BlueOccupyingPercent").GetComponent<Text>();
-        extraTimeRed = FindObject(inGameUI, "RedPoint");
-        extraTimeBlue = FindObject(inGameUI, "BluePoint");
         extraObj = FindObject(inGameUI, "Extra");
         extraTimer = FindObject(inGameUI, "ExtaTimer").GetComponent<Text>();
+        redExtraObj = FindObject(inGameUI, "Red");
+        blueExtraObj = FindObject(inGameUI, "Blue");
         redCTF = FindObject(inGameUI, "RedCTF_Filled").GetComponent<Image>();
         blueCTF = FindObject(inGameUI, "BlueCTF_Filled").GetComponent<Image>();
         redFirstPoint = FindObject(inGameUI, "RedFirstPoint");
@@ -227,8 +227,8 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
                 if (globalTimer <= 0.0f)
                 {
                     gameState = GameState.Round;
-                    etcUI.SetActive(false);
                     ResetRound();
+                    etcUI.SetActive(false);
                 }
             }
             else if (gameState == GameState.Round)
@@ -264,7 +264,8 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
                 }
                 else
                 {
-                    gameState = GameState.CharacterSelect;
+                    globalTimer = readyTime;
+                    gameState = GameState.Ready;
                     ResetRound();
                 }
             }
@@ -363,17 +364,19 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
     {
         if (occupyingA.rate >= occupyingComplete && currentOccupationTeam == teamA && teamBOccupying <= 0)
         {
-            if (!extraObj.activeSelf) extraObj.SetActive(true);
-            if (redExtraUI.activeSelf) redExtraUI.SetActive(false);
-
+            extraObj.SetActive(true);
+            redExtraUI.SetActive(false);
+            redExtraObj.SetActive(true);
+            redCTF.fillAmount = roundEndTimer / roundEndTime;
             roundEndTimer -= Time.deltaTime;
 
         }
         else if (occupyingB.rate >= occupyingComplete && currentOccupationTeam == teamB && teamAOccupying <= 0)
         {
-            if (!extraObj.activeSelf) extraObj.SetActive(true);
-            if (blueExtraUI.activeSelf) blueExtraUI.SetActive(false);
-
+            extraObj.SetActive(true);
+            blueExtraUI.SetActive(false);
+            blueExtraObj.SetActive(true);
+            blueCTF.fillAmount = roundEndTimer / roundEndTime;
             roundEndTimer -= Time.deltaTime;
         }
         else
@@ -396,6 +399,7 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
                 occupyingB.rate = 100;
                 roundB++;
             }
+
             gameState = GameState.RoundEnd;//라운드 종료
         }
     }
@@ -508,10 +512,24 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
         occupyingB = new Occupation();
         occupyingTeam = new OccupyingTeam();
         occupyingReturnTimer = 0f;
-        roundEndTimer = 0f;
+        roundEndTimer = roundEndTime;
         globalTimer = 0f;
         teamAOccupying = 0;
         teamBOccupying = 0;
+
+        captured_Red.SetActive(false);
+        captured_Blue.SetActive(false);
+
+        extraObj.SetActive(false);
+        redExtraUI.SetActive(true);
+        redExtraObj.SetActive(false);
+        blueExtraUI.SetActive(true);
+        blueExtraObj.SetActive(false);
+
+        redPayload.fillAmount = 0.0f;
+        bluePayload.fillAmount = 0.0f;
+
+        etcUI.SetActive(true);
     }
 
 
