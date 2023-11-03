@@ -9,8 +9,11 @@ using System;
 
 public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
 {
+    [HideInInspector]
     public GameObject playerSpawnPoints;
+    [HideInInspector]
     public GameObject inGameUI;
+    [HideInInspector]
     public GameObject etcUI;
 
     // 플레이어 소환 좌표
@@ -21,12 +24,17 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
     GameObject unContested;
     GameObject captured_Red;
     GameObject captured_Blue;
+    Image redFillCircle;
+    Image blueFillCircle;
     Image redPayload;
     Image bluePayload;
+    GameObject redExtraUI;
+    GameObject blueExtraUI;
     Text redPercentage;
     Text bluePercentage;
     GameObject extraTimeRed;
     GameObject extraTimeBlue;
+    GameObject extraObj;
     Text extraTimer;
     Image redCTF;
     Image blueCTF;
@@ -90,13 +98,15 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
     float characterSelectTime = 5f; //나중에 데이터 매니저에서 값을 가져오도록한다.
     float readyTime = 5f;
 
-    //추가 시간
-    float roundEndTime = 5f;
-
     float occupyingGaugeRate = 100f;
     float occupyingReturnTime = 3f;
     float occupyingRate = 5f;
-    float occupyingComplete = 100f;
+
+    // 추가시간이 발생하는 기준 게이지
+    float occupyingComplete = 99f;
+
+    //추가 시간
+    float roundEndTime = 5f;
 
     string teamA = "A";
     string teamB = "B";
@@ -107,25 +117,35 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
 
     void Start()
     {
-        gameState = GameState.WaitingAllPlayer;
-        Init();
-        etcUI.SetActive(true);
+        if(PhotonNetwork.IsMasterClient)
+            Init();
     }
 
     void Init()
     {
+        gameState = GameState.WaitingAllPlayer;
+
+        playerSpawnPoints = PhotonNetwork.Instantiate("TaeWoo/Prefabs/PlayerSpawnPoints", new Vector3(0,0,0), Quaternion.identity);
+        inGameUI = PhotonNetwork.Instantiate("TaeWoo/Prefabs/InGameUI", new Vector3(0,0,0), Quaternion.identity);
+        etcUI = PhotonNetwork.Instantiate("TaeWoo/Prefabs/EtcUI", new Vector3(0,0,0), Quaternion.identity);
+
         playerSpawnA = FindObject(playerSpawnPoints, "TeamA").transform;
         playerSpawnB = FindObject(playerSpawnPoints, "TeamB").transform;
 
         unContested = FindObject(inGameUI, "UnContested");
-        captured_Red = FindObject(inGameUI, "Captured_Red");
-        captured_Blue = FindObject(inGameUI, "Captured_Blue");
+        captured_Red = FindObject(inGameUI, "RedCapture");
+        captured_Blue = FindObject(inGameUI, "BlueCapture");
+        redFillCircle = FindObject(inGameUI, "RedOutline").GetComponent<Image>();
+        blueFillCircle = FindObject(inGameUI, "BlueOutline").GetComponent<Image>();
         redPayload = FindObject(inGameUI, "RedPayload_Filled").GetComponent<Image>();
         bluePayload = FindObject(inGameUI, "BluePayload_Filled").GetComponent<Image>();
+        redExtraUI = FindObject(inGameUI, "RedCTF_Filled");
+        blueExtraUI = FindObject(inGameUI, "BlueCTF_Filled");
         redPercentage = FindObject(inGameUI, "RedOccupyingPercent").GetComponent<Text>();
         bluePercentage = FindObject(inGameUI, "BlueOccupyingPercent").GetComponent<Text>();
         extraTimeRed = FindObject(inGameUI, "RedPoint");
         extraTimeBlue = FindObject(inGameUI, "BluePoint");
+        extraObj = FindObject(inGameUI, "Extra");
         extraTimer = FindObject(inGameUI, "ExtaTimer").GetComponent<Text>();
         redCTF = FindObject(inGameUI, "RedCTF_Filled").GetComponent<Image>();
         blueCTF = FindObject(inGameUI, "BlueCTF_Filled").GetComponent<Image>();
@@ -136,9 +156,9 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
 
         gameStateUI = FindObject(etcUI, "GameState").GetComponent<Text>();
         timer = FindObject(etcUI, "Timer").GetComponent<Text>();
-    }
 
-    int tempNum = 1;
+        inGameUI.SetActive(false);
+    }
 
     void Update()
     {
@@ -157,13 +177,12 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
                 // custom property로 값 저장 (ActorNumber, name, team)
 
 
-
-                if(PhotonNetwork.CurrentRoom.PlayerCount >= tempNum)
+                int tempNum = 1;
+                if (PhotonNetwork.CurrentRoom.PlayerCount >= tempNum)
                 {
                     globalTimer = loadingTime;
                     allPlayers = PhotonNetwork.PlayerList;
                     gameState = GameState.MatchStart;
-                    Debug.Log("한 번만 실행...");
                 }
 
             }
@@ -179,7 +198,6 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
                 {
                     gameState = GameState.CharacterSelect;
                     globalTimer = characterSelectTime;
-                    Debug.Log("Change CharacterSelect");
                 }
 
             }
@@ -215,8 +233,10 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
             }
             else if (gameState == GameState.Round)
             {
-                redPayload.fillAmount = occupyingA.rate;
-                bluePayload.fillAmount = occupyingB.rate;
+                redPayload.fillAmount = occupyingA.rate * 0.01f;
+                bluePayload.fillAmount = occupyingB.rate * 0.01f;
+                redPercentage.text = string.Format((int)occupyingA.rate + "%");
+                bluePercentage.text = string.Format((int)occupyingB.rate + "%");
                 extraTimer.text = string.Format("{0:F2}", roundEndTimer);
 
                 //지역이 점령되어있으면 점령한 팀의 점령비율이 높아진다.
@@ -343,28 +363,37 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
     {
         if (occupyingA.rate >= occupyingComplete && currentOccupationTeam == teamA && teamBOccupying <= 0)
         {
-            roundEndTimer += Time.deltaTime;
+            if (!extraObj.activeSelf) extraObj.SetActive(true);
+            if (redExtraUI.activeSelf) redExtraUI.SetActive(false);
+
+            roundEndTimer -= Time.deltaTime;
+
         }
         else if (occupyingB.rate >= occupyingComplete && currentOccupationTeam == teamB && teamAOccupying <= 0)
         {
-            roundEndTimer += Time.deltaTime;
+            if (!extraObj.activeSelf) extraObj.SetActive(true);
+            if (blueExtraUI.activeSelf) blueExtraUI.SetActive(false);
+
+            roundEndTimer -= Time.deltaTime;
         }
         else
-            roundEndTimer = 0f;
+            roundEndTimer = roundEndTime;
 
-        if (roundEndTimer >= roundEndTime)
+        if (roundEndTimer <= 0.0f)
         {
             //라운드 종료
             if (currentOccupationTeam == teamA)
             {
                 if (roundA == 0) redFirstPoint.SetActive(true);
                 else if(roundA==1) redSecondPoint.SetActive(true);
+                occupyingA.rate = 100;
                 roundA++;
             }
             else if (currentOccupationTeam == teamB)
             {
                 if (roundB == 0) blueFirstPoint.SetActive(true);
                 else if (roundB == 1) blueSecondPoint.SetActive(true);
+                occupyingB.rate = 100;
                 roundB++;
             }
             gameState = GameState.RoundEnd;//라운드 종료
@@ -395,15 +424,18 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
         {
             //서로 교전 중이라는 것을 알림
             occupyingReturnTimer = 0f;
+            Debug.Log("교전중..");
         }
         else if (teamAOccupying > 0)//A팀 점령
         {
             ChangeOccupyingRate(teamAOccupying, teamA);
+            redFillCircle.fillAmount = occupyingTeam.rate * 0.01f;
             occupyingReturnTimer = 0f;
         }
         else if (teamBOccupying > 0)//B팀 점령
         {
             ChangeOccupyingRate(teamBOccupying, teamB);
+            blueFillCircle.fillAmount = occupyingTeam.rate * 0.01f;
             occupyingReturnTimer = 0f;
         }
         else
@@ -437,6 +469,18 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
                 currentOccupationTeam = name;
                 occupyingTeam.name = "";
                 occupyingTeam.rate = 0f;
+
+                if (currentOccupationTeam == "A")
+                {
+                    captured_Red.SetActive(true);
+                    captured_Blue.SetActive(false);
+                }
+
+                else if (currentOccupationTeam == "B")
+                {
+                    captured_Red.SetActive(false);
+                    captured_Blue.SetActive(true);
+                }
             }
         }
         else if (occupyingTeam.name == "")
