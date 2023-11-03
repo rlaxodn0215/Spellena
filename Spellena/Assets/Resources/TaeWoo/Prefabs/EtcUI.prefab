@@ -181,7 +181,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Test Text
+  m_Text: "\uB370\uC774\uD130 \uBD88\uB7EC\uC624\uB294 \uC911..."
 --- !u!1 &4502354066897103290
 GameObject:
   m_ObjectHideFlags: 0
@@ -261,4 +261,4 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 0
+  m_Text: 2

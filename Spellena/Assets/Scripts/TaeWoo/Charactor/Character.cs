@@ -137,6 +137,7 @@ namespace Player
             {
                 isOccupying = false;
             }
+
             if (photonView.IsMine)
             {
                 animator.SetBool("Grounded", isGrounded);
