@@ -8,14 +8,28 @@ public class VideoOption : MonoBehaviour
     int previousWidth;   // 이전 화면 너비
     int previousHeight;  // 이전 화면 높이
     int previousNum;     // 이전 드롭박스 인덱스 번호
+    int resolutionNum;
     public GameObject resolutionCheckPanel;
     public GameObject settingPanel;
     public GameObject friendsPanel;
-    FullScreenMode screenMode;
     public Dropdown resolutionDropdown;
     public Dropdown fullScreenDropdown;
+    public Slider soundSlider;
+    public Slider bgmSlider;
+    public Slider effectSlider;
+    public Slider voiceSlider;
+    public Slider sensitivitySlider;
+    public InputField soundInput;
+    public InputField bgmInput;
+    public InputField effectInput;
+    public InputField voiceInput;
+    public InputField sensitivityInput;
+    private bool isEditText = false;
+    FullScreenMode screenMode;
     List<Resolution> resolutions = new List<Resolution>();
-    int resolutionNum;
+
+    
+
     // Start is called before the first frame update
     void Start()
     {
@@ -27,6 +41,8 @@ public class VideoOption : MonoBehaviour
         settingPanel.SetActive(false);
         friendsPanel.SetActive(false);
         Screen.SetResolution(780, 500, FullScreenMode.Windowed);
+
+        //soundValueText.GetComponentInChildren<Button>().onClick.AddListener(() => EditText());
     }
 
     private void Update()
@@ -46,6 +62,11 @@ public class VideoOption : MonoBehaviour
                 settingPanel.SetActive(true);
             }
         }
+        if(!isEditText)
+        {
+            UpdateSliderValueToText();
+        }
+
     }
     void InitUI()
     {
@@ -122,4 +143,28 @@ public class VideoOption : MonoBehaviour
 
         resolutionCheckPanel.SetActive(false);
     }
+
+    public void UpdateSliderValueToText()
+    {
+        float _soundVal = soundSlider.value;
+        float _bgmVal = bgmSlider.value;
+        float _effectVal = effectSlider.value;
+        float _voiceVal = voiceSlider.value;
+        float _sensitivityVal = sensitivitySlider.value;
+
+        soundInput.text = string.Format("{0}", _soundVal * 100);
+        bgmInput.text = string.Format("{0}", _bgmVal * 100);
+        effectInput.text = string.Format("{0}", _effectVal * 100);
+        voiceInput.text = string.Format("{0}", _voiceVal * 100);
+        sensitivityInput.text = string.Format("{0}", _sensitivityVal * 5);
+    }
+
+    /*public void OnInputFieldChanged(string value)
+    {
+        float _valToSlider = int.Parse(value) / 100;
+
+        soundSlider.value = _valToSlider;
+    }*/
+
 }
+
