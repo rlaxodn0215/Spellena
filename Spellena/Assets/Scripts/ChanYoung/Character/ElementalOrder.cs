@@ -23,8 +23,6 @@ namespace Player
         public GameObject OverlaySight;
 
         Animator overlayAnimator;
-
-        Vector3 handPoint;
         Vector3 networkHandPoint;
         Vector3 currentHandPoint;
 
@@ -81,11 +79,11 @@ namespace Player
         public Material landMaterial;
         public Material stormMaterial;
 
-        Vector3 pointStrikePoint;
-
         //로컬 클라이언트에서 접근
         bool isEterialStorm = false;
         bool isMeteorStrike = false;
+
+        private Vector3 handPoint;
 
         protected override void Awake()
         {
@@ -220,10 +218,23 @@ namespace Player
                 if(meteorStrike == null)
                 {
                     meteorStrike = new MeteorStrike();
+                    isMeteorStrike = true;
                 }
                 else
                 {
+                    if(isPointStrike == true)
+                    {
+                        object[] _data = new object[5];
+                        _data[0] = name;
+                        _data[1] = tag;
+                        _data[2] = "MeteorStrike";
 
+                        PhotonNetwork.Instantiate("ChanYoung/Prefabs/MeteorStrike", pointStrike, Quaternion.identity, data: _data);
+                        meteorStrikeCoolDownTime = meteorStrike.GetSkillCoolDownTime();
+                        meteorStrike = null;
+                        isPointStrike = false;
+                        skillState = SkillState.None;
+                    }
                 }
             }
         }
@@ -251,8 +262,9 @@ namespace Player
                     Ray _tempRay = camera.GetComponent<Camera>().ScreenPointToRay(Aim.transform.position);
                     RaycastHit _tempRayHit;
                     LayerMask _tempLayerMask = LayerMask.GetMask("Map");
-                    MeteorShower _localMeteorShower = new MeteorShower();
+                    MeteorStrike _localMeteorShower = new MeteorStrike();
                     float _maxDistace = _localMeteorShower.maxDistance;
+    
                     if (Physics.Raycast(_tempRay, out _tempRayHit, _maxDistace, _tempLayerMask))
                     {
                         Vector3 _hitPoint = _tempRayHit.point - _tempRay.direction * 0.05f;
@@ -275,6 +287,7 @@ namespace Player
                         Vector3 _hitPoint = _tempRay.origin + _tempRay.direction * _maxDistace;
                         Ray _bottomRay = new Ray(_hitPoint, Vector3.down);
                         RaycastHit _bottomRayHit;
+
 
                         if (Physics.Raycast(_bottomRay, out _bottomRayHit, Mathf.Infinity, _tempLayerMask))
                         {
@@ -301,6 +314,11 @@ namespace Player
                     Cursor.visible = false;
                     Cursor.lockState = CursorLockMode.Locked;
                     isEterialStorm = false;
+                }
+                else if(isMeteorStrike == true)
+                {
+                    isMeteorStrike = false;
+                    testCube.GetComponent <MeshRenderer>().enabled = false;
                 }
             }
             
@@ -330,6 +348,11 @@ namespace Player
                 burstFlareCoolDownTime = burstFlare.GetSkillCoolDownTime();
                 burstFlare = null;
             }
+            else if(skillState == SkillState.MeteorStrike)
+            {
+                meteorStrike = null;
+                isMeteorStrike = false;
+            }
 
             skillState = SkillState.None;
             commands.Clear();
@@ -345,30 +368,38 @@ namespace Player
                         || (commands[0] == 3 && commands[1] == 1)) && burstFlareCoolDownTime <= 0f)
                     {
                         skillState = SkillState.BurstFlare;
+                        CheckCommands(origin, direction);
                     }
                     else if (((commands[0] == 2 && commands[1] == 3)
                         || (commands[0] == 3 && commands[1] == 2)) && gaiaTiedCoolDownTime <= 0f)
                     {
                         skillState = SkillState.GaiaTied;
+                        CheckCommands(origin, direction);
                     }
                     else if (commands[0] == 3 && commands[1] == 3 && eterialStormCoolDownTime <= 0f)
                     {
                         skillState = SkillState.EterialStorm;
+                        CheckCommands(origin, direction);
                     }
                     else if (commands[0] == 1 && commands[1] == 1 && meteorStrikeCoolDownTime <= 0f)
                     {
                         skillState = SkillState.MeteorStrike;
+                        CheckCommands(origin, direction);
                     }
                 }
 
-                isReadyToUseSkill = false;
-                UseSkill(origin, direction);
-                commands.Clear();
             }
             else
             {
                 UseSkill(origin, direction);
             }
+        }
+
+        void CheckCommands(Vector3 origin, Vector3 direction)
+        {
+            isReadyToUseSkill = false;
+            UseSkill(origin, direction);
+            commands.Clear();
         }
 
         //입력
@@ -426,8 +457,11 @@ namespace Player
                             isPointStrike = true;
                         }
                     }
-
-
+                    else if(isMeteorStrike == true)
+                    {
+                        pointStrike = testCube.transform.position;
+                        isPointStrike = true;
+                    }
 
                     photonView.RPC("ClickMouse", RpcTarget.MasterClient, screenRay.origin, screenRay.direction);
                 }
@@ -545,25 +579,6 @@ namespace Player
                 else if (typeLeft == 3)
                     leftHandSpell.GetComponent<MeshRenderer>().material = stormMaterial;
             }
-
-
-            rightHandSpell.transform.position = overlayAnimator.GetBoneTransform(HumanBodyBones.RightHand).position
-                                                + overlayAnimator.GetBoneTransform(HumanBodyBones.RightHand).right * 0.1f
-                                                - overlayAnimator.GetBoneTransform(HumanBodyBones.RightHand).up * 0.1f;
-
-            Vector3 _tempLeftHand = overlayAnimator.GetBoneTransform(HumanBodyBones.LeftHand).position;
-            Vector3 _tempLeftIKHand = overlayAnimator.GetIKPosition(AvatarIKGoal.LeftHand);
-            float _tempWeight = overlayAnimator.GetIKPositionWeight(AvatarIKGoal.LeftHand);
-
-            Quaternion _tempLeftHandRot = overlayAnimator.GetBoneTransform(HumanBodyBones.LeftHand).rotation;
-            Quaternion _tempLeftIKHandRot = overlayAnimator.GetIKRotation(AvatarIKGoal.LeftHand);
-            Quaternion _tempFinalLeftHandRot = Quaternion.Slerp(_tempLeftIKHandRot, _tempLeftHandRot,
-                overlayAnimator.GetIKRotationWeight(AvatarIKGoal.LeftHand));
-            Vector3 _tempLeftHandDirectionForward = _tempFinalLeftHandRot * Vector3.forward * 0.1f;
-            Vector3 _tempLeftHandDirectionRight = _tempFinalLeftHandRot * Vector3.right * 0.2f;
-            Vector3 _tempLeftHandDirectionUp = _tempFinalLeftHandRot * Vector3.up * 0.25f;
-            leftHandSpell.transform.position = _tempLeftHand * (1 - _tempWeight) + _tempLeftIKHand * _tempWeight
-                - _tempLeftHandDirectionForward + _tempLeftHandDirectionRight - _tempLeftHandDirectionUp;
         }
 
         protected override void OnAnimatorIK()
@@ -571,8 +586,19 @@ namespace Player
             animator.logWarnings = false;
             overlayAnimator.logWarnings = false;    
             base.OnAnimatorIK();
+
+
             if (photonView.IsMine)
             {
+                if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Idle"))
+                {
+                    overlayAnimator.SetIKPositionWeight(AvatarIKGoal.LeftHand, 0.2f);
+                    overlayAnimator.SetIKPosition(AvatarIKGoal.LeftHand, OverlaySight.transform.position);
+                    overlayAnimator.SetIKPositionWeight(AvatarIKGoal.RightHand, 0.22f);
+                    overlayAnimator.SetIKPosition(AvatarIKGoal.RightHand, OverlaySight.transform.position);
+                }
+
+
                 if (commands.Count <= 0)
                 {
                     SetHandEffectPositionIK(0, 0);
@@ -635,13 +661,6 @@ namespace Player
                 }
                 animator.SetIKPositionWeight(AvatarIKGoal.LeftHand, leftCurrentWeight);
                 animator.SetIKPositionWeight(AvatarIKGoal.RightHand, rightCurrentWeight);
-
-                
-                if(overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Idle"))
-                {
-                    overlayAnimator.SetIKPositionWeight(AvatarIKGoal.LeftHand, 0.2f);
-                    overlayAnimator.SetIKPosition(AvatarIKGoal.LeftHand, OverlaySight.transform.position);
-                }
             }
             else
             {

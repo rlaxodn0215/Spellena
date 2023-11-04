@@ -27,7 +27,6 @@ public class EterialStormObject : SpawnObject,IPunObservable
         if (PhotonNetwork.IsMasterClient)
         {
             OnEnable();
-            Debug.Log("¾Æ¿À");
         }
     }
 
