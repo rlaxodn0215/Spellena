@@ -1,15 +1,14 @@
 using UnityEngine;
 using Photon.Pun;
-using Photon.Realtime;
-using Photon.Pun.Demo.PunBasics;
 using System.Collections.Generic;
 using Player;
-using UnityEngine.UI;
-using System;
 
 public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
 {
-    GameObject globalUI;
+    GameObject globalUIObj;
+    PhotonView globalUIView;
+    GlobalUI globalUI;
+
     GameObject playerSpawnPoints;
 
     // 플레이어 소환 좌표
@@ -85,7 +84,7 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
     // 거점 전환하는 시간
     float occupyingReturnTime = 3f;
     // 거점 % 먹는 비율
-    float occupyingRate = 10f;
+    float occupyingRate = 2f;
     // 추가시간이 발생하는 기준 게이지
     float occupyingComplete = 99f;
     //추가 시간
@@ -155,12 +154,16 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
         // allPlayers = PhotonNetwork.PlayerList;
         // custom property로 값 저장 (ActorNumber, name, team)
 
-        int tempNum = 1;
+        int tempNum = 2;
         if (PhotonNetwork.CurrentRoom.PlayerCount >= tempNum)
         {
             globalTimer = loadingTime;
             allPlayers = PhotonNetwork.PlayerList;
-            globalUI = PhotonNetwork.Instantiate("TaeWoo/Prefabs/UI/GlobalUI", Vector3.zero, Quaternion.identity);
+
+            globalUIObj = PhotonNetwork.Instantiate("TaeWoo/Prefabs/UI/GlobalUI", Vector3.zero, Quaternion.identity);
+            globalUIView = globalUIObj.GetComponent<PhotonView>();
+            globalUI = globalUIObj.GetComponent<GlobalUI>();
+
             playerSpawnPoints = PhotonNetwork.Instantiate("TaeWoo/Prefabs/PlayerSpawnPoints", Vector3.zero, Quaternion.identity);
             MakeSpawnPoint();
             gameState = GameState.MatchStart;
@@ -201,7 +204,7 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
             MakeCharacter();
             globalTimer = readyTime;
             gameState = GameState.Ready;
-            globalUI.GetComponent<PhotonView>().RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "inGameUI", true);
+            globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "inGameUI", true);
         }
     }
 
@@ -214,7 +217,7 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
         {
             gameState = GameState.Round;
             ResetRound();
-            globalUI.GetComponent<PhotonView>().RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "etcUI", false);
+            globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "etcUI", false);
         }
     }
 
@@ -264,14 +267,14 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
 
     void GiveDataToUI()
     {
-        globalUI.GetComponent<GlobalUI>().gameStateString = gameStateString;
-        globalUI.GetComponent<GlobalUI>().globalTimerUI = globalTimer;
-        globalUI.GetComponent<GlobalUI>().roundEndTimerUI = roundEndTimer;
-        globalUI.GetComponent<GlobalUI>().roundEndTimeUI = roundEndTime;
-        globalUI.GetComponent<GlobalUI>().occupyingAUI.rate = occupyingA.rate;
-        globalUI.GetComponent<GlobalUI>().occupyingBUI.rate = occupyingB.rate;
-        globalUI.GetComponent<GlobalUI>().occupyingTeamUI.name = occupyingTeam.name;
-        globalUI.GetComponent<GlobalUI>().occupyingTeamUI.rate = occupyingTeam.rate;
+        globalUI.gameStateString = gameStateString;
+        globalUI.globalTimerUI = globalTimer;
+        globalUI.roundEndTimerUI = roundEndTimer;
+        globalUI.roundEndTimeUI = roundEndTime;
+        globalUI.occupyingAUI.rate = occupyingA.rate;
+        globalUI.occupyingBUI.rate = occupyingB.rate;
+        globalUI.occupyingTeamUI.name = occupyingTeam.name;
+        globalUI.occupyingTeamUI.rate = occupyingTeam.rate;
     }
 
     GameObject FindObject(GameObject parrent ,string name)
@@ -303,7 +306,7 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
             //ActorNumber로 custom property 접근, 캐릭터 viewID 데이터 추가
             //현재 캐릭터는 에테르나 고정, 접속 순서에 따라 A,B 팀 나뉨
 
-            if (i % 2 == 1)     // A 팀 (Red)
+            if (i % 2 == 0)     // A 팀 (Red)
             {
                 GameObject playerCharacter = PhotonNetwork.Instantiate("TaeWoo/Prefabs/Aeterna", playerSpawnA.position, Quaternion.identity);
                 playerCharacter.GetComponent<PhotonView>().TransferOwnership(allPlayers[i].ActorNumber);
@@ -341,21 +344,23 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
     {
         if (occupyingA.rate >= occupyingComplete && currentOccupationTeam == teamA && teamBOccupying <= 0)
         {
-            globalUI.GetComponent<PhotonView>().RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "extraObj", true);
-            globalUI.GetComponent<PhotonView>().RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "redExtraUI", false);
-            globalUI.GetComponent<PhotonView>().RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "redExtraObj", true);
+            globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "extraObj", true);
+            globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "redExtraUI", false);
+            globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "redExtraObj", true);
             roundEndTimer -= Time.deltaTime;
 
         }
         else if (occupyingB.rate >= occupyingComplete && currentOccupationTeam == teamB && teamAOccupying <= 0)
         {
-            globalUI.GetComponent<PhotonView>().RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "extraObj", true);
-            globalUI.GetComponent<PhotonView>().RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "blueExtraUI", false);
-            globalUI.GetComponent<PhotonView>().RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "blueExtraObj", true);
+            globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "extraObj", true);
+            globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "blueExtraUI", false);
+            globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "blueExtraObj", true);
             roundEndTimer -= Time.deltaTime;
         }
         else
+        {
             roundEndTimer = roundEndTime;
+        }
 
         if (roundEndTimer <= 0.0f)
         {
@@ -364,12 +369,12 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
             {
                 if (roundA == 0)
                 {
-                    globalUI.GetComponent<PhotonView>().RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "redFirstPoint", true);
+                    globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "redFirstPoint", true);
                 }
 
                 else if (roundA == 1)
                 {
-                    globalUI.GetComponent<PhotonView>().RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "redSecondPoint", true);
+                    globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "redSecondPoint", true);
                 }
 
                 occupyingA.rate = 100;
@@ -379,12 +384,12 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
             {
                 if (roundB == 0)
                 {
-                    globalUI.GetComponent<PhotonView>().RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "blueFirstPoint", true);
+                    globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "blueFirstPoint", true);
                 }
 
                 else if (roundB == 1)
                 {
-                    globalUI.GetComponent<PhotonView>().RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "blueSecondPoint", true);
+                    globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "blueSecondPoint", true);
                 }
 
                 occupyingB.rate = 100;
@@ -419,7 +424,6 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
         {
             //서로 교전 중이라는 것을 알림
             occupyingReturnTimer = 0f;
-            Debug.Log("교전중..");
         }
         else if (teamAOccupying > 0)//A팀 점령
         {
@@ -456,7 +460,7 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
         {
             if (currentOccupationTeam == name)
                 return;
-            occupyingTeam.rate += occupyingGaugeRate * Time.deltaTime * num;
+            occupyingTeam.rate += occupyingGaugeRate * Time.deltaTime;
             if (occupyingTeam.rate >= 100)
             {
                 currentOccupationTeam = name;
@@ -465,14 +469,20 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
 
                 if (currentOccupationTeam == "A")
                 {
-                    globalUI.GetComponent<PhotonView>().RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "captured_Red", true);
-                    globalUI.GetComponent<PhotonView>().RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "captured_Blue", false);
+                    globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "captured_Red", true);
+                    globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "captured_Blue", false);
+                    globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "extraObj", false);
+                    globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "blueExtraObj", false);
+                    globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "blueExtraUI", true);
                 }
 
                 else if (currentOccupationTeam == "B")
                 {
-                    globalUI.GetComponent<PhotonView>().RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "captured_Red", false);
-                    globalUI.GetComponent<PhotonView>().RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "captured_Blue", true);
+                    globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "captured_Red", false);
+                    globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "captured_Blue", true);
+                    globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "extraObj", false);
+                    globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "redExtraObj", false);
+                    globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "redExtraUI", true);
                 }
             }
         }
@@ -481,11 +491,11 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
             if (currentOccupationTeam == name)
                 return;
             occupyingTeam.name = name;
-            occupyingTeam.rate += occupyingGaugeRate * Time.deltaTime * num;
+            occupyingTeam.rate += occupyingGaugeRate * Time.deltaTime;
         }
         else
         {
-            occupyingTeam.rate -= occupyingGaugeRate * Time.deltaTime * num;
+            occupyingTeam.rate -= occupyingGaugeRate * Time.deltaTime;
             if (occupyingTeam.rate < 0)
             {
                 occupyingTeam.name = "";
@@ -506,17 +516,16 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
         teamAOccupying = 0;
         teamBOccupying = 0;
 
-        globalUI.GetComponent<PhotonView>().RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "captured_Red", false);
-        globalUI.GetComponent<PhotonView>().RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "captured_Blue", false);
-        globalUI.GetComponent<PhotonView>().RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "extraObj", false);
-        globalUI.GetComponent<PhotonView>().RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "redExtraUI", true);
-        globalUI.GetComponent<PhotonView>().RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "redExtraObj", false);
-        globalUI.GetComponent<PhotonView>().RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "blueExtraUI", true);
-        globalUI.GetComponent<PhotonView>().RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "blueExtraObj", false);
-        globalUI.GetComponent<PhotonView>().RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "etcUI", true);
+        globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "captured_Red", false);
+        globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "captured_Blue", false);
+        globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "extraObj", false);
+        globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "redExtraUI", true);
+        globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "redExtraObj", false);
+        globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "blueExtraUI", true);
+        globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "blueExtraObj", false);
+        globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "etcUI", true);
 
     }
-
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {

@@ -655,7 +655,7 @@ MonoBehaviour:
     SynchronizeType: 2
     Name: Grounded
   - Type: 9
-    SynchronizeType: 2
+    SynchronizeType: 0
     Name: BasicAttack
   - Type: 4
     SynchronizeType: 2

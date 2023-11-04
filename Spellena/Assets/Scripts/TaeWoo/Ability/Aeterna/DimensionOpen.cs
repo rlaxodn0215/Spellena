@@ -46,7 +46,7 @@ namespace Player
             {
                 IsDisActive();
 
-                animator.SetTrigger("BasicAttack");
+                Player.GetComponent<PhotonView>().RPC("BasicAttackTrigger", RpcTarget.AllBufferedViaServer);
 
                 if (Physics.Raycast(ray, out hit, Player.aeternaData.skill1DoorSpawnMaxRange, layerMask))
                 {

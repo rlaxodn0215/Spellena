@@ -48,7 +48,7 @@ namespace Player
 
         private void OnDuration()
         {
-            animator.SetTrigger("BasicAttack");
+            Player.GetComponent<PhotonView>().RPC("BasicAttackTrigger", RpcTarget.AllBufferedViaServer);
             sword.GetComponent<BoxCollider>().enabled = true;
             StartCoroutine(EndAttack());
         }

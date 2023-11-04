@@ -329,6 +329,12 @@ namespace Player
             }
         }
 
+        [PunRPC]
+        public void BasicAttackTrigger()
+        {
+            animator.SetTrigger("BasicAttack");
+        }
+
         private void Skill1Execute()
         {
             if (skillTimer[1] <= 0.0f && isMouseButton)
@@ -447,9 +453,9 @@ namespace Player
 
         IEnumerator Skill4AttackPause()
         {
-            animator.SetTrigger("BasicAttack");
+            photonView.RPC("BasicAttackTrigger", RpcTarget.AllBufferedViaServer);
             animator.SetBool("isHolding", false);
-            yield return new WaitForSeconds(animator.GetCurrentAnimatorClipInfo(1).Length/ 5.0f);
+            yield return new WaitForSeconds(animator.GetCurrentAnimatorClipInfo(1).Length/ 10.0f);
             animator.SetBool("isHolding", true);
             StopCoroutine(skill4SlashCoroutine);
         }

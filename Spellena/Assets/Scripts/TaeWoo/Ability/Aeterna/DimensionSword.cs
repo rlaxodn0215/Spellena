@@ -22,7 +22,7 @@ namespace Player
 
         public override void Execution()
         {
-            animator.SetTrigger("BasicAttack");
+            Player.GetComponent<PhotonView>().RPC("BasicAttackTrigger", RpcTarget.AllBufferedViaServer);
             Sword.GetComponent<BoxCollider>().enabled = true;
             StartCoroutine(EndAttack());
             StartCoroutine(ShootSlash());

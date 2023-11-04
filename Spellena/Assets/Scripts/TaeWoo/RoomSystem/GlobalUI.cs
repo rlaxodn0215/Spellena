@@ -3,12 +3,24 @@ using Photon.Pun;
 using System.Collections.Generic;
 using UnityEngine.UI;
 
-public class GlobalUI : MonoBehaviourPunCallbacks
+public class GlobalUI : MonoBehaviourPunCallbacks,IPunObservable
 {
     public GameObject inGameUI;
     public GameObject etcUI;
 
     Dictionary<string, GameObject> UIObjects = new Dictionary<string, GameObject>();
+
+    Text timerText;
+    Text gameStateUIText;
+    Image redPayloadImage;
+    Image bluePayloadImage;
+    Text redPercentageText;
+    Text bluePercentageText;
+    Text extraTimerText;
+    Image redFillCircleImage;
+    Image blueFillCircleImage;
+    Image redCTFImage;
+    Image blueCTFImage;
 
     public struct OccupyingTeam
     {
@@ -75,6 +87,18 @@ public class GlobalUI : MonoBehaviourPunCallbacks
 
         UIObjects["gameStateUI"] = FindObject(etcUI, "GameState");
         UIObjects["timer"] = FindObject(etcUI, "Timer");
+
+        timerText = UIObjects["timer"].GetComponent<Text>();
+        gameStateUIText = UIObjects["gameStateUI"].GetComponent<Text>();
+        redPayloadImage = UIObjects["redPayload"].GetComponent<Image>();
+        bluePayloadImage = UIObjects["bluePayload"].GetComponent<Image>();
+        redPercentageText = UIObjects["redPercentage"].GetComponent<Text>();
+        bluePercentageText = UIObjects["bluePercentage"].GetComponent<Text>();
+        extraTimerText = UIObjects["extraTimer"].GetComponent<Text>();
+        redFillCircleImage = UIObjects["redFillCircle"].GetComponent<Image>();
+        blueFillCircleImage = UIObjects["blueFillCircle"].GetComponent<Image>();
+        redCTFImage = UIObjects["redCTF"].GetComponent<Image>();
+        blueCTFImage = UIObjects["blueCTF"].GetComponent<Image>();
     }
 
     void InitUI()
@@ -85,17 +109,26 @@ public class GlobalUI : MonoBehaviourPunCallbacks
 
     void Update()
     {
-        UIObjects["timer"].GetComponent<Text>().text = ((int)globalTimerUI + 1).ToString();
-        UIObjects["gameStateUI"].GetComponent<Text>().text = gameStateString;
-        UIObjects["redPayload"].GetComponent<Image>().fillAmount = occupyingAUI.rate * 0.01f;
-        UIObjects["bluePayload"].GetComponent<Image>().fillAmount = occupyingBUI.rate * 0.01f;
-        UIObjects["redPercentage"].GetComponent<Text>().text = string.Format((int)occupyingAUI.rate + "%");
-        UIObjects["bluePercentage"].GetComponent<Text>().text = string.Format((int)occupyingBUI.rate + "%");
-        UIObjects["extraTimer"].GetComponent<Text>().text = string.Format("{0:F2}", roundEndTimerUI);
-        UIObjects["redFillCircle"].GetComponent<Image>().fillAmount = occupyingTeamUI.rate * 0.01f;
-        UIObjects["blueFillCircle"].GetComponent<Image>().fillAmount = occupyingTeamUI.rate * 0.01f;
-        UIObjects["redCTF"].GetComponent<Image>().fillAmount = roundEndTimerUI / roundEndTimeUI;
-        UIObjects["blueCTF"].GetComponent<Image>().fillAmount = roundEndTimerUI / roundEndTimeUI;
+        timerText.text = ((int)globalTimerUI + 1).ToString();
+        gameStateUIText.text = gameStateString;
+        redPayloadImage.fillAmount = occupyingAUI.rate * 0.01f;
+        bluePayloadImage.fillAmount = occupyingBUI.rate * 0.01f;
+        redPercentageText.text = string.Format((int)occupyingAUI.rate + "%");
+        bluePercentageText.text = string.Format((int)occupyingBUI.rate + "%");
+        extraTimerText.text = string.Format("{0:F2}", roundEndTimerUI);
+
+        if(occupyingTeamUI.name == "A")
+            redFillCircleImage.fillAmount = occupyingTeamUI.rate * 0.01f;
+        else if (occupyingTeamUI.name == "B")
+            blueFillCircleImage.fillAmount = occupyingTeamUI.rate * 0.01f;
+        else
+        {
+            redFillCircleImage.fillAmount = 0;
+            blueFillCircleImage.fillAmount = 0;
+        }
+
+        redCTFImage.fillAmount = roundEndTimerUI / roundEndTimeUI;
+        blueCTFImage.fillAmount = roundEndTimerUI / roundEndTimeUI;
     }
 
     [PunRPC]
@@ -124,5 +157,30 @@ public class GlobalUI : MonoBehaviourPunCallbacks
         }
 
         return foundObject;
+    }
+
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if (stream.IsWriting)
+        {
+            Debug.Log("Writting...");
+            stream.SendNext(gameStateString);
+            stream.SendNext(globalTimerUI);
+            stream.SendNext(roundEndTimerUI);
+            stream.SendNext(occupyingAUI.rate);
+            stream.SendNext(occupyingBUI.rate);
+            stream.SendNext(occupyingTeamUI.name);
+            stream.SendNext(occupyingTeamUI.rate);
+        }
+        else
+        {
+            gameStateString = (string)stream.ReceiveNext();
+            globalTimerUI = (float)stream.ReceiveNext();
+            roundEndTimerUI = (float)stream.ReceiveNext();
+            occupyingAUI.rate = (float)stream.ReceiveNext();
+            occupyingBUI.rate = (float)stream.ReceiveNext();
+            occupyingTeamUI.name = (string)stream.ReceiveNext();
+            occupyingTeamUI.rate = (float)stream.ReceiveNext();
+        }
     }
 }
