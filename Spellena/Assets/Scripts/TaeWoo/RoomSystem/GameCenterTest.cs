@@ -80,7 +80,7 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
     // 대기실 준비 시간
     float readyTime = 5f;
     // 거점 전환 원 먹는 비율
-    float occupyingGaugeRate = 100f;
+    float occupyingGaugeRate = 250f;
     // 거점 전환하는 시간
     float occupyingReturnTime = 3f;
     // 거점 % 먹는 비율
@@ -424,20 +424,24 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
         {
             //서로 교전 중이라는 것을 알림
             occupyingReturnTimer = 0f;
+            //globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "fighting", true);
         }
         else if (teamAOccupying > 0)//A팀 점령
         {
             ChangeOccupyingRate(teamAOccupying, teamA);
             occupyingReturnTimer = 0f;
+            //globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "fighting", false);
         }
         else if (teamBOccupying > 0)//B팀 점령
         {
             ChangeOccupyingRate(teamBOccupying, teamB);
             occupyingReturnTimer = 0f;
+            //globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "fighting", false);
         }
         else
         {
             occupyingReturnTimer += Time.deltaTime;
+            //globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "fighting", false);
         }
 
         if (occupyingReturnTimer >= occupyingReturnTime)

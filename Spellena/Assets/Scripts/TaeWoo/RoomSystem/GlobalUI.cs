@@ -68,6 +68,7 @@ public class GlobalUI : MonoBehaviourPunCallbacks,IPunObservable
         UIObjects["captured_Blue"] = FindObject(inGameUI, "BlueCapture");
         UIObjects["redFillCircle"] = FindObject(inGameUI, "RedOutline");
         UIObjects["blueFillCircle"] = FindObject(inGameUI, "BlueOutline");
+        UIObjects["fighting"] = FindObject(inGameUI, "Fighting");
         UIObjects["redPayload"] = FindObject(inGameUI, "RedPayload_Filled");
         UIObjects["bluePayload"] = FindObject(inGameUI, "BluePayload_Filled");
         UIObjects["redExtraUI"] = FindObject(inGameUI, "RedCTF");
