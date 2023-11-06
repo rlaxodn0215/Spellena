@@ -22,6 +22,10 @@ public class GlobalUI : MonoBehaviourPunCallbacks,IPunObservable
     Image redCTFImage;
     Image blueCTFImage;
 
+    List<Text> murderNames;
+    List<Text> victimNames;
+    List<Text> playerNames;
+
     public struct OccupyingTeam
     {
         public string name;
@@ -33,19 +37,19 @@ public class GlobalUI : MonoBehaviourPunCallbacks,IPunObservable
         public float rate;
     }
 
-    // ÀÏ½ÃÀûÀÎ °ÔÀÓ »óÅÂ string Å×ÀÌÅÍ
+    // ì¼ì‹œì ì¸ ê²Œì„ ìƒíƒœ string í…Œì´í„°
     public string gameStateString;
-    // ÀüÃ¼ Å¸ÀÌ¸Ó
+    // ì „ì²´ íƒ€ì´ë¨¸
     public float globalTimerUI;
-    // Ãß°¡½Ã°£ Å¸ÀÌ¸Ó
+    // ì¶”ê°€ì‹œê°„ íƒ€ì´ë¨¸
     public float roundEndTimerUI;
-    //Ãß°¡ ½Ã°£
+    //ì¶”ê°€ ì‹œê°„
     public float roundEndTimeUI = 5f;
-    // AÆÀÀÇ Á¡·Éµµ
+    // AíŒ€ì˜ ì ë ¹ë„
     public Occupation occupyingAUI;
-    // BÆÀÀÇ Á¡·Éµµ
+    // BíŒ€ì˜ ì ë ¹ë„
     public Occupation occupyingBUI;
-    // Á¡·É °ÔÀÌÁö ¹Ù
+    // ì ë ¹ ê²Œì´ì§€ ë°”
     public OccupyingTeam occupyingTeamUI;
 
     public Photon.Realtime.Player[] allPlayers;
@@ -81,10 +85,15 @@ public class GlobalUI : MonoBehaviourPunCallbacks,IPunObservable
         UIObjects["blueExtraObj"] = FindObject(inGameUI, "Blue");
         UIObjects["redCTF"] = FindObject(inGameUI, "RedCTF_Filled");
         UIObjects["blueCTF"] = FindObject(inGameUI, "BlueCTF_Filled");
+
         UIObjects["redFirstPoint"] = FindObject(inGameUI, "RedFirstPoint");
         UIObjects["redSecondPoint"] = FindObject(inGameUI, "RedSecondPoint");
         UIObjects["blueFirstPoint"] = FindObject(inGameUI, "BlueFirstPoint");
         UIObjects["blueSecondPoint"] = FindObject(inGameUI, "BlueSecondPoint");
+
+        ConnectKillLogs();
+        ConnectMyTeamStatus();
+        ConnectOutcome();
 
         UIObjects["gameStateUI"] = FindObject(etcUI, "GameState");
         UIObjects["timer"] = FindObject(etcUI, "Timer");
@@ -100,6 +109,44 @@ public class GlobalUI : MonoBehaviourPunCallbacks,IPunObservable
         blueFillCircleImage = UIObjects["blueFillCircle"].GetComponent<Image>();
         redCTFImage = UIObjects["redCTF"].GetComponent<Image>();
         blueCTFImage = UIObjects["blueCTF"].GetComponent<Image>();
+    }
+
+    void ConnectKillLogs()
+    {
+        int n = FindObject(inGameUI, "PlayerKillLogs").transform.childCount;
+
+        for(int i = 1; i <= n; i++)
+        {
+            UIObjects["killLog_" + i] = FindObject(inGameUI, "KillLog_" + i);
+            UIObjects["killLog_" + i + "_BackImage_Red"] = FindObject(inGameUI, "KillLog_" + i + "_BackImage_Red");
+            UIObjects["killLog_" + i + "BackImage_Blue"] = FindObject(inGameUI, "KillLog_" + i + "_BackImage_Blue");
+            UIObjects["murder_" + i] = FindObject(inGameUI, "Murder_" + i);
+            murderNames.Add(UIObjects["murder_" + i].GetComponent<Text>());
+            UIObjects["victim_" + i] = FindObject(inGameUI, "Victim_" + i);
+            victimNames.Add(UIObjects["victim_" + i].GetComponent<Text>());
+        }
+    }
+
+    void ConnectMyTeamStatus()
+    {
+        int n = FindObject(inGameUI, "MyTeamPlayerStatus").transform.childCount;
+
+        for(int i = 1; i <=n; i++)
+        {
+            UIObjects["player_" + i] = FindObject(inGameUI, "Player_" + i);
+            UIObjects["playerName_" + i] = FindObject(inGameUI, "PlayerName_" + i);
+            playerNames.Add(UIObjects["playerName_" + i].GetComponent<Text>());
+            UIObjects["playerDead_" + i] = FindObject(inGameUI, "PlayerDead_" + i);
+        }
+
+    }
+
+    void ConnectOutcome()
+    {
+        UIObjects["roundWin"] = FindObject(inGameUI, "RoundWin");
+        UIObjects["roundLoose"] = FindObject(inGameUI, "RoundLoose");
+        UIObjects["victory"] = FindObject(inGameUI, "Victory");
+        UIObjects["defeat"] = FindObject(inGameUI, "Defeat");
     }
 
     void InitUI()
@@ -148,13 +195,13 @@ public class GlobalUI : MonoBehaviourPunCallbacks,IPunObservable
             if (transform.name == name)
             {
                 foundObject = transform.gameObject;
-                break; // Ã£¾ÒÀ¸¸é ·çÇÁ¸¦ Á¾·á.
+                break; // ì°¾ì•˜ìœ¼ë©´ ë£¨í”„ë¥¼ ì¢…ë£Œ.
             }
         }
 
         if (foundObject == null)
         {
-            Debug.LogError("ÇØ´ç ÀÌ¸§ÀÇ °ÔÀÓ ¿ÀºêÁ§Æ®¸¦ Ã£Áö ¸øÇß½À´Ï´Ù : " + name);
+            Debug.LogError("í•´ë‹¹ ì´ë¦„ì˜ ê²Œì„ ì˜¤ë¸Œì íŠ¸ë¥¼ ì°¾ì§€ ëª»í–ˆìŠµë‹ˆë‹¤ : " + name);
         }
 
         return foundObject;

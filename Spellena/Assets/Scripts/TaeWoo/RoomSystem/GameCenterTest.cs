@@ -66,9 +66,9 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
     // 점령 게이지 바
     OccupyingTeam occupyingTeam;
 
-    public Photon.Realtime.Player[] allPlayers;
-    public List<GameObject> playersA = new List<GameObject>(); // Red
-    public List<GameObject> playersB = new List<GameObject>(); // Blue
+    int masterActorNum;
+    public List<Photon.Realtime.Player> playersA = new List<Photon.Realtime.Player>(); // Red
+    public List<Photon.Realtime.Player> playersB = new List<Photon.Realtime.Player>(); // Blue 
 
     // 이 이하는 테스트용 일시적 정보이다.
     // Scriptable Object로 데이터 전달
@@ -158,7 +158,8 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
         if (PhotonNetwork.CurrentRoom.PlayerCount >= tempNum)
         {
             globalTimer = loadingTime;
-            allPlayers = PhotonNetwork.PlayerList;
+
+            SetPlayerDatas();
 
             globalUIObj = PhotonNetwork.Instantiate("TaeWoo/Prefabs/UI/GlobalUI", Vector3.zero, Quaternion.identity);
             globalUIView = globalUIObj.GetComponent<PhotonView>();
@@ -166,10 +167,36 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
 
             playerSpawnPoints = PhotonNetwork.Instantiate("TaeWoo/Prefabs/PlayerSpawnPoints", Vector3.zero, Quaternion.identity);
             MakeSpawnPoint();
+
             gameState = GameState.MatchStart;
         }
 
     }
+
+    void SetPlayerDatas()
+    {
+        masterActorNum = PhotonNetwork.CurrentRoom.MasterClientId;
+
+        foreach(var player in PhotonNetwork.CurrentRoom.Players.Values)
+        {
+            // 플레이어 이름
+            // player.NickName = 
+
+            // 플레이어 캐릭터의 게임 오브젝트, 팀, 총 데미지 수, 킬 수, 죽은 수
+            ExitGames.Client.Photon.Hashtable playerData = new ExitGames.Client.Photon.Hashtable();
+
+            playerData.Add("CharacterGameObject", null);
+            playerData.Add("CharacterName", "none");
+            playerData.Add("Team", "none");
+            playerData.Add("TotalDamage", 0);
+            playerData.Add("Kills", 0);
+            playerData.Add("Dead", 0);
+
+            player.SetCustomProperties(playerData);
+
+        }
+    }
+
     void MakeSpawnPoint()
     {
         playerSpawnA = FindObject(playerSpawnPoints, "TeamA").transform;
@@ -301,43 +328,55 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
 
     void MakeCharacter()
     {
-        for(int i = 0; i < allPlayers.Length; i++)
+        foreach(var player in PhotonNetwork.CurrentRoom.Players.Values)
         {
-            //ActorNumber로 custom property 접근, 캐릭터 viewID 데이터 추가
             //현재 캐릭터는 에테르나 고정, 접속 순서에 따라 A,B 팀 나뉨
+            //if((string)player.CustomProperties["Team"]=="A")
+            string choseCharacter = "Aeterna";
 
-            if (i % 2 == 0)     // A 팀 (Red)
+            if (player.ActorNumber % 2 == 0)     // A 팀 (Red)
             {
-                GameObject playerCharacter = PhotonNetwork.Instantiate("TaeWoo/Prefabs/Aeterna", playerSpawnA.position, Quaternion.identity);
-                playerCharacter.GetComponent<PhotonView>().TransferOwnership(allPlayers[i].ActorNumber);
-                playerCharacter.GetComponent<PhotonView>().RPC("IsLocalPlayer", allPlayers[i]);
+                player.CustomProperties["CharacterGameObject"]
+                   = PhotonNetwork.Instantiate("TaeWoo/Prefabs/" + choseCharacter, playerSpawnA.position, Quaternion.identity);
+                GameObject playerCharacter = (GameObject)player.CustomProperties["CharacterGameObject"];
+                playerCharacter.GetComponent<PhotonView>().TransferOwnership(player.ActorNumber);
+                playerCharacter.GetComponent<PhotonView>().RPC("IsLocalPlayer", player);
                 playerCharacter.GetComponent<Character>().SetTagServer("TeamA");
-                playersA.Add(playerCharacter);
+                playersA.Add(player);
             }
 
             else                // B 팀 (Blue)
             {
-                GameObject playerCharacter = PhotonNetwork.Instantiate("TaeWoo/Prefabs/Aeterna", playerSpawnB.position, Quaternion.identity);
-                playerCharacter.GetComponent<PhotonView>().TransferOwnership(allPlayers[i].ActorNumber);
-                playerCharacter.GetComponent<PhotonView>().RPC("IsLocalPlayer", allPlayers[i]);
+                player.CustomProperties["CharacterGameObject"]
+                   = PhotonNetwork.Instantiate("TaeWoo/Prefabs/" + choseCharacter, playerSpawnB.position, Quaternion.identity);
+                GameObject playerCharacter = (GameObject)player.CustomProperties["CharacterGameObject"];
+                playerCharacter.GetComponent<PhotonView>().TransferOwnership(player.ActorNumber);
+                playerCharacter.GetComponent<PhotonView>().RPC("IsLocalPlayer", player);
                 playerCharacter.GetComponent<Character>().SetTagServer("TeamB");
-                playersB.Add(playerCharacter);
+                playersB.Add(player);
             }
         }
 
+        //적 쉐이더 적용
         for(int i = 0; i < playersA.Count;i++)
         {
-            PhotonView photonView = PhotonView.Get(playersA[i]);
-            photonView.gameObject.GetComponent<Character>().SetEnemyLayer();
+            if (PhotonNetwork.LocalPlayer.IsLocal)
+            {
+                GameObject temp = (GameObject)playersA[i].CustomProperties["CharacterGameObject"];
+                PhotonView photonView = temp.GetComponent<PhotonView>();
+                photonView.gameObject.GetComponent<Character>().SetEnemyLayer();
+            }
         }
 
         for (int i = 0; i < playersB.Count; i++)
         {
-            PhotonView photonView = PhotonView.Get(playersB[i]);
-            photonView.gameObject.GetComponent<Character>().SetEnemyLayer();
+            if (PhotonNetwork.LocalPlayer.IsLocal)
+            {
+                GameObject temp = (GameObject)playersB[i].CustomProperties["CharacterGameObject"];
+                PhotonView photonView = temp.GetComponent<PhotonView>();
+                photonView.gameObject.GetComponent<Character>().SetEnemyLayer();
+            }
         }
-
-
     }
 
     void CheckRoundEnd()
@@ -404,9 +443,13 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
         teamAOccupying = 0;
         teamBOccupying = 0;
 
+        GameObject temp;
+
         for (int i = 0; i < playersA.Count; i++)
         {
-            if (playersA[i].GetComponent<Character>().isOccupying == true)
+            temp = (GameObject)playersA[i].CustomProperties["CharacterGameObject"];
+
+            if (temp.GetComponent<Character>().isOccupying == true)
             {
                 teamAOccupying++;
             }
@@ -414,7 +457,9 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
 
         for (int i = 0; i < playersB.Count; i++)
         {
-            if (playersB[i].GetComponent<Character>().isOccupying == true)
+            temp = (GameObject)playersB[i].CustomProperties["CharacterGameObject"];
+
+            if (temp.GetComponent<Character>().isOccupying == true)
             {
                 teamBOccupying++;
             }
