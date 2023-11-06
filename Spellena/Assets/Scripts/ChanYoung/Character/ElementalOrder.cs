@@ -82,6 +82,8 @@ namespace Player
         //로컬 클라이언트에서 접근
         bool isEterialStorm = false;
         bool isMeteorStrike = false;
+        bool isRagnaEdge = false;
+        bool isTerraBreak = false;
 
         private Vector3 handPoint;
 
@@ -155,6 +157,16 @@ namespace Player
             if(eterialStormCoolDownTime > 0f)
             {
                 eterialStormCoolDownTime -= Time.deltaTime;
+            }
+
+            if(terraBreakCoolDownTime > 0f)
+            {
+                terraBreakCoolDownTime -= Time.deltaTime;
+            }
+
+            if(ragnaEdgeCoolDownTime > 0f)
+            {
+                ragnaEdgeCoolDownTime -= Time.deltaTime;
             }
 
         }
@@ -237,6 +249,35 @@ namespace Player
                     }
                 }
             }
+            else if(skillState == SkillState.RagnaEdge)
+            {
+                if(ragnaEdge == null)
+                {
+                    ragnaEdge = new RagnaEdge();
+                    isRagnaEdge = true;
+                }
+
+                if(isPointStrike == true)
+                {
+                    object[] _data = new object[5];
+                    _data[0] = name;
+                    _data[1] = tag;
+                    _data[2] = "RagnaEdge";
+
+                    ragnaEdgeCoolDownTime = ragnaEdge.GetSkillCoolDownTime();
+                    PhotonNetwork.Instantiate("ChanYoung/Prefabs/RagnaEdge", pointStrike, Quaternion.identity, data: _data);
+                    ragnaEdge = null;
+                    isPointStrike = false;
+                    skillState = SkillState.None;
+                }
+            }
+            else if(skillState == SkillState.TerraBreak)
+            {
+                if(terraBreak == null)
+                {
+                    terraBreak = new TerraBreak();
+                }
+            }
         }
         //로컬 클라이언트에서 확인하는 요소
         void CheckSkillOnMine()
@@ -262,8 +303,8 @@ namespace Player
                     Ray _tempRay = camera.GetComponent<Camera>().ScreenPointToRay(Aim.transform.position);
                     RaycastHit _tempRayHit;
                     LayerMask _tempLayerMask = LayerMask.GetMask("Map");
-                    MeteorStrike _localMeteorShower = new MeteorStrike();
-                    float _maxDistace = _localMeteorShower.maxDistance;
+                    MeteorStrike _localMeteorStrike = new MeteorStrike();
+                    float _maxDistace = _localMeteorStrike.maxDistance;
     
                     if (Physics.Raycast(_tempRay, out _tempRayHit, _maxDistace, _tempLayerMask))
                     {
@@ -303,6 +344,18 @@ namespace Player
                     }
                 }
             }
+            else if(skillState == SkillState.RagnaEdge)
+            {
+                if(isRagnaEdge == true)
+                {
+                    minimapCamera.GetComponent<Camera>().targetTexture = null;
+                    minimapCamera.GetComponent<Camera>().clearFlags = CameraClearFlags.Nothing;
+                    camera.GetComponent<MouseControl>().enabled = false;
+                    Cursor.visible = true;
+                    Cursor.lockState = CursorLockMode.None;
+                }
+
+            }
             else if(skillState == SkillState.None)
             {
                 if(isEterialStorm == true)
@@ -319,6 +372,16 @@ namespace Player
                 {
                     isMeteorStrike = false;
                     testCube.GetComponent <MeshRenderer>().enabled = false;
+                }
+                else if(isRagnaEdge == true)
+                {
+                    minimapCamera.GetComponent<Camera>().targetTexture = minimapRenderTexture;
+                    minimapCamera.GetComponent<Camera>().clearFlags = CameraClearFlags.SolidColor;
+
+                    camera.GetComponent<MouseControl>().enabled = true;
+                    Cursor.visible = false;
+                    Cursor.lockState = CursorLockMode.Locked;
+                    isRagnaEdge= false;
                 }
             }
             
@@ -386,6 +449,18 @@ namespace Player
                         skillState = SkillState.MeteorStrike;
                         CheckCommands(origin, direction);
                     }
+                    else if (((commands[0] == 1 && commands[1] == 2)
+                        || (commands[0] == 2 && commands[1] == 1)) && ragnaEdgeCoolDownTime <= 0f)
+                    {
+                        skillState = SkillState.RagnaEdge;
+                        CheckCommands(origin, direction);
+                    }
+                    else if (commands[0] == 2 && commands[1] == 2 && terraBreakCoolDownTime <= 0f)
+                    {
+                        skillState = SkillState.TerraBreak;
+                        CheckCommands(origin, direction);
+                    }
+
                 }
 
             }
@@ -446,14 +521,17 @@ namespace Player
                 if (isClicked == true)
                 {
                     //로컬 클라이언트 접근
-                    if(isEterialStorm == true)
+                    if(isEterialStorm == true || isRagnaEdge == true)
                     {
                         Ray _tempRay = minimapCamera.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
                         RaycastHit _tempHit;
                         int _tempLayerMask = ~(1 << LayerMask.NameToLayer("Minimap"));
                         if (Physics.Raycast(_tempRay, out _tempHit, Mathf.Infinity, _tempLayerMask))
                         {
-                            pointStrike = new Vector3(_tempHit.point.x, _tempHit.point.y + 1f, _tempHit.point.z);
+                            if(isEterialStorm == true)
+                                pointStrike = new Vector3(_tempHit.point.x, _tempHit.point.y + 1f, _tempHit.point.z);
+                            else
+                                pointStrike = new Vector3(_tempHit.point.x, _tempHit.point.y, _tempHit.point.z);
                             isPointStrike = true;
                         }
                     }
@@ -482,6 +560,7 @@ namespace Player
                 stream.SendNext(pointStrike);
                 stream.SendNext(isPointStrike);
                 stream.SendNext(isMeteorStrike);
+                stream.SendNext(isRagnaEdge);
                 stream.SendNext(arrivedVec);
             }
             else
@@ -493,6 +572,7 @@ namespace Player
                 pointStrike = (Vector3)stream.ReceiveNext();
                 isPointStrike = (bool)stream.ReceiveNext();
                 isMeteorStrike = (bool)stream.ReceiveNext();
+                isRagnaEdge = (bool)stream.ReceiveNext();
                 arrivedVec = (Vector3)stream.ReceiveNext();
             }
         }

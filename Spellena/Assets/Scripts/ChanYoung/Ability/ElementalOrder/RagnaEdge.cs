@@ -3,15 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using Player;
 
-public class RagnaEdge : Ability
+public class RagnaEdge
 {
-    public override void Execution()
-    {
+    float skillCoolDownTime = 10f;
 
-    }
-
-    public override void AddPlayer(Character player)
+    public float GetSkillCoolDownTime()
     {
-        base.AddPlayer(player);
+        return skillCoolDownTime;
     }
 }
