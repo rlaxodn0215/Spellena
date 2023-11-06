@@ -448,6 +448,11 @@ namespace Player
                 murder = enemy;
                 // 히트 스캔일 경우 RPC에 쏜 사람 이름 매개변수로 전달
                 Debug.Log("죽는것 확인");
+                if(photonView.IsMine)
+                {
+                    PhotonNetwork.CurrentRoom.Players[photonView.Owner.ActorNumber].CustomProperties["isAlive"] = false;
+                }
+                //PhotonNetwork.player
             }
 
             if(damage>0)

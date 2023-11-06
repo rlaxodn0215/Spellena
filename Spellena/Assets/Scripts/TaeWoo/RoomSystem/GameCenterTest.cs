@@ -1,5 +1,6 @@
 using UnityEngine;
 using Photon.Pun;
+using Photon.Realtime;
 using System.Collections.Generic;
 using Player;
 
@@ -179,20 +180,19 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
 
         foreach(var player in PhotonNetwork.CurrentRoom.Players.Values)
         {
-            // 플레이어 이름
-            // player.NickName = 
-
-            // 플레이어 캐릭터의 게임 오브젝트, 팀, 총 데미지 수, 킬 수, 죽은 수
+            // 플레이어 이름, 캐릭터의 게임 오브젝트, 팀, 총 데미지 수, 킬 수, 죽은 수
             ExitGames.Client.Photon.Hashtable playerData = new ExitGames.Client.Photon.Hashtable();
 
+            playerData.Add("Name", "no");
             playerData.Add("CharacterGameObject", null);
             playerData.Add("Team", "none");
             playerData.Add("TotalDamage", 0);
             playerData.Add("Kills", 0);
+            playerData.Add("Murder", 0);
+            playerData.Add("isAlive", true);
             playerData.Add("Dead", 0);
 
             player.SetCustomProperties(playerData);
-
         }
     }
 
@@ -266,6 +266,18 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
         OccupyAreaCounts();
         CheckRoundEnd();
     }
+
+    //public override void OnPhotonCustomRoomPropertiesChanged()
+    //{
+    //    // This method is called when any custom property in the room changes.
+    //    // You can check if the specific property you are interested in has changed and react accordingly.
+    //    if (propertiesThatChanged.ContainsKey("CustomValue"))
+    //    {
+    //        // The "CustomValue" property has changed.
+    //        // You can update your local variable or perform any actions here.
+    //        customPropertyValue = (int)propertiesThatChanged["CustomValue"];
+    //    }
+    //}
 
     void RoundEnd()
     {
