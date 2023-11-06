@@ -9,6 +9,7 @@ namespace Player
     public class Aeterna : Character
     {
         public AeternaData aeternaData;
+
         public GameObject DimensionSword;
         public GameObject DimensionSlash;
         public GameObject DimensionDoor;
@@ -31,7 +32,7 @@ namespace Player
         [HideInInspector]
         public int skillButton = 0;
         [HideInInspector]
-        public float[] skillTimer; //serizeview·Î °øÀ¯
+        public float[] skillTimer;
 
         [HideInInspector]
         public int ultimateCount = 0;
@@ -102,7 +103,7 @@ namespace Player
 
             for(int i = 0; i <= Skills.Count;i++)
             {
-                skillTimer[i] = -1;
+                skillTimer[i] = -0.01f;
             }
 
             skill2Phase = 1;

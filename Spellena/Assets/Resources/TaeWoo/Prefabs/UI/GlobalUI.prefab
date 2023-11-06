@@ -177,6 +177,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: InGameUI
       objectReference: {fileID: 0}
+    - target: {fileID: 8135333902747381375, guid: 6b7cd71dbeeb9a747a12a20c43e338de, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6b7cd71dbeeb9a747a12a20c43e338de, type: 3}
 --- !u!1 &8816560580522957930 stripped
@@ -283,6 +287,10 @@ PrefabInstance:
     - target: {fileID: 2703658482993605783, guid: b2ad125948d7bb34a8cfe03f2fde77c9, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2823941851923055298, guid: b2ad125948d7bb34a8cfe03f2fde77c9, type: 3}
+      propertyPath: m_UiScaleMode
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6363521506417267364, guid: b2ad125948d7bb34a8cfe03f2fde77c9, type: 3}
       propertyPath: sceneViewId

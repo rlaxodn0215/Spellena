@@ -22,9 +22,9 @@ public class GlobalUI : MonoBehaviourPunCallbacks,IPunObservable
     Image redCTFImage;
     Image blueCTFImage;
 
-    List<Text> murderNames;
-    List<Text> victimNames;
-    List<Text> playerNames;
+    List<Text> murderNames = new List<Text>();
+    List<Text> victimNames = new List<Text>();
+    List<Text> playerNames = new List<Text>();
 
     public struct OccupyingTeam
     {
@@ -185,7 +185,7 @@ public class GlobalUI : MonoBehaviourPunCallbacks,IPunObservable
         UIObjects[uiName].SetActive(isActive);
     }
 
-    GameObject FindObject(GameObject parrent, string name)
+    public static GameObject FindObject(GameObject parrent, string name)
     {
         GameObject foundObject = null;
         Transform[] array = parrent.GetComponentsInChildren<Transform>(true);

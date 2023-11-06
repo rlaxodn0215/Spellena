@@ -154,7 +154,7 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
         // allPlayers = PhotonNetwork.PlayerList;
         // custom property로 값 저장 (ActorNumber, name, team)
 
-        int tempNum = 2;
+        int tempNum = 1;
         if (PhotonNetwork.CurrentRoom.PlayerCount >= tempNum)
         {
             globalTimer = loadingTime;
@@ -186,7 +186,6 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
             ExitGames.Client.Photon.Hashtable playerData = new ExitGames.Client.Photon.Hashtable();
 
             playerData.Add("CharacterGameObject", null);
-            playerData.Add("CharacterName", "none");
             playerData.Add("Team", "none");
             playerData.Add("TotalDamage", 0);
             playerData.Add("Kills", 0);
