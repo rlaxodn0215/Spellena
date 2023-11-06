@@ -12,6 +12,12 @@ public class VideoOption : MonoBehaviour
     public GameObject resolutionCheckPanel;
     public GameObject settingPanel;
     public GameObject friendsPanel;
+    public GameObject playPanel;
+    public GameObject gameOffPanel;
+    public Button mainEscButton;
+    public Button friendEscButton;
+    public Button playEscButton;
+    public Button settingEscButton;
     public Dropdown resolutionDropdown;
     public Dropdown fullScreenDropdown;
     public Slider soundSlider;
@@ -28,6 +34,7 @@ public class VideoOption : MonoBehaviour
     FullScreenMode screenMode;
     List<Resolution> resolutions = new List<Resolution>();
 
+    Button escButton;
     
 
     // Start is called before the first frame update
@@ -51,15 +58,23 @@ public class VideoOption : MonoBehaviour
         {
             if (settingPanel.activeSelf)
             {
-                settingPanel.SetActive(false);
+                OnClickEscButton(settingEscButton);
             }
             else if(friendsPanel.activeSelf)
             {
-                friendsPanel.SetActive(false);
+                OnClickEscButton(friendEscButton);
             }
-            else
+            else if(playPanel.activeSelf)
             {
-                settingPanel.SetActive(true);
+                OnClickEscButton(playEscButton);
+            }
+            else if(gameOffPanel.activeSelf)
+            {
+                gameOffPanel.SetActive(false);
+            }
+            else 
+            {
+                OnClickEscButton(mainEscButton);
             }
         }
         if(!isEditText)
@@ -68,6 +83,13 @@ public class VideoOption : MonoBehaviour
         }
 
     }
+
+    public void OnClickEscButton(Button _btn)
+    {
+        escButton = _btn;
+        escButton.onClick.Invoke();
+    }
+
     void InitUI()
     {
         // 60프레인 기준 해상도만 리스트에 추가 

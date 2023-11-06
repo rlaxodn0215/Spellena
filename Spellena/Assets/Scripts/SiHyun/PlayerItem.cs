@@ -41,9 +41,7 @@ public class PlayerItem : MonoBehaviourPunCallbacks
         {
             localPlayerItemInstance = this.gameObject;
         }
-        targetObject = GameObject.Find("TeamAList");
-        playerItemParent = targetObject.transform;
-        this.transform.SetParent(playerItemParent);
+        TeamChanged("TeamAList");
     }
 
     private void Update()
@@ -53,6 +51,13 @@ public class PlayerItem : MonoBehaviourPunCallbacks
             leftArrowButton.SetActive(false);
             rightArrowButton.SetActive(false);
         }
+    }
+
+    private void TeamChanged(string _teamList)
+    {
+        targetObject = GameObject.Find(_teamList);
+        playerItemParent = targetObject.transform;
+        this.transform.SetParent(playerItemParent);
     }
 
     public void SetPlayerInfo(Photon.Realtime.Player _player)
@@ -88,25 +93,23 @@ public class PlayerItem : MonoBehaviourPunCallbacks
 
     public void OnClickLeftArrow()
     {
+        TeamChanged("TeamAList");
         playerItem.tag = "TeamA";
         leftArrowButton.SetActive(false);
         rightArrowButton.SetActive(true);
         playerProperties["playerTeam"] = (int)Team.TeamA;
         player.SetCustomProperties(playerProperties);
-        lobbyManagerScript.TeamChangedBToA(this);
         Debug.Log("ÆÀ ¹Ù²ñ");
     }
 
     public void OnClickRightArrow()
     {
-        string _team = "TeamB";
-        photonView.RPC("ChangedTeam", RpcTarget.AllBuffered, _team);
+        TeamChanged("TeamBList");
         playerItem.tag = "TeamB";
         leftArrowButton.SetActive(true);
         rightArrowButton.SetActive(false);
         playerProperties["playerTeam"] = (int)Team.TeamB;
         player.SetCustomProperties(playerProperties);
-        lobbyManagerScript.TeamChangedAToB(this);
         Debug.Log("ÆÀ ¹Ù²ñ");
     }
 
