@@ -1,5 +1,6 @@
 using UnityEngine;
 using Photon.Pun;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 
@@ -21,6 +22,9 @@ public class GlobalUI : MonoBehaviourPunCallbacks,IPunObservable
     Image blueFillCircleImage;
     Image redCTFImage;
     Image blueCTFImage;
+    Text killText;
+
+    int killLogIndex = 1;
 
     List<Text> murderNames = new List<Text>();
     List<Text> victimNames = new List<Text>();
@@ -51,6 +55,10 @@ public class GlobalUI : MonoBehaviourPunCallbacks,IPunObservable
     public Occupation occupyingBUI;
     // 점령 게이지 바
     public OccupyingTeam occupyingTeamUI;
+    // 킬 CrossHair 활성 시간
+    public float killActiveTime = 1f;
+    // 킬 로그 활성 시간
+    public float killLogActiveTime = 2f;
 
     public Photon.Realtime.Player[] allPlayers;
     public List<GameObject> playersA = new List<GameObject>(); // Red
@@ -91,6 +99,9 @@ public class GlobalUI : MonoBehaviourPunCallbacks,IPunObservable
         UIObjects["blueFirstPoint"] = FindObject(inGameUI, "BlueFirstPoint");
         UIObjects["blueSecondPoint"] = FindObject(inGameUI, "BlueSecondPoint");
 
+        UIObjects["damage"] = FindObject(inGameUI, "Damage");
+        UIObjects["killText"] = FindObject(inGameUI, "KillText");
+
         ConnectKillLogs();
         ConnectMyTeamStatus();
         ConnectOutcome();
@@ -109,6 +120,7 @@ public class GlobalUI : MonoBehaviourPunCallbacks,IPunObservable
         blueFillCircleImage = UIObjects["blueFillCircle"].GetComponent<Image>();
         redCTFImage = UIObjects["redCTF"].GetComponent<Image>();
         blueCTFImage = UIObjects["blueCTF"].GetComponent<Image>();
+        killText = UIObjects["killText"].GetComponent<Text>();
     }
 
     void ConnectKillLogs()
@@ -182,7 +194,26 @@ public class GlobalUI : MonoBehaviourPunCallbacks,IPunObservable
     [PunRPC]
     public void ActiveUI(string uiName, bool isActive)
     {
+        if (UIObjects[uiName] == null) return;
         UIObjects[uiName].SetActive(isActive);
+    }
+
+    [PunRPC]
+    public void ShowKillUI(string victim)
+    {
+        if (UIObjects["kill"] && UIObjects["killText"])
+        {
+            UIObjects["killText"].SetActive(true);
+            killText.text = string.Format("<color=red>" + victim + "</color>" + " 처치");
+            StartCoroutine(DisableUI("killText", killActiveTime));
+        }
+   
+    }
+
+    IEnumerator DisableUI(string name, float time)
+    {
+        yield return new WaitForSeconds(time);
+        UIObjects[name].SetActive(false);
     }
 
     public static GameObject FindObject(GameObject parrent, string name)

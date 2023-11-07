@@ -1,6 +1,7 @@
 using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
+using System.Collections;
 using System.Collections.Generic;
 using Player;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
@@ -76,11 +77,13 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
     // Scriptable Object로 데이터 전달
 
     // 맵, 캐릭터 로딩 타임
-    float loadingTime = 0f;
+    float loadingTime = 1f;
     // 캐릭터 선택 타임
-    float characterSelectTime = 0f;
+    float characterSelectTime = 1f;
     // 대기실 준비 시간
-    float readyTime = 0f;
+    float readyTime = 1f;
+    // 플레이어 리스폰 타임
+    float playerRespawnTime = 1;
     // 거점 전환 원 먹는 비율
     float occupyingGaugeRate = 250f;
     // 거점 전환하는 시간
@@ -161,6 +164,7 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
         {
             globalTimer = loadingTime;
 
+            //SetRoomDatas();
             SetPlayerDatas();
 
             globalUIObj = PhotonNetwork.Instantiate("TaeWoo/Prefabs/UI/GlobalUI", Vector3.zero, Quaternion.identity);
@@ -184,13 +188,19 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
             // 플레이어 이름, 캐릭터의 게임 오브젝트, 팀, 총 데미지 수, 킬 수, 죽은 수
             Hashtable playerData = new Hashtable();
 
+            // 보여주는 데이터
             playerData.Add("Name", player.ActorNumber);
-            playerData.Add("CharacterViewID", 0);
             playerData.Add("Team", "none");
             playerData.Add("TotalDamage", 0);
-            playerData.Add("Kills", 0);
-            playerData.Add("Dead", 0);
-            playerData.Add("Parameter", "none");
+            playerData.Add("KillCount", 0);
+            playerData.Add("DeadCount", 0);
+            playerData.Add("IsAlive", true);
+
+            // 보여주지 않는 데이터
+            playerData.Add("CharacterViewID", 0);
+            playerData.Add("DeadTime", -1.0f);
+            playerData.Add("ReSpawnTime", -1.0f);
+            playerData.Add("Parameter", null);
 
             player.SetCustomProperties(playerData);
         }
@@ -250,6 +260,8 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
 
     void Round()
     {
+        globalTimer += Time.deltaTime;
+
         //지역이 점령되어있으면 점령한 팀의 점령비율이 높아진다.
         if (currentOccupationTeam == teamA)
         {
@@ -265,12 +277,40 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
         }
 
         OccupyAreaCounts();
+        CheckPlayerReSpawn();
         CheckRoundEnd();
     }
 
+    void CheckPlayerReSpawn()
+    {
+        foreach(var player in PhotonNetwork.CurrentRoom.Players.Values)
+        {
+            if ((bool)player.CustomProperties["IsAlive"]) continue;
+            if((float)player.CustomProperties["ReSpawnTime"] <= globalTimer)
+            {
+                PhotonView view = PhotonView.Find((int)player.CustomProperties["CharacterViewID"]);
+
+                if((string)player.CustomProperties["Team"] == "A")
+                {
+                    view.RPC("PlayerReBorn", RpcTarget.AllBufferedViaServer, playerSpawnA.position);
+
+                }
+
+                else if((string)player.CustomProperties["Team"] == "B")
+                {
+                    view.RPC("PlayerReBorn", RpcTarget.AllBufferedViaServer, playerSpawnB.position);
+
+                }
+
+                player.CustomProperties["IsAlive"] = true;
+            }
+        }
+    }
+
+
     public static Photon.Realtime.Player FindPlayerWithCustomProperty(string key, string value)
     {
-        foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerList)
+        foreach (Photon.Realtime.Player player in PhotonNetwork.CurrentRoom.Players.Values)
         {
             if (player.CustomProperties.ContainsKey(key) && player.CustomProperties[key].ToString() == value)
             {
@@ -313,23 +353,30 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
                 {
                     case "TotalDamage":
                         Debug.Log("Update Total Damage " + targetPlayer.CustomProperties["Name"]);
+                        // 데이지 UI 활성화
                         break;
-                    case "Kills":
-                        Debug.Log("Update Kills " + targetPlayer.CustomProperties["Name"]);
+                    case "KillCount":
+                        Debug.Log("Update KillCount " + targetPlayer.CustomProperties["Name"]);
+                        // 킬 UI 활성화
+                        //globalUIObj.GetComponent<PhotonView>().RPC("ShowKillUI",targetPlayer,)
+                        
                         break;
-                    case "Dead":
-                        Debug.Log("Update Dead " + targetPlayer.CustomProperties["Name"]);
+                    case "DeadCount":
+                        Debug.Log("Update DeadCount " + targetPlayer.CustomProperties["Name"]);
+
+                        targetPlayer.CustomProperties["IsAlive"] = false;
+                        targetPlayer.CustomProperties["DeadTime"] = globalTimer;
+                        targetPlayer.CustomProperties["ReSpawnTime"] = globalTimer + playerRespawnTime;
+
+                        // 죽음 UI 활성화
                         break;
                     default:
                         break;
                 }
 
-                targetPlayer.CustomProperties["Parameter"] = "none";
-
             }
         }
     }
-
 
     void RoundEnd()
     {
@@ -405,6 +452,7 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
                 playerCharacter.GetComponent<PhotonView>().RPC("IsLocalPlayer", player);
                 playerCharacter.GetComponent<Character>().SetTagServer("TeamA");
                 ChangePlayerCustomProperties(player, "CharacterViewID", playerCharacter.GetComponent<PhotonView>().ViewID);
+                ChangePlayerCustomProperties(player, "Team", "A");
                 playersA.Add(player);
             }
 
@@ -416,6 +464,7 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
                 playerCharacter.GetComponent<PhotonView>().RPC("IsLocalPlayer", player);
                 playerCharacter.GetComponent<Character>().SetTagServer("TeamB");
                 ChangePlayerCustomProperties(player, "CharacterViewID", playerCharacter.GetComponent<PhotonView>().ViewID);
+                ChangePlayerCustomProperties(player, "Team", "B");
                 playersB.Add(player);
             }
         }

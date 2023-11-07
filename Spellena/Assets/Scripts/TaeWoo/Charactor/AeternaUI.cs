@@ -13,7 +13,6 @@ namespace Player
 
         Image hpBarImage;
         Text hpText;
-        Image killImage;
         Image skill4ChargeBarImage;
         List<Text> skillCooltimes = new List<Text>();
 
@@ -28,7 +27,6 @@ namespace Player
         {
             UIObjects["hpBar"] = GlobalUI.FindObject(gameObject, "HpBar");
             UIObjects["hpText"] = GlobalUI.FindObject(gameObject, "HpText");
-            UIObjects["kill"] = GlobalUI.FindObject(gameObject, "Kill");
             UIObjects["chargeBar"] = GlobalUI.FindObject(gameObject, "ChargeBar");
 
             for (int i = 1; i <= 3; i++)
@@ -47,7 +45,6 @@ namespace Player
 
             hpBarImage = UIObjects["hpBar"].GetComponent<Image>();
             hpText = UIObjects["hpText"].GetComponent<Text>();
-            killImage = UIObjects["kill"].GetComponent<Image>();
             skill4ChargeBarImage = UIObjects["chargeBar"].GetComponent<Image>();
 
             for (int i = 1; i <= 10; i++)

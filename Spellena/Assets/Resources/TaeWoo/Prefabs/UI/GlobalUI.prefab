@@ -53,6 +53,8 @@ MonoBehaviour:
   globalTimerUI: 0
   roundEndTimerUI: 0
   roundEndTimeUI: 5
+  killActiveTime: 1
+  killLogActiveTime: 2
   playersA: []
   playersB: []
 --- !u!114 &3829482606500867166
@@ -85,6 +87,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 7824049731993364394}
     m_Modifications:
+    - target: {fileID: 349144341, guid: 6b7cd71dbeeb9a747a12a20c43e338de, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1887410728, guid: 6b7cd71dbeeb9a747a12a20c43e338de, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4459471099486296675, guid: 6b7cd71dbeeb9a747a12a20c43e338de, type: 3}
       propertyPath: sceneViewId
       value: 0
@@ -176,10 +186,6 @@ PrefabInstance:
     - target: {fileID: 8135333902747381375, guid: 6b7cd71dbeeb9a747a12a20c43e338de, type: 3}
       propertyPath: m_Name
       value: InGameUI
-      objectReference: {fileID: 0}
-    - target: {fileID: 8135333902747381375, guid: 6b7cd71dbeeb9a747a12a20c43e338de, type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6b7cd71dbeeb9a747a12a20c43e338de, type: 3}

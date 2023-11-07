@@ -481,24 +481,45 @@ namespace Player
                 {
                     murder = enemy;
 
-                    int temp1 = (int)PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["Dead"];
-                    PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["Parameter"] = "Dead";
+                    int temp1 = (int)PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["DeadCount"];
+                    PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["Parameter"] = "DeadCount";
                     GameCenterTest.ChangePlayerCustomProperties
-                        (PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr], "Dead", temp1 + 1);
+                        (PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr], "DeadCount", temp1 + 1);
 
                     Photon.Realtime.Player killer = GameCenterTest.FindPlayerWithCustomProperty("CharacterViewID", enemy);
 
-                    if( killer == null)
+                    if( killer != null)
                     {
-                        Debug.Log("자살");
-                        return;
+                        int temp2 = (int)killer.CustomProperties["KillCount"];
+                        killer.CustomProperties["Parameter"] = "KillCount";
+                        GameCenterTest.ChangePlayerCustomProperties(killer, "KillCount", temp2 + 1);                      
                     }
 
-                    int temp2 = (int)killer.CustomProperties["Kills"];
-                    killer.CustomProperties["Parameter"] = "Kills";
-                    GameCenterTest.ChangePlayerCustomProperties(killer, "Kills", temp2 + 1);
+                    else
+                    {
+                        Debug.Log("자살");
+                    }
+
+                    photonView.RPC("PlayerDead", RpcTarget.AllBufferedViaServer);
+
                 }
             }
+        }
+
+        [PunRPC]
+        public void PlayerDead()
+        {
+            // Ragdoll로 처리
+            hp = dataHp;
+            gameObject.SetActive(false);
+        }
+
+        [PunRPC]
+        public void PlayerReBorn(Vector3 pos)
+        {
+            gameObject.transform.position = pos;
+            gameObject.transform.rotation = Quaternion.identity;
+            gameObject.SetActive(true);
         }
 
         protected virtual void OnAnimatorIK()
