@@ -41,7 +41,7 @@ public class PlayerItem : MonoBehaviourPunCallbacks
         {
             localPlayerItemInstance = this.gameObject;
         }
-        TeamChanged("TeamAList");
+        //TeamChanged("TeamAList");
     }
 
     private void Update()
@@ -60,7 +60,7 @@ public class PlayerItem : MonoBehaviourPunCallbacks
         this.transform.SetParent(playerItemParent);
     }
 
-    public void SetPlayerInfo(Photon.Realtime.Player _player)
+    public void SetPlayerInfo(Photon.Realtime.Player _player, PunTeams.Team _team)
     {
         Debug.Log(PhotonNetwork.IsMasterClient);
         Debug.Log(PhotonNetwork.InRoom);
@@ -77,7 +77,10 @@ public class PlayerItem : MonoBehaviourPunCallbacks
         _player.SetCustomProperties(customProperties);
 
         player = _player;
-        UpdatePlayerItem(player);
+        player.SetTeam(_team);
+        Debug.Log(player.GetTeam());
+
+        //UpdatePlayerItem(player);
     }
 
     async void GetUserName(string _userId)
