@@ -13,7 +13,6 @@ namespace Player
 
         Image hpBarImage;
         Text hpText;
-        Image killImage;
         Image skill4ChargeBarImage;
         List<Text> skillCooltimes = new List<Text>();
 
@@ -28,7 +27,6 @@ namespace Player
         {
             UIObjects["hpBar"] = GlobalUI.FindObject(gameObject, "HpBar");
             UIObjects["hpText"] = GlobalUI.FindObject(gameObject, "HpText");
-            UIObjects["kill"] = GlobalUI.FindObject(gameObject, "Kill");
             UIObjects["chargeBar"] = GlobalUI.FindObject(gameObject, "ChargeBar");
 
             for (int i = 1; i <= 3; i++)
@@ -39,11 +37,14 @@ namespace Player
             }
 
             UIObjects["skill_4_Active"] = GlobalUI.FindObject(gameObject, "Skill_4_Active");
-            UIObjects["skill_4_Lock"] = GlobalUI.FindObject(gameObject, "Skill_4_Lock");
+
+            for(int i = 1; i <=4; i++)
+            {
+                UIObjects["skill_"+i+"_Lock"] = GlobalUI.FindObject(gameObject, "Skill_"+i+"_Lock");
+            }
 
             hpBarImage = UIObjects["hpBar"].GetComponent<Image>();
             hpText = UIObjects["hpText"].GetComponent<Text>();
-            killImage = UIObjects["kill"].GetComponent<Image>();
             skill4ChargeBarImage = UIObjects["chargeBar"].GetComponent<Image>();
 
             for (int i = 1; i <= 10; i++)
@@ -93,7 +94,17 @@ namespace Player
         {
             for (int i = 0; i <= 2; i++)
             {
-                skillCooltimes[i].text = string.Format("{0:F1}", aeterna.skillTimer[i+1]);
+                if (aeterna.skillTimer[i + 1] >= 0.0f)
+                {
+                    skillCooltimes[i].text = string.Format("{0:F1}", aeterna.skillTimer[i + 1]);
+                    UIObjects["skill_" + (i + 1) + "_Lock"].SetActive(true);
+                }
+
+                else
+                {
+                    skillCooltimes[i].text = "";
+                    UIObjects["skill_" + (i + 1) + "_Lock"].SetActive(false);
+                }
             }
         }
 

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: PhotonServerSettings
   m_EditorClassIdentifier: 
   AppSettings:
-    AppIdRealtime: c96511c6-9ddc-406c-9dd3-3beb7adde172
+    AppIdRealtime: b40bc1c7-5808-4300-bd70-dbabca776df7
     AppIdFusion: 
     AppIdChat: 
     AppIdVoice: 
@@ -88,6 +88,10 @@ MonoBehaviour:
   - SyncUIActive
   - ActiveUI
   - BasicAttackTrigger
+  - PlayerDead
+  - PlayerReBorn
+  - ShowKillUI
+  - SetEnemyLayer
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1
