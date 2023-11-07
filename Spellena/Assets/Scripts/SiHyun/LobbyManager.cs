@@ -41,7 +41,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks, IPunObservable
         {
             PhotonNetwork.CreateRoom(roomInputField.text, new RoomOptions()
             {
-                MaxPlayers = 10
+                MaxPlayers = 14
             });
         }
     }
@@ -86,8 +86,9 @@ public class LobbyManager : MonoBehaviourPunCallbacks, IPunObservable
         lobbyPanel.SetActive(false);
         roomPanel.SetActive(true);
         roomName.text = "Room Name: " + PhotonNetwork.CurrentRoom.Name;
-        playerItemPool.Init();
-        UpdatePlayerList();
+        //playerItemPool.Init();
+        //UpdatePlayerList();
+        SetUpPlayerInfo(PhotonNetwork.LocalPlayer, PunTeams.Team.red);
     }
 
     public override void OnLeftRoom()
@@ -101,9 +102,52 @@ public class LobbyManager : MonoBehaviourPunCallbacks, IPunObservable
         PhotonNetwork.JoinLobby();
     }
 
+    void SetUpPlayerInfo(Photon.Realtime.Player _player, PunTeams.Team _team)
+    {
+        GameObject _playerItem = PhotonNetwork.Instantiate("PlayerItem", Vector3.zero, Quaternion.identity);
+        PlayerItem _item = _playerItem.GetComponent<PlayerItem>();
+        // PlayerItem에 플레이어 정보를 설정하고 RPC로 동기화
+        //_item.SetPlayerInfo(_player, _team);
+        SetPlayerInfoRPC(_player, _team); // RPC를 통해 다른 클라이언트에게 정보 전송
+        _playerItem.transform.SetParent(playerItemParentA);
+    }
+
+    void RemovePlayerItem(Photon.Realtime.Player _player)
+    {
+        // 플레이어가 방을 떠날 때 해당 플레이어의 PlayerItem을 삭제
+        PlayerItem[] playerItems = FindObjectsOfType<PlayerItem>();
+
+        foreach (PlayerItem item in playerItems)
+        {
+            if (item.photonView.OwnerActorNr == _player.ActorNumber)
+            {
+                PhotonNetwork.Destroy(item.gameObject);
+            }
+        }
+    }
+
+    [PunRPC]
+    void SetPlayerInfoRPC(Photon.Realtime.Player _player, PunTeams.Team _team)
+    {
+        // RPC로 호출되는 함수로, 플레이어 정보를 설정
+        PlayerItem _item = GetComponent<PlayerItem>();
+
+        if (_player.IsLocal)
+        {
+            // 이 플레이어가 로컬 플레이어일 경우
+            _item.SetPlayerInfo(_player, _team);
+        }
+        else
+        {
+            // 다른 플레이어일 경우
+            _item.SetPlayerInfo(_player, _team);
+        }
+    }
+
+
     void UpdatePlayerList()
     {
-        Photon.Realtime.Player[] _players = PhotonNetwork.PlayerList;
+        /*Photon.Realtime.Player[] _players = PhotonNetwork.PlayerList;
 
         int index = 0;
         List<GameObject> _playerItems = playerItemPool.GetPlayerItemPool();
@@ -131,7 +175,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks, IPunObservable
             {
                 Debug.LogWarning("플레이어 GameObject가 부족합니다.");
             }
-        }
+        }*/
 
 
         /*Photon.Realtime.Player[] _players = PhotonNetwork.PlayerList;
@@ -193,14 +237,14 @@ public class LobbyManager : MonoBehaviourPunCallbacks, IPunObservable
         }*/
     }
 
-    public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
+    public override void OnPlayerEnteredRoom(Photon.Realtime.Player _newPlayer)
     {
-        UpdatePlayerList();
+        SetUpPlayerInfo(_newPlayer, PunTeams.Team.red);
     }
 
     public override void OnPlayerLeftRoom(Photon.Realtime.Player otherPlayer)
     {
-        UpdatePlayerList();
+        RemovePlayerItem(otherPlayer);
     }
 
 
