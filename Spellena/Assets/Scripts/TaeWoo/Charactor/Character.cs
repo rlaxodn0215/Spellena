@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using Photon.Pun;
 using Photon.Realtime;
+using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 namespace Player
 {
@@ -439,26 +440,65 @@ namespace Player
         [PunRPC]
         public void PlayerDamaged(string enemy ,int damage)
         {
-            if(hp <= dataHp)
-                hp-=damage;
-
-            if (hp <= 0)
+            if (damage > 0)
             {
-                // 투척 무기에 쏜 사람 이름 저장
-                murder = enemy;
-                // 히트 스캔일 경우 RPC에 쏜 사람 이름 매개변수로 전달
-                Debug.Log("죽는것 확인");
-                if(photonView.IsMine)
+                if (hp <= dataHp)
                 {
-                    PhotonNetwork.CurrentRoom.Players[photonView.Owner.ActorNumber].CustomProperties["isAlive"] = false;
+                    hp -= damage;
+                    Debug.Log("Player Damaged !!  EnemyName: " + enemy);
                 }
-                //PhotonNetwork.player
             }
 
-            if(damage>0)
-                Debug.Log("Player Damaged !!  EnemyName: " + enemy);
             else
+            {
+                if (hp < dataHp)
+                {
+                    hp -= damage;
+                }
+
                 Debug.Log("Player Healing !!");
+            }
+
+
+            if (PhotonNetwork.IsMasterClient)
+            {
+                if (damage > 0)
+                {
+                    Photon.Realtime.Player killer = GameCenterTest.FindPlayerWithCustomProperty("CharacterViewID", enemy);
+
+                    if (killer == null)
+                    {
+                        Debug.Log("자해");
+                        return;
+                    }
+
+                    int temp = (int)killer.CustomProperties["TotalDamage"];
+                    killer.CustomProperties["Parameter"] = "TotalDamage";
+                    GameCenterTest.ChangePlayerCustomProperties(killer, "TotalDamage", temp + damage);
+                }
+
+                if (hp <= 0)
+                {
+                    murder = enemy;
+
+                    int temp1 = (int)PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["Dead"];
+                    PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["Parameter"] = "Dead";
+                    GameCenterTest.ChangePlayerCustomProperties
+                        (PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr], "Dead", temp1 + 1);
+
+                    Photon.Realtime.Player killer = GameCenterTest.FindPlayerWithCustomProperty("CharacterViewID", enemy);
+
+                    if( killer == null)
+                    {
+                        Debug.Log("자살");
+                        return;
+                    }
+
+                    int temp2 = (int)killer.CustomProperties["Kills"];
+                    killer.CustomProperties["Parameter"] = "Kills";
+                    GameCenterTest.ChangePlayerCustomProperties(killer, "Kills", temp2 + 1);
+                }
+            }
         }
 
         protected virtual void OnAnimatorIK()

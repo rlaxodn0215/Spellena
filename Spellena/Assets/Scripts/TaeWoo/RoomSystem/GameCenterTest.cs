@@ -3,6 +3,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using System.Collections.Generic;
 using Player;
+using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
 {
@@ -75,11 +76,11 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
     // Scriptable Object로 데이터 전달
 
     // 맵, 캐릭터 로딩 타임
-    float loadingTime = 3f;
+    float loadingTime = 0f;
     // 캐릭터 선택 타임
-    float characterSelectTime = 5f;
+    float characterSelectTime = 0f;
     // 대기실 준비 시간
-    float readyTime = 5f;
+    float readyTime = 0f;
     // 거점 전환 원 먹는 비율
     float occupyingGaugeRate = 250f;
     // 거점 전환하는 시간
@@ -155,7 +156,7 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
         // allPlayers = PhotonNetwork.PlayerList;
         // custom property로 값 저장 (ActorNumber, name, team)
 
-        int tempNum = 1;
+        int tempNum = 2;
         if (PhotonNetwork.CurrentRoom.PlayerCount >= tempNum)
         {
             globalTimer = loadingTime;
@@ -178,22 +179,22 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
     {
         masterActorNum = PhotonNetwork.CurrentRoom.MasterClientId;
 
-        foreach(var player in PhotonNetwork.CurrentRoom.Players.Values)
+        foreach(Photon.Realtime.Player player in PhotonNetwork.CurrentRoom.Players.Values)
         {
             // 플레이어 이름, 캐릭터의 게임 오브젝트, 팀, 총 데미지 수, 킬 수, 죽은 수
-            ExitGames.Client.Photon.Hashtable playerData = new ExitGames.Client.Photon.Hashtable();
+            Hashtable playerData = new Hashtable();
 
-            playerData.Add("Name", "no");
-            playerData.Add("CharacterGameObject", null);
+            playerData.Add("Name", player.ActorNumber);
+            playerData.Add("CharacterViewID", 0);
             playerData.Add("Team", "none");
             playerData.Add("TotalDamage", 0);
             playerData.Add("Kills", 0);
-            playerData.Add("Murder", 0);
-            playerData.Add("isAlive", true);
             playerData.Add("Dead", 0);
+            playerData.Add("Parameter", "none");
 
             player.SetCustomProperties(playerData);
         }
+
     }
 
     void MakeSpawnPoint()
@@ -267,17 +268,68 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
         CheckRoundEnd();
     }
 
-    //public override void OnPhotonCustomRoomPropertiesChanged()
-    //{
-    //    // This method is called when any custom property in the room changes.
-    //    // You can check if the specific property you are interested in has changed and react accordingly.
-    //    if (propertiesThatChanged.ContainsKey("CustomValue"))
-    //    {
-    //        // The "CustomValue" property has changed.
-    //        // You can update your local variable or perform any actions here.
-    //        customPropertyValue = (int)propertiesThatChanged["CustomValue"];
-    //    }
-    //}
+    public static Photon.Realtime.Player FindPlayerWithCustomProperty(string key, string value)
+    {
+        foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerList)
+        {
+            if (player.CustomProperties.ContainsKey(key) && player.CustomProperties[key].ToString() == value)
+            {
+                return player; 
+            }
+        }
+
+        return null; 
+    }
+
+    public static void ChangePlayerCustomProperties(Photon.Realtime.Player player, string key, object value)
+    {
+        Hashtable temp = player.CustomProperties;
+
+        if (temp[key] != null)
+        {
+            temp[key] = value;
+            player.SetCustomProperties(temp);
+        }
+
+        else
+        {
+            Debug.LogError("해당 플레이어의 키 값을 찾을 수 없습니다.");
+            return;
+        }
+        
+    }
+
+    public override void OnPlayerPropertiesUpdate(Photon.Realtime.Player targetPlayer, Hashtable changedProps)
+    {
+        if (gameState == GameState.Round)
+        {
+            if (targetPlayer != null && changedProps != null)
+            {
+                //pararmeter로 변경된 key값을 찾는다.
+
+                string param = (string)targetPlayer.CustomProperties["Parameter"];
+
+                switch (param)
+                {
+                    case "TotalDamage":
+                        Debug.Log("Update Total Damage " + targetPlayer.CustomProperties["Name"]);
+                        break;
+                    case "Kills":
+                        Debug.Log("Update Kills " + targetPlayer.CustomProperties["Name"]);
+                        break;
+                    case "Dead":
+                        Debug.Log("Update Dead " + targetPlayer.CustomProperties["Name"]);
+                        break;
+                    default:
+                        break;
+                }
+
+                targetPlayer.CustomProperties["Parameter"] = "none";
+
+            }
+        }
+    }
+
 
     void RoundEnd()
     {
@@ -347,47 +399,47 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
 
             if (player.ActorNumber % 2 == 0)     // A 팀 (Red)
             {
-                player.CustomProperties["CharacterGameObject"]
-                   = PhotonNetwork.Instantiate("TaeWoo/Prefabs/" + choseCharacter, playerSpawnA.position, Quaternion.identity);
-                GameObject playerCharacter = (GameObject)player.CustomProperties["CharacterGameObject"];
+                GameObject playerCharacter 
+                    = PhotonNetwork.Instantiate("TaeWoo/Prefabs/" + choseCharacter, playerSpawnA.position, Quaternion.identity);
                 playerCharacter.GetComponent<PhotonView>().TransferOwnership(player.ActorNumber);
                 playerCharacter.GetComponent<PhotonView>().RPC("IsLocalPlayer", player);
                 playerCharacter.GetComponent<Character>().SetTagServer("TeamA");
+                ChangePlayerCustomProperties(player, "CharacterViewID", playerCharacter.GetComponent<PhotonView>().ViewID);
                 playersA.Add(player);
             }
 
             else                // B 팀 (Blue)
             {
-                player.CustomProperties["CharacterGameObject"]
-                   = PhotonNetwork.Instantiate("TaeWoo/Prefabs/" + choseCharacter, playerSpawnB.position, Quaternion.identity);
-                GameObject playerCharacter = (GameObject)player.CustomProperties["CharacterGameObject"];
+                GameObject playerCharacter 
+                    = PhotonNetwork.Instantiate("TaeWoo/Prefabs/" + choseCharacter, playerSpawnB.position, Quaternion.identity);
                 playerCharacter.GetComponent<PhotonView>().TransferOwnership(player.ActorNumber);
                 playerCharacter.GetComponent<PhotonView>().RPC("IsLocalPlayer", player);
                 playerCharacter.GetComponent<Character>().SetTagServer("TeamB");
+                ChangePlayerCustomProperties(player, "CharacterViewID", playerCharacter.GetComponent<PhotonView>().ViewID);
                 playersB.Add(player);
             }
         }
 
-        //적 쉐이더 적용
-        for(int i = 0; i < playersA.Count;i++)
-        {
-            if (PhotonNetwork.LocalPlayer.IsLocal)
-            {
-                GameObject temp = (GameObject)playersA[i].CustomProperties["CharacterGameObject"];
-                PhotonView photonView = temp.GetComponent<PhotonView>();
-                photonView.gameObject.GetComponent<Character>().SetEnemyLayer();
-            }
-        }
+        ////적 쉐이더 적용
+        //for(int i = 0; i < playersA.Count;i++)
+        //{
+        //    if (PhotonNetwork.LocalPlayer.IsLocal)
+        //    {
+        //        GameObject temp = (GameObject)playersA[i].CustomProperties["CharacterGameObject"];
+        //        PhotonView photonView = temp.GetComponent<PhotonView>();
+        //        photonView.gameObject.GetComponent<Character>().SetEnemyLayer();
+        //    }
+        //}
 
-        for (int i = 0; i < playersB.Count; i++)
-        {
-            if (PhotonNetwork.LocalPlayer.IsLocal)
-            {
-                GameObject temp = (GameObject)playersB[i].CustomProperties["CharacterGameObject"];
-                PhotonView photonView = temp.GetComponent<PhotonView>();
-                photonView.gameObject.GetComponent<Character>().SetEnemyLayer();
-            }
-        }
+        //for (int i = 0; i < playersB.Count; i++)
+        //{
+        //    if (PhotonNetwork.LocalPlayer.IsLocal)
+        //    {
+        //        GameObject temp = (GameObject)playersB[i].CustomProperties["CharacterGameObject"];
+        //        PhotonView photonView = temp.GetComponent<PhotonView>();
+        //        photonView.gameObject.GetComponent<Character>().SetEnemyLayer();
+        //    }
+        //}
     }
 
     void CheckRoundEnd()
@@ -449,6 +501,23 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
             gameState = GameState.RoundEnd;//라운드 종료
         }
     }
+
+    GameObject FindObjectWithViewID(int viewID)
+    {
+        PhotonView photonView = PhotonView.Find(viewID);
+
+        if (photonView == null)
+        {
+            Debug.LogError("해당 " + viewID + "로 게임 오브젝트를 찾을 수 없습니다.");
+            return null;
+        }
+
+        else
+        {
+            return photonView.gameObject;
+        }
+    }
+
     void OccupyAreaCounts()//점령 지역에 플레이어가 몇 명 점령하고 있는지 확인
     {
         teamAOccupying = 0;
@@ -458,7 +527,7 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
 
         for (int i = 0; i < playersA.Count; i++)
         {
-            temp = (GameObject)playersA[i].CustomProperties["CharacterGameObject"];
+            temp = FindObjectWithViewID((int)playersA[i].CustomProperties["CharacterViewID"]);
 
             if (temp.GetComponent<Character>().isOccupying == true)
             {
@@ -468,7 +537,7 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
 
         for (int i = 0; i < playersB.Count; i++)
         {
-            temp = (GameObject)playersB[i].CustomProperties["CharacterGameObject"];
+            temp = FindObjectWithViewID((int)playersB[i].CustomProperties["CharacterViewID"]);
 
             if (temp.GetComponent<Character>().isOccupying == true)
             {

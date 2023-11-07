@@ -211,7 +211,6 @@ public class GlobalUI : MonoBehaviourPunCallbacks,IPunObservable
     {
         if (stream.IsWriting)
         {
-            Debug.Log("Writting...");
             stream.SendNext(gameStateString);
             stream.SendNext(globalTimerUI);
             stream.SendNext(roundEndTimerUI);
