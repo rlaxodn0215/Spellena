@@ -4,8 +4,11 @@ using UnityEngine;
 
 public class GaiaTied
 {
-    public void Initialize()
-    {
+    public float maxDistance = 5f;
+    float skillCoolDownTime = 12f;
 
+    public float GetSkillCoolDownTime()
+    {
+        return skillCoolDownTime;
     }
 }

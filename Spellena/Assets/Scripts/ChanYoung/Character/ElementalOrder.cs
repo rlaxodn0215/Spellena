@@ -84,6 +84,7 @@ namespace Player
         bool isMeteorStrike = false;
         bool isRagnaEdge = false;
         bool isTerraBreak = false;
+        bool isGaiaTied = false;
 
         private Vector3 handPoint;
 
@@ -167,6 +168,11 @@ namespace Player
             if(ragnaEdgeCoolDownTime > 0f)
             {
                 ragnaEdgeCoolDownTime -= Time.deltaTime;
+            }
+
+            if(meteorStrikeCoolDownTime > 0f)
+            {
+                meteorStrikeCoolDownTime -= Time.deltaTime;
             }
 
         }
@@ -273,9 +279,47 @@ namespace Player
             }
             else if(skillState == SkillState.TerraBreak)
             {
-                if(terraBreak == null)
+                if (terraBreak == null)
                 {
                     terraBreak = new TerraBreak();
+                    isTerraBreak = true;
+                }
+
+                if (isPointStrike == true)
+                {
+                    object[] _data = new object[5];
+                    _data[0] = name;
+                    _data[1] = tag;
+                    _data[2] = "TerraBreak";
+
+                    PhotonNetwork.Instantiate("ChanYoung/Prefabs/TerraBreak", pointStrike, Quaternion.identity, data: _data);
+                    terraBreakCoolDownTime = terraBreak.GetSkillCoolDownTime();
+                    terraBreak = null;
+                    isPointStrike = false;
+                    skillState = SkillState.None;
+                }
+            }
+            else if(skillState == SkillState.GaiaTied)
+            {
+                if(gaiaTied == null)
+                {
+                    gaiaTied = new GaiaTied();
+                    isGaiaTied = true;
+                }
+
+                if(isPointStrike == true)
+                {
+                    object[] _data = new object[5];
+                    _data[0] = name;
+                    _data[1] = tag;
+                    _data[2] = "gaiaTied";
+                    _data[3] = direction;
+
+                    PhotonNetwork.Instantiate("ChanYoung/Prefabs/GaiaTied", pointStrike, Quaternion.identity, data: _data);
+                    gaiaTiedCoolDownTime = gaiaTied.GetSkillCoolDownTime();
+                    gaiaTied = null;
+                    isPointStrike = false;
+                    skillState = SkillState.None;
                 }
             }
         }
@@ -295,16 +339,31 @@ namespace Player
                     isEterialStorm = true;
                 }  
             }
-            else if(skillState == SkillState.MeteorStrike)
+            else if(skillState == SkillState.MeteorStrike || skillState == SkillState.TerraBreak
+                || skillState == SkillState.GaiaTied)
             {
-                if (isMeteorStrike == true)
+                if (isMeteorStrike == true || isTerraBreak == true || isGaiaTied == true)
                 {
                     Vector3 _arrivedGroundVec;
                     Ray _tempRay = camera.GetComponent<Camera>().ScreenPointToRay(Aim.transform.position);
                     RaycastHit _tempRayHit;
                     LayerMask _tempLayerMask = LayerMask.GetMask("Map");
-                    MeteorStrike _localMeteorStrike = new MeteorStrike();
-                    float _maxDistace = _localMeteorStrike.maxDistance;
+                    float _maxDistace;
+                    if (skillState == SkillState.MeteorStrike)
+                    {
+                        MeteorStrike _localMeteorStrike = new MeteorStrike();
+                        _maxDistace =  _localMeteorStrike.maxDistance;
+                    }
+                    else if(skillState == SkillState.TerraBreak)
+                    {
+                        TerraBreak _localTerraBreak = new TerraBreak();
+                        _maxDistace = _localTerraBreak.maxDistance;
+                    }
+                    else
+                    {
+                        GaiaTied _localGaiaTied = new GaiaTied();
+                        _maxDistace = _localGaiaTied.maxDistance;
+                    }
     
                     if (Physics.Raycast(_tempRay, out _tempRayHit, _maxDistace, _tempLayerMask))
                     {
@@ -368,12 +427,12 @@ namespace Player
                     Cursor.lockState = CursorLockMode.Locked;
                     isEterialStorm = false;
                 }
-                else if(isMeteorStrike == true)
+                else if(isMeteorStrike)
                 {
                     isMeteorStrike = false;
                     testCube.GetComponent <MeshRenderer>().enabled = false;
                 }
-                else if(isRagnaEdge == true)
+                else if(isRagnaEdge)
                 {
                     minimapCamera.GetComponent<Camera>().targetTexture = minimapRenderTexture;
                     minimapCamera.GetComponent<Camera>().clearFlags = CameraClearFlags.SolidColor;
@@ -382,6 +441,16 @@ namespace Player
                     Cursor.visible = false;
                     Cursor.lockState = CursorLockMode.Locked;
                     isRagnaEdge= false;
+                }
+                else if(isTerraBreak)
+                {
+                    isTerraBreak = false;
+                    testCube.GetComponent<MeshRenderer>().enabled = false;
+                }
+                else if(isGaiaTied)
+                {
+                    isGaiaTied = false;
+                    testCube.GetComponent<MeshRenderer>().enabled = false;
                 }
             }
             
@@ -414,7 +483,18 @@ namespace Player
             else if(skillState == SkillState.MeteorStrike)
             {
                 meteorStrike = null;
-                isMeteorStrike = false;
+            }
+            else if(skillState == SkillState.TerraBreak)
+            {
+                terraBreak = null;
+            }
+            else if(skillState == SkillState.EterialStorm)
+            {
+                eterialStorm = null;
+            }
+            else if(skillState == SkillState.RagnaEdge)
+            {
+                ragnaEdge = null;
             }
 
             skillState = SkillState.None;
@@ -460,9 +540,7 @@ namespace Player
                         skillState = SkillState.TerraBreak;
                         CheckCommands(origin, direction);
                     }
-
                 }
-
             }
             else
             {
@@ -521,7 +599,7 @@ namespace Player
                 if (isClicked == true)
                 {
                     //로컬 클라이언트 접근
-                    if(isEterialStorm == true || isRagnaEdge == true)
+                    if(isEterialStorm || isRagnaEdge)
                     {
                         Ray _tempRay = minimapCamera.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
                         RaycastHit _tempHit;
@@ -535,10 +613,11 @@ namespace Player
                             isPointStrike = true;
                         }
                     }
-                    else if(isMeteorStrike == true)
+                    else if(isMeteorStrike || isTerraBreak || isGaiaTied)
                     {
                         pointStrike = testCube.transform.position;
                         isPointStrike = true;
+                        Debug.Log("testCube : " + pointStrike);
                     }
 
                     photonView.RPC("ClickMouse", RpcTarget.MasterClient, screenRay.origin, screenRay.direction);
@@ -561,6 +640,8 @@ namespace Player
                 stream.SendNext(isPointStrike);
                 stream.SendNext(isMeteorStrike);
                 stream.SendNext(isRagnaEdge);
+                stream.SendNext(isTerraBreak);
+                stream.SendNext(isGaiaTied);
                 stream.SendNext(arrivedVec);
             }
             else
@@ -573,6 +654,8 @@ namespace Player
                 isPointStrike = (bool)stream.ReceiveNext();
                 isMeteorStrike = (bool)stream.ReceiveNext();
                 isRagnaEdge = (bool)stream.ReceiveNext();
+                isTerraBreak = (bool)stream.ReceiveNext();
+                isGaiaTied = (bool)stream.ReceiveNext();
                 arrivedVec = (Vector3)stream.ReceiveNext();
             }
         }

@@ -2,17 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TerraBreak : MonoBehaviour
+public class TerraBreak
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public float maxDistance = 5f;
+    float skillCoolDownTime = 19f;
 
-    // Update is called once per frame
-    void Update()
+    public float GetSkillCoolDownTime()
     {
-        
+        return skillCoolDownTime;
     }
 }
