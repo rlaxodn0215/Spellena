@@ -525,7 +525,7 @@ MonoBehaviour:
   rigidbody: {fileID: 0}
   moveVec: {x: 0, y: 0, z: 0}
   aeternaData: {fileID: 11400000, guid: 3ab088a29565a8742af0c359ef4214cd, type: 2}
-  DimensionSword: {fileID: 0}
+  DimensionSword: {fileID: 4044119007042299656}
   DimensionSlash: {fileID: 1646871050452766, guid: 95b3ea755bc01f344a99fccc5f4702f8, type: 3}
   DimensionDoor: {fileID: 100898, guid: a25b3d9a8119bf047b7609dba7f57302, type: 3}
   DimensionDoorGUI: {fileID: 185454, guid: ade1f0bfc938f694ab4f3bc05fc5c55b, type: 3}
