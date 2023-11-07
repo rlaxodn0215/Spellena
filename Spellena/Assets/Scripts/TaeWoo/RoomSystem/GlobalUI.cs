@@ -201,11 +201,12 @@ public class GlobalUI : MonoBehaviourPunCallbacks,IPunObservable
     [PunRPC]
     public void ShowKillUI(string victim)
     {
-        if (UIObjects["kill"] && UIObjects["killText"])
+        if (UIObjects["killText"])
         {
             UIObjects["killText"].SetActive(true);
             killText.text = string.Format("<color=red>" + victim + "</color>" + " 처치");
             StartCoroutine(DisableUI("killText", killActiveTime));
+            Debug.Log(photonView.ViewID);
         }
    
     }

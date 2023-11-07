@@ -391,6 +391,7 @@ namespace Player
             }
         }
 
+        [PunRPC]
         public void SetEnemyLayer()
         {
             Character[] characters = FindObjectsOfType<Character>();

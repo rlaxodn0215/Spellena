@@ -71,7 +71,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ObservedComponentsFoldoutOpen: 1
   Group: 0
-  prefixField: -1
+  prefixField: 0
   Synchronization: 3
   OwnershipTransfer: 0
   observableSearch: 2
@@ -87,18 +87,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 7824049731993364394}
     m_Modifications:
-    - target: {fileID: 349144341, guid: 6b7cd71dbeeb9a747a12a20c43e338de, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1887410728, guid: 6b7cd71dbeeb9a747a12a20c43e338de, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4459471099486296675, guid: 6b7cd71dbeeb9a747a12a20c43e338de, type: 3}
-      propertyPath: sceneViewId
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 8135333902747381371, guid: 6b7cd71dbeeb9a747a12a20c43e338de, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -292,14 +280,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2703658482993605783, guid: b2ad125948d7bb34a8cfe03f2fde77c9, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2823941851923055298, guid: b2ad125948d7bb34a8cfe03f2fde77c9, type: 3}
-      propertyPath: m_UiScaleMode
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6363521506417267364, guid: b2ad125948d7bb34a8cfe03f2fde77c9, type: 3}
-      propertyPath: sceneViewId
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

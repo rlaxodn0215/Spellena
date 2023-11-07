@@ -45,9 +45,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8227908abc7a81945b97a09a4160d61b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  globalUIObj: {fileID: 7434328451660678656, guid: 5343b9624fec7464f967ecacdceee9be, type: 3}
   gameState: 0
-  playersA: []
-  playersB: []
 --- !u!114 &-404882153769451898
 MonoBehaviour:
   m_ObjectHideFlags: 0
