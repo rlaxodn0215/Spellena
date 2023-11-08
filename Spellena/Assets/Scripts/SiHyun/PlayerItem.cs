@@ -6,16 +6,15 @@ using Photon.Pun;
 using Photon.Realtime;
 using Photon.Pun.UtilityScripts;
 
-public class PlayerItem : MonoBehaviourPunCallbacks
+public class PlayerItem : MonoBehaviourPunCallbacks, IPunObservable
 {
     public Text playerName;
 
     public static GameObject localPlayerItemInstance;
 
-    Image backgroundImage;
-    public Color highlightColor;
-    public GameObject leftArrowButton;
-    public GameObject rightArrowButton;
+    /*public GameObject leftArrowButton;
+    public GameObject rightArrowButton;*/
+    public GameObject popUpButton;
     LobbyManager lobbyManagerScript;
     public GameObject playerItem;
 
@@ -26,31 +25,53 @@ public class PlayerItem : MonoBehaviourPunCallbacks
 
     public Photon.Realtime.Player player;
 
-    enum Team
+    private string userId;
+    private string userName;
+    private string firebaseUserId;
+
+    public async void Initialize(string _firebaseUserId)
     {
-        TeamA = 1,
-        TeamB
+        firebaseUserId = _firebaseUserId;
+        string _photonUserId = await FirebaseLoginManager.Instance.GetUserMapping(_firebaseUserId);
+
+        if(!string.IsNullOrEmpty(_photonUserId))
+        {
+            Photon.Realtime.Player _targetPlayer = FindPhotonPlayerByUserId(_photonUserId);
+            if(_targetPlayer != null)
+            {
+                playerName.text = _targetPlayer.NickName;
+            }
+        }
+    }
+
+    private Photon.Realtime.Player FindPhotonPlayerByUserId(string _userId)
+    {
+        Photon.Realtime.Player[] _players = PhotonNetwork.PlayerList;
+
+        foreach(var _player in _players)
+        {
+            if (_player.UserId == _userId)
+            {
+                return _player;
+            }
+        }
+        return null;
     }
 
     // Start is called before the first frame update
     private void Awake()
     {
-        backgroundImage = GetComponent<Image>();
         lobbyManagerScript = FindAnyObjectByType<LobbyManager>();
         if(photonView.IsMine)
         {
             localPlayerItemInstance = this.gameObject;
         }
-        //TeamChanged("TeamAList");
-    }
-
-    private void Update()
-    {
-        if(!PhotonNetwork.IsMasterClient)
+        if (!PhotonNetwork.IsMasterClient)
         {
-            leftArrowButton.SetActive(false);
-            rightArrowButton.SetActive(false);
+            popUpButton.SetActive(false);
         }
+        SetPlayerNameFromFirebase();
+        TeamChanged("TeamAList");
     }
 
     private void TeamChanged(string _teamList)
@@ -60,6 +81,13 @@ public class PlayerItem : MonoBehaviourPunCallbacks
         this.transform.SetParent(playerItemParent);
     }
 
+    private async void SetPlayerNameFromFirebase()
+    {
+        string _userId = FirebaseLoginManager.Instance.GetUser().UserId;
+        string _userName = await FirebaseLoginManager.Instance.ReadUserInfo(_userId);
+        playerName.text = _userName;
+    }
+
     public void SetPlayerInfo(Photon.Realtime.Player _player, PunTeams.Team _team)
     {
         Debug.Log(PhotonNetwork.IsMasterClient);
@@ -67,20 +95,59 @@ public class PlayerItem : MonoBehaviourPunCallbacks
         Debug.Log(photonView.ViewID);
 
         string userId = FirebaseLoginManager.Instance.GetUser().UserId;
-        GetUserName(userId);
+        //GetUserName(userId);
 
-        // Firebase에서 가져온 사용자 정보를 Photon.Player의 커스텀 프로퍼티에 저장
-        ExitGames.Client.Photon.Hashtable customProperties = new ExitGames.Client.Photon.Hashtable();
-        customProperties["UserId"] = userId;
-        customProperties["UserName"] = playerName.text;
+       FirebaseLoginManager.Instance.ReadUserInfo(userId).ContinueWith(task =>
+       {
+            if(task.IsCompleted && !task.IsFaulted && !task.IsCanceled)
+            {
+                string userName = task.Result;
+                playerName.text = userName;
 
-        _player.SetCustomProperties(customProperties);
+                // Firebase에서 가져온 사용자 정보를 Photon.Player의 커스텀 프로퍼티에 저장
+                ExitGames.Client.Photon.Hashtable customProperties = new ExitGames.Client.Photon.Hashtable();
+                customProperties["UserId"] = userId;
+                customProperties["UserName"] = userName;
+                _player.SetCustomProperties(customProperties);
 
-        player = _player;
-        player.SetTeam(_team);
-        Debug.Log(player.GetTeam());
+                player = _player;
+                player.SetTeam(_team);
+            }
+        });
+    }
 
-        //UpdatePlayerItem(player);
+    public void SetPlayerInfo(string _userId, string _userName)
+    {
+        userId = _userId;
+        userName = _userName;
+        playerName.text = userName;
+    }
+
+    public void OnPhotonSerializeView(PhotonStream _stream, PhotonMessageInfo _info)
+    {
+        if(_stream.IsWriting)
+        {
+            _stream.SendNext(userId);
+            _stream.SendNext(userName);
+        }
+        else
+        {
+            userId = (string)_stream.ReceiveNext();
+            userName = (string)_stream.ReceiveNext();
+            playerName.text = userName;
+        }
+    }
+
+    public override void OnPlayerPropertiesUpdate(Photon.Realtime.Player targetPlayer, ExitGames.Client.Photon.Hashtable changedProps)
+    {
+        if (targetPlayer != null && targetPlayer != player)
+        {
+            // 다른 플레이어의 커스텀 프로퍼티가 업데이트되면, 이름을 설정합니다.
+            if (changedProps.TryGetValue("UserName", out object userName))
+            {
+                playerName.text = userName.ToString();
+            }
+        }
     }
 
     async void GetUserName(string _userId)
@@ -89,55 +156,34 @@ public class PlayerItem : MonoBehaviourPunCallbacks
         Debug.Log(playerName.text);
     }
 
-    public void ApplyLocalChanges()
-    {
-        backgroundImage.color = highlightColor;
-    }
-
     public void OnClickLeftArrow()
     {
         TeamChanged("TeamAList");
         playerItem.tag = "TeamA";
-        leftArrowButton.SetActive(false);
-        rightArrowButton.SetActive(true);
-        playerProperties["playerTeam"] = (int)Team.TeamA;
-        player.SetCustomProperties(playerProperties);
         Debug.Log("팀 바뀜");
+        photonView.RPC("TeamChangedRPC", RpcTarget.AllBuffered, "TeamAList");
     }
 
     public void OnClickRightArrow()
     {
         TeamChanged("TeamBList");
         playerItem.tag = "TeamB";
-        leftArrowButton.SetActive(true);
-        rightArrowButton.SetActive(false);
-        playerProperties["playerTeam"] = (int)Team.TeamB;
-        player.SetCustomProperties(playerProperties);
         Debug.Log("팀 바뀜");
+        photonView.RPC("TeamChangedRPC", RpcTarget.AllBuffered, "TeamBList");
+    }
+
+    [PunRPC]
+    public void TeamChangedRPC(string _teamList)
+    {
+        targetObject = GameObject.Find(_teamList);
+        playerItemParent = targetObject.transform;
+        this.transform.SetParent(playerItemParent);
     }
 
     [PunRPC]
     public void ChangedTeam(string _team)
     {
         this.tag = _team;
-    }
-
-    public override void OnPlayerPropertiesUpdate(Photon.Realtime.Player targetPlayer, ExitGames.Client.Photon.Hashtable changedProps)
-    {
-        if(player == targetPlayer)
-        {
-            UpdatePlayerItem(targetPlayer);
-        }
-    }
-
-    public void UpdatePlayerItem(Photon.Realtime.Player player)
-    {
-        if (player != null && player.CustomProperties.ContainsKey("playerTeam"))
-        {
-            int team = (int)player.CustomProperties["playerTeam"];
-            leftArrowButton.SetActive(team == (int)Team.TeamB);
-            rightArrowButton.SetActive(team == (int)Team.TeamA);
-        }
     }
 
     public PlayerItem GetPlayerItem()

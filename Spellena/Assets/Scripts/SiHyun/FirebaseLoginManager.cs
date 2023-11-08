@@ -17,6 +17,7 @@ public class FirebaseLoginManager
     private FirebaseAuth auth;
     private FirebaseUser user;
     DatabaseReference reference;
+    private Dictionary<string, string> userIdMapping = new Dictionary<string, string>();
 
 
     public class User
@@ -69,30 +70,6 @@ public class FirebaseLoginManager
             {
                 Debug.Log("로그인");
                 Firebase.Auth.FirebaseUser currentUser = auth.CurrentUser;
-                /*if (currentUser != null)
-                {
-                    Firebase.Auth.UserProfile profile = new Firebase.Auth.UserProfile
-                    {
-                        DisplayName = nickname,
-                        PhotoUrl = new System.Uri("https://example.com/jane-q-user/profile.jpg"),
-                    };
-                    currentUser.UpdateUserProfileAsync(profile).ContinueWith(task =>
-                    {
-                        if (task.IsCanceled)
-                        {
-                            Debug.LogError("UpdateUserProfileAsync was canceled.");
-                            return;
-                        }
-                        if (task.IsFaulted)
-                        {
-                            Debug.LogError("UpdateUserProfileAsync encountered an error: " + task.Exception);
-                            return;
-                        }
-
-                        Debug.Log("User profile updated successfully.");
-                    });
-                }*/
-
                 SceneManager.LoadScene("SiHyun MainLobby Test");
                    
             }
@@ -183,7 +160,8 @@ public class FirebaseLoginManager
 
         if(_snapShot != null)
         {
-            return _snapShot.Child("userName").Value.ToString();
+            string _userName = _snapShot.Child("userName").Value.ToString();
+            return _userName;
         }
         return null;
     }
@@ -193,9 +171,7 @@ public class FirebaseLoginManager
         reference.Child("users").Child(_userId).Child("status").SetValueAsync(_status);
     }
 
-
-
-    public void SearchUserByName(string _userName)
+    /*public void SearchUserByName(string _userName)
     {
         List<string> _resultList = new List<string>();
 
@@ -215,13 +191,44 @@ public class FirebaseLoginManager
 
     public void AddFriend(string _userId, string _friendId)
     {
-
         reference.Child("users").Child(_userId).Child("friends").Child("friendId").SetValueAsync(_friendId);
     }
 
     public void FriendList(string _userId)
     {
         reference.Child("users").Child(_userId).Child("friends").GetValueAsync();
+    }*/
+
+    public async Task<string> GetUserMapping(string _firebaseUserId)
+    {
+        if(userIdMapping.ContainsKey(_firebaseUserId))
+        {
+            return userIdMapping[_firebaseUserId];
+        }
+        else
+        {
+            //Firebase 사용자 아이디를 Photon Realtime Player의 아이디로 매핑
+            string _photonUserId = await MapFirebaseUserIdToPhotonUserId(_firebaseUserId);
+            if (!string.IsNullOrEmpty(_photonUserId))
+            {
+                userIdMapping[_firebaseUserId] = _photonUserId;
+                return _photonUserId;
+            }
+        }
+        return null;
+    }
+    private async Task<string> MapFirebaseUserIdToPhotonUserId(string _firebaseUserId)
+    {
+        // 이 함수는 Firebase 사용자 UID를 Photon UserId로 매핑하는 로직을 구현해야 합니다.
+        // 아래는 예제일 뿐이며, 실제 매핑 방법은 프로젝트의 구조와 요구 사항에 따라 다를 수 있습니다.
+
+        string photonUserId = null;
+
+        // Firebase 사용자 UID를 기반으로 Photon UserId를 가져오는 방법 예제
+        // 이 예제는 간단하게 Firebase UID를 Photon UserId로 사용하는 것입니다.
+        photonUserId = _firebaseUserId;
+
+        return photonUserId;
     }
 
 }
