@@ -5,13 +5,12 @@ using UnityEngine;
 public class BurstFlareObject : SpawnObject, IPunObservable
 {
     Vector3 direction;
-    Rigidbody rigidbody;
 
     float lifeTime = 4f;
     float currentLifeTime = 0f;
 
-
-
+    public ParticleSystem shootParticle;
+    public ParticleSystem explodeParticle;
     void Start()
     {
         if (PhotonNetwork.IsMasterClient)
@@ -30,14 +29,8 @@ public class BurstFlareObject : SpawnObject, IPunObservable
     {
         if (PhotonNetwork.IsMasterClient)
         {
-            MovePosition();
             CheckTime();
         }
-    }
-
-    void MovePosition()
-    {
-        rigidbody.MovePosition(this.transform.position + direction * Time.deltaTime * 100);
     }
 
     void CheckTime()
@@ -56,8 +49,17 @@ public class BurstFlareObject : SpawnObject, IPunObservable
             this.gameObject.transform.position = (Vector3)data[3];
             direction = (Vector3)data[4];
         }
+        transform.rotation = Quaternion.LookRotation(direction);
         currentLifeTime = lifeTime;
-        rigidbody = GetComponent<Rigidbody>();
+        explodeParticle.Stop();
+        shootParticle.GetComponent<ParticleEventCall>().explodeEvent += RunExplode;
+    }
+
+    void RunExplode(Vector3 pos)
+    {
+        shootParticle.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        explodeParticle.transform.position = pos;
+        explodeParticle.Play(true);
     }
 
     public override void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
