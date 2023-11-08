@@ -6,7 +6,8 @@ using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine.SceneManagement;
 using Photon.Pun.UtilityScripts;
-public class LobbyManager : MonoBehaviourPunCallbacks, IPunObservable
+
+public class LobbyManager : MonoBehaviourPunCallbacks
 { 
     public InputField roomInputField;
     public GameObject lobbyPanel;
@@ -20,14 +21,9 @@ public class LobbyManager : MonoBehaviourPunCallbacks, IPunObservable
     public float timeBetweenUpdates = 1.5f;
     float nextUpdateTime;
 
-    List<PlayerItem> playerItemListA = new List<PlayerItem>();
-    List<PlayerItem> playerItemListB = new List<PlayerItem>();
     public PlayerItem playerItemPrefab;
     public Transform playerItemParentA;
     public Transform playerItemParentB;
-
-    Photon.Realtime.Player player;
-
     public ObjectPool playerItemPool;
 
     private void Start()
@@ -86,9 +82,16 @@ public class LobbyManager : MonoBehaviourPunCallbacks, IPunObservable
         lobbyPanel.SetActive(false);
         roomPanel.SetActive(true);
         roomName.text = "Room Name: " + PhotonNetwork.CurrentRoom.Name;
-        //playerItemPool.Init();
-        //UpdatePlayerList();
-        SetUpPlayerInfo(PhotonNetwork.LocalPlayer, PunTeams.Team.red);
+        CreateLocalPlayerItem(PhotonNetwork.LocalPlayer);
+    }
+
+    public override void OnPlayerEnteredRoom(Photon.Realtime.Player _newPlayer)
+    {
+        CreatePlayerItem(_newPlayer);
+    }
+
+    public override void OnPlayerLeftRoom(Photon.Realtime.Player otherPlayer)
+    {
     }
 
     public override void OnLeftRoom()
@@ -102,151 +105,29 @@ public class LobbyManager : MonoBehaviourPunCallbacks, IPunObservable
         PhotonNetwork.JoinLobby();
     }
 
-    void SetUpPlayerInfo(Photon.Realtime.Player _player, PunTeams.Team _team)
+    void CreateLocalPlayerItem(Photon.Realtime.Player _localPlayer)
     {
-        GameObject _playerItem = PhotonNetwork.Instantiate("PlayerItem", Vector3.zero, Quaternion.identity);
-        PlayerItem _item = _playerItem.GetComponent<PlayerItem>();
-        // PlayerItem에 플레이어 정보를 설정하고 RPC로 동기화
-        //_item.SetPlayerInfo(_player, _team);
-        SetPlayerInfoRPC(_player, _team); // RPC를 통해 다른 클라이언트에게 정보 전송
-        _playerItem.transform.SetParent(playerItemParentA);
-    }
-
-    void RemovePlayerItem(Photon.Realtime.Player _player)
-    {
-        // 플레이어가 방을 떠날 때 해당 플레이어의 PlayerItem을 삭제
-        PlayerItem[] playerItems = FindObjectsOfType<PlayerItem>();
-
-        foreach (PlayerItem item in playerItems)
+        if (PlayerItem.localPlayerItemInstance == null)
         {
-            if (item.photonView.OwnerActorNr == _player.ActorNumber)
-            {
-                PhotonNetwork.Destroy(item.gameObject);
-            }
+            GameObject _playerItemObj = PhotonNetwork.Instantiate("PlayerItem", Vector3.zero, Quaternion.identity);
+            PlayerItem _playerItem = _playerItemObj.GetComponent<PlayerItem>();
+            _playerItem.SetPlayerInfo(_localPlayer, PunTeams.Team.red);
         }
     }
 
-    [PunRPC]
-    void SetPlayerInfoRPC(Photon.Realtime.Player _player, PunTeams.Team _team)
+    void CreatePlayerItem(Photon.Realtime.Player _newPlayer)
     {
-        // RPC로 호출되는 함수로, 플레이어 정보를 설정
-        PlayerItem _item = GetComponent<PlayerItem>();
+        if (PlayerItem.localPlayerItemInstance == null)
+        {
+            GameObject _playerItemObj = PhotonNetwork.Instantiate(playerItemPrefab.name, Vector3.zero, Quaternion.identity);
+            PlayerItem _playerItem = _playerItemObj.GetComponent<PlayerItem>();
 
-        if (_player.IsLocal)
-        {
-            // 이 플레이어가 로컬 플레이어일 경우
-            _item.SetPlayerInfo(_player, _team);
-        }
-        else
-        {
-            // 다른 플레이어일 경우
-            _item.SetPlayerInfo(_player, _team);
+            string userId = _newPlayer.UserId;
+            string userName = FirebaseLoginManager.Instance.ReadUserInfo(userId).Result; // 이 부분을 수정하여 Firebase에서 정보를 가져오세요.
+
+            _playerItem.SetPlayerInfo(userId, userName);
         }
     }
-
-
-    void UpdatePlayerList()
-    {
-        /*Photon.Realtime.Player[] _players = PhotonNetwork.PlayerList;
-
-        int index = 0;
-        List<GameObject> _playerItems = playerItemPool.GetPlayerItemPool();
-
-        if(_playerItems != null)
-        {
-            foreach (GameObject _oldItem in _playerItems)
-            {
-                PlayerItem _item = _oldItem.GetComponent<PlayerItem>();
-                playerItemPool.ReturnPlayerItemPool(_item);
-            }
-        }
-
-        foreach (Photon.Realtime.Player _player in _players)
-        {
-            // playerItemPool에서 사용 가능한 플레이어 GameObject를 가져옴
-            if (index < _playerItems.Count)
-            {
-                GameObject _playerItemGO = _playerItems[index];
-                PlayerItem _playerItem = _playerItemGO.GetComponent<PlayerItem>();
-                _playerItem.SetPlayerInfo(_player);
-                index++;
-            }
-            else
-            {
-                Debug.LogWarning("플레이어 GameObject가 부족합니다.");
-            }
-        }*/
-
-
-        /*Photon.Realtime.Player[] _players = PhotonNetwork.PlayerList;
-
-        if (PhotonNetwork.CurrentRoom == null)
-        {
-            return;
-        }
-
-        foreach(Photon.Realtime.Player _player in _players)
-        {
-            GameObject _playerItemGO = playerItemPool.GetPlayerItemPool();
-            PlayerItem _playertItem = _playerItemGO.GetComponent<PlayerItem>();
-            _playertItem.SetPlayerInfo(_player);
-        }*/
-
-        /*GameObject _test;
-
-        foreach (KeyValuePair<int, Photon.Realtime.Player> player in PhotonNetwork.CurrentRoom.Players)
-        {
-            Transform _playerParent = playerItemParentA;
-
-            if (player.Value.GetTeam() == PunTeams.Team.blue)
-            {
-                _playerParent = playerItemParentA;
-            }
-            else if(player.Value.GetTeam() == PunTeams.Team.red)
-            {
-                _playerParent = playerItemParentB;
-            }
-            else if(player.Value.GetTeam() == PunTeams.Team.none)
-            {
-                _playerParent = playerItemParentA;
-            }
-            
-            if(PlayerItem.localPlayerItemInstance == null)
-            {
-                _test = PhotonNetwork.Instantiate("PlayerItem", new Vector3(0, 0, 0), Quaternion.identity, 0);
-                PlayerItem _newPlayerItem = _test.transform.GetComponent<PlayerItem>();
-
-
-                _newPlayerItem.SetPlayerInfo(player.Value);
-
-                if (player.Value == PhotonNetwork.LocalPlayer)
-                {
-                    _newPlayerItem.ApplyLocalChanges();
-                }
-
-                // 플레이어의 태그를 확인하여 해당 리스트에 추가
-                if (_newPlayerItem.tag == "TeamA")
-                {
-                    playerItemListA.Add(_newPlayerItem);
-                }
-                else if (_newPlayerItem.tag == "TeamB")
-                {
-                    playerItemListB.Add(_newPlayerItem);
-                }
-            }
-        }*/
-    }
-
-    public override void OnPlayerEnteredRoom(Photon.Realtime.Player _newPlayer)
-    {
-        SetUpPlayerInfo(_newPlayer, PunTeams.Team.red);
-    }
-
-    public override void OnPlayerLeftRoom(Photon.Realtime.Player otherPlayer)
-    {
-        RemovePlayerItem(otherPlayer);
-    }
-
 
     private void Update()
     {
@@ -256,18 +137,6 @@ public class LobbyManager : MonoBehaviourPunCallbacks, IPunObservable
             {
                 SceneManager.LoadScene("SiHyun MainLobby Test");
             }
-        }
-    }
-
-    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
-    {
-        if(stream.IsWriting)
-        {
-
-        }
-        else
-        {
-
         }
     }
 }
