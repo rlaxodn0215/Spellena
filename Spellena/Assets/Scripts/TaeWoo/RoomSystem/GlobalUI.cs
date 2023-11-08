@@ -24,11 +24,20 @@ public class GlobalUI : MonoBehaviourPunCallbacks,IPunObservable
     Image blueCTFImage;
     Text killText;
 
-    int killLogIndex = 1;
-
     List<Text> murderNames = new List<Text>();
     List<Text> victimNames = new List<Text>();
     List<Text> playerNames = new List<Text>();
+
+    public int endKillLogIndex;
+    public int maxKillLogIndex;
+    KillLogData[] playerKillLogDatas;
+
+    public struct KillLogData
+    {
+        public bool isRed;
+        public bool isMe;
+        public float killLogTimer;
+    }
 
     public struct OccupyingTeam
     {
@@ -55,10 +64,12 @@ public class GlobalUI : MonoBehaviourPunCallbacks,IPunObservable
     public Occupation occupyingBUI;
     // 점령 게이지 바
     public OccupyingTeam occupyingTeamUI;
+    // 데미지 CrossHair 활성 시간
+    public float damageActiveTime = 0.75f;
     // 킬 CrossHair 활성 시간
     public float killActiveTime = 1f;
     // 킬 로그 활성 시간
-    public float killLogActiveTime = 2f;
+    public float killLogActiveTime = 3f;
 
     public Photon.Realtime.Player[] allPlayers;
     public List<GameObject> playersA = new List<GameObject>(); // Red
@@ -127,11 +138,16 @@ public class GlobalUI : MonoBehaviourPunCallbacks,IPunObservable
     {
         int n = FindObject(inGameUI, "PlayerKillLogs").transform.childCount;
 
-        for(int i = 1; i <= n; i++)
+        endKillLogIndex = 0;
+        maxKillLogIndex = n;
+        playerKillLogDatas = new KillLogData[n];
+
+        for (int i = 1; i <= n; i++)
         {
             UIObjects["killLog_" + i] = FindObject(inGameUI, "KillLog_" + i);
             UIObjects["killLog_" + i + "_BackImage_Red"] = FindObject(inGameUI, "KillLog_" + i + "_BackImage_Red");
-            UIObjects["killLog_" + i + "BackImage_Blue"] = FindObject(inGameUI, "KillLog_" + i + "_BackImage_Blue");
+            UIObjects["killLog_" + i + "_BackImage_Blue"] = FindObject(inGameUI, "KillLog_" + i + "_BackImage_Blue");
+            UIObjects["isMe_" + i] = FindObject(inGameUI, "IsMe_" + i);
             UIObjects["murder_" + i] = FindObject(inGameUI, "Murder_" + i);
             murderNames.Add(UIObjects["murder_" + i].GetComponent<Text>());
             UIObjects["victim_" + i] = FindObject(inGameUI, "Victim_" + i);
@@ -143,7 +159,7 @@ public class GlobalUI : MonoBehaviourPunCallbacks,IPunObservable
     {
         int n = FindObject(inGameUI, "MyTeamPlayerStatus").transform.childCount;
 
-        for(int i = 1; i <=n; i++)
+        for(int i = 1; i <= n; i++)
         {
             UIObjects["player_" + i] = FindObject(inGameUI, "Player_" + i);
             UIObjects["playerName_" + i] = FindObject(inGameUI, "PlayerName_" + i);
@@ -176,8 +192,9 @@ public class GlobalUI : MonoBehaviourPunCallbacks,IPunObservable
         redPercentageText.text = string.Format((int)occupyingAUI.rate + "%");
         bluePercentageText.text = string.Format((int)occupyingBUI.rate + "%");
         extraTimerText.text = string.Format("{0:F2}", roundEndTimerUI);
+        DisableKillLog();
 
-        if(occupyingTeamUI.name == "A")
+        if (occupyingTeamUI.name == "A")
             redFillCircleImage.fillAmount = occupyingTeamUI.rate * 0.01f;
         else if (occupyingTeamUI.name == "B")
             blueFillCircleImage.fillAmount = occupyingTeamUI.rate * 0.01f;
@@ -197,6 +214,15 @@ public class GlobalUI : MonoBehaviourPunCallbacks,IPunObservable
         if (UIObjects[uiName] == null) return;
         UIObjects[uiName].SetActive(isActive);
     }
+    [PunRPC]
+    public void ShowDamageUI()
+    {
+        if(UIObjects["damage"])
+        {
+            UIObjects["damage"].SetActive(true);
+            StartCoroutine(DisableUI("damage", damageActiveTime));
+        }
+    }
 
     [PunRPC]
     public void ShowKillUI(string victim)
@@ -206,9 +232,87 @@ public class GlobalUI : MonoBehaviourPunCallbacks,IPunObservable
             UIObjects["killText"].SetActive(true);
             killText.text = string.Format("<color=red>" + victim + "</color>" + " 처치");
             StartCoroutine(DisableUI("killText", killActiveTime));
-            Debug.Log(photonView.ViewID);
         }
    
+    }
+    
+    [PunRPC]
+    public void ShowKillLogMe()
+    {
+        playerKillLogDatas[0].isMe = true;
+        UIObjects["isMe_" + 1].SetActive(true);
+        //for (int i = 0; i <= 3; i++)
+        //    Debug.Log(playerKillLogDatas[i].isMe);
+    }
+
+    [PunRPC]
+    public void ShowKillLog(string _killer, string _victim, bool _isRed)
+    {
+        MoveKillLog();
+
+        murderNames[0].text = _killer;
+        victimNames[0].text = _victim;
+        playerKillLogDatas[0].isRed = _isRed;
+        playerKillLogDatas[0].isMe = false;
+        playerKillLogDatas[0].killLogTimer = globalTimerUI + killLogActiveTime;
+
+        UIObjects["killLog_" + 1 + "_BackImage_Red"].SetActive(_isRed);
+        UIObjects["killLog_" + 1 + "_BackImage_Blue"].SetActive(!_isRed);
+        UIObjects["isMe_" + 1].SetActive(false);
+    }
+
+    void MoveKillLog()
+    {
+        if (endKillLogIndex == 0)
+        {
+            endKillLogIndex++;
+            UIObjects["killLog_" + endKillLogIndex].SetActive(true);
+        }
+
+        else if (endKillLogIndex < maxKillLogIndex)
+        {
+            for (int i = endKillLogIndex - 1; i >= 0; i--)
+            {
+                murderNames[i + 1].text = murderNames[i].text;
+                victimNames[i + 1].text = victimNames[i].text;
+                playerKillLogDatas[i + 1] = playerKillLogDatas[i];
+
+                UIObjects["killLog_" + (i + 2) + "_BackImage_Red"].SetActive(playerKillLogDatas[i+1].isRed);
+                UIObjects["killLog_" + (i + 2) + "_BackImage_Blue"].SetActive(!playerKillLogDatas[i+1].isRed);
+
+                UIObjects["isMe_" + (i + 2)].SetActive(playerKillLogDatas[i + 1].isMe);
+
+            }
+
+            endKillLogIndex++;
+
+            UIObjects["killLog_" + endKillLogIndex].SetActive(true);
+
+        }
+
+        else
+        {
+            for (int i = maxKillLogIndex - 2; i >= 0; i--)
+            {
+                murderNames[i + 1].text = murderNames[i].text;
+                victimNames[i + 1].text = victimNames[i].text;
+                playerKillLogDatas[i + 1] = playerKillLogDatas[i];
+
+                UIObjects["killLog_" + (i + 2) + "_BackImage_Red"].SetActive(playerKillLogDatas[i + 1].isRed);
+                UIObjects["killLog_" + (i + 2) + "_BackImage_Blue"].SetActive(!playerKillLogDatas[i + 1].isRed);
+                UIObjects["isMe_" + (i + 2)].SetActive(playerKillLogDatas[i + 1].isMe);
+            }
+        }
+    }
+
+    void DisableKillLog()
+    {
+        if (endKillLogIndex < 1) return;
+        if(globalTimerUI >= playerKillLogDatas[endKillLogIndex-1].killLogTimer)
+        {
+            UIObjects["killLog_" + endKillLogIndex].SetActive(false);
+            endKillLogIndex--;
+        }
     }
 
     IEnumerator DisableUI(string name, float time)
@@ -250,6 +354,8 @@ public class GlobalUI : MonoBehaviourPunCallbacks,IPunObservable
             stream.SendNext(occupyingBUI.rate);
             stream.SendNext(occupyingTeamUI.name);
             stream.SendNext(occupyingTeamUI.rate);
+            stream.SendNext(endKillLogIndex);
+            stream.SendNext(maxKillLogIndex);
         }
         else
         {
@@ -260,6 +366,8 @@ public class GlobalUI : MonoBehaviourPunCallbacks,IPunObservable
             occupyingBUI.rate = (float)stream.ReceiveNext();
             occupyingTeamUI.name = (string)stream.ReceiveNext();
             occupyingTeamUI.rate = (float)stream.ReceiveNext();
+            endKillLogIndex = (int)stream.ReceiveNext();
+            maxKillLogIndex = (int)stream.ReceiveNext();
         }
     }
 }

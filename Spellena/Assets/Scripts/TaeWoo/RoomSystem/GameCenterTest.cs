@@ -296,7 +296,7 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
     {
         foreach(var player in PhotonNetwork.CurrentRoom.Players.Values)
         {
-            if ((bool)player.CustomProperties["IsAlive"]) continue;
+            if ((bool)player.CustomProperties["IsAlive"] && (bool)player.CustomProperties["IsAlive"] == true) continue;
             if((float)player.CustomProperties["ReSpawnTime"] <= globalTimer)
             {
                 PhotonView view = PhotonView.Find((int)player.CustomProperties["CharacterViewID"]);
@@ -365,13 +365,17 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
                     case "TotalDamage":
                         //Debug.Log("Update Total Damage " + targetPlayer.CustomProperties["Name"]);
                         // 데이지 UI 활성화
+                        if (globalUIView == null) break;
+                        globalUIView.RPC("ShowDamageUI", targetPlayer);
                         break;
                     case "KillCount":
                         //Debug.Log("Update KillCount " + targetPlayer.CustomProperties["Name"]);
                         // 킬 UI 활성화
                         if (globalUIView == null) break;
                         globalUIView.RPC("ShowKillUI", targetPlayer, tempVictim);
-                        
+                        globalUIView.RPC("ShowKillLog", RpcTarget.AllBufferedViaServer,
+                            targetPlayer.CustomProperties["Name"], tempVictim, ((string)targetPlayer.CustomProperties["Team"] == "A"));
+                        globalUIView.RPC("ShowKillLogMe", targetPlayer);
                         break;
                     case "DeadCount":
                         //Debug.Log("Update DeadCount " + targetPlayer.CustomProperties["Name"]);

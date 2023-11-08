@@ -49,12 +49,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inGameUI: {fileID: 8816560580522957930}
   etcUI: {fileID: 3792418234866893435}
+  endKillLogIndex: 0
+  maxKillLogIndex: 0
   gameStateString: 
   globalTimerUI: 0
   roundEndTimerUI: 0
   roundEndTimeUI: 5
+  damageActiveTime: 0.5
   killActiveTime: 1
-  killLogActiveTime: 2
+  killLogActiveTime: 100
   playersA: []
   playersB: []
 --- !u!114 &3829482606500867166

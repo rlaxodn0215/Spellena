@@ -19,7 +19,7 @@ MonoBehaviour:
   jumpHeight: 7
   basicAttackTime: 1
   DimenstionSlash_0_lifeTime: 10
-  DimenstionSlash_0_Damage: 100
+  DimenstionSlash_0_Damage: 50
   DimenstionSlash_0_Speed: 3
   DimenstionSlash_0_Healing: 10
   skill1Time: 5

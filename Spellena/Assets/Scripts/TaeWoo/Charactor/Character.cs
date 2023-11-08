@@ -446,7 +446,7 @@ namespace Player
                 if (hp <= dataHp)
                 {
                     hp -= damage;
-                    Debug.Log("Player Damaged !!  EnemyName: " + enemy);
+                    //Debug.Log("Player Damaged !!  EnemyName: " + enemy);
                 }
             }
 
@@ -457,7 +457,7 @@ namespace Player
                     hp -= damage;
                 }
 
-                Debug.Log("Player Healing !!");
+                //Debug.Log("Player Healing !!");
             }
 
 
