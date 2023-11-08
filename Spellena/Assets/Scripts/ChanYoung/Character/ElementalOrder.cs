@@ -70,14 +70,15 @@ namespace Player
         float ragnaEdgeCoolDownTime = 0f;
         float terraBreakCoolDownTime = 0f;
 
-        public GameObject leftHandSpell;
-        public GameObject rightHandSpell;
+
+        public GameObject leftHandSpellFire;
+        public GameObject leftHandSpellStorm;
+        public GameObject leftHandSpellLand;
+        public GameObject rightHandSpellFire;
+        public GameObject rightHandSpellStorm;
+        public GameObject rightHandSpellLand;
 
         public GameObject testCube;
-
-        public Material fireMaterial;
-        public Material landMaterial;
-        public Material stormMaterial;
 
         //로컬 클라이언트에서 접근
         bool isEterialStorm = false;
@@ -98,8 +99,12 @@ namespace Player
         protected override void Start()
         {
             base.Start();
-            Initialize();
-            overlayCameraDefaultPos = overlayCamera.transform.localPosition;
+            if (photonView.IsMine)
+            {
+                Initialize();
+                overlayCameraDefaultPos = overlayCamera.transform.localPosition;
+            }
+
         }
         protected override void Update()
         {
@@ -373,13 +378,17 @@ namespace Player
                         if(Physics.Raycast(_bottomRay, out _bottomRayHit, Mathf.Infinity, _tempLayerMask))
                         {
                             _arrivedGroundVec = _bottomRayHit.point;
-                            testCube.GetComponent<MeshRenderer>().enabled = true;
+                            testCube.SetActive(true);
+
+                            testCube.GetComponent<ParticleSystem>().Stop(true, ParticleSystemStopBehavior.StopEmitting);
+                            testCube.GetComponent<ParticleSystem>().Simulate(0.4f);
+
                             testCube.transform.position = _arrivedGroundVec;
 
                         }
                         else
                         {
-                            testCube.GetComponent<MeshRenderer>().enabled = false;
+                            testCube.SetActive(false);
                         }
                     }
                     else
@@ -392,13 +401,17 @@ namespace Player
                         if (Physics.Raycast(_bottomRay, out _bottomRayHit, Mathf.Infinity, _tempLayerMask))
                         {
                             _arrivedGroundVec = _bottomRayHit.point;
-                            testCube.GetComponent<MeshRenderer>().enabled = true;
+                            testCube.SetActive(true);
+
+                            testCube.GetComponent<ParticleSystem>().Stop(true, ParticleSystemStopBehavior.StopEmitting);
+                            testCube.GetComponent<ParticleSystem>().Simulate(0.4f);
+
                             testCube.transform.position = _arrivedGroundVec;
 
                         }
                         else
                         {
-                            testCube.GetComponent<MeshRenderer>().enabled = false;
+                            testCube.SetActive(false);
                         }
                     }
                 }
@@ -430,7 +443,7 @@ namespace Player
                 else if(isMeteorStrike)
                 {
                     isMeteorStrike = false;
-                    testCube.GetComponent <MeshRenderer>().enabled = false;
+                    testCube.SetActive(false);
                 }
                 else if(isRagnaEdge)
                 {
@@ -445,12 +458,12 @@ namespace Player
                 else if(isTerraBreak)
                 {
                     isTerraBreak = false;
-                    testCube.GetComponent<MeshRenderer>().enabled = false;
+                    testCube.SetActive(false);
                 }
                 else if(isGaiaTied)
                 {
                     isGaiaTied = false;
-                    testCube.GetComponent<MeshRenderer>().enabled = false;
+                    testCube.SetActive(false);
                 }
             }
             
@@ -495,6 +508,10 @@ namespace Player
             else if(skillState == SkillState.RagnaEdge)
             {
                 ragnaEdge = null;
+            }
+            else if(skillState == SkillState.GaiaTied)
+            {
+                gaiaTied = null;
             }
 
             skillState = SkillState.None;
@@ -719,28 +736,59 @@ namespace Player
         void SetHandEffectPositionIK(int typeRight, int typeLeft)
         {
             if (typeRight == 0)
-                rightHandSpell.GetComponent<MeshRenderer>().enabled = false;
+            {
+                rightHandSpellFire.SetActive(false);
+                rightHandSpellLand.SetActive(false);
+                rightHandSpellStorm.SetActive(false);
+            }
             else
             {
-                rightHandSpell.GetComponent<MeshRenderer>().enabled = true;
                 if (typeRight == 1)
-                    rightHandSpell.GetComponent<MeshRenderer>().material = fireMaterial;
-                else if(typeRight == 2)
-                    rightHandSpell.GetComponent<MeshRenderer>().material = landMaterial;
+                {
+                    rightHandSpellFire.SetActive(true);
+                    rightHandSpellLand.SetActive(false);
+                    rightHandSpellStorm.SetActive(false);
+                }
+                else if (typeRight == 2)
+                {
+                    rightHandSpellFire.SetActive(false);
+                    rightHandSpellLand.SetActive(true);
+                    rightHandSpellStorm.SetActive(false);
+                }
                 else if (typeRight == 3)
-                    rightHandSpell.GetComponent<MeshRenderer>().material = stormMaterial;
+                {
+                    rightHandSpellFire.SetActive(false);
+                    rightHandSpellLand.SetActive(false);
+                    rightHandSpellStorm.SetActive(true);
+                }
             }
             if (typeLeft == 0)
-                leftHandSpell.GetComponent<MeshRenderer>().enabled = false;
+            {
+                leftHandSpellFire.SetActive(false);
+                leftHandSpellLand.SetActive(false);
+                leftHandSpellStorm.SetActive(false);
+            }
             else
             {
-                leftHandSpell.GetComponent<MeshRenderer>().enabled = true;
                 if (typeLeft == 1)
-                    leftHandSpell.GetComponent<MeshRenderer>().material = fireMaterial;
+                {
+                    leftHandSpellFire.SetActive(true);
+                    leftHandSpellLand.SetActive(false);
+                    leftHandSpellStorm.SetActive(false);
+                }
+                   
                 else if (typeLeft == 2)
-                    leftHandSpell.GetComponent<MeshRenderer>().material = landMaterial;
+                {
+                    leftHandSpellFire.SetActive(false);
+                    leftHandSpellLand.SetActive(true);
+                    leftHandSpellStorm.SetActive(false);
+                }
                 else if (typeLeft == 3)
-                    leftHandSpell.GetComponent<MeshRenderer>().material = stormMaterial;
+                {
+                    leftHandSpellFire.SetActive(false);
+                    leftHandSpellLand.SetActive(false);
+                    leftHandSpellStorm.SetActive(true);
+                }
             }
         }
 
