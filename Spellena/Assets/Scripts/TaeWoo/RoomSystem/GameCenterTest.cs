@@ -15,8 +15,8 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
     GameObject playerSpawnPoints;
 
     // 플레이어 소환 좌표
-    Transform playerSpawnA;
-    Transform playerSpawnB;
+    Transform[] playerSpawnA;
+    Transform[] playerSpawnB;
 
     public enum GameState
     {
@@ -164,7 +164,7 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
         // allPlayers = PhotonNetwork.PlayerList;
         // custom property로 값 저장 (ActorNumber, name, team)
 
-        int tempNum = 2;
+        int tempNum = 1;
         if (PhotonNetwork.CurrentRoom.PlayerCount >= tempNum)
         {
             globalTimer = loadingTime;
@@ -204,6 +204,7 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
             playerData.Add("CharacterViewID", 0);
             playerData.Add("DeadTime", -1.0f);
             playerData.Add("ReSpawnTime", -1.0f);
+            playerData.Add("SpawnPoint", new Vector3(0, 0, 0));
             playerData.Add("Parameter", null);
 
             player.SetCustomProperties(playerData);
@@ -213,8 +214,8 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
 
     void MakeSpawnPoint()
     {
-        playerSpawnA = FindObject(playerSpawnPoints, "TeamA").transform;
-        playerSpawnB = FindObject(playerSpawnPoints, "TeamB").transform;
+        playerSpawnA = FindObject(playerSpawnPoints, "TeamA").GetComponentsInChildren<Transform>(true);
+        playerSpawnB = FindObject(playerSpawnPoints, "TeamB").GetComponentsInChildren<Transform>(true);
     }
 
     void DataLoading()
@@ -307,13 +308,12 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
 
                 if ((string)player.CustomProperties["Team"] == "A")
                 {
-                    view.RPC("PlayerReBorn", RpcTarget.AllBufferedViaServer, playerSpawnA.position);
-
+                    view.RPC("PlayerReBorn", RpcTarget.AllBufferedViaServer, (Vector3)player.CustomProperties["SpawnPoint"]);
                 }
 
                 else if ((string)player.CustomProperties["Team"] == "B")
                 {
-                    view.RPC("PlayerReBorn", RpcTarget.AllBufferedViaServer, playerSpawnB.position);
+                    view.RPC("PlayerReBorn", RpcTarget.AllBufferedViaServer, (Vector3)player.CustomProperties["SpawnPoint"]);
                 }
 
                 player.CustomProperties["IsAlive"] = true;
@@ -498,6 +498,9 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
 
     void MakeCharacter()
     {
+        int aTeamIndex = 1;
+        int bTeamIndex = 1;
+
         foreach(var player in PhotonNetwork.CurrentRoom.Players.Values)
         {
             //현재 캐릭터는 에테르나 고정, 접속 순서에 따라 A,B 팀 나뉨
@@ -507,7 +510,7 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
             if (player.ActorNumber % 2 == 0)     // A 팀 (Red)
             {
                 GameObject playerCharacter 
-                    = PhotonNetwork.Instantiate("TaeWoo/Prefabs/" + choseCharacter, playerSpawnA.position, Quaternion.identity);
+                    = PhotonNetwork.Instantiate("TaeWoo/Prefabs/" + choseCharacter, playerSpawnA[aTeamIndex].position, Quaternion.identity);
 
                 playerCharacter.GetComponent<PhotonView>().TransferOwnership(player.ActorNumber);
                 playerCharacter.GetComponent<PhotonView>().RPC("IsLocalPlayer", player);
@@ -515,13 +518,15 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
 
                 ChangePlayerCustomProperties(player, "CharacterViewID", playerCharacter.GetComponent<PhotonView>().ViewID);
                 ChangePlayerCustomProperties(player, "Team", "A");
+                ChangePlayerCustomProperties(player, "SpawnPoint", playerSpawnA[aTeamIndex].position);
+                aTeamIndex++;
                 playersA.Add(player);
             }
 
             else                // B 팀 (Blue)
             {
                 GameObject playerCharacter 
-                    = PhotonNetwork.Instantiate("TaeWoo/Prefabs/" + choseCharacter, playerSpawnB.position, Quaternion.identity);
+                    = PhotonNetwork.Instantiate("TaeWoo/Prefabs/" + choseCharacter, playerSpawnB[bTeamIndex].position, Quaternion.identity);
 
                 playerCharacter.GetComponent<PhotonView>().TransferOwnership(player.ActorNumber);
                 playerCharacter.GetComponent<PhotonView>().RPC("IsLocalPlayer", player);
@@ -529,6 +534,8 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
 
                 ChangePlayerCustomProperties(player, "CharacterViewID", playerCharacter.GetComponent<PhotonView>().ViewID);
                 ChangePlayerCustomProperties(player, "Team", "B");
+                ChangePlayerCustomProperties(player, "SpawnPoint", playerSpawnB[bTeamIndex].position);
+                bTeamIndex++;
                 playersB.Add(player);
             }
         } 

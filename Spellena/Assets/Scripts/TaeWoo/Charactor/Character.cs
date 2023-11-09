@@ -264,6 +264,8 @@ namespace Player
         }
         void OnJump()
         {
+            Debug.Log(isGrounded);
+
             if (playerActionDatas[(int)PlayerActionState.Jump].isExecuting) return;
 
             if (photonView.IsMine)
