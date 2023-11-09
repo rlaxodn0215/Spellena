@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: PhotonServerSettings
   m_EditorClassIdentifier: 
   AppSettings:
-    AppIdRealtime: b40bc1c7-5808-4300-bd70-dbabca776df7
+    AppIdRealtime: c96511c6-9ddc-406c-9dd3-3beb7adde172
     AppIdFusion: 
     AppIdChat: 
     AppIdVoice: 
@@ -94,14 +94,7 @@ MonoBehaviour:
   - SetEnemyLayer
   - ShowKillUI
   - TeamChangedRPC
-  - ShowDamageUI
-  - ShowKillLog
-  - ShowKillLogMe
-  - ShowTeamState
-  - ShowTeamDead
-  - ShowTeamLifeDead
-  - ShowRoundLoose
-  - ShowRoundWin
+  - KickPlayerRPC
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

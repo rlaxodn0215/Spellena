@@ -24,6 +24,7 @@ public class VideoOption : MonoBehaviour
     public Slider bgmSlider;
     public Slider effectSlider;
     public Slider voiceSlider;
+    [Range((float)0.01, 1)]
     public Slider sensitivitySlider;
     public InputField soundInput;
     public InputField bgmInput;
