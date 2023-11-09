@@ -34,16 +34,17 @@ public class MatchMaking : MonoBehaviourPunCallbacks
     async void GetUserName()
     {
         var _user = FirebaseLoginManager.Instance.GetUser();
-        playerNameText.text = await FirebaseLoginManager.Instance.ReadUserInfo(_user.UserId);
+        string _userName = await FirebaseLoginManager.Instance.ReadUserInfo(_user.UserId);
+        if(!string.IsNullOrEmpty(_userName))
+        {
+            PhotonNetwork.LocalPlayer.NickName = _userName;
+            playerNameText.text = PhotonNetwork.LocalPlayer.NickName;
+        }
     }
-
-
 
     public void JoinRandomOrCreateRoom()
     {
         Debug.Log("·£´ý ¸ÅÄª ½ÃÀÛ.");
-        PhotonNetwork.LocalPlayer.NickName = FirebaseLoginManager.Instance.GetUser().DisplayName;
-
         byte _maxPlayers = 10;
 
         RoomOptions _roomOptions = new RoomOptions();

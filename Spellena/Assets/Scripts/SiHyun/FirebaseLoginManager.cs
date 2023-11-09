@@ -13,7 +13,12 @@ using System.Threading.Tasks;
 public class FirebaseLoginManager
 {
     private static FirebaseLoginManager instance = null;
+
     private string nickname;
+    private string userName;
+    private string birthDate;
+    private string phoneNumber;
+
     private FirebaseAuth auth;
     private FirebaseUser user;
     DatabaseReference reference;
@@ -22,13 +27,23 @@ public class FirebaseLoginManager
 
     public class User
     {
-        public string userName;
+        public string nickName;
         public string email;
+        public string passward;
+        public string userName;
+        public string birthDate;
+        public string phoneNumber;
         public string status;
-        public User(string _userName, string _email, string _status)
+
+        public User(string _nickName, string _email, string _passward,
+                    string _userName, string _birthDate, string _phoneNumber, string _status)
         {
-            this.userName = _userName;
+            this.nickName = _nickName;
             this.email = _email;
+            this.passward = _passward;
+            this.userName = _userName;
+            this.birthDate = _birthDate;
+            this.phoneNumber = _phoneNumber;
             this.status = _status;
         }
     }
@@ -37,7 +52,7 @@ public class FirebaseLoginManager
     {
         get
         {
-            if(instance == null)
+            if (instance == null)
             {
                 instance = new FirebaseLoginManager();
             }
@@ -50,7 +65,7 @@ public class FirebaseLoginManager
     {
         reference = FirebaseDatabase.DefaultInstance.RootReference;
         auth = FirebaseAuth.DefaultInstance;
-        if(auth.CurrentUser != null)
+        if (auth.CurrentUser != null)
         {
             SignOut();
         }
@@ -59,19 +74,19 @@ public class FirebaseLoginManager
 
     private void OnChanged(object sender, EventArgs e)
     {
-        if(auth.CurrentUser != user)
+        if (auth.CurrentUser != user)
         {
             bool signed = (auth.CurrentUser != user && auth.CurrentUser != null);
-            if(!signed && user != null)
+            if (!signed && user != null)
             {
                 Debug.Log("로그아웃");
             }
-            if(signed)
+            if (signed)
             {
                 Debug.Log("로그인");
                 Firebase.Auth.FirebaseUser currentUser = auth.CurrentUser;
                 SceneManager.LoadScene("SiHyun MainLobby Test");
-                   
+
             }
         }
     }
@@ -95,7 +110,8 @@ public class FirebaseLoginManager
             {
                 //Firebase user has been created.
                 Firebase.Auth.AuthResult result = task.Result;
-                SaveUserInfo(result.User.UserId, nickname, result.User.Email);
+                SaveUserInfo(result.User.UserId, nickname, result.User.Email, passward, userName,
+                             birthDate, phoneNumber);
                 Debug.LogFormat("Firebase user created successfully: {0} ({1})",
                     result.User.DisplayName, result.User.UserId);
             }
@@ -141,14 +157,10 @@ public class FirebaseLoginManager
         return user;
     }
 
-    public void SetNickname(string s)
+    public void SaveUserInfo(string _uID, string _nickName, string _email, string _passward,
+                             string _userName, string _birthDate, string _phoneNumber)
     {
-        nickname = s;
-    }
-
-    public void SaveUserInfo(string _uID, string _userName, string _email)
-    {
-        User _user = new User(_userName, _email, "온라인");
+        User _user = new User(_nickName, _email, _passward, _userName, _birthDate, _phoneNumber, "온라인");
         string _json = JsonUtility.ToJson(_user);
         reference.Child("users").Child(_uID).SetRawJsonValueAsync(_json);
     }
@@ -158,11 +170,35 @@ public class FirebaseLoginManager
         DatabaseReference _userReference = reference.Child("users").Child(_uID);
         DataSnapshot _snapShot = await _userReference.GetValueAsync();
 
-        if(_snapShot != null)
+        if (_snapShot != null)
         {
-            string _userName = _snapShot.Child("userName").Value.ToString();
-            return _userName;
+            string _nickName = _snapShot.Child("nickName").Value.ToString();
+            return _nickName;
         }
+        return null;
+    }
+
+    public async Task<string> FindUserEmail(string _userName, string _phoneNumber)
+    {
+        DatabaseReference _userRef = reference.Child("users");
+
+        var _userNameQuery = _userRef.OrderByChild("userName").EqualTo(_userName);
+
+        DataSnapshot _userNameSnapshot = await _userNameQuery.GetValueAsync();
+
+        if(_userNameSnapshot.HasChildren)
+        {
+            foreach(var _childSnapshot in _userNameSnapshot.Children)
+            {
+                var _userPhonNumber = _childSnapshot.Child("phoneNumber").Value.ToString();
+                if(_userPhonNumber == _phoneNumber)
+                {
+                    string _userEmail = _childSnapshot.Child("email").Value.ToString();
+                    return _userEmail;
+                }
+            }
+        }
+
         return null;
     }
 
@@ -171,11 +207,11 @@ public class FirebaseLoginManager
         reference.Child("users").Child(_userId).Child("status").SetValueAsync(_status);
     }
 
-    /*public void SearchUserByName(string _userName)
+    /*public void SearchUserByName(string _nickName)
     {
         List<string> _resultList = new List<string>();
 
-        reference.Child("users").OrderByChild("userName").EqualTo(_userName).GetValueAsync().ContinueWith(task =>
+        reference.Child("users").OrderByChild("nickName").EqualTo(_nickName).GetValueAsync().ContinueWith(task =>
         {
             DataSnapshot _snapShot = task.Result;
             if (_snapShot.HasChildren)
@@ -199,36 +235,23 @@ public class FirebaseLoginManager
         reference.Child("users").Child(_userId).Child("friends").GetValueAsync();
     }*/
 
-    public async Task<string> GetUserMapping(string _firebaseUserId)
+
+    public void SetNickname(string _nickName)
     {
-        if(userIdMapping.ContainsKey(_firebaseUserId))
-        {
-            return userIdMapping[_firebaseUserId];
-        }
-        else
-        {
-            //Firebase 사용자 아이디를 Photon Realtime Player의 아이디로 매핑
-            string _photonUserId = await MapFirebaseUserIdToPhotonUserId(_firebaseUserId);
-            if (!string.IsNullOrEmpty(_photonUserId))
-            {
-                userIdMapping[_firebaseUserId] = _photonUserId;
-                return _photonUserId;
-            }
-        }
-        return null;
-    }
-    private async Task<string> MapFirebaseUserIdToPhotonUserId(string _firebaseUserId)
-    {
-        // 이 함수는 Firebase 사용자 UID를 Photon UserId로 매핑하는 로직을 구현해야 합니다.
-        // 아래는 예제일 뿐이며, 실제 매핑 방법은 프로젝트의 구조와 요구 사항에 따라 다를 수 있습니다.
-
-        string photonUserId = null;
-
-        // Firebase 사용자 UID를 기반으로 Photon UserId를 가져오는 방법 예제
-        // 이 예제는 간단하게 Firebase UID를 Photon UserId로 사용하는 것입니다.
-        photonUserId = _firebaseUserId;
-
-        return photonUserId;
+        nickname = _nickName;
     }
 
+    public void SetUserName(string _userName)
+    {
+        userName = _userName;
+    }
+
+    public void SetBirthDate(string _birthDate)
+    {
+        birthDate = _birthDate;
+    }
+    public void SetPhoneNumber(string _phoneNumber)
+    {
+        phoneNumber = _phoneNumber;
+    }
 }

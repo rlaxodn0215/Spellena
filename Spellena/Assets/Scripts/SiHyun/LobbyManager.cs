@@ -122,10 +122,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
             GameObject _playerItemObj = PhotonNetwork.Instantiate(playerItemPrefab.name, Vector3.zero, Quaternion.identity);
             PlayerItem _playerItem = _playerItemObj.GetComponent<PlayerItem>();
 
-            string userId = _newPlayer.UserId;
-            string userName = FirebaseLoginManager.Instance.ReadUserInfo(userId).Result; // 이 부분을 수정하여 Firebase에서 정보를 가져오세요.
-
-            _playerItem.SetPlayerInfo(userId, userName);
+            _playerItem.SetPlayerInfo(_newPlayer.UserId, _newPlayer.NickName);
         }
     }
 
