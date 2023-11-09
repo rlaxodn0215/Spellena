@@ -97,13 +97,15 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
     float occupyingComplete = 99f;
     //추가 시간
     float roundEndTime = 5f;
+    // 라운드 결과 확인 시간
+    float roundEndResultTime = 6;
 
     string teamA = "A";
     string teamB = "B";
 
     void Start()
     {
-        
+
     }
 
     void Update()
@@ -167,7 +169,6 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
         {
             globalTimer = loadingTime;
 
-            //SetRoomDatas();
             SetPlayerDatas();
 
             globalUIObj = PhotonNetwork.Instantiate("TaeWoo/Prefabs/UI/GlobalUI", Vector3.zero, Quaternion.identity);
@@ -186,7 +187,7 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
     {
         masterActorNum = PhotonNetwork.CurrentRoom.MasterClientId;
 
-        foreach(Photon.Realtime.Player player in PhotonNetwork.CurrentRoom.Players.Values)
+        foreach (var player in PhotonNetwork.CurrentRoom.Players.Values)
         {
             // 플레이어 이름, 캐릭터의 게임 오브젝트, 팀, 총 데미지 수, 킬 수, 죽은 수
             Hashtable playerData = new Hashtable();
@@ -241,10 +242,13 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
         {
             // 선택한 캐릭터로 소환 및 태그 설정
             // 적 플레이어는 빨강 쉐이더 적용
-            MakeCharacter();
+
             globalTimer = readyTime;
             gameState = GameState.Ready;
             globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "inGameUI", true);
+
+            MakeCharacter();
+            MakeTeamStateUI();
         }
     }
 
@@ -294,26 +298,43 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
 
     void CheckPlayerReSpawn()
     {
-        foreach(var player in PhotonNetwork.CurrentRoom.Players.Values)
+        foreach (var player in PhotonNetwork.CurrentRoom.Players.Values)
         {
             if ((bool)player.CustomProperties["IsAlive"] && (bool)player.CustomProperties["IsAlive"] == true) continue;
-            if((float)player.CustomProperties["ReSpawnTime"] <= globalTimer)
+            if ((float)player.CustomProperties["ReSpawnTime"] <= globalTimer)
             {
                 PhotonView view = PhotonView.Find((int)player.CustomProperties["CharacterViewID"]);
 
-                if((string)player.CustomProperties["Team"] == "A")
+                if ((string)player.CustomProperties["Team"] == "A")
                 {
                     view.RPC("PlayerReBorn", RpcTarget.AllBufferedViaServer, playerSpawnA.position);
 
                 }
 
-                else if((string)player.CustomProperties["Team"] == "B")
+                else if ((string)player.CustomProperties["Team"] == "B")
                 {
                     view.RPC("PlayerReBorn", RpcTarget.AllBufferedViaServer, playerSpawnB.position);
-
                 }
 
                 player.CustomProperties["IsAlive"] = true;
+
+                // 팀원 부활 알리기
+
+                if((string)player.CustomProperties["Team"]=="A")
+                {
+                    foreach(var playerA in playersA)
+                    {
+                        globalUIView.RPC("ShowTeamLifeDead", playerA, (string)player.CustomProperties["Name"], false);
+                    }
+                }
+
+                else if ((string)player.CustomProperties["Team"] == "B")
+                {
+                    foreach (var playerB in playersB)
+                    {
+                        globalUIView.RPC("ShowTeamLifeDead", playerB, (string)player.CustomProperties["Name"], false);
+                    }
+                }
             }
         }
     }
@@ -325,11 +346,11 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
         {
             if (player.CustomProperties.ContainsKey(key) && player.CustomProperties[key].ToString() == value)
             {
-                return player; 
+                return player;
             }
         }
 
-        return null; 
+        return null;
     }
 
     public static void ChangePlayerCustomProperties(Photon.Realtime.Player player, string key, object value)
@@ -347,7 +368,7 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
             Debug.LogError("해당 플레이어의 키 값을 찾을 수 없습니다.");
             return;
         }
-        
+
     }
 
     public override void OnPlayerPropertiesUpdate(Photon.Realtime.Player targetPlayer, Hashtable changedProps)
@@ -363,29 +384,23 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
                 switch (param)
                 {
                     case "TotalDamage":
-                        //Debug.Log("Update Total Damage " + targetPlayer.CustomProperties["Name"]);
                         // 데이지 UI 활성화
                         if (globalUIView == null) break;
                         globalUIView.RPC("ShowDamageUI", targetPlayer);
                         break;
                     case "KillCount":
-                        //Debug.Log("Update KillCount " + targetPlayer.CustomProperties["Name"]);
                         // 킬 UI 활성화
                         if (globalUIView == null) break;
                         globalUIView.RPC("ShowKillUI", targetPlayer, tempVictim);
-                        globalUIView.RPC("ShowKillLog", RpcTarget.AllBufferedViaServer,
-                            targetPlayer.CustomProperties["Name"], tempVictim, ((string)targetPlayer.CustomProperties["Team"] == "A"));
-                        globalUIView.RPC("ShowKillLogMe", targetPlayer);
+                        globalUIView.RPC("ShowKillLog", RpcTarget.AllBufferedViaServer, targetPlayer.CustomProperties["Name"],
+                            tempVictim, ((string)targetPlayer.CustomProperties["Team"] == "A"), targetPlayer.ActorNumber);
                         break;
                     case "DeadCount":
-                        //Debug.Log("Update DeadCount " + targetPlayer.CustomProperties["Name"]);
-
                         targetPlayer.CustomProperties["IsAlive"] = false;
                         targetPlayer.CustomProperties["DeadTime"] = globalTimer;
                         targetPlayer.CustomProperties["ReSpawnTime"] = globalTimer + playerRespawnTime;
                         tempVictim = (string)targetPlayer.CustomProperties["Name"];
-
-                        // 죽음 UI 활성화
+                        ShowTeamMateDead((string)targetPlayer.CustomProperties["Team"],(string)targetPlayer.CustomProperties["Name"]);
                         break;
                     default:
                         break;
@@ -395,17 +410,45 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
         }
     }
 
+    void ShowTeamMateDead(string team, string deadName)
+    {
+        if(team=="A")
+        {
+            foreach(var player in playersA)
+            {
+                globalUIView.RPC("ShowTeamLifeDead", player, deadName,true);
+            }
+        }
+
+        else if(team=="B")
+        {
+            foreach (var player in playersB)
+            {
+                globalUIView.RPC("ShowTeamLifeDead", player, deadName,true);
+            }
+        }
+    }
+
     void RoundEnd()
     {
-        if (roundA >= 2 || roundB >= 2)
+        globalTimer -= Time.deltaTime;
+
+        if (globalTimer <= 0.0f)
         {
-            gameState = GameState.MatchEnd;
-        }
-        else
-        {
-            globalTimer = readyTime;
-            gameState = GameState.Ready;
-            ResetRound();
+            globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "roundWin", false);
+            globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "roundLoose", false);
+
+            if (roundA >= 2 || roundB >= 2)
+            {
+                gameState = GameState.MatchEnd;
+                Debug.Log("Game End");
+            }
+
+            else
+            {
+                gameState = GameState.Ready;
+                ResetRound();
+            }
         }
     }
 
@@ -491,6 +534,28 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
         } 
     }
 
+    void MakeTeamStateUI()
+    {
+        foreach (var player in PhotonNetwork.CurrentRoom.Players.Values)
+        {
+            if((string)player.CustomProperties["Team"] == "A")
+            {
+                foreach(var playerA in playersA)
+                {
+                    globalUIView.RPC("ShowTeamState", player, playerA.CustomProperties["Name"], "Aeterna");
+                }
+            }
+
+            else if((string)player.CustomProperties["Team"] == "B")
+            {
+                foreach (var playerB in playersB)
+                {
+                    globalUIView.RPC("ShowTeamState", player, playerB.CustomProperties["Name"], "Aeterna");
+                }
+            }
+        }
+    }
+
     void CheckRoundEnd()
     {
         if (occupyingA.rate >= occupyingComplete && currentOccupationTeam == teamA && teamBOccupying <= 0)
@@ -518,36 +583,81 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
             //라운드 종료
             if (currentOccupationTeam == teamA)
             {
-                if (roundA == 0)
-                {
-                    globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "redFirstPoint", true);
-                }
-
-                else if (roundA == 1)
-                {
-                    globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "redSecondPoint", true);
-                }
-
                 occupyingA.rate = 100;
                 roundA++;
+
+                if (roundA == 1)
+                {
+                    globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "redFirstPoint", true);
+
+                    foreach (var player in playersA)
+                    {
+                        globalUIView.RPC("ShowRoundWin", player, roundA + roundB);
+                    }
+
+                    foreach (var player in playersB)
+                    {
+                        globalUIView.RPC("ShowRoundLoose", player, roundA + roundB);
+                    }
+                }
+
+                else if (roundA == 2)
+                {
+                    globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "redSecondPoint", true);
+
+                    foreach (var player in playersA)
+                    {
+                        globalUIView.RPC("ActiveUI", player, "victory", true);
+                    }
+
+                    foreach (var player in playersB)
+                    {
+                        globalUIView.RPC("ActiveUI", player, "defeat",true);
+                    }
+                }
+
             }
+
             else if (currentOccupationTeam == teamB)
             {
-                if (roundB == 0)
-                {
-                    globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "blueFirstPoint", true);
-                }
-
-                else if (roundB == 1)
-                {
-                    globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "blueSecondPoint", true);
-                }
-
                 occupyingB.rate = 100;
                 roundB++;
+
+                if (roundB == 1)
+                {
+                    globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "blueFirstPoint", true);
+
+                    foreach (var player in playersB)
+                    {
+                        globalUIView.RPC("ShowRoundWin", player, roundA + roundB);
+                    }
+
+                    foreach (var player in playersA)
+                    {
+                        globalUIView.RPC("ShowRoundLoose", player, roundA + roundB);
+                    }
+                }
+
+                else if (roundB == 2)
+                {
+                    globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "blueSecondPoint", true);
+
+                    foreach (var player in playersB)
+                    {
+                        globalUIView.RPC("ActiveUI", player, "victory", true);
+                    }
+
+                    foreach (var player in playersA)
+                    {
+                        globalUIView.RPC("ActiveUI", player, "defeat", true);
+                    }
+                }    
             }
 
-            gameState = GameState.RoundEnd;//라운드 종료
+            //라운드 종료
+            gameState = GameState.RoundEnd;
+            globalTimer = roundEndResultTime;
+
         }
     }
 
@@ -690,7 +800,7 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
         occupyingTeam = new OccupyingTeam();
         occupyingReturnTimer = 0f;
         roundEndTimer = 0;
-        globalTimer = 0f;
+        globalTimer = readyTime;
         teamAOccupying = 0;
         teamBOccupying = 0;
 

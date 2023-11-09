@@ -54,6 +54,7 @@ MonoBehaviour:
   gameStateString: 
   globalTimerUI: 0
   roundEndTimerUI: 0
+  teamCount: 1
   roundEndTimeUI: 5
   damageActiveTime: 0.5
   killActiveTime: 1
@@ -90,6 +91,22 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 7824049731993364394}
     m_Modifications:
+    - target: {fileID: 1179341533550705586, guid: 6b7cd71dbeeb9a747a12a20c43e338de, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1610354561484587838, guid: 6b7cd71dbeeb9a747a12a20c43e338de, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7026679619026689879, guid: 6b7cd71dbeeb9a747a12a20c43e338de, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7984256669354668913, guid: 6b7cd71dbeeb9a747a12a20c43e338de, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8135333902747381371, guid: 6b7cd71dbeeb9a747a12a20c43e338de, type: 3}
       propertyPath: m_Pivot.x
       value: 0

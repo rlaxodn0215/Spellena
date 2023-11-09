@@ -23,13 +23,18 @@ public class GlobalUI : MonoBehaviourPunCallbacks,IPunObservable
     Image redCTFImage;
     Image blueCTFImage;
     Text killText;
+    Text roundWinText;
+    Text roundLooseText;
 
     List<Text> murderNames = new List<Text>();
     List<Text> victimNames = new List<Text>();
     List<Text> playerNames = new List<Text>();
 
+    [HideInInspector]
     public int endKillLogIndex;
+    [HideInInspector]
     public int maxKillLogIndex;
+
     KillLogData[] playerKillLogDatas;
 
     public struct KillLogData
@@ -51,24 +56,37 @@ public class GlobalUI : MonoBehaviourPunCallbacks,IPunObservable
     }
 
     // 일시적인 게임 상태 string 테이터
+    [HideInInspector]
     public string gameStateString;
     // 전체 타이머
+    [HideInInspector]
     public float globalTimerUI;
     // 추가시간 타이머
+    [HideInInspector]
     public float roundEndTimerUI;
+    // 같은 팀원 수
+    [HideInInspector]
+    public int teamCount = 1;
     //추가 시간
+    [HideInInspector]
     public float roundEndTimeUI = 5f;
     // A팀의 점령도
+    [HideInInspector]
     public Occupation occupyingAUI;
     // B팀의 점령도
+    [HideInInspector]
     public Occupation occupyingBUI;
     // 점령 게이지 바
+    [HideInInspector]
     public OccupyingTeam occupyingTeamUI;
     // 데미지 CrossHair 활성 시간
+    [HideInInspector]
     public float damageActiveTime = 0.75f;
     // 킬 CrossHair 활성 시간
+    [HideInInspector]
     public float killActiveTime = 1f;
     // 킬 로그 활성 시간
+    [HideInInspector]
     public float killLogActiveTime = 3f;
 
     public Photon.Realtime.Player[] allPlayers;
@@ -163,6 +181,7 @@ public class GlobalUI : MonoBehaviourPunCallbacks,IPunObservable
         {
             UIObjects["player_" + i] = FindObject(inGameUI, "Player_" + i);
             UIObjects["playerName_" + i] = FindObject(inGameUI, "PlayerName_" + i);
+            UIObjects["player_" + i + "_Image"] = FindObject(inGameUI, "Player_" + i + "_Image");
             playerNames.Add(UIObjects["playerName_" + i].GetComponent<Text>());
             UIObjects["playerDead_" + i] = FindObject(inGameUI, "PlayerDead_" + i);
         }
@@ -172,7 +191,9 @@ public class GlobalUI : MonoBehaviourPunCallbacks,IPunObservable
     void ConnectOutcome()
     {
         UIObjects["roundWin"] = FindObject(inGameUI, "RoundWin");
+        roundWinText = UIObjects["roundWin"].GetComponentInChildren<Text>();
         UIObjects["roundLoose"] = FindObject(inGameUI, "RoundLoose");
+        roundLooseText = UIObjects["roundLoose"].GetComponentInChildren<Text>();
         UIObjects["victory"] = FindObject(inGameUI, "Victory");
         UIObjects["defeat"] = FindObject(inGameUI, "Defeat");
     }
@@ -214,6 +235,21 @@ public class GlobalUI : MonoBehaviourPunCallbacks,IPunObservable
         if (UIObjects[uiName] == null) return;
         UIObjects[uiName].SetActive(isActive);
     }
+
+    [PunRPC]
+    public void ShowRoundWin(int round)
+    {
+        ActiveUI("roundWin", true);
+        roundWinText.text = string.Format(round + " 라운드 승리!");
+    }
+
+    [PunRPC]
+    public void ShowRoundLoose(int round)
+    {
+        ActiveUI("roundLoose", true);
+        roundLooseText.text = string.Format(round + " 라운드 패배!");
+    }
+
     [PunRPC]
     public void ShowDamageUI()
     {
@@ -235,30 +271,56 @@ public class GlobalUI : MonoBehaviourPunCallbacks,IPunObservable
         }
    
     }
-    
+
     [PunRPC]
-    public void ShowKillLogMe()
+    public void ShowTeamState(string playerName, string characterName)
     {
-        playerKillLogDatas[0].isMe = true;
-        UIObjects["isMe_" + 1].SetActive(true);
-        //for (int i = 0; i <= 3; i++)
-        //    Debug.Log(playerKillLogDatas[i].isMe);
+        UIObjects["player_" + teamCount].SetActive(true);
+        playerNames[teamCount - 1].text = playerName;
+
+        // 캐릭터 이미지 대입
+
+        teamCount++;
     }
 
     [PunRPC]
-    public void ShowKillLog(string _killer, string _victim, bool _isRed)
+    public void ShowTeamLifeDead(string playerName, bool isDead)
+    {
+        for(int i = 0; i < playerNames.Count; i++)
+        {
+            if(playerNames[i].text == playerName)
+            {
+                UIObjects["playerDead_" + (i + 1)].SetActive(isDead);
+                break;
+            }
+        }
+    }
+
+    [PunRPC]
+    public void ShowKillLog(string _killer, string _victim, bool _isRed, int _isMeActorNum)
     {
         MoveKillLog();
 
         murderNames[0].text = _killer;
         victimNames[0].text = _victim;
         playerKillLogDatas[0].isRed = _isRed;
-        playerKillLogDatas[0].isMe = false;
+
+        if(PhotonNetwork.LocalPlayer.ActorNumber == _isMeActorNum)
+        {
+            playerKillLogDatas[0].isMe = true;
+        }
+
+        else
+        {
+            playerKillLogDatas[0].isMe = false;
+        }
+
         playerKillLogDatas[0].killLogTimer = globalTimerUI + killLogActiveTime;
 
         UIObjects["killLog_" + 1 + "_BackImage_Red"].SetActive(_isRed);
         UIObjects["killLog_" + 1 + "_BackImage_Blue"].SetActive(!_isRed);
-        UIObjects["isMe_" + 1].SetActive(false);
+        UIObjects["isMe_" + 1].SetActive(playerKillLogDatas[0].isMe);
+
     }
 
     void MoveKillLog()
@@ -279,7 +341,6 @@ public class GlobalUI : MonoBehaviourPunCallbacks,IPunObservable
 
                 UIObjects["killLog_" + (i + 2) + "_BackImage_Red"].SetActive(playerKillLogDatas[i+1].isRed);
                 UIObjects["killLog_" + (i + 2) + "_BackImage_Blue"].SetActive(!playerKillLogDatas[i+1].isRed);
-
                 UIObjects["isMe_" + (i + 2)].SetActive(playerKillLogDatas[i + 1].isMe);
 
             }
@@ -303,6 +364,8 @@ public class GlobalUI : MonoBehaviourPunCallbacks,IPunObservable
                 UIObjects["isMe_" + (i + 2)].SetActive(playerKillLogDatas[i + 1].isMe);
             }
         }
+
+
     }
 
     void DisableKillLog()
