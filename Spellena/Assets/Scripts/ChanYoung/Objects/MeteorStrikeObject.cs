@@ -8,12 +8,13 @@ public class MeteorStrikeObject : SpawnObject, IPunObservable
 {
     float castingTime = 3.5f;
     float currentCastingTime = 0f;
-    float lifeTime = 1f;
+    float lifeTime = 10f;
     float currentLifeTime = 0f;
+
+    public GameObject hitCollider;
+    public GameObject hitEffect;
+
     bool isColliderOn = false;
-
-    Collider hitCollider;
-
     void Start()
     {
         if (PhotonNetwork.IsMasterClient)
@@ -41,7 +42,7 @@ public class MeteorStrikeObject : SpawnObject, IPunObservable
             if(isColliderOn == false)
             {
                 isColliderOn = true;
-                hitCollider.enabled = true;
+                hitEffect.SetActive(true);
             }
             if(currentLifeTime > 0f)
             {
@@ -64,16 +65,14 @@ public class MeteorStrikeObject : SpawnObject, IPunObservable
     {
         currentCastingTime = castingTime;
         currentLifeTime = lifeTime;
-        hitCollider = GetComponent<Collider>();
-        hitCollider.enabled = false;
+        hitCollider.GetComponent<TriggerEventer>().hitTriggerEvent += triggerEvent;
     }
 
-    private void OnTriggerEnter(Collider other)
+    void triggerEvent(GameObject gameObject)
     {
-        if(other.gameObject.GetComponent<Character>() != null)
+        if (isColliderOn)
         {
-            other.gameObject.GetComponent<Character>().hp -= 5;
-            Debug.Log(other.gameObject.GetComponent<Character>().hp);
+            Debug.Log(gameObject);
         }
     }
 
