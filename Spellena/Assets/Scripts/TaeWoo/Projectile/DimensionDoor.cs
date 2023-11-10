@@ -8,8 +8,12 @@ namespace Player
     public class DimensionDoor : SpawnObject
     {
         public AeternaData aeternaData;
+        [HideInInspector]
+        public float InnerForce = 1.5f;
+
         private string enemyTag;
         private List<string> playerInArea;
+        private List<Rigidbody> playerInAreaObject = new List<Rigidbody>();
 
         public override void OnEnable()
         {
@@ -52,6 +56,25 @@ namespace Player
                 photonView.RPC("DestorySpawnObject", RpcTarget.MasterClient); 
             }
 
+        }
+
+        private void FixedUpdate()
+        {
+            GiveGravity();
+        }
+
+        void GiveGravity()
+        {
+            Vector3 direction;
+
+            if (playerInAreaObject == null) return;
+            foreach(Rigidbody player in playerInAreaObject)
+            {
+                direction = transform.position - player.transform.position;
+                direction.Normalize();
+                direction *= InnerForce;
+                player.MovePosition(player.transform.position + direction*Time.deltaTime);
+            }
         }
 
         public void OnTriggerEnter(Collider other)
@@ -117,6 +140,7 @@ namespace Player
             }
 
             playerInArea.Add(temp.name);
+            playerInAreaObject.Add(temp.GetComponent<Rigidbody>());
 
             temp.GetComponent<Character>().sitSpeed *= aeternaData.skill1DeBuffRatio;
             temp.GetComponent<Character>().walkSpeed *= aeternaData.skill1DeBuffRatio;
@@ -140,6 +164,8 @@ namespace Player
                     temp.GetComponent<Character>().jumpHeight = temp.GetComponent<Character>().dataJumpHeight;
 
                     playerInArea.Remove(player);
+                    playerInAreaObject.Remove(temp.GetComponent<Rigidbody>());
+
                     if (playerInArea.Count == 0) return;
                 }
             }
@@ -153,6 +179,7 @@ namespace Player
             if (temp != null)
             {
                 Debug.Log("EnBuffWhenDestory");
+
                 temp.GetComponent<Character>().sitSpeed = temp.GetComponent<Character>().dataSitSpeed;
                 temp.GetComponent<Character>().walkSpeed = temp.GetComponent<Character>().dataWalkSpeed;
                 temp.GetComponent<Character>().runSpeed = temp.GetComponent<Character>().dataRunSpeed;

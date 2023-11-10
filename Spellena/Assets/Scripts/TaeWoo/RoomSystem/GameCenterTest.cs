@@ -164,7 +164,7 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
         // allPlayers = PhotonNetwork.PlayerList;
         // custom property로 값 저장 (ActorNumber, name, team)
 
-        int tempNum = 10;
+        int tempNum = 2;
         if (PhotonNetwork.CurrentRoom.PlayerCount >= tempNum)
         {
             globalTimer = loadingTime;
@@ -175,7 +175,7 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
             globalUIView = globalUIObj.GetComponent<PhotonView>();
             globalUI = globalUIObj.GetComponent<GlobalUI>();
 
-            playerSpawnPoints = PhotonNetwork.Instantiate("TaeWoo/Prefabs/PlayerSpawnPoints", Vector3.zero, Quaternion.identity);
+            playerSpawnPoints = PhotonNetwork.Instantiate("TaeWoo/Prefabs/PlayerSpawnPointsTest", Vector3.zero, Quaternion.identity);
             MakeSpawnPoint();
 
             gameState = GameState.MatchStart;
@@ -858,5 +858,11 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
             occupyingTeam.name = (string)stream.ReceiveNext();
             occupyingTeam.rate = (float)stream.ReceiveNext();
         }
+    }
+
+    //인게임 프레임 확인
+    void OnGUI()
+    {
+        GUI.Label(new Rect(10, 10, 100, 20), "FPS: " + (1.0f / Time.smoothDeltaTime));
     }
 }

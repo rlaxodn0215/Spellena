@@ -4895,6 +4895,7 @@ MonoBehaviour:
   type: 0
   objectName: 
   aeternaData: {fileID: 11400000, guid: 3ab088a29565a8742af0c359ef4214cd, type: 2}
+  InnerForce: 1.5
 --- !u!135 &536479597
 SphereCollider:
   m_ObjectHideFlags: 0
