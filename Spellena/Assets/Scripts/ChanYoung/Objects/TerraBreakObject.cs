@@ -22,6 +22,8 @@ public class TerraBreakObject : SpawnObject, IPunObservable
 
     bool isColliderOn = false;
 
+    public GameObject hitCollider;
+
     List<GameObject> hitPlayers = new List<GameObject>();
 
     void Start()
@@ -87,7 +89,16 @@ public class TerraBreakObject : SpawnObject, IPunObservable
         currentCastingTime = castingTime;
         currentLifeTime = lifeTime;
         hitCountTimer = lifeTime / hitCount;
+        hitCollider.GetComponent<TriggerEventer>().hitTriggerEvent += TriggerEvent;
     }
+
+    void TriggerEvent(GameObject gameObject)
+    {
+        if(isColliderOn)
+        {
+            Debug.Log("È÷Æ®");
+        }
+    }    
 
     private void OnTriggerStay(Collider other)
     {

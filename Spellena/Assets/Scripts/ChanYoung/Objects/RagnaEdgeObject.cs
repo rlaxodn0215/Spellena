@@ -6,6 +6,9 @@ using UnityEngine;
 
 public class RagnaEdgeObject : SpawnObject, IPunObservable
 {
+    public GameObject floor;
+    public GameObject cylinder;
+    public GameObject hitColliderObject;
 
     float castingTime = 2f;
     float currentCastingTime = 0f;
@@ -17,10 +20,8 @@ public class RagnaEdgeObject : SpawnObject, IPunObservable
 
     bool isCylinderColliderOn = false;
     bool isFloorColliderOn = false;
-    Collider hitFloorCollider;
-    MeshRenderer floorRenderer;
-    Collider hitCylinderCollider;
-    MeshRenderer cylinderRenderer;
+
+    bool isReverse = false;
 
     void Start()
     {
@@ -48,6 +49,20 @@ public class RagnaEdgeObject : SpawnObject, IPunObservable
         {
             if(isCylinderColliderOn == true)
             {
+                if (isReverse == false)
+                {
+                    cylinder.transform.localScale = new Vector3(cylinder.transform.localScale.x,
+                        cylinder.transform.localScale.y + Time.deltaTime * cylinderLifeTime * 2, cylinder.transform.localScale.z);
+                    if (cylinder.transform.localScale.y > 2f)
+                        isReverse = true;
+                }
+                else
+                {
+                    cylinder.transform.localScale = new Vector3(cylinder.transform.localScale.x,
+                        Mathf.Lerp(cylinder.transform.localScale.y, 0f, Time.deltaTime * 4), cylinder.transform.localScale.z);
+                }
+                cylinder.transform.localPosition = new Vector3(cylinder.transform.localPosition.x,
+                    cylinder.transform.localScale.y, cylinder.transform.localPosition.z);
                 currentCylinderLifeTime -= Time.deltaTime;
                 if(currentCylinderLifeTime < 0f)
                 {
@@ -57,8 +72,10 @@ public class RagnaEdgeObject : SpawnObject, IPunObservable
             else if(isFloorColliderOn == false)
             {
                 isFloorColliderOn = true;
-                hitFloorCollider.enabled = true;
-                floorRenderer.enabled = true;
+                for(int i = 0; i < 3; i++)
+                {
+                    floor.transform.GetChild(i).GetComponent<ParticleSystem>().Play();
+                }
             }
             else
             {
@@ -66,10 +83,7 @@ public class RagnaEdgeObject : SpawnObject, IPunObservable
                 if(currentFloorLifeTime <= 0f)
                 {
                     isCylinderColliderOn = true;
-                    hitFloorCollider.enabled = false;
-                    floorRenderer.enabled = false;
-                    hitCylinderCollider.enabled = true;
-                    cylinderRenderer.enabled = true;
+                    cylinder.SetActive(true);
                 }
             }
         }
@@ -86,14 +100,25 @@ public class RagnaEdgeObject : SpawnObject, IPunObservable
         currentCastingTime = castingTime;
         currentFloorLifeTime = floorLifeTime;
         currentCylinderLifeTime = cylinderLifeTime;
-        hitFloorCollider = gameObject.transform.GetChild(0).GetComponent<Collider>();
-        hitCylinderCollider = gameObject.transform.GetChild(1).GetComponent<Collider>();
-        floorRenderer = gameObject.transform.GetChild(0).GetComponent<MeshRenderer>();
-        cylinderRenderer = gameObject.transform.GetChild(1).GetComponent<MeshRenderer>();
-        hitFloorCollider.enabled = false;
-        hitCylinderCollider.enabled = false;
-        floorRenderer.enabled = false;
-        cylinderRenderer.enabled = false;
+        cylinder.SetActive(false);
+        hitColliderObject.GetComponent<TriggerEventer>().hitTriggerEvent += triggerFloorEvent;
+        cylinder.GetComponent<TriggerEventer>().hitTriggerEvent += triggerCylinderEvent;
+    }
+
+    void triggerFloorEvent(GameObject gameObject)
+    {
+        if (isFloorColliderOn)
+        {
+            Debug.Log("히트");
+        }
+    }
+
+    void triggerCylinderEvent(GameObject gameObject)
+    {
+        if (isCylinderColliderOn)
+        {
+            Debug.Log("히트");
+        }
     }
 
     public override void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)

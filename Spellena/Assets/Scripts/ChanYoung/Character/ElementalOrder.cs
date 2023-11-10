@@ -378,12 +378,18 @@ namespace Player
                         if(Physics.Raycast(_bottomRay, out _bottomRayHit, Mathf.Infinity, _tempLayerMask))
                         {
                             _arrivedGroundVec = _bottomRayHit.point;
+                            if(_arrivedGroundVec.y > _bottomRayHit.collider.gameObject.transform.position.y)
+                                _arrivedGroundVec = new Vector3(_arrivedGroundVec.x, _bottomRayHit.collider.gameObject.transform.position.y, _arrivedGroundVec.z);
+
                             testCube.SetActive(true);
 
-                            testCube.GetComponent<ParticleSystem>().Stop(true, ParticleSystemStopBehavior.StopEmitting);
-                            testCube.GetComponent<ParticleSystem>().Simulate(0.4f);
-
                             testCube.transform.position = _arrivedGroundVec;
+
+                            if (testCube.GetComponent<ParticleSystem>().time > 0.7f)
+                            {
+                                testCube.GetComponent<ParticleSystem>().Simulate(0.3f);
+                            }
+
 
                         }
                         else
@@ -403,10 +409,15 @@ namespace Player
                             _arrivedGroundVec = _bottomRayHit.point;
                             testCube.SetActive(true);
 
-                            testCube.GetComponent<ParticleSystem>().Stop(true, ParticleSystemStopBehavior.StopEmitting);
-                            testCube.GetComponent<ParticleSystem>().Simulate(0.4f);
+                            if (_arrivedGroundVec.y > _bottomRayHit.collider.gameObject.transform.position.y)
+                                _arrivedGroundVec = new Vector3(_arrivedGroundVec.x, _bottomRayHit.collider.gameObject.transform.position.y, _arrivedGroundVec.z);
 
                             testCube.transform.position = _arrivedGroundVec;
+
+                            if (testCube.GetComponent<ParticleSystem>().time > 0.7f)
+                            {
+                                testCube.GetComponent<ParticleSystem>().Simulate(0.3f);
+                            }
 
                         }
                         else

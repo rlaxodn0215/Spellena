@@ -15,6 +15,10 @@ public class GaiaTiedObject : SpawnObject, IPunObservable
 
     float currentCylinderLifeTime = 0f;
 
+
+    Vector3 scaleCorrect = new Vector3(0.3f, 0.5f, 0.3f);
+
+
     int cylinderCount = 6;
 
     List<GameObject> cylinders = new List<GameObject>();
@@ -66,22 +70,21 @@ public class GaiaTiedObject : SpawnObject, IPunObservable
                     {
                         if (reverseScale[i] == false)
                         {
-                            cylinders[i].transform.localScale = new Vector3(1,
-                                Mathf.Lerp(cylinders[i].transform.localScale.y, 2f, Time.deltaTime * 2), 1);
+                            cylinders[i].transform.localScale = new Vector3(scaleCorrect.x,
+                                Mathf.Lerp(cylinders[i].transform.localScale.y, 2f * scaleCorrect.y, Time.deltaTime * 2 * scaleCorrect.y), scaleCorrect.z);
                         }
                         else
                         {
-                            cylinders[i].transform.localScale = new Vector3(1,
-                                Mathf.Lerp(cylinders[i].transform.localScale.y, -0.5f, Time.deltaTime * 2), 1);
+                            cylinders[i].transform.localScale = new Vector3(scaleCorrect.x,
+                                Mathf.Lerp(cylinders[i].transform.localScale.y, -0.5f * scaleCorrect.y, Time.deltaTime * 2 * scaleCorrect.y), scaleCorrect.z);
 
                             if(cylinders[i].transform.localScale.y < 0f)
                             {
                                 cylinders[i].GetComponent<Collider>().enabled = false;
-                                cylinders[i].GetComponent<MeshRenderer>().enabled = false;
                             }
                         }
                         cylinders[i].transform.localPosition = new Vector3(cylinders[i].transform.localPosition.x, cylinders[i].transform.localScale.y, cylinders[i].transform.localPosition.z);
-                        if (cylinders[i].transform.localScale.y > 1f)
+                        if (cylinders[i].transform.localScale.y > scaleCorrect.y)
                         {
                             reverseScale[i] = true;
                         }
@@ -122,9 +125,18 @@ public class GaiaTiedObject : SpawnObject, IPunObservable
             cylinders.Add(transform.GetChild(i).gameObject);
             cylinders[i].GetComponent<Collider>().enabled = false;
             cylinders[i].transform.localScale = Vector3.zero;
+            cylinders[i].GetComponent<TriggerEventer>().hitTriggerEvent += triggerCylinderEvent;
             reverseScale.Add(false);
         }
 
+    }
+
+    void triggerCylinderEvent(GameObject gameObject)
+    {
+        if(gameObject.layer != 11)
+        {
+            Debug.Log("Å¸°Ý");
+        }
     }
 
     public override void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
