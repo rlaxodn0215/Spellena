@@ -199,7 +199,35 @@ public class FirebaseLoginManager
             }
         }
 
-        return null;
+        return "회원 정보가 없습니다.";
+    }
+
+    public async Task<string> FindUserPassward(string _email,     string _userName,
+                                               string _birthDate, string _phoneNumber)
+    {
+        DatabaseReference _userRef = reference.Child("users");
+
+        var _userEmailQuery = _userRef.OrderByChild("email").EqualTo(_email);
+
+        DataSnapshot _userEmailSnapshot = await _userEmailQuery.GetValueAsync();
+
+        if (_userEmailSnapshot.HasChildren)
+        {
+            foreach(var _childrenSnapshot in _userEmailSnapshot.Children)
+            {
+                var _userNameVal = _childrenSnapshot.Child("userName").Value.ToString();
+                var _birthDateVal = _childrenSnapshot.Child("birthDate").Value.ToString();
+                var _phoneNumberVal = _childrenSnapshot.Child("phoneNumber").Value.ToString();
+
+                if(_userNameVal == _userName && _birthDateVal == _birthDate && _phoneNumberVal == _phoneNumber)
+                {
+                    string _passWard = _childrenSnapshot.Child("passward").Value.ToString();
+                    return _passWard;
+                }
+            }
+        }
+
+        return "회원 정보가 없습니다.";
     }
 
     public void SetUserStatus(string _userId, string _status)

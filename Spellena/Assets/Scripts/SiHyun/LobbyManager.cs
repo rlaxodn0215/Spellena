@@ -109,7 +109,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     {
         if (PlayerItem.localPlayerItemInstance == null)
         {
-            GameObject _playerItemObj = PhotonNetwork.Instantiate("PlayerItem", Vector3.zero, Quaternion.identity);
+            GameObject _playerItemObj = PhotonNetwork.Instantiate(playerItemPrefab.name, Vector3.zero, Quaternion.identity);
             PlayerItem _playerItem = _playerItemObj.GetComponent<PlayerItem>();
             _playerItem.SetPlayerInfo(_localPlayer, PunTeams.Team.red);
         }
