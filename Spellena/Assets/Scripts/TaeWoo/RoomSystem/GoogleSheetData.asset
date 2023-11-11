@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: GoogleSheetData
   m_EditorClassIdentifier: 
   gooleSheets:
-  - name: 
-    address: 
-    range_1: 
-    range_2: 
+  - name: "\uC5D0\uD14C\uB974\uB098"
+    address: https://docs.google.com/spreadsheets/d/1F9yGxGXeHoRzCnQsCOKARQh5ySId8cM9fkFSHiC1kHA/
+    range_1: D6
+    range_2: AQ17
   - name: 
     address: 
     range_1: 
