@@ -26,6 +26,13 @@ public class LoginSystem : MonoBehaviour
     public InputField phoneNumberInput;
     public Text resultEmailText;
 
+    // 비밀번호 찾기
+    public InputField userEmailInputField;
+    public InputField userNameInputField;
+    public InputField userBirthDateInputField;
+    public InputField userPhoneNumberInputField;
+    public Text resultPasswardText;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -79,8 +86,29 @@ public class LoginSystem : MonoBehaviour
         }
     }
 
-    /*public void OnClickFindID()
+    public void OnClickFindID()
     {
-        resultEmailText.text = await FirebaseLoginManager.Instance.FindUserEmail(userNameInput.text, phoneNumberInput.text);
-    }*/
+        FindIDToName();
+    }
+
+    public void OnClickFindPassward()
+    {
+        FindPasswardToEmail();
+    }
+
+    async void FindIDToName()
+    {
+        string _result = await FirebaseLoginManager.Instance.FindUserEmail(userNameInput.text,
+            phoneNumberInput.text);
+
+        resultEmailText.text = _result;
+    }
+
+    async void FindPasswardToEmail()
+    {
+        string _result = await FirebaseLoginManager.Instance.FindUserPassward(userEmailInputField.text,
+            userNameInputField.text, userBirthDateInputField.text, userPhoneNumberInputField.text);
+
+        resultPasswardText.text = _result;
+    }
 }
