@@ -97,6 +97,11 @@ MonoBehaviour:
   - ShowDamageUI
   - ShowKillLog
   - ShowKillLogMe
+  - KickPlayerRPC
+  - ShowRoundLoose
+  - ShowRoundWin
+  - ShowTeamLifeDead
+  - ShowTeamState
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1
