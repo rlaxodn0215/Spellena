@@ -6,18 +6,20 @@ using UnityEngine;
 public class AeternaData : ScriptableObject
 {
     [Header("에테르나 캐릭터 데이터")]
-    [Tooltip("에테르나 체력")]
-    public int Hp;
-    [Tooltip("앉아 있을때 걷는 속도")]
+
+    public int hp;
     public float sitSpeed;
-    [Tooltip("걷는 속도")]
-    public float walkSpeed;
-    [Tooltip("달리는 속도")]
-    public float runSpeed;
-    [Tooltip("점프 높이")]
+    public float sitSideSpeed;
+    public float sitBackSpeed;
+    public float moveSpeed;
+    public float backSpeed;
+    public float sideSpeed;
+    public float runSpeedRatio;
     public float jumpHeight;
+    public float headShotRatio;
 
     [Header("에테르나 기본 공격 데이터")]
+
     [Tooltip("기본 공격 쿨 타임")]
     public float basicAttackTime;
     [Tooltip("기본 공격 수명")]

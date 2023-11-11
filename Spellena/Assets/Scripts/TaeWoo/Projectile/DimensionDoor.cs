@@ -142,10 +142,10 @@ namespace Player
             playerInArea.Add(temp.name);
             playerInAreaObject.Add(temp.GetComponent<Rigidbody>());
 
-            temp.GetComponent<Character>().sitSpeed *= aeternaData.skill1DeBuffRatio;
-            temp.GetComponent<Character>().walkSpeed *= aeternaData.skill1DeBuffRatio;
-            temp.GetComponent<Character>().runSpeed *= aeternaData.skill1DeBuffRatio;
-            temp.GetComponent<Character>().jumpHeight *= aeternaData.skill1DeBuffRatio;
+            //temp.GetComponent<Character>().sitSpeed *= aeternaData.skill1DeBuffRatio;
+            //temp.GetComponent<Character>().walkSpeed *= aeternaData.skill1DeBuffRatio;
+            //temp.GetComponent<Character>().runSpeed *= aeternaData.skill1DeBuffRatio;
+            //temp.GetComponent<Character>().jumpHeight *= aeternaData.skill1DeBuffRatio;
         }
 
         [PunRPC]
@@ -158,10 +158,10 @@ namespace Player
             {
                 if (player == temp.name)
                 {
-                    temp.GetComponent<Character>().sitSpeed = temp.GetComponent<Character>().dataSitSpeed;
-                    temp.GetComponent<Character>().walkSpeed = temp.GetComponent<Character>().dataWalkSpeed;
-                    temp.GetComponent<Character>().runSpeed = temp.GetComponent<Character>().dataRunSpeed;
-                    temp.GetComponent<Character>().jumpHeight = temp.GetComponent<Character>().dataJumpHeight;
+                    //temp.GetComponent<Character>().sitSpeed = temp.GetComponent<Character>().dataSitSpeed;
+                    //temp.GetComponent<Character>().walkSpeed = temp.GetComponent<Character>().dataWalkSpeed;
+                    //temp.GetComponent<Character>().runSpeed = temp.GetComponent<Character>().dataRunSpeed;
+                    //temp.GetComponent<Character>().jumpHeight = temp.GetComponent<Character>().dataJumpHeight;
 
                     playerInArea.Remove(player);
                     playerInAreaObject.Remove(temp.GetComponent<Rigidbody>());
@@ -180,10 +180,10 @@ namespace Player
             {
                 Debug.Log("EnBuffWhenDestory");
 
-                temp.GetComponent<Character>().sitSpeed = temp.GetComponent<Character>().dataSitSpeed;
-                temp.GetComponent<Character>().walkSpeed = temp.GetComponent<Character>().dataWalkSpeed;
-                temp.GetComponent<Character>().runSpeed = temp.GetComponent<Character>().dataRunSpeed;
-                temp.GetComponent<Character>().jumpHeight = temp.GetComponent<Character>().dataJumpHeight;
+                //temp.GetComponent<Character>().sitSpeed = temp.GetComponent<Character>().dataSitSpeed;
+                //temp.GetComponent<Character>().walkSpeed = temp.GetComponent<Character>().dataWalkSpeed;
+                //temp.GetComponent<Character>().runSpeed = temp.GetComponent<Character>().dataRunSpeed;
+                //temp.GetComponent<Character>().jumpHeight = temp.GetComponent<Character>().dataJumpHeight;
             }
             
         }

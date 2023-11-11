@@ -2,37 +2,71 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEditor;
 
-public class GoogleSheetManager : MonoBehaviour
+public class GoogleSheetManager : EditorWindow
 {
-    public GoogleSheetData googleSheetData;
-    [Header("")]
-    public AeternaData aeternaData;
+    private GoogleSheetData googleSheetData;
 
+    private AeternaData aeternaData;
+
+    // URL
     private string URL;
 
     // 문자열로 나눈 2차원 배열
     private string[,] dividData;
 
-    IEnumerator Start()
+    [MenuItem("Custom/GoogleSpreadSheetManager")]
+    public static void ShowWindow()
     {
-        for(int i = 0; i < googleSheetData.gooleSheets.Length; i++)
+        EditorWindow wnd = GetWindow<GoogleSheetManager>();
+        wnd.titleContent = new GUIContent("GoogleSheetManager");
+    }
+
+    private void OnGUI()
+    {
+        EditorGUILayout.LabelField("Sheet Data", EditorStyles.boldLabel);
+        googleSheetData = (GoogleSheetData)EditorGUILayout.ObjectField("SheetData", googleSheetData, typeof(GoogleSheetData), true);
+        EditorGUILayout.LabelField("");
+        aeternaData = (AeternaData)EditorGUILayout.ObjectField("AeternaData", aeternaData, typeof(AeternaData), true);
+
+        if (GUILayout.Button("데이터 불러오고 저장하기"))
+        {
+            InitData();
+            Debug.Log("데이터 불러옴");
+        }
+
+    }
+
+    void InitData()
+    {
+
+        for (int i = 0; i < googleSheetData.gooleSheets.Length; i++)
         {
             URL = googleSheetData.gooleSheets[i].address + googleSheetData.exportFormattsv + googleSheetData.andRange
                 + googleSheetData.gooleSheets[i].range_1 + ":" + googleSheetData.gooleSheets[i].range_2;
 
             UnityWebRequest www = UnityWebRequest.Get(URL);
-            yield return www.SendWebRequest();   // URL과 통신
+            www.SendWebRequest();
+            while (!www.isDone)
+            { 
+                //Debug.Log("데이터 가져오는 중...");                                
+            }
 
-            string Data = www.downloadHandler.text; // string 데이터로 받아옴
-            Debug.Log("End Receving");
+            if (www.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError("데이터 가져오기 실패: " + www.error);
+                return;
+            }
+
+            string Data = www.downloadHandler.text;
+
+            Debug.Log("데이터 가져오기 성공");
 
             DividText(Data);
             GiveData(i);
         }
-        
     }
-
 
     void DividText(string tsv)
     {
@@ -61,7 +95,7 @@ public class GoogleSheetManager : MonoBehaviour
 
     void GiveData(int index)
     {
-        switch(index)
+        switch (index)
         {
             case 0:
                 GiveAeternaData();
@@ -73,18 +107,25 @@ public class GoogleSheetManager : MonoBehaviour
 
     void GiveAeternaData()
     {
-        Debug.Log(dividData[28, 0]);
-        //aeternaData.Hp = (int)dividData[28,0];
-        //aeternaData.sitSpeed;
-        //aeternaData.walkSpeed;
-        //[Tooltip("달리는 속도")]
-        //aeternaData.runSpeed;
-        //[Tooltip("점프 높이")]
-        //aeternaData.jumpHeight;
+        aeternaData.hp = int.Parse(dividData[28, 0]);
+        aeternaData.moveSpeed = float.Parse(dividData[29, 0]);
+        aeternaData.backSpeed = float.Parse(dividData[30, 0]);
+        aeternaData.sideSpeed = float.Parse(dividData[31, 0]);
+        aeternaData.runSpeedRatio = float.Parse(dividData[32, 0]);
+        aeternaData.sitSpeed = float.Parse(dividData[33, 0]);
+        aeternaData.sitBackSpeed = float.Parse(dividData[34, 0]);
+        aeternaData.jumpHeight = float.Parse(dividData[36, 0]);
+        aeternaData.headShotRatio = float.Parse(dividData[38, 0]);
 
-        //[Header("에테르나 기본 공격 데이터")]
         //[Tooltip("기본 공격 쿨 타임")]
-        //aeternaData.basicAttackTime;
+        aeternaData.basicAttackTime = float.Parse(dividData[8, 1]);
+        //[Tooltip("스킬1 포탈 쿨 타임")]
+        aeternaData.skill1DoorCoolTime = float.Parse(dividData[8, 2]);
+        //[Tooltip("스킬2 쿨 타임")]
+        aeternaData.skill2CoolTime = float.Parse(dividData[8, 3]);
+        //[Tooltip("스킬3 쿨 타임")]
+        aeternaData.skill3CoolTime = float.Parse(dividData[8, 5]);
+
         //[Tooltip("기본 공격 수명")]
         //aeternaData.DimenstionSlash_0_lifeTime;
         //[Tooltip("기본 공격 데미지")]
@@ -97,8 +138,7 @@ public class GoogleSheetManager : MonoBehaviour
         //[Header("에테르나 스킬1 데이터")]
         //[Tooltip("스킬1 포탈 수명")]
         //aeternaData.skill1Time;
-        //[Tooltip("스킬1 포탈 쿨 타임")]
-        //aeternaData.skill1DoorCoolTime;
+
         //[Tooltip("스킬1 포탈 소환 최대 고리")]
         //aeternaData.skill1DoorSpawnMaxRange;
         //[Tooltip("스킬1 포탈 적용 범위")]
@@ -111,8 +151,6 @@ public class GoogleSheetManager : MonoBehaviour
         //aeternaData.skill2DurationTime;
         //[Tooltip("스킬2 투사체 가지고 있는 시간")]
         //aeternaData.skill2HoldTime;
-        //[Tooltip("스킬2 쿨 타임")]
-        //aeternaData.skill2CoolTime;
 
         //[Header("에테르나 스킬3 데이터")]
         //[Tooltip("스킬3 지속 시간")]

@@ -130,7 +130,7 @@ namespace Player
         private void Initialize()
         {
             hp = elementalOrderData.Hp;
-            walkSpeed = elementalOrderData.moveSpeed;
+            //walkSpeed = elementalOrderData.moveSpeed;
             jumpHeight = elementalOrderData.jumpHeight;
             overlayAnimator = transform.GetChild(1).GetComponent<Animator>();
             minimapRenderTexture = minimapCamera.GetComponent<Camera>().targetTexture;

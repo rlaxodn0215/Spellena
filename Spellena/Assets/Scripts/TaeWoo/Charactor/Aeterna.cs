@@ -109,17 +109,16 @@ namespace Player
             skill2Phase = 1;
             skill3Phase = 1;
 
-            dataHp = aeternaData.Hp;
-            dataSitSpeed = aeternaData.sitSpeed;
-            dataWalkSpeed = aeternaData.walkSpeed;
-            dataRunSpeed = aeternaData.runSpeed;
-            dataJumpHeight = aeternaData.jumpHeight;
-
-            hp = dataHp;
-            sitSpeed = dataSitSpeed;
-            walkSpeed = dataWalkSpeed;
-            runSpeed = dataRunSpeed;
-            jumpHeight = dataJumpHeight;
+            hp = dataHp = aeternaData.hp;
+            sitSpeed = dataSitSpeed = aeternaData.sitSpeed;
+            sitSideSpeed = dataSitSideSpeed = aeternaData.sitSideSpeed;
+            sitBackSpeed = dataSitBackSpeed = aeternaData.sitBackSpeed;
+            moveSpeed = dataMoveSpeed = aeternaData.moveSpeed;
+            backSpeed = dataBackSpeed = aeternaData.backSpeed;
+            sideSpeed = dataSideSpeed = aeternaData.sideSpeed;
+            runSpeedRatio = dataRunSpeedRatio = aeternaData.runSpeedRatio;
+            jumpHeight = dataJumpHeight = aeternaData.jumpHeight;
+            headShotRatio = headShotRatio = aeternaData.headShotRatio;
 
             chargeCountTime = new float[3];
 

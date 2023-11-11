@@ -52,22 +52,45 @@ namespace Player
         public bool isOccupying = false;
 
         public int hp;
+
         public float sitSpeed;
-        public float walkSpeed;
-        public float runSpeed;
+        public float sitSideSpeed;
+        public float sitBackSpeed;
+
+        public float moveSpeed;
+        public float backSpeed;
+        public float sideSpeed;
+        public float runSpeedRatio;
+
         public float jumpHeight;
+
+        public float headShotRatio;
 
         // 데이터 베이스에서 받는 데이터들
         [HideInInspector]
         public int dataHp;
+
         [HideInInspector]
         public float dataSitSpeed;
         [HideInInspector]
-        public float dataWalkSpeed;
+        public float dataSitSideSpeed;
         [HideInInspector]
-        public float dataRunSpeed;
+        public float dataSitBackSpeed;
+
+        [HideInInspector]
+        public float dataMoveSpeed;
+        [HideInInspector]
+        public float dataBackSpeed;
+        [HideInInspector]
+        public float dataSideSpeed;
+        [HideInInspector]
+        public float dataRunSpeedRatio;
+
         [HideInInspector]
         public float dataJumpHeight;
+
+        [HideInInspector]
+        public float dataHeadShotRatio;
 
         // 컴포넌트
         [HideInInspector]
@@ -234,20 +257,74 @@ namespace Player
                 }
 
                 _temp.Normalize();
+                SelectMoveSpeed(_temp);
 
-                if(playerActionDatas[(int)PlayerActionState.Sit].isExecuting)
+                _temp = transform.InverseTransformVector(_temp);
+
+                animator.SetInteger("VerticalSpeed", (int)moveVec.z);
+                animator.SetInteger("HorizontalSpeed", (int)moveVec.x);
+            }
+        }
+
+        void SelectMoveSpeed(Vector3 _temp)
+        {
+            if (playerActionDatas[(int)PlayerActionState.Sit].isExecuting)
+            {
+                if (Mathf.Abs(moveVec.x) > 0.01f)
+                {
+                    rigidbody.MovePosition(rigidbody.transform.position + _temp * sitSideSpeed * Time.deltaTime);
+                }
+
+                else if (moveVec.z > 0.01f)
+                {
                     rigidbody.MovePosition(rigidbody.transform.position + _temp * sitSpeed * Time.deltaTime);
-                else if(playerActionDatas[(int)PlayerActionState.Run].isExecuting)
-                    rigidbody.MovePosition(rigidbody.transform.position + _temp * runSpeed * Time.deltaTime);
-                else
-                    rigidbody.MovePosition(rigidbody.transform.position + _temp * walkSpeed * Time.deltaTime);
+                }
+
+                else if (moveVec.z < -0.01f)
+                {
+                    rigidbody.MovePosition(rigidbody.transform.position + _temp * sitBackSpeed * Time.deltaTime);
+                }
 
             }
 
-            _temp = transform.InverseTransformVector(_temp);
+            else if (playerActionDatas[(int)PlayerActionState.Run].isExecuting)
+            {
+                if (Mathf.Abs(moveVec.x) > 0.01f)
+                {
+                    rigidbody.MovePosition(rigidbody.transform.position + _temp * sideSpeed * runSpeedRatio * Time.deltaTime);
+                }
 
-            animator.SetInteger("VerticalSpeed", (int)moveVec.z);
-            animator.SetInteger("HorizontalSpeed", (int)moveVec.x);
+                else if (moveVec.z > 0.01f)
+                {
+                    rigidbody.MovePosition(rigidbody.transform.position + _temp * moveSpeed * runSpeedRatio * Time.deltaTime);
+                }
+
+                else if (moveVec.z < -0.01f)
+                {
+                    rigidbody.MovePosition(rigidbody.transform.position + _temp * backSpeed * runSpeedRatio * Time.deltaTime);
+                }
+            }
+
+            else
+            {
+                if (Mathf.Abs(moveVec.x) > 0.01f)
+                {
+                    rigidbody.MovePosition(rigidbody.transform.position + _temp * sideSpeed * Time.deltaTime);
+                }
+
+                else if (moveVec.z > 0.01f)
+                {
+                    rigidbody.MovePosition(rigidbody.transform.position + _temp * moveSpeed * Time.deltaTime);
+                }
+
+                else if (moveVec.z < -0.01f)
+                {
+                    rigidbody.MovePosition(rigidbody.transform.position + _temp * backSpeed * Time.deltaTime);
+                }
+
+            }
+
+            
         }
 
         void OnMove(InputValue value)
