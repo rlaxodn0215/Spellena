@@ -16,7 +16,10 @@ public class EterialStormObject : SpawnObject,IPunObservable
     float currentGenerateTimer = 0f;
 
     bool isColliderOn = false;
-    Collider hitCollider;
+
+    public GameObject hitCollider;
+    public GameObject hitEffect;
+    public GameObject rangeArea;
 
     float hitCoolDownTime = 0.4f;
     float impulsePower = 4f;
@@ -61,7 +64,10 @@ public class EterialStormObject : SpawnObject,IPunObservable
             if(isColliderOn == false)
             {
                 isColliderOn = true;
-                hitCollider.enabled = true;
+                for(int i = 0; i < hitEffect.transform.childCount; i++)
+                {
+                    hitEffect.transform.GetChild(i).GetComponent<ParticleSystem>().Play(true);
+                }
             }
             else
             {
@@ -86,7 +92,7 @@ public class EterialStormObject : SpawnObject,IPunObservable
     {
         currentGenerateTimer = generateTimer;
         currentLifeTime = lifeTime;
-        hitCollider = GetComponent<Collider>();
+        hitCollider.GetComponent<TriggerEventer>().hitTriggerEvent += TriggerEvent;
     }
     public override void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
@@ -101,19 +107,22 @@ public class EterialStormObject : SpawnObject,IPunObservable
         }
     }
 
-    private void OnTriggerStay(Collider other)
+    void TriggerEvent(GameObject hitObject)
     {
         if (PhotonNetwork.IsMasterClient)
         {
-            if (other.gameObject.GetComponent<Character>() != null)
+            if (isColliderOn)
             {
-                CheckHitCount(other);
-                Debug.Log(other.GetComponent<Character>().hp);
+                if (hitObject.GetComponent<Character>() != null)
+                {
+                    CheckHitCount(hitObject);
+                    Debug.Log(hitObject.GetComponent<Character>().hp);
+                }
             }
         }
     }
 
-    void CheckHitCount(Collider other)
+    void CheckHitCount(GameObject other)
     {
         float _xPos = other.transform.position.x - transform.position.x;
         float _zPos = other.transform.position.z - transform.position.z;

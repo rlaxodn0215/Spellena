@@ -1704,8 +1704,8 @@ ModelImporter:
       name: Combat_Cast_Attack
       takeName: Combat_Cast_Attack
       internalID: -8132736215989395924
-      firstFrame: 650
-      lastFrame: 683
+      firstFrame: 665
+      lastFrame: 675
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
