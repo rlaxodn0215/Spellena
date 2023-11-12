@@ -513,14 +513,24 @@ MonoBehaviour:
   isOccupying: 0
   hp: 0
   sitSpeed: 0
-  walkSpeed: 0
-  runSpeed: 0
+  sitSideSpeed: 0
+  sitBackSpeed: 0
+  moveSpeed: 0
+  backSpeed: 0
+  sideSpeed: 0
+  runSpeedRatio: 0
   jumpHeight: 0
+  headShotRatio: 0
   dataHp: 0
   dataSitSpeed: 0
-  dataWalkSpeed: 0
-  dataRunSpeed: 0
+  dataSitSideSpeed: 0
+  dataSitBackSpeed: 0
+  dataMoveSpeed: 0
+  dataBackSpeed: 0
+  dataSideSpeed: 0
+  dataRunSpeedRatio: 0
   dataJumpHeight: 0
+  dataHeadShotRatio: 0
   animator: {fileID: 0}
   rigidbody: {fileID: 0}
   moveVec: {x: 0, y: 0, z: 0}
