@@ -12,11 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c2e5de6c6e89044aaa45db2eaf6e559, type: 3}
   m_Name: AeternaData
   m_EditorClassIdentifier: 
-  Hp: 100
-  sitSpeed: 2
-  walkSpeed: 3
-  runSpeed: 5
+  hp: 100
+  sitSpeed: 3
+  sitSideSpeed: 1
+  sitBackSpeed: 2
+  moveSpeed: 5
+  backSpeed: 4
+  sideSpeed: 3
+  runSpeedRatio: 1.5
   jumpHeight: 7
+  headShotRatio: 0
   basicAttackTime: 1
   DimenstionSlash_0_lifeTime: 10
   DimenstionSlash_0_Damage: 50
