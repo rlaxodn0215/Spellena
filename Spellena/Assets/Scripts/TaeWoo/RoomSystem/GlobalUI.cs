@@ -87,7 +87,7 @@ public class GlobalUI : MonoBehaviourPunCallbacks,IPunObservable
     public float killActiveTime = 1f;
     // 킬 로그 활성 시간
     [HideInInspector]
-    public float killLogActiveTime = 3f;
+    private float killLogActiveTime = 3f;
 
     public Photon.Realtime.Player[] allPlayers;
     public List<GameObject> playersA = new List<GameObject>(); // Red
@@ -213,6 +213,7 @@ public class GlobalUI : MonoBehaviourPunCallbacks,IPunObservable
         redPercentageText.text = string.Format((int)occupyingAUI.rate + "%");
         bluePercentageText.text = string.Format((int)occupyingBUI.rate + "%");
         extraTimerText.text = string.Format("{0:F2}", roundEndTimerUI);
+
         DisableKillLog();
 
         if (occupyingTeamUI.name == "A")
@@ -227,6 +228,7 @@ public class GlobalUI : MonoBehaviourPunCallbacks,IPunObservable
 
         redCTFImage.fillAmount = roundEndTimerUI / roundEndTimeUI;
         blueCTFImage.fillAmount = roundEndTimerUI / roundEndTimeUI;
+        
     }
 
     [PunRPC]
@@ -371,9 +373,12 @@ public class GlobalUI : MonoBehaviourPunCallbacks,IPunObservable
     void DisableKillLog()
     {
         if (endKillLogIndex < 1) return;
+       // Debug.Log("globalTimerUI : " + globalTimerUI + " / " + "killLogTimer : " + playerKillLogDatas[endKillLogIndex - 1].killLogTimer);
+
         if(globalTimerUI >= playerKillLogDatas[endKillLogIndex-1].killLogTimer)
         {
             UIObjects["killLog_" + endKillLogIndex].SetActive(false);
+            //Debug.LogError("DisableKillLog");
             endKillLogIndex--;
         }
     }

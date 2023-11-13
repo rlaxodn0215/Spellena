@@ -86,7 +86,7 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
     // 대기실 준비 시간
     float readyTime = 1f;
     // 플레이어 리스폰 타임
-    float playerRespawnTime = 8;
+    float playerRespawnTime = 6;
     // 거점 전환 원 먹는 비율
     float occupyingGaugeRate = 300f;
     // 거점 전환하는 시간
@@ -98,7 +98,7 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
     //추가 시간
     float roundEndTime = 5f;
     // 라운드 결과 확인 시간
-    float roundEndResultTime = 6;
+    float roundEndResultTime = 6f;
 
     string teamA = "A";
     string teamB = "B";
@@ -206,6 +206,8 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
             playerData.Add("ReSpawnTime", -1.0f);
             playerData.Add("SpawnPoint", new Vector3(0, 0, 0));
             playerData.Add("Parameter", null);
+            playerData.Add("ForceDirection", new Vector3(0, 0, 0));
+            playerData.Add("ForceSize", 0.0f);
 
             player.SetCustomProperties(playerData);
         }
@@ -406,7 +408,7 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
                         PhotonView view = PhotonView.Find((int)targetPlayer.CustomProperties["CharacterViewID"]);
                         if (view == null) break;
 
-                        view.RPC("PlayerDead", RpcTarget.AllBufferedViaServer);
+                        view.RPC("PlayerDead", RpcTarget.AllBufferedViaServer, (Vector3)targetPlayer.CustomProperties["ForceDirection"], (float)targetPlayer.CustomProperties["ForceSize"]);
                         view.RPC("PlayerDeadCam", targetPlayer);
 
                         break;
@@ -441,10 +443,15 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
     {
         globalTimer -= Time.deltaTime;
 
+
+        photonView.RPC("TimeScaling", RpcTarget.AllBuffered, 0.3f);
+
         if (globalTimer <= 0.0f)
         {
             globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "roundWin", false);
             globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "roundLoose", false);
+
+            photonView.RPC("TimeScaling", RpcTarget.AllBuffered, 1.0f);
 
             if (roundA >= 2 || roundB >= 2)
             {
@@ -458,6 +465,12 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
                 ResetRound();
             }
         }
+    }
+
+    [PunRPC]
+    public void TimeScaling(float ratio)
+    {
+        Time.timeScale = ratio;
     }
 
     void MatchEnd()
@@ -827,6 +840,16 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
         globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "blueExtraUI", true);
         globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "blueExtraObj", false);
         globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "etcUI", true);
+
+        foreach(Photon.Realtime.Player player in PhotonNetwork.CurrentRoom.Players.Values)
+        {
+            if(player.CustomProperties["SpawnPoint"] !=null)
+            {
+                PhotonView view = PhotonView.Find((int)player.CustomProperties["CharacterViewID"]);
+                if (view == null) continue;
+                view.RPC("PlayerTeleport", RpcTarget.AllBuffered, (Vector3)player.CustomProperties["SpawnPoint"]);
+            }
+        }
 
     }
 

@@ -564,7 +564,8 @@ namespace Player
             transform.position = pos;
         }
 
-        public void PlayerDamaged(string enemy ,int damage)
+        [PunRPC]
+        public void PlayerDamaged(string enemy ,int damage, Vector3 direction, float force)
         {
             if (damage > 0)
             {
@@ -574,44 +575,47 @@ namespace Player
                     //Debug.Log("Player Damaged !!  EnemyName: " + enemy);
                 }
 
-                Photon.Realtime.Player killer = GameCenterTest.FindPlayerWithCustomProperty("CharacterViewID", enemy);
-
-                if (killer == null)
+                if (PhotonNetwork.IsMasterClient)
                 {
-                    Debug.Log("자해");
-                    return;
-                }
+                    Photon.Realtime.Player killer = GameCenterTest.FindPlayerWithCustomProperty("CharacterViewID", enemy);
 
-                int temp = (int)killer.CustomProperties["TotalDamage"];
-                killer.CustomProperties["Parameter"] = "TotalDamage";
-                GameCenterTest.ChangePlayerCustomProperties(killer, "TotalDamage", temp + damage);
-
-                if (hp <= 0)
-                {
-                    murder = enemy;
-
-                    int temp1 = (int)PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["DeadCount"];
-                    PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["Parameter"] = "DeadCount";
-                    GameCenterTest.ChangePlayerCustomProperties
-                        (PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr], "DeadCount", temp1 + 1);
-
-                    Photon.Realtime.Player killer1 = GameCenterTest.FindPlayerWithCustomProperty("CharacterViewID", enemy);
-
-                    if (killer1 != null)
+                    if (killer == null)
                     {
-                        int temp2 = (int)killer1.CustomProperties["KillCount"];
-                        killer1.CustomProperties["Parameter"] = "KillCount";
-                        GameCenterTest.ChangePlayerCustomProperties(killer1, "KillCount", temp2 + 1);
+                        Debug.Log("자해");
+                        return;
                     }
 
-                    else
+                    int temp = (int)killer.CustomProperties["TotalDamage"];
+                    killer.CustomProperties["Parameter"] = "TotalDamage";
+                    GameCenterTest.ChangePlayerCustomProperties(killer, "TotalDamage", temp + damage);
+
+                    if (hp <= 0)
                     {
-                        Debug.Log("자살");
+                        murder = enemy;
+
+                        int temp1 = (int)PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["DeadCount"];
+                        PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["Parameter"] = "DeadCount";
+                        PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["ForceDirection"] = direction;
+                        PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["ForceSize"] = force;
+
+                        GameCenterTest.ChangePlayerCustomProperties
+                            (PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr], "DeadCount", temp1 + 1);
+
+                        Photon.Realtime.Player killer1 = GameCenterTest.FindPlayerWithCustomProperty("CharacterViewID", enemy);
+
+                        if (killer1 != null)
+                        {
+                            int temp2 = (int)killer1.CustomProperties["KillCount"];
+                            killer1.CustomProperties["Parameter"] = "KillCount";
+                            GameCenterTest.ChangePlayerCustomProperties(killer1, "KillCount", temp2 + 1);
+                        }
+
+                        else
+                        {
+                            Debug.Log("자살");
+                        }
                     }
                 }
-
-
-
             }
 
             else
@@ -628,13 +632,14 @@ namespace Player
         }
 
         [PunRPC]
-        public void PlayerDead()
+        public void PlayerDead(Vector3 direction, float force)
         {
             // Ragdoll로 처리
             hp = dataHp;
             Dead.SetActive(true);
             Alive.SetActive(false);
             GetComponent<CapsuleCollider>().enabled = false;
+            rigidbody.AddForce(direction.normalized * force, ForceMode.Impulse);
         }
 
         [PunRPC]

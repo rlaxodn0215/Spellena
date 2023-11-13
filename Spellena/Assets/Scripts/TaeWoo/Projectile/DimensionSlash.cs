@@ -140,7 +140,10 @@ namespace Player
 
                         if (other.transform.root.GetComponent<Character>() && other.gameObject.layer == LayerMask.NameToLayer("Other"))
                         {
-                            other.transform.root.GetComponent<Character>().PlayerDamaged(playerName, -healing);                    
+                            //other.transform.root.GetComponent<Character>().PlayerDamaged(playerName, -healing);
+
+                            other.transform.root.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBuffered,playerName,
+                                -healing, Vector3.zero, 0.0f);               
                             DestorySpawnObject();
                         }
 
@@ -160,8 +163,10 @@ namespace Player
                     {
                         if (other.transform.root.GetComponent<Character>())
                         {
-                            other.transform.root.GetComponent<Character>().PlayerDamaged(playerName, damage);
-                            Debug.Log("ATTACK!!!!!");
+                            //other.transform.root.GetComponent<Character>().PlayerDamaged(playerName, damage);
+                            other.transform.root.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBuffered, playerName,
+                                damage, transform.TransformDirection(transform.forward), 2.0f);
+                            Debug.Log(other.name);
                             DestorySpawnObject();
                         }
 
