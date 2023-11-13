@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fafd9958282b7b34ba039a1c3f944018, type: 3}
+  m_Name: ElementalOrderData
+  m_EditorClassIdentifier: 
+  hp: 100
+  sitSpeed: 5
+  sitSideSpeed: 5
+  sitBackSpeed: 5
+  moveSpeed: 5
+  backSpeed: 5
+  sideSpeed: 5
+  runSpeedRatio: 1
+  jumpHeight: 5
+  ragnaEdgeCastingTime: 2
+  ragnaEdgeFloorLifeTime: 1
+  ragnaEdgeCylinderLifeTime: 2
+  burstFlareLifeTime: 4
+  gaiaTiedCastingTime: 2
+  gaiaTiedLifeTime: 3
+  meteorStrikeCastingTime: 3.5
+  meteorStrikeLifeTime: 10
+  terraBreakCastingTime: 4.5
+  terraBreakLifeTime: 3
+  eterialStormCastingTime: 2.5
+  eterialStormLifeTime: 3.2

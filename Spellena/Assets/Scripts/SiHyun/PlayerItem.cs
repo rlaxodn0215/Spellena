@@ -12,7 +12,6 @@ public class PlayerItem : MonoBehaviourPunCallbacks
 
     public static GameObject localPlayerItemInstance;
     public GameObject popUpButton;
-    LobbyManager lobbyManagerScript;
     public GameObject playerItem;
 
     GameObject targetObject;
@@ -30,7 +29,6 @@ public class PlayerItem : MonoBehaviourPunCallbacks
     // Start is called before the first frame update
     private void Awake()
     {
-        lobbyManagerScript = FindAnyObjectByType<LobbyManager>();
         if(photonView.IsMine)
         {
             localPlayerItemInstance = this.gameObject;
@@ -39,7 +37,6 @@ public class PlayerItem : MonoBehaviourPunCallbacks
         {
             popUpButton.SetActive(false);
         }
-        TeamChanged("TeamAList");
     }
 
     private void OnEnable()
@@ -93,7 +90,7 @@ public class PlayerItem : MonoBehaviourPunCallbacks
         userName = _userName;
         playerName.text = photonView.Owner.NickName;
 
-        if(photonView.IsMine && photonView.Owner != null)
+        if (photonView.IsMine && photonView.Owner != null)
         {
             ExitGames.Client.Photon.Hashtable _customProperties = new ExitGames.Client.Photon.Hashtable();
             _customProperties["UserId"] = _userId;

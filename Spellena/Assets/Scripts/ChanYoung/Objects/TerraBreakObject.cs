@@ -6,10 +6,15 @@ using UnityEngine;
 
 public class TerraBreakObject : SpawnObject, IPunObservable
 {
-    float castingTime = 4.5f;
+    public ElementalOrderData elementalOrderData;
+
+    public GameObject rangeArea;
+    public GameObject hitEffect;
+
+    float castingTime;
     float currentCastingTime = 0f;
 
-    float lifeTime = 3f;
+    float lifeTime;
     float currentLifeTime = 0f;
 
     float hitCountTimer;
@@ -47,10 +52,15 @@ public class TerraBreakObject : SpawnObject, IPunObservable
         if(currentCastingTime > 0f)
         {
             currentCastingTime -= Time.deltaTime;
+
+            if(currentCastingTime <= 0f)
+            {
+                hitEffect.SetActive(true);
+            }
         }
         else
         {
-            if(currentHitCountTimer <= 0f)
+            if (currentHitCountTimer <= 0f)
             {
                 currentHitCountTimer = hitCountTimer;
                 currentColliderTimer = colliderTimer;
@@ -75,6 +85,7 @@ public class TerraBreakObject : SpawnObject, IPunObservable
             {
                 PhotonNetwork.Destroy(gameObject);
             }
+            
         }
     }
 
@@ -86,6 +97,9 @@ public class TerraBreakObject : SpawnObject, IPunObservable
 
     void Init()
     {
+        castingTime = elementalOrderData.terraBreakCastingTime;
+        lifeTime = elementalOrderData.terraBreakLifeTime;
+
         currentCastingTime = castingTime;
         currentLifeTime = lifeTime;
         hitCountTimer = lifeTime / hitCount;

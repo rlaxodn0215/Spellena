@@ -53917,6 +53917,7 @@ MonoBehaviour:
   observableSearch: 2
   ObservedComponents:
   - {fileID: 6615612863486490475}
+  - {fileID: 8838959651026145984}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -53935,6 +53936,7 @@ MonoBehaviour:
   playerName: 
   type: 0
   objectName: 
+  elementalOrderData: {fileID: 11400000, guid: f59593c682ebc2b41896b199699b9e9c, type: 2}
   shootParticle: {fileID: 546465675545352016}
   explodeParticle: {fileID: 3825644428435986582}
 --- !u!1 &3825644427761579314

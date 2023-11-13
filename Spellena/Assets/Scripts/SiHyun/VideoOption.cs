@@ -24,7 +24,6 @@ public class VideoOption : MonoBehaviour
     public Slider bgmSlider;
     public Slider effectSlider;
     public Slider voiceSlider;
-    [Range((float)0.01, 1)]
     public Slider sensitivitySlider;
     public InputField soundInput;
     public InputField bgmInput;
@@ -48,9 +47,8 @@ public class VideoOption : MonoBehaviour
         resolutionCheckPanel.SetActive(false);
         settingPanel.SetActive(false);
         friendsPanel.SetActive(false);
-        Screen.SetResolution(780, 500, FullScreenMode.Windowed);
 
-        //soundValueText.GetComponentInChildren<Button>().onClick.AddListener(() => EditText());
+        Screen.SetResolution(1336, 768, FullScreenMode.Windowed);
     }
 
     private void Update()
@@ -181,13 +179,5 @@ public class VideoOption : MonoBehaviour
         voiceInput.text = string.Format("{0}", _voiceVal * 100);
         sensitivityInput.text = string.Format("{0}", _sensitivityVal * 5);
     }
-
-    /*public void OnInputFieldChanged(string value)
-    {
-        float _valToSlider = int.Parse(value) / 100;
-
-        soundSlider.value = _valToSlider;
-    }*/
-
 }
 

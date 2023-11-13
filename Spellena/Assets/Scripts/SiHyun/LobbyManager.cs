@@ -24,11 +24,12 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     public PlayerItem playerItemPrefab;
     public Transform playerItemParentA;
     public Transform playerItemParentB;
-    public ObjectPool playerItemPool;
 
     private void Start()
     {
         PhotonNetwork.JoinLobby();
+        roomPanel.SetActive(false);
+        lobbyPanel.SetActive(true);
     }
 
     public void OnClickCreate()
@@ -111,7 +112,39 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         {
             GameObject _playerItemObj = PhotonNetwork.Instantiate(playerItemPrefab.name, Vector3.zero, Quaternion.identity);
             PlayerItem _playerItem = _playerItemObj.GetComponent<PlayerItem>();
-            _playerItem.SetPlayerInfo(_localPlayer, PunTeams.Team.red);
+            _playerItem.transform.SetParent(playerItemParentA);
+            if(_playerItem.photonView.IsMine)
+            {
+                _playerItem.SetPlayerInfo(_localPlayer, PunTeams.Team.red);
+            }
+
+            CanvasScaler canvasScaler = playerItemParentA.GetComponentInParent<CanvasScaler>();
+            if (canvasScaler != null)
+            {
+                float referenceWidth = canvasScaler.referenceResolution.x;
+                float referenceHeight = canvasScaler.referenceResolution.y;
+
+                // 기준 해상도에서의 cellSize 및 spacing
+                Vector2 baseCellSize = new Vector2(427f, 93f);
+                Vector2 baseSpacing = new Vector2(0f, 3f);
+
+                // 화면 크기에 따라 조절된 cellSize 및 spacing 계산
+                float scaleFactorX = canvasScaler.referenceResolution.x / Screen.width;
+                float scaleFactorY = canvasScaler.referenceResolution.y / Screen.height;
+
+                Vector2 adjustedCellSize = new Vector2(baseCellSize.x / scaleFactorX, baseCellSize.y / scaleFactorY);
+                Vector2 adjustedSpacing = new Vector2(baseSpacing.x / scaleFactorX, baseSpacing.y / scaleFactorY);
+
+                GridLayoutGroup _gridLayout = playerItemParentA.GetComponent<GridLayoutGroup>();
+
+                if (_gridLayout != null)
+                {
+                    _gridLayout.cellSize = adjustedCellSize;
+                    _gridLayout.spacing = adjustedSpacing;
+
+                    //AdjustChildObjectSizes(_playerItem, adjustedCellSize);
+                }
+            }
         }
     }
 
@@ -121,8 +154,54 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         {
             GameObject _playerItemObj = PhotonNetwork.Instantiate(playerItemPrefab.name, Vector3.zero, Quaternion.identity);
             PlayerItem _playerItem = _playerItemObj.GetComponent<PlayerItem>();
-
+            _playerItem.transform.SetParent(playerItemParentA);
+            if(_playerItem.photonView.IsMine)
+            {
             _playerItem.SetPlayerInfo(_newPlayer.UserId, _newPlayer.NickName);
+            }
+
+            CanvasScaler canvasScaler = playerItemParentA.GetComponentInParent<CanvasScaler>();
+            if (canvasScaler != null)
+            {
+                float referenceWidth = canvasScaler.referenceResolution.x;
+                float referenceHeight = canvasScaler.referenceResolution.y;
+
+                // 기준 해상도에서의 cellSize 및 spacing
+                Vector2 baseCellSize = new Vector2(427f, 93f);
+                Vector2 baseSpacing = new Vector2(0f, 3f);
+
+                // 화면 크기에 따라 조절된 cellSize 및 spacing 계산
+                float scaleFactorX = canvasScaler.referenceResolution.x / Screen.width;
+                float scaleFactorY = canvasScaler.referenceResolution.y / Screen.height;
+
+                Vector2 adjustedCellSize = new Vector2(baseCellSize.x / scaleFactorX, baseCellSize.y / scaleFactorY);
+                Vector2 adjustedSpacing = new Vector2(baseSpacing.x / scaleFactorX, baseSpacing.y / scaleFactorY);
+
+                GridLayoutGroup _gridLayout = playerItemParentA.GetComponent<GridLayoutGroup>();
+
+                if (_gridLayout != null)
+                {
+                    _gridLayout.cellSize = adjustedCellSize;
+                    _gridLayout.spacing = adjustedSpacing;
+
+                    //AdjustChildObjectSizes(_playerItem, adjustedCellSize);
+                }
+            }
+        }
+    }
+
+    void AdjustChildObjectSizes(PlayerItem parentObject, Vector2 cellSize)
+    {
+        // 자식 오브젝트들의 크기 조절
+        foreach (Transform child in parentObject.transform)
+        {
+            RectTransform childRectTransform = child.GetComponent<RectTransform>();
+
+            // 자식 오브젝트의 크기를 부모의 셀 크기에 맞게 설정
+            if (childRectTransform != null)
+            {
+                childRectTransform.sizeDelta = new Vector2(cellSize.x, cellSize.y);
+            }
         }
     }
 

@@ -4,9 +4,11 @@ using UnityEngine;
 
 public class BurstFlareObject : SpawnObject, IPunObservable
 {
+    public ElementalOrderData elementalOrderData;
+
     Vector3 direction;
 
-    float lifeTime = 4f;
+    float lifeTime;
     float currentLifeTime = 0f;
 
     public ParticleSystem shootParticle;
@@ -44,6 +46,7 @@ public class BurstFlareObject : SpawnObject, IPunObservable
 
     void Init()
     {
+        lifeTime = elementalOrderData.burstFlareLifeTime;
         if (data != null)
         {
             this.gameObject.transform.position = (Vector3)data[3];

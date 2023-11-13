@@ -6,9 +6,11 @@ using UnityEngine;
 
 public class MeteorStrikeObject : SpawnObject, IPunObservable
 {
-    float castingTime = 3.5f;
+    public ElementalOrderData elementalOrderData;
+
+    float castingTime;
     float currentCastingTime = 0f;
-    float lifeTime = 10f;
+    float lifeTime;
     float currentLifeTime = 0f;
 
     public GameObject hitCollider;
@@ -63,6 +65,8 @@ public class MeteorStrikeObject : SpawnObject, IPunObservable
 
     void Init()
     {
+        castingTime = elementalOrderData.meteorStrikeCastingTime;
+        lifeTime = elementalOrderData.meteorStrikeLifeTime;
         currentCastingTime = castingTime;
         currentLifeTime = lifeTime;
         hitCollider.GetComponent<TriggerEventer>().hitTriggerEvent += triggerEvent;

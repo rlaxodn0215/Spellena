@@ -6,14 +6,16 @@ using UnityEngine;
 
 public class EterialStormObject : SpawnObject,IPunObservable
 {
-    float lifeTime = 3.2f;
+    public ElementalOrderData elementalOrderData;
+
+    float lifeTime;
     float currentLifeTime = 0f;
 
     List<GameObject> hitObjects = new List<GameObject>();
     List<float> hitTimer = new List<float>();
 
-    float generateTimer = 2.5f;
-    float currentGenerateTimer = 0f;
+    float castingTime;
+    float currentCastingTime = 0f;
 
     bool isColliderOn = false;
 
@@ -55,9 +57,9 @@ public class EterialStormObject : SpawnObject,IPunObservable
 
     void CheckTimer()
     {
-        if(currentGenerateTimer > 0f)
+        if(currentCastingTime > 0f)
         {
-            currentGenerateTimer -= Time.deltaTime;
+            currentCastingTime -= Time.deltaTime;
         }
         else
         {
@@ -90,7 +92,10 @@ public class EterialStormObject : SpawnObject,IPunObservable
 
     void Init()
     {
-        currentGenerateTimer = generateTimer;
+        castingTime = elementalOrderData.eterialStormCastingTime;
+        lifeTime = elementalOrderData.eterialStormLifeTime;
+
+        currentCastingTime = castingTime;
         currentLifeTime = lifeTime;
         hitCollider.GetComponent<TriggerEventer>().hitTriggerEvent += TriggerEvent;
     }

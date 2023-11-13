@@ -29,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 2319188459155301796}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 1, z: 0}
-  m_LocalScale: {x: 4, y: 1, z: 4}
+  m_LocalScale: {x: 4.5, y: 1, z: 4.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8000135797746306587}
@@ -9911,7 +9911,7 @@ Transform:
   m_GameObject: {fileID: 5237258633841638861}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_LocalScale: {x: 1.25, y: 1.25, z: 1.25}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 8000135797746306587}
@@ -24697,6 +24697,7 @@ MonoBehaviour:
   playerName: 
   type: 0
   objectName: 
+  elementalOrderData: {fileID: 11400000, guid: f59593c682ebc2b41896b199699b9e9c, type: 2}
   hitCollider: {fileID: 2319188459155301796}
   hitEffect: {fileID: 8000135797675167278}
 --- !u!1 &8000135797843315325

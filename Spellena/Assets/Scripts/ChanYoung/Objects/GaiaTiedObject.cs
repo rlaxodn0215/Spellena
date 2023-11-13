@@ -6,13 +6,15 @@ using UnityEngine;
 
 public class GaiaTiedObject : SpawnObject, IPunObservable
 {
-    float castingTime = 2f;
+    public ElementalOrderData elementalOrderData;
+
+    float castingTime;
     float currentCastingTime = 0f;
 
-    float lifeTime = 3f;
+    float lifeTime;
     float currentLifeTime = 0f;
-    float cylinderLifeTime;
 
+    float cylinderLifeTime;
     float currentCylinderLifeTime = 0f;
 
 
@@ -110,6 +112,9 @@ public class GaiaTiedObject : SpawnObject, IPunObservable
 
     void Init()
     {
+        castingTime = elementalOrderData.gaiaTiedCastingTime;
+        lifeTime = elementalOrderData.gaiaTiedLifeTime;
+
         Vector3 _target = (Vector3)data[3];
         transform.rotation = Quaternion.LookRotation(_target);
         transform.rotation = new Quaternion(0, transform.rotation.y, 0, transform.rotation.w);

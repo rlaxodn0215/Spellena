@@ -12,7 +12,7 @@ namespace Player
 {
     public class ElementalOrder : Character, IPunObservable
     {
-        public CharacterData elementalOrderData;
+        public ElementalOrderData elementalOrderData;
 
         public GameObject overlayCamera;
         public GameObject minimapCamera;
@@ -22,6 +22,7 @@ namespace Player
         public GameObject Aim;
         public GameObject OverlaySight;
 
+        public GameObject overlayAnimatorObject;
         Animator overlayAnimator;
         Vector3 networkHandPoint;
         Vector3 currentHandPoint;
@@ -78,7 +79,8 @@ namespace Player
         public GameObject rightHandSpellStorm;
         public GameObject rightHandSpellLand;
 
-        public GameObject testCube;
+        public GameObject rangePointStrikeArea;
+        public GameObject rangeBoxArea;
 
         //로컬 클라이언트에서 접근
         bool isEterialStorm = false;
@@ -119,6 +121,7 @@ namespace Player
             if(PhotonNetwork.IsMasterClient)
             {
                 CheckCoolDown();
+                CheckAnimator();
             }
         }
 
@@ -129,10 +132,12 @@ namespace Player
 
         private void Initialize()
         {
-            hp = elementalOrderData.Hp;
-            //walkSpeed = elementalOrderData.moveSpeed;
+            hp = elementalOrderData.hp;
+            moveSpeed = elementalOrderData.moveSpeed;
+            sideSpeed = elementalOrderData.sideSpeed;
+            backSpeed = elementalOrderData.backSpeed;
             jumpHeight = elementalOrderData.jumpHeight;
-            overlayAnimator = transform.GetChild(1).GetComponent<Animator>();
+            overlayAnimator = overlayAnimatorObject.GetComponent<Animator>();
             minimapRenderTexture = minimapCamera.GetComponent<Camera>().targetTexture;
         }
 
@@ -207,6 +212,7 @@ namespace Player
                 _data[4] = direction;
 
                 overlayAnimator.SetBool("Spell2", true);
+                animator.SetBool("Spell2", true);
 
                 PhotonNetwork.Instantiate("ChanYoung/Prefabs/BurstFlare", origin, Quaternion.identity, data: _data);
 
@@ -231,6 +237,7 @@ namespace Player
                     _data[2] = "EterialStorm";
 
                     overlayAnimator.SetBool("Spell6", true);
+                    animator.SetBool("Spell6", true);
 
                     PhotonNetwork.Instantiate("ChanYoung/Prefabs/Cylinder", pointStrike, Quaternion.identity, data: _data);
                     eterialStormCoolDownTime = eterialStorm.GetSkillCoolDownTime();
@@ -258,6 +265,7 @@ namespace Player
                         pointStrike += new Vector3(0, 0.05f, 0);
 
                         overlayAnimator.SetBool("Spell4", true);
+                        animator.SetBool("Spell4", true);
 
                         PhotonNetwork.Instantiate("ChanYoung/Prefabs/MeteorStrike", pointStrike, Quaternion.identity, data: _data);
                         meteorStrikeCoolDownTime = meteorStrike.GetSkillCoolDownTime();
@@ -285,6 +293,7 @@ namespace Player
                     ragnaEdgeCoolDownTime = ragnaEdge.GetSkillCoolDownTime();
 
                     overlayAnimator.SetBool("Spell1", true);
+                    animator.SetBool("Spell1", true);
 
                     PhotonNetwork.Instantiate("ChanYoung/Prefabs/RagnaEdge", pointStrike, Quaternion.identity, data: _data);
                     ragnaEdge = null;
@@ -308,6 +317,7 @@ namespace Player
                     _data[2] = "TerraBreak";
 
                     overlayAnimator.SetBool("Spell5", true);
+                    animator.SetBool("Spell5", true);
 
                     PhotonNetwork.Instantiate("ChanYoung/Prefabs/TerraBreak", pointStrike, Quaternion.identity, data: _data);
                     terraBreakCoolDownTime = terraBreak.GetSkillCoolDownTime();
@@ -333,6 +343,7 @@ namespace Player
                     _data[3] = direction;
 
                     overlayAnimator.SetBool("Spell3", true);
+                    animator.SetBool("Spell3", true);
 
                     PhotonNetwork.Instantiate("ChanYoung/Prefabs/GaiaTied", pointStrike, Quaternion.identity, data: _data);
                     gaiaTiedCoolDownTime = gaiaTied.GetSkillCoolDownTime();
@@ -354,7 +365,6 @@ namespace Player
                     camera.GetComponent<MouseControl>().enabled = false;
                     Cursor.visible = true;
                     Cursor.lockState = CursorLockMode.None;
-                    Debug.Log(isEterialStorm);
                     isEterialStorm = true;
                 }  
             }
@@ -372,11 +382,13 @@ namespace Player
                     {
                         MeteorStrike _localMeteorStrike = new MeteorStrike();
                         _maxDistace =  _localMeteorStrike.maxDistance;
+                        rangePointStrikeArea.transform.localScale = new Vector3(1.25f, 1.25f, 1.25f);
                     }
                     else if(skillState == SkillState.TerraBreak)
                     {
                         TerraBreak _localTerraBreak = new TerraBreak();
                         _maxDistace = _localTerraBreak.maxDistance;
+                        rangePointStrikeArea.transform.localScale = new Vector3(2f, 2f, 2f);
                     }
                     else
                     {
@@ -394,25 +406,34 @@ namespace Player
                             _arrivedGroundVec = _bottomRayHit.point;
                             if(_arrivedGroundVec.y < _bottomRayHit.collider.gameObject.transform.position.y)
                                 _arrivedGroundVec = new Vector3(_arrivedGroundVec.x, _bottomRayHit.collider.gameObject.transform.position.y, _arrivedGroundVec.z);
-
-                            testCube.SetActive(true);
-
-                            testCube.transform.position = _arrivedGroundVec;
-
-                            if (testCube.GetComponent<ParticleSystem>().time > 0.7f)
+                            if (isGaiaTied)
                             {
-                                testCube.GetComponent<ParticleSystem>().Simulate(0.3f);
+                                rangeBoxArea.SetActive(true);
+                                rangeBoxArea.transform.position = _arrivedGroundVec;
+                                rangeBoxArea.transform.localPosition += 
+                                    new Vector3(0, rangeBoxArea.transform.localScale.y / 2, rangeBoxArea.transform.localScale.z / 2);
                             }
+                            else
+                            {
+                                rangePointStrikeArea.SetActive(true);
+                                rangePointStrikeArea.transform.position = _arrivedGroundVec;
 
+                                if (rangePointStrikeArea.GetComponent<ParticleSystem>().time > 0.7f)
+                                {
+                                    rangePointStrikeArea.GetComponent<ParticleSystem>().Simulate(0.3f);
+                                }
+                            }
 
                         }
                         else
                         {
-                            testCube.SetActive(false);
+                            rangeBoxArea.SetActive(false);
+                            rangePointStrikeArea.SetActive(false);
                         }
                     }
                     else
                     {
+
                         Vector3 _hitPoint = _tempRay.origin + _tempRay.direction * _maxDistace;
                         Ray _bottomRay = new Ray(_hitPoint, Vector3.down);
                         RaycastHit _bottomRayHit;
@@ -421,22 +442,32 @@ namespace Player
                         if (Physics.Raycast(_bottomRay, out _bottomRayHit, Mathf.Infinity, _tempLayerMask))
                         {
                             _arrivedGroundVec = _bottomRayHit.point;
-                            testCube.SetActive(true);
 
                             if (_arrivedGroundVec.y < _bottomRayHit.collider.gameObject.transform.position.y)
                                 _arrivedGroundVec = new Vector3(_arrivedGroundVec.x, _bottomRayHit.collider.gameObject.transform.position.y, _arrivedGroundVec.z);
 
-                            testCube.transform.position = _arrivedGroundVec;
-
-                            if (testCube.GetComponent<ParticleSystem>().time > 0.7f)
+                            if (isGaiaTied)
                             {
-                                testCube.GetComponent<ParticleSystem>().Simulate(0.3f);
+                                rangeBoxArea.SetActive(true);
+                                rangeBoxArea.transform.position = _arrivedGroundVec;
+                                rangeBoxArea.transform.localPosition += new Vector3(0, rangeBoxArea.transform.localScale.y / 2, rangeBoxArea.transform.localScale.z / 2);
+                            }
+                            else
+                            {
+                                rangePointStrikeArea.SetActive(true);
+                                rangePointStrikeArea.transform.position = _arrivedGroundVec;
+
+                                if (rangePointStrikeArea.GetComponent<ParticleSystem>().time > 0.7f)
+                                {
+                                    rangePointStrikeArea.GetComponent<ParticleSystem>().Simulate(0.3f);
+                                }
                             }
 
                         }
                         else
                         {
-                            testCube.SetActive(false);
+                            rangeBoxArea.SetActive(false);
+                            rangePointStrikeArea.SetActive(false);
                         }
                     }
                 }
@@ -445,6 +476,7 @@ namespace Player
             {
                 if(isRagnaEdge == true)
                 {
+                    rangePointStrikeArea.transform.localScale = new Vector3(2.2f, 2.2f, 2.2f);
                     minimapCamera.GetComponent<Camera>().targetTexture = null;
                     minimapCamera.GetComponent<Camera>().clearFlags = CameraClearFlags.Nothing;
                     camera.GetComponent<MouseControl>().enabled = false;
@@ -468,7 +500,7 @@ namespace Player
                 else if(isMeteorStrike)
                 {
                     isMeteorStrike = false;
-                    testCube.SetActive(false);
+                    rangePointStrikeArea.SetActive(false);
                 }
                 else if(isRagnaEdge)
                 {
@@ -483,12 +515,12 @@ namespace Player
                 else if(isTerraBreak)
                 {
                     isTerraBreak = false;
-                    testCube.SetActive(false);
+                    rangePointStrikeArea.SetActive(false);
                 }
                 else if(isGaiaTied)
                 {
                     isGaiaTied = false;
-                    testCube.SetActive(false);
+                    rangeBoxArea.SetActive(false);
                 }
             }
             
@@ -652,9 +684,16 @@ namespace Player
                             isPointStrike = true;
                         }
                     }
-                    else if(isMeteorStrike || isTerraBreak || isGaiaTied)
+                    else if(isMeteorStrike || isTerraBreak)
                     {
-                        pointStrike = testCube.transform.position;
+                        pointStrike = rangePointStrikeArea.transform.position;
+                        isPointStrike = true;
+                    }
+                    else if(isGaiaTied)
+                    {
+                        rangeBoxArea.transform.localPosition -= new Vector3(0, rangeBoxArea.transform.localScale.y / 2, rangeBoxArea.transform.localScale.z / 2);
+                        pointStrike = rangeBoxArea.transform.position;
+
                         isPointStrike = true;
                     }
 
@@ -706,7 +745,6 @@ namespace Player
                 overlayCamera.transform.localPosition = Vector3.Lerp(overlayCamera.transform.localPosition,
                     overlayCameraDefaultPos + new Vector3(0, 0.2f, 0), Time.deltaTime * 8f);
                 overlayAnimator.SetBool("Spell1", false);
-                animator.SetBool("Spell1", false);
             }
             else if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Spell2"))
             {
@@ -715,7 +753,6 @@ namespace Player
                 if (burstFlare == null)
                 {
                     overlayAnimator.SetBool("Spell2", false);
-                    animator.SetBool("Spell2", false);
                 }
             }
             else if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Spell3"))
@@ -723,26 +760,23 @@ namespace Player
                 overlayCamera.transform.localPosition = Vector3.Lerp(overlayCamera.transform.localPosition,
                     overlayCameraDefaultPos + new Vector3(0, 0.1f, 0), Time.deltaTime * 8f);
                 overlayAnimator.SetBool("Spell3", false);
-                animator.SetBool("Spell3", false);
             }
             else if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Spell4"))
             {
                 overlayCamera.transform.localPosition = Vector3.Lerp(overlayCamera.transform.localPosition,
                    overlayCameraDefaultPos + new Vector3(0, 0.1f, 0), Time.deltaTime * 8f);
                 overlayAnimator.SetBool("Spell4", false);
-                animator.SetBool("Spell4", false);
             }
             else if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Spell5"))
             {
-                overlayCamera.transform.localPosition = Vector3.Lerp(overlayCamera.transform.localPosition,
-                   overlayCameraDefaultPos + new Vector3(0, 0.15f, 0), Time.deltaTime * 8f);
                 overlayAnimator.SetBool("Spell5", false);
-                animator.SetBool("Spell5", false);
             }
             else if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Spell6"))
             {
+                overlayCamera.transform.localPosition = Vector3.Lerp(overlayCamera.transform.localPosition,
+                  overlayCameraDefaultPos + new Vector3(0, 0.2f, 0), Time.deltaTime * 8f);
+
                 overlayAnimator.SetBool("Spell6", false);
-                animator.SetBool("Spell6", false);
             }
             else
             {
@@ -750,6 +784,31 @@ namespace Player
                     overlayCameraDefaultPos, Time.deltaTime);
             }
 
+            Debug.Log(animator.GetCurrentAnimatorStateInfo(0).IsName("Spell1"));
+            if(animator.GetCurrentAnimatorStateInfo(0).IsName("Spell1"))
+            {
+                animator.SetBool("Spell1", false);
+            }
+
+        }
+
+        void CheckAnimator()
+        {
+            if (animator.GetCurrentAnimatorStateInfo(0).IsName("Spell1"))
+                animator.SetBool("Spell1", false);
+            else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Spell2"))
+            {
+                if(burstFlare == null)
+                    animator.SetBool("Spell2", false);
+            }
+            else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Spell3"))
+                animator.SetBool("Spell3", false);
+            else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Spell4"))
+                animator.SetBool("Spell4", false);
+            else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Spell5"))
+                animator.SetBool("Spell5", false);
+            else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Spell6"))
+                animator.SetBool("Spell6", false);
         }
 
         void SetHandEffectPositionIK(int typeRight, int typeLeft)
@@ -813,8 +872,6 @@ namespace Player
 
         protected override void OnAnimatorIK()
         {
-            animator.logWarnings = false;
-            overlayAnimator.logWarnings = false;    
             base.OnAnimatorIK();
 
 
@@ -835,7 +892,7 @@ namespace Player
                     rightCurrentWeight = Mathf.Lerp(rightCurrentWeight, 0.2f, Time.deltaTime * 8f);
                     leftCurrentWeight = Mathf.Lerp(leftCurrentWeight, 0, Time.deltaTime * 8f);
                 }
-                else if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Spell5"))
+                else if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Spell6"))
                 {
 
                     rightCurrentWeight = Mathf.Lerp(rightCurrentWeight, targetWeight, Time.deltaTime * 8f);
@@ -852,8 +909,6 @@ namespace Player
 
                 overlayAnimator.SetIKPositionWeight(AvatarIKGoal.RightHand, rightCurrentWeight);
                 overlayAnimator.SetIKPosition(AvatarIKGoal.RightHand, OverlaySight.transform.position);
-
-                Debug.Log(rightCurrentWeight);
 
 
 
@@ -890,12 +945,6 @@ namespace Player
                 rightNotMineCurrentWeight = _tempRightHandWeight;
                 leftNotMineCurrentWeight = _tempLeftHandWeight;
             }
-        }
-
-        private void reverseAnimatorBool(string parameter)
-        {
-            overlayAnimator.SetBool(parameter, !overlayAnimator.GetBool(parameter));
-            animator.SetBool(parameter, !animator.GetBool(parameter));
         }
 
         void CheckPoint()
