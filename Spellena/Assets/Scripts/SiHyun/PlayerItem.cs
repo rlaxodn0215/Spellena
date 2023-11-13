@@ -12,7 +12,6 @@ public class PlayerItem : MonoBehaviourPunCallbacks
 
     public static GameObject localPlayerItemInstance;
     public GameObject popUpButton;
-    LobbyManager lobbyManagerScript;
     public GameObject playerItem;
 
     GameObject targetObject;
@@ -30,7 +29,6 @@ public class PlayerItem : MonoBehaviourPunCallbacks
     // Start is called before the first frame update
     private void Awake()
     {
-        lobbyManagerScript = FindAnyObjectByType<LobbyManager>();
         if(photonView.IsMine)
         {
             localPlayerItemInstance = this.gameObject;
@@ -39,16 +37,15 @@ public class PlayerItem : MonoBehaviourPunCallbacks
         {
             popUpButton.SetActive(false);
         }
-        TeamChanged("TeamAList");
     }
 
     private void OnEnable()
     {
-        if(photonView.IsMine && photonView.Owner != null)
+        if(photonView.IsMine && photonView.Controller != null)
         {
-            if(photonView.Owner.CustomProperties.ContainsKey("UserName"))
+            if(photonView.Controller.CustomProperties.ContainsKey("UserName"))
             {
-                string _playerName = (string)photonView.Owner.CustomProperties["UserName"];
+                string _playerName = (string)photonView.Controller.CustomProperties["UserName"];
                 playerName.text = _playerName;
             }
         }
@@ -56,8 +53,8 @@ public class PlayerItem : MonoBehaviourPunCallbacks
 
     private void Update()
     {
-        playerName.text = photonView.Owner.NickName;
-        if (photonView.IsMine && !photonView.Owner.IsMasterClient && !wasSetSibiling)
+        playerName.text = photonView.Controller.NickName;
+        if (photonView.IsMine && !photonView.Controller.IsMasterClient && !wasSetSibiling)
         {
             wasSetSibiling = true;
             this.transform.SetAsLastSibling();
@@ -74,7 +71,7 @@ public class PlayerItem : MonoBehaviourPunCallbacks
     public void SetPlayerInfo(Photon.Realtime.Player _player, PunTeams.Team _team)
     {
         string userId = FirebaseLoginManager.Instance.GetUser().UserId;
-        userName = photonView.Owner.NickName;
+        userName = photonView.Controller.NickName;
         playerName.text = userName;
 
         // Firebase에서 가져온 사용자 정보를 Photon.Player의 커스텀 프로퍼티에 저장
@@ -91,14 +88,14 @@ public class PlayerItem : MonoBehaviourPunCallbacks
     {
         userId = _userId;
         userName = _userName;
-        playerName.text = photonView.Owner.NickName;
+        playerName.text = photonView.Controller.NickName;
 
-        if(photonView.IsMine && photonView.Owner != null)
+        if (photonView.IsMine && photonView.Controller != null)
         {
             ExitGames.Client.Photon.Hashtable _customProperties = new ExitGames.Client.Photon.Hashtable();
             _customProperties["UserId"] = _userId;
             _customProperties["UserName"] = _userName;
-            photonView.Owner.SetCustomProperties(_customProperties);
+            photonView.Controller.SetCustomProperties(_customProperties);
         }
     }
 
@@ -120,7 +117,7 @@ public class PlayerItem : MonoBehaviourPunCallbacks
 
     public void OnClickKickPlayer()
     {
-        photonView.RPC("KickPlayerRPC", RpcTarget.AllBuffered, photonView.Owner.ActorNumber);
+        photonView.RPC("KickPlayerRPC", RpcTarget.AllBuffered, photonView.Controller.ActorNumber);
     }
 
     [PunRPC]
