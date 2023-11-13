@@ -20,6 +20,8 @@ public class FriendManager : MonoBehaviour
 
     async void SearchUser(string text)
     {
+        nullResultText.gameObject.SetActive(false);
+
         ResetResults();
 
         List<string> _newResults = await FirebaseLoginManager.Instance.SearchUserByName(text);

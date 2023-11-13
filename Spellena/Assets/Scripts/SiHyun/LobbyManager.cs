@@ -110,7 +110,8 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     {
         if (PlayerItem.localPlayerItemInstance == null)
         {
-            GameObject _playerItemObj = PhotonNetwork.Instantiate(playerItemPrefab.name, Vector3.zero, Quaternion.identity);
+            GameObject _playerItemObj = 
+                PhotonNetwork.Instantiate(playerItemPrefab.name, Vector3.zero, Quaternion.identity);
             PlayerItem _playerItem = _playerItemObj.GetComponent<PlayerItem>();
             _playerItem.transform.SetParent(playerItemParentA);
             if(_playerItem.photonView.IsMine)
@@ -132,8 +133,10 @@ public class LobbyManager : MonoBehaviourPunCallbacks
                 float scaleFactorX = canvasScaler.referenceResolution.x / Screen.width;
                 float scaleFactorY = canvasScaler.referenceResolution.y / Screen.height;
 
-                Vector2 adjustedCellSize = new Vector2(baseCellSize.x / scaleFactorX, baseCellSize.y / scaleFactorY);
-                Vector2 adjustedSpacing = new Vector2(baseSpacing.x / scaleFactorX, baseSpacing.y / scaleFactorY);
+                Vector2 adjustedCellSize = 
+                    new Vector2(baseCellSize.x / scaleFactorX, baseCellSize.y / scaleFactorY);
+                Vector2 adjustedSpacing = 
+                    new Vector2(baseSpacing.x / scaleFactorX, baseSpacing.y / scaleFactorY);
 
                 GridLayoutGroup _gridLayout = playerItemParentA.GetComponent<GridLayoutGroup>();
 
@@ -142,7 +145,11 @@ public class LobbyManager : MonoBehaviourPunCallbacks
                     _gridLayout.cellSize = adjustedCellSize;
                     _gridLayout.spacing = adjustedSpacing;
 
-                    //AdjustChildObjectSizes(_playerItem, adjustedCellSize);
+                    float verticalSpacing = _gridLayout.spacing.y;
+                    float horizontalSpacing = _gridLayout.spacing.x;
+
+                    AdjustChildObjectSizesAndPositions(playerItemParentA.gameObject, adjustedCellSize,
+                        _gridLayout.constraintCount, verticalSpacing, horizontalSpacing);
                 }
             }
         }
@@ -152,7 +159,8 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     {
         if (PlayerItem.localPlayerItemInstance == null)
         {
-            GameObject _playerItemObj = PhotonNetwork.Instantiate(playerItemPrefab.name, Vector3.zero, Quaternion.identity);
+            GameObject _playerItemObj = 
+                PhotonNetwork.Instantiate(playerItemPrefab.name, Vector3.zero, Quaternion.identity);
             PlayerItem _playerItem = _playerItemObj.GetComponent<PlayerItem>();
             _playerItem.transform.SetParent(playerItemParentA);
             if(_playerItem.photonView.IsMine)
@@ -174,8 +182,10 @@ public class LobbyManager : MonoBehaviourPunCallbacks
                 float scaleFactorX = canvasScaler.referenceResolution.x / Screen.width;
                 float scaleFactorY = canvasScaler.referenceResolution.y / Screen.height;
 
-                Vector2 adjustedCellSize = new Vector2(baseCellSize.x / scaleFactorX, baseCellSize.y / scaleFactorY);
-                Vector2 adjustedSpacing = new Vector2(baseSpacing.x / scaleFactorX, baseSpacing.y / scaleFactorY);
+                Vector2 adjustedCellSize = 
+                    new Vector2(baseCellSize.x / scaleFactorX, baseCellSize.y / scaleFactorY);
+                Vector2 adjustedSpacing =
+                    new Vector2(baseSpacing.x / scaleFactorX, baseSpacing.y / scaleFactorY);
 
                 GridLayoutGroup _gridLayout = playerItemParentA.GetComponent<GridLayoutGroup>();
 
@@ -183,14 +193,18 @@ public class LobbyManager : MonoBehaviourPunCallbacks
                 {
                     _gridLayout.cellSize = adjustedCellSize;
                     _gridLayout.spacing = adjustedSpacing;
+                    float verticalSpacing = _gridLayout.spacing.y;
+                    float horizontalSpacing = _gridLayout.spacing.x;
 
-                    //AdjustChildObjectSizes(_playerItem, adjustedCellSize);
+                    AdjustChildObjectSizesAndPositions(playerItemParentA.gameObject, adjustedCellSize,
+                        _gridLayout.constraintCount,verticalSpacing , horizontalSpacing);
                 }
             }
         }
     }
 
-    void AdjustChildObjectSizes(PlayerItem parentObject, Vector2 cellSize)
+    void AdjustChildObjectSizesAndPositions(GameObject parentObject, Vector2 cellSize,
+        int constraintCount, float verticalSpacing, float horizontalSpacing)
     {
         // 자식 오브젝트들의 크기 조절
         foreach (Transform child in parentObject.transform)
@@ -201,6 +215,16 @@ public class LobbyManager : MonoBehaviourPunCallbacks
             if (childRectTransform != null)
             {
                 childRectTransform.sizeDelta = new Vector2(cellSize.x, cellSize.y);
+
+                // 자식 오브젝트의 위치 계산
+                int index = child.GetSiblingIndex();
+                int row = index / constraintCount;
+                int col = index % constraintCount;
+
+                float posX = col * (cellSize.x + verticalSpacing);
+                float posY = -row * (cellSize.y + horizontalSpacing);
+
+                childRectTransform.anchoredPosition = new Vector2(posX, posY);
             }
         }
     }
