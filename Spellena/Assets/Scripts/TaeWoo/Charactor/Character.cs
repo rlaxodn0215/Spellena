@@ -332,6 +332,7 @@ namespace Player
             if (photonView.IsMine)
             {
                 moveVec = new Vector3(value.Get<Vector2>().x, 0, value.Get<Vector2>().y);
+                Debug.Log(moveVec);
 
                 if (moveVec.magnitude <= 0)
                     playerActionDatas[(int)PlayerActionState.Move].isExecuting = false;

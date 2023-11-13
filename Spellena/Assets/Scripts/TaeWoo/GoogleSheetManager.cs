@@ -1,9 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Networking;
-using UnityEditor;
 
+using UnityEngine.Networking;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
+#if UNITY_EDITOR
 public class GoogleSheetManager : EditorWindow
 {
     private GoogleSheetData googleSheetData;
@@ -201,3 +205,5 @@ public class GoogleSheetManager : EditorWindow
         //aeternaData.DimenstionSlash_3_Healing;
     }
 }
+
+#endif

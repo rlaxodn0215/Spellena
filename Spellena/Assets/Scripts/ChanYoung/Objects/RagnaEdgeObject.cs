@@ -6,16 +6,18 @@ using UnityEngine;
 
 public class RagnaEdgeObject : SpawnObject, IPunObservable
 {
+    public ElementalOrderData elementalOrderData;
+
     public GameObject floor;
     public GameObject cylinder;
     public GameObject hitColliderObject;
 
-    float castingTime = 2f;
+    float castingTime;
     float currentCastingTime = 0f;
 
-    float floorLifeTime = 1f;
+    float floorLifeTime;
     float currentFloorLifeTime = 0f;
-    float cylinderLifeTime = 2f;
+    float cylinderLifeTime;
     float currentCylinderLifeTime = 0f;
 
     bool isCylinderColliderOn = false;
@@ -97,6 +99,9 @@ public class RagnaEdgeObject : SpawnObject, IPunObservable
 
     void Init()
     {
+        castingTime = elementalOrderData.ragnaEdgeCastingTime;
+        floorLifeTime = elementalOrderData.ragnaEdgeFloorLifeTime;
+        cylinderLifeTime = elementalOrderData.ragnaEdgeCylinderLifeTime;
         currentCastingTime = castingTime;
         currentFloorLifeTime = floorLifeTime;
         currentCylinderLifeTime = cylinderLifeTime;

@@ -138,7 +138,7 @@ Transform:
   m_GameObject: {fileID: 5522540594824117563}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_LocalScale: {x: 2.2, y: 2.2, z: 2.2}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 8511626878374379178}
@@ -9909,6 +9909,7 @@ MonoBehaviour:
   playerName: 
   type: 0
   objectName: 
+  elementalOrderData: {fileID: 11400000, guid: f59593c682ebc2b41896b199699b9e9c, type: 2}
   floor: {fileID: 8904169209808248094}
   cylinder: {fileID: 8511626878855782518}
   hitColliderObject: {fileID: 2251099796359523661}

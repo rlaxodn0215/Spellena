@@ -14746,6 +14746,7 @@ MonoBehaviour:
   playerName: 
   type: 0
   objectName: 
+  elementalOrderData: {fileID: 11400000, guid: f59593c682ebc2b41896b199699b9e9c, type: 2}
   hitCollider: {fileID: 7173760067844833545}
   hitEffect: {fileID: 1915198712257354724}
   rangeArea: {fileID: 0}
