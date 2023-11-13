@@ -230,27 +230,39 @@ public class FirebaseLoginManager
         return "회원 정보가 없습니다.";
     }
 
-    public void SetUserStatus(string _userId, string _status)
-    {
-        reference.Child("users").Child(_userId).Child("status").SetValueAsync(_status);
-    }
 
-    /*public void SearchUserByName(string _nickName)
+    public async Task<List<string>> SearchUserByName(string _nickName)
     {
         List<string> _resultList = new List<string>();
 
-        reference.Child("users").OrderByChild("nickName").EqualTo(_nickName).GetValueAsync().ContinueWith(task =>
+        DatabaseReference _userRef = reference.Child("users");
+        
+        var _userNickNameQuery = _userRef.OrderByChild("nickName").EqualTo(_nickName);
+
+        DataSnapshot _userNickNameSnapshot = await _userNickNameQuery.GetValueAsync();
+
+        if(_userNickNameSnapshot.HasChildren)
         {
-            DataSnapshot _snapShot = task.Result;
-            if (_snapShot.HasChildren)
+            foreach(var _childrenSnapshot in _userNickNameSnapshot.Children)
             {
-                foreach (var _childSnapshot in _snapShot.Children)
-                {
-                    string _userId = _childSnapshot.Key;
-                    _resultList.Add(_userId);
-                }
+                string userId = _childrenSnapshot.Key;
+                _resultList.Add(userId);
             }
-        });
+            return _resultList;
+        }
+        return null;
+    }
+    
+    public void SendFriendRequest(string _senderUserId, string _recevierUserId)
+    {
+
+    }
+
+
+
+    public void SetUserStatus(string _userId, string _status)
+    {
+        reference.Child("users").Child(_userId).Child("status").SetValueAsync(_status);
     }
 
     public void AddFriend(string _userId, string _friendId)
@@ -261,7 +273,7 @@ public class FirebaseLoginManager
     public void FriendList(string _userId)
     {
         reference.Child("users").Child(_userId).Child("friends").GetValueAsync();
-    }*/
+    }
 
 
     public void SetNickname(string _nickName)
