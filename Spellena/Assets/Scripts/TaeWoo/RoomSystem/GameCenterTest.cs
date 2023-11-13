@@ -86,9 +86,9 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
     // 대기실 준비 시간
     float readyTime = 1f;
     // 플레이어 리스폰 타임
-    float playerRespawnTime = 1;
+    float playerRespawnTime = 8;
     // 거점 전환 원 먹는 비율
-    float occupyingGaugeRate = 250f;
+    float occupyingGaugeRate = 300f;
     // 거점 전환하는 시간
     float occupyingReturnTime = 3f;
     // 거점 % 먹는 비율
@@ -164,7 +164,7 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
         // allPlayers = PhotonNetwork.PlayerList;
         // custom property로 값 저장 (ActorNumber, name, team)
 
-        int tempNum = 1;
+        int tempNum = 2;
         if (PhotonNetwork.CurrentRoom.PlayerCount >= tempNum)
         {
             globalTimer = loadingTime;
@@ -399,8 +399,16 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
                         targetPlayer.CustomProperties["IsAlive"] = false;
                         targetPlayer.CustomProperties["DeadTime"] = globalTimer;
                         targetPlayer.CustomProperties["ReSpawnTime"] = globalTimer + playerRespawnTime;
+
                         tempVictim = (string)targetPlayer.CustomProperties["Name"];
                         ShowTeamMateDead((string)targetPlayer.CustomProperties["Team"],(string)targetPlayer.CustomProperties["Name"]);
+
+                        PhotonView view = PhotonView.Find((int)targetPlayer.CustomProperties["CharacterViewID"]);
+                        if (view == null) break;
+
+                        view.RPC("PlayerDead", RpcTarget.AllBufferedViaServer);
+                        view.RPC("PlayerDeadCam", targetPlayer);
+
                         break;
                     default:
                         break;

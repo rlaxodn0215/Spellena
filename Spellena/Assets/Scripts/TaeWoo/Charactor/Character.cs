@@ -46,6 +46,10 @@ namespace Player
         public GameObject enemyCam;
         public GameObject UI;
 
+        public GameObject Alive;
+        public GameObject Dead;
+        public GameObject DeadCam;
+
         //실시간 갱신 데이터
         public string playerName;
         public string murder;
@@ -107,6 +111,11 @@ namespace Player
         private Vector3 cameraPos;
         private Transform avatarForOther;
         private Transform avatarForMe;
+        private RaycastHit slopeHit;
+
+        private Rigidbody[] ragdollRigid;
+        private Vector3[] ragdollPos;
+        private Quaternion[] ragdollRot;
 
         private Vector3 networkSight;
         private Vector3 currentSight;
@@ -127,6 +136,17 @@ namespace Player
             SetPlayerKeys(PlayerActionState.Skill3, "Skill3");
             SetPlayerKeys(PlayerActionState.Skill4, "Skill4");
             currentSight = sight.transform.position;
+
+            ragdollRigid = Dead.GetComponentsInChildren<Rigidbody>(true);
+            ragdollPos = new Vector3[ragdollRigid.Length];
+            ragdollRot = new Quaternion[ragdollRigid.Length];
+
+            for(int i = 0; i < ragdollRigid.Length; i++)
+            {
+                ragdollPos[i] = ragdollRigid[i].transform.localPosition;
+                ragdollRot[i] = ragdollRigid[i].transform.localRotation;
+            }
+
         }
 
         void SetPlayerKeys(PlayerActionState playerActionState, string action)
@@ -237,6 +257,18 @@ namespace Player
 
             Vector3 _temp = new Vector3(0, 0, 0);
 
+            if(IsOnSlope())
+            {
+                rigidbody.useGravity = false;
+                if(isGrounded)
+                    rigidbody.velocity = new Vector3(0,0,0);
+            }
+
+            else
+            {
+                rigidbody.useGravity = true;
+            }
+
             if (playerActionDatas[(int)PlayerActionState.Move].isExecuting)
             {
                 if (moveVec.z > 0)
@@ -260,10 +292,23 @@ namespace Player
                 SelectMoveSpeed(_temp);
 
                 _temp = transform.InverseTransformVector(_temp);
-
-                animator.SetInteger("VerticalSpeed", (int)moveVec.z);
-                animator.SetInteger("HorizontalSpeed", (int)moveVec.x);
             }
+
+            animator.SetInteger("VerticalSpeed", (int)moveVec.z);
+            animator.SetInteger("HorizontalSpeed", (int)moveVec.x);
+
+        }
+
+        bool IsOnSlope()
+        {
+            Ray ray = new Ray(transform.position, Vector3.down);
+            if(Physics.Raycast(ray, out slopeHit,0.2f))
+            {
+                var angle = Vector3.Angle(Vector3.up, slopeHit.normal);
+                return angle != 0.0f;
+            }
+
+            return false;
         }
 
         void SelectMoveSpeed(Vector3 _temp)
@@ -275,12 +320,12 @@ namespace Player
                     rigidbody.MovePosition(rigidbody.transform.position + _temp * sitSideSpeed * Time.deltaTime);
                 }
 
-                else if (moveVec.z > 0.01f)
+                if (moveVec.z > 0.01f)
                 {
                     rigidbody.MovePosition(rigidbody.transform.position + _temp * sitSpeed * Time.deltaTime);
                 }
 
-                else if (moveVec.z < -0.01f)
+                if (moveVec.z < -0.01f)
                 {
                     rigidbody.MovePosition(rigidbody.transform.position + _temp * sitBackSpeed * Time.deltaTime);
                 }
@@ -294,12 +339,12 @@ namespace Player
                     rigidbody.MovePosition(rigidbody.transform.position + _temp * sideSpeed * runSpeedRatio * Time.deltaTime);
                 }
 
-                else if (moveVec.z > 0.01f)
+                if (moveVec.z > 0.01f)
                 {
                     rigidbody.MovePosition(rigidbody.transform.position + _temp * moveSpeed * runSpeedRatio * Time.deltaTime);
                 }
 
-                else if (moveVec.z < -0.01f)
+                if (moveVec.z < -0.01f)
                 {
                     rigidbody.MovePosition(rigidbody.transform.position + _temp * backSpeed * runSpeedRatio * Time.deltaTime);
                 }
@@ -312,12 +357,12 @@ namespace Player
                     rigidbody.MovePosition(rigidbody.transform.position + _temp * sideSpeed * Time.deltaTime);
                 }
 
-                else if (moveVec.z > 0.01f)
+                if (moveVec.z > 0.01f)
                 {
                     rigidbody.MovePosition(rigidbody.transform.position + _temp * moveSpeed * Time.deltaTime);
                 }
 
-                else if (moveVec.z < -0.01f)
+                if (moveVec.z < -0.01f)
                 {
                     rigidbody.MovePosition(rigidbody.transform.position + _temp * backSpeed * Time.deltaTime);
                 }
@@ -342,15 +387,15 @@ namespace Player
         }
         void OnJump()
         {
-            Debug.Log(isGrounded);
-
             if (playerActionDatas[(int)PlayerActionState.Jump].isExecuting) return;
 
             if (photonView.IsMine)
             {
                 if (isGrounded)
                 {
-                    rigidbody.velocity = new Vector3(rigidbody.velocity.x, jumpHeight, rigidbody.velocity.z);
+                    //rigidbody.velocity = new Vector3(rigidbody.velocity.x, jumpHeight, rigidbody.velocity.z);
+                    rigidbody.AddForce(Vector3.up * jumpHeight, ForceMode.Impulse);
+                    playerActionDatas[(int)PlayerActionState.Jump].isExecuting = true;
                 }
             }
         }
@@ -414,13 +459,14 @@ namespace Player
             }
         }
 
-        private void OnCollisionEnter(Collision collision)
+        private void OnCollisionStay(Collision collision)
         {
             if(photonView.IsMine)
             {
                 if (collision.gameObject.tag == "Ground")
                 {
                     isGrounded = true;
+                    playerActionDatas[(int)PlayerActionState.Jump].isExecuting = false;
                 }
             }
         }
@@ -432,6 +478,7 @@ namespace Player
                 if (collision.gameObject.tag == "Ground")
                 {
                     isGrounded = false;
+                    playerActionDatas[(int)PlayerActionState.Jump].isExecuting = true;
                 }
             }
         }
@@ -441,7 +488,6 @@ namespace Player
             {
                 if (other.tag == "OccupationArea")
                 {
-                    Debug.Log("점령중...");
                     isOccupying = true;
                 }
             }
@@ -454,12 +500,12 @@ namespace Player
             {
                 GetComponent<PlayerInput>().enabled = true;
                 camera.SetActive(true);
-                avatarForOther = transform.GetChild(0).GetChild(0);//다른 사람들이 보는 자신의 아바타
-                avatarForMe = transform.GetChild(1).GetChild(0);//자신이 보는 자신의 아바타
+                avatarForOther = transform.GetChild(0).GetChild(0).GetChild(0);//다른 사람들이 보는 자신의 아바타
+                avatarForMe = transform.GetChild(0).GetChild(1).GetChild(0);//자신이 보는 자신의 아바타
                 for (int i = 0; i < avatarForOther.childCount; i++)
                 {
                     avatarForOther.GetChild(i).gameObject.layer = LayerMask.NameToLayer("Me");
-                    avatarForOther.GetChild(i).gameObject.GetComponent<SkinnedMeshRenderer>().enabled = false;
+                    //avatarForOther.GetChild(i).gameObject.GetComponent<SkinnedMeshRenderer>().enabled = false;
                 }
 
                 for (int i = 0; i < avatarForMe.childCount; i++)
@@ -518,7 +564,6 @@ namespace Player
             transform.position = pos;
         }
 
-        [PunRPC]
         public void PlayerDamaged(string enemy ,int damage)
         {
             if (damage > 0)
@@ -528,6 +573,45 @@ namespace Player
                     hp -= damage;
                     //Debug.Log("Player Damaged !!  EnemyName: " + enemy);
                 }
+
+                Photon.Realtime.Player killer = GameCenterTest.FindPlayerWithCustomProperty("CharacterViewID", enemy);
+
+                if (killer == null)
+                {
+                    Debug.Log("자해");
+                    return;
+                }
+
+                int temp = (int)killer.CustomProperties["TotalDamage"];
+                killer.CustomProperties["Parameter"] = "TotalDamage";
+                GameCenterTest.ChangePlayerCustomProperties(killer, "TotalDamage", temp + damage);
+
+                if (hp <= 0)
+                {
+                    murder = enemy;
+
+                    int temp1 = (int)PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["DeadCount"];
+                    PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["Parameter"] = "DeadCount";
+                    GameCenterTest.ChangePlayerCustomProperties
+                        (PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr], "DeadCount", temp1 + 1);
+
+                    Photon.Realtime.Player killer1 = GameCenterTest.FindPlayerWithCustomProperty("CharacterViewID", enemy);
+
+                    if (killer1 != null)
+                    {
+                        int temp2 = (int)killer1.CustomProperties["KillCount"];
+                        killer1.CustomProperties["Parameter"] = "KillCount";
+                        GameCenterTest.ChangePlayerCustomProperties(killer1, "KillCount", temp2 + 1);
+                    }
+
+                    else
+                    {
+                        Debug.Log("자살");
+                    }
+                }
+
+
+
             }
 
             else
@@ -540,51 +624,7 @@ namespace Player
                 //Debug.Log("Player Healing !!");
             }
 
-
-            if (PhotonNetwork.IsMasterClient)
-            {
-                if (damage > 0)
-                {
-                    Photon.Realtime.Player killer = GameCenterTest.FindPlayerWithCustomProperty("CharacterViewID", enemy);
-
-                    if (killer == null)
-                    {
-                        Debug.Log("자해");
-                        return;
-                    }
-
-                    int temp = (int)killer.CustomProperties["TotalDamage"];
-                    killer.CustomProperties["Parameter"] = "TotalDamage";
-                    GameCenterTest.ChangePlayerCustomProperties(killer, "TotalDamage", temp + damage);
-                }
-
-                if (hp <= 0)
-                {
-                    murder = enemy;
-
-                    int temp1 = (int)PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["DeadCount"];
-                    PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["Parameter"] = "DeadCount";
-                    GameCenterTest.ChangePlayerCustomProperties
-                        (PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr], "DeadCount", temp1 + 1);
-
-                    Photon.Realtime.Player killer = GameCenterTest.FindPlayerWithCustomProperty("CharacterViewID", enemy);
-
-                    if( killer != null)
-                    {
-                        int temp2 = (int)killer.CustomProperties["KillCount"];
-                        killer.CustomProperties["Parameter"] = "KillCount";
-                        GameCenterTest.ChangePlayerCustomProperties(killer, "KillCount", temp2 + 1);                      
-                    }
-
-                    else
-                    {
-                        Debug.Log("자살");
-                    }
-
-                    photonView.RPC("PlayerDead", RpcTarget.AllBufferedViaServer);
-
-                }
-            }
+            
         }
 
         [PunRPC]
@@ -592,7 +632,15 @@ namespace Player
         {
             // Ragdoll로 처리
             hp = dataHp;
-            gameObject.SetActive(false);
+            Dead.SetActive(true);
+            Alive.SetActive(false);
+            GetComponent<CapsuleCollider>().enabled = false;
+        }
+
+        [PunRPC]
+        public void PlayerDeadCam()
+        {
+            DeadCam.SetActive(true);
         }
 
         [PunRPC]
@@ -600,7 +648,18 @@ namespace Player
         {
             gameObject.transform.position = pos;
             gameObject.transform.rotation = Quaternion.identity;
-            gameObject.SetActive(true);
+
+            for(int i = 0; i < ragdollRigid.Length; i++)
+            {
+                ragdollRigid[i].transform.localPosition = ragdollPos[i];
+                ragdollRigid[i].transform.localRotation = ragdollRot[i];
+                ragdollRigid[i].velocity = new Vector3(0, 0, 0);
+            }
+            
+            Alive.SetActive(true);
+            GetComponent<CapsuleCollider>().enabled = true;
+            DeadCam.SetActive(false);
+            Dead.SetActive(false);
         }
 
         protected virtual void OnAnimatorIK()
