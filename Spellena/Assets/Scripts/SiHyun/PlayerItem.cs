@@ -41,11 +41,11 @@ public class PlayerItem : MonoBehaviourPunCallbacks
 
     private void OnEnable()
     {
-        if(photonView.IsMine && photonView.Controller != null)
+        if(photonView.IsMine && photonView.Owner != null)
         {
-            if(photonView.Controller.CustomProperties.ContainsKey("UserName"))
+            if(photonView.Owner.CustomProperties.ContainsKey("UserName"))
             {
-                string _playerName = (string)photonView.Controller.CustomProperties["UserName"];
+                string _playerName = (string)photonView.Owner.CustomProperties["UserName"];
                 playerName.text = _playerName;
             }
         }
@@ -53,8 +53,8 @@ public class PlayerItem : MonoBehaviourPunCallbacks
 
     private void Update()
     {
-        playerName.text = photonView.Controller.NickName;
-        if (photonView.IsMine && !photonView.Controller.IsMasterClient && !wasSetSibiling)
+        playerName.text = photonView.Owner.NickName;
+        if (photonView.IsMine && !photonView.Owner.IsMasterClient && !wasSetSibiling)
         {
             wasSetSibiling = true;
             this.transform.SetAsLastSibling();
@@ -71,7 +71,7 @@ public class PlayerItem : MonoBehaviourPunCallbacks
     public void SetPlayerInfo(Photon.Realtime.Player _player, PunTeams.Team _team)
     {
         string userId = FirebaseLoginManager.Instance.GetUser().UserId;
-        userName = photonView.Controller.NickName;
+        userName = photonView.Owner.NickName;
         playerName.text = userName;
 
         // Firebase에서 가져온 사용자 정보를 Photon.Player의 커스텀 프로퍼티에 저장
@@ -88,14 +88,14 @@ public class PlayerItem : MonoBehaviourPunCallbacks
     {
         userId = _userId;
         userName = _userName;
-        playerName.text = photonView.Controller.NickName;
+        playerName.text = photonView.Owner.NickName;
 
-        if (photonView.IsMine && photonView.Controller != null)
+        if (photonView.IsMine && photonView.Owner != null)
         {
             ExitGames.Client.Photon.Hashtable _customProperties = new ExitGames.Client.Photon.Hashtable();
             _customProperties["UserId"] = _userId;
             _customProperties["UserName"] = _userName;
-            photonView.Controller.SetCustomProperties(_customProperties);
+            photonView.Owner.SetCustomProperties(_customProperties);
         }
     }
 
@@ -117,7 +117,7 @@ public class PlayerItem : MonoBehaviourPunCallbacks
 
     public void OnClickKickPlayer()
     {
-        photonView.RPC("KickPlayerRPC", RpcTarget.AllBuffered, photonView.Controller.ActorNumber);
+        photonView.RPC("KickPlayerRPC", RpcTarget.AllBuffered, photonView.Owner.ActorNumber);
     }
 
     [PunRPC]
