@@ -24,7 +24,6 @@ public class FirebaseLoginManager
     DatabaseReference reference;
     private Dictionary<string, string> userIdMapping = new Dictionary<string, string>();
 
-
     public class User
     {
         public string nickName;
@@ -47,6 +46,19 @@ public class FirebaseLoginManager
             this.status = _status;
         }
     }
+
+    public class FriendRequestData
+    {
+        public string senderUserId;
+        public string status;
+
+        public FriendRequestData(string _senderUserId, string _status)
+        {
+            this.senderUserId = _senderUserId;
+            this.status = _status;
+        }
+    }
+
 
     public static FirebaseLoginManager Instance
     {
@@ -156,9 +168,8 @@ public class FirebaseLoginManager
         user = auth.CurrentUser;
         return user;
     }
-
     public void SaveUserInfo(string _uID, string _nickName, string _email, string _passward,
-                             string _userName, string _birthDate, string _phoneNumber)
+                         string _userName, string _birthDate, string _phoneNumber)
     {
         User _user = new User(_nickName, _email, _passward, _userName, _birthDate, _phoneNumber, "온라인");
         string _json = JsonUtility.ToJson(_user);
@@ -252,13 +263,16 @@ public class FirebaseLoginManager
         }
         return null;
     }
-    
-    public void SendFriendRequest(string _senderUserId, string _recevierUserId)
+
+    public async void SendFriendRequest(string _senderUserId, string _recevierUserId)
     {
+        FriendRequestData request = new FriendRequestData(_senderUserId, "pending");
+
+        // 데이터베이스에 요청 추가
+        string requestId = reference.Child("friendRequests").Child(_recevierUserId).Push().Key;
+        reference.Child("friendRequests").Child(_recevierUserId).Child(requestId).SetValueAsync(request);
 
     }
-
-
 
     public void SetUserStatus(string _userId, string _status)
     {

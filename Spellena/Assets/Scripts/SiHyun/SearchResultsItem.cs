@@ -29,8 +29,6 @@ public class SearchResultsItem : MonoBehaviour
         var _sendUser = FirebaseLoginManager.Instance.GetUser();
         string _sendUserId = _sendUser.UserId;
 
-        Debug.Log("Send User : " + _sendUserId);
-        Debug.Log("Recevier User : " + userId);
         FirebaseLoginManager.Instance.SendFriendRequest(_sendUserId, userId);
     }
 
