@@ -113,9 +113,12 @@ public class LobbyManager : MonoBehaviourPunCallbacks
             GameObject _playerItemObj = PhotonNetwork.Instantiate(playerItemPrefab.name, Vector3.zero, Quaternion.identity);
             PlayerItem _playerItem = _playerItemObj.GetComponent<PlayerItem>();
             _playerItem.transform.SetParent(playerItemParentA);
-            _playerItem.SetPlayerInfo(_localPlayer, PunTeams.Team.red);
+            if(_playerItem.photonView.IsMine)
+            {
+                _playerItem.SetPlayerInfo(_localPlayer, PunTeams.Team.red);
+            }
 
-            /*CanvasScaler canvasScaler = playerItemParentA.GetComponentInParent<CanvasScaler>();
+            CanvasScaler canvasScaler = playerItemParentA.GetComponentInParent<CanvasScaler>();
             if (canvasScaler != null)
             {
                 float referenceWidth = canvasScaler.referenceResolution.x;
@@ -139,9 +142,9 @@ public class LobbyManager : MonoBehaviourPunCallbacks
                     _gridLayout.cellSize = adjustedCellSize;
                     _gridLayout.spacing = adjustedSpacing;
 
-                    AdjustChildObjectSizes(_playerItem, adjustedCellSize);
+                    //AdjustChildObjectSizes(_playerItem, adjustedCellSize);
                 }
-            }*/
+            }
         }
     }
 
@@ -152,9 +155,12 @@ public class LobbyManager : MonoBehaviourPunCallbacks
             GameObject _playerItemObj = PhotonNetwork.Instantiate(playerItemPrefab.name, Vector3.zero, Quaternion.identity);
             PlayerItem _playerItem = _playerItemObj.GetComponent<PlayerItem>();
             _playerItem.transform.SetParent(playerItemParentA);
+            if(_playerItem.photonView.IsMine)
+            {
             _playerItem.SetPlayerInfo(_newPlayer.UserId, _newPlayer.NickName);
+            }
 
-            /*CanvasScaler canvasScaler = playerItemParentA.GetComponentInParent<CanvasScaler>();
+            CanvasScaler canvasScaler = playerItemParentA.GetComponentInParent<CanvasScaler>();
             if (canvasScaler != null)
             {
                 float referenceWidth = canvasScaler.referenceResolution.x;
@@ -178,10 +184,9 @@ public class LobbyManager : MonoBehaviourPunCallbacks
                     _gridLayout.cellSize = adjustedCellSize;
                     _gridLayout.spacing = adjustedSpacing;
 
-                    AdjustChildObjectSizes(_playerItem, adjustedCellSize);
-
+                    //AdjustChildObjectSizes(_playerItem, adjustedCellSize);
                 }
-            }*/
+            }
         }
     }
 
