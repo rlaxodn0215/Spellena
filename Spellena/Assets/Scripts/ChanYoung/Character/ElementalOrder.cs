@@ -22,6 +22,7 @@ namespace Player
         public GameObject Aim;
         public GameObject OverlaySight;
 
+        public GameObject overlayAnimatorObject;
         Animator overlayAnimator;
         Vector3 networkHandPoint;
         Vector3 currentHandPoint;
@@ -136,7 +137,7 @@ namespace Player
             sideSpeed = elementalOrderData.sideSpeed;
             backSpeed = elementalOrderData.backSpeed;
             jumpHeight = elementalOrderData.jumpHeight;
-            overlayAnimator = transform.GetChild(1).GetComponent<Animator>();
+            overlayAnimator = overlayAnimatorObject.GetComponent<Animator>();
             minimapRenderTexture = minimapCamera.GetComponent<Camera>().targetTexture;
         }
 
