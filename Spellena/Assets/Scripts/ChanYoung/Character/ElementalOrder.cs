@@ -1,5 +1,7 @@
+using ExitGames.Client.Photon;
 using ExitGames.Client.Photon.StructWrapping;
 using Photon.Pun;
+using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -7,6 +9,8 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
+
+using HashTable = ExitGames.Client.Photon.Hashtable;
 
 namespace Player
 {
@@ -96,6 +100,15 @@ namespace Player
             base.Awake();
             CheckPoint();
             currentHandPoint = handPoint;
+
+            if (photonView.IsMine)
+            {
+                //테스트 정보
+                HashTable _tempTable = new HashTable();
+                _tempTable.Add("CharacterViewID", photonView.ViewID);
+                PhotonNetwork.LocalPlayer.SetCustomProperties(_tempTable);
+            }
+
         }
 
         protected override void Start()
@@ -122,6 +135,10 @@ namespace Player
             {
                 CheckCoolDown();
                 CheckAnimator();
+            }
+            for(int i = 0; i < commands.Count; i++)
+            {
+                Debug.Log(photonView.ViewID + " : " + commands[i]);
             }
         }
 
@@ -704,6 +721,35 @@ namespace Player
 
 
         //동기화
+
+        public override void OnMasterClientSwitched(Photon.Realtime.Player newMasterClient)
+        {
+            base.OnMasterClientSwitched(newMasterClient);
+            int _tempLocalViewID = -1;
+            PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue("CharacterViewID", out _tempLocalViewID);
+            Debug.Log(_tempLocalViewID);
+            int _tempNewMasterViewID = -1;
+            newMasterClient.CustomProperties.TryGetValue("CharacterViewID", out _tempNewMasterViewID);
+
+            if (_tempLocalViewID != _tempNewMasterViewID)
+            {
+                int[] _tempCommands = commands.ToArray();
+                photonView.RPC("ExchangeToNewMasterClient", newMasterClient, _tempCommands);
+            }
+        }
+
+        [PunRPC]
+        public void ExchangeToNewMasterClient(int[] testInt)
+        {
+            commands.Clear();
+            for(int i = 0; i < testInt.Length; i++)
+            {
+                commands.Add(testInt[i]);
+            }
+            Debug.Log(photonView.ViewID);
+        }
+
+
         public override void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
         {
             base.OnPhotonSerializeView(stream, info);
@@ -783,8 +829,6 @@ namespace Player
                 overlayCamera.transform.localPosition = Vector3.Lerp(overlayCamera.transform.localPosition,
                     overlayCameraDefaultPos, Time.deltaTime);
             }
-
-            Debug.Log(animator.GetCurrentAnimatorStateInfo(0).IsName("Spell1"));
             if(animator.GetCurrentAnimatorStateInfo(0).IsName("Spell1"))
             {
                 animator.SetBool("Spell1", false);

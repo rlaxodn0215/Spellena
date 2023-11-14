@@ -4166,6 +4166,8 @@ MonoBehaviour:
   contentObjects: {fileID: 70663104}
   searchInputField: {fileID: 2074992367}
   nullResultText: {fileID: 637252951}
+  alarmSpace: {fileID: 777805638}
+  alarmItem: {fileID: -2501547637576207805, guid: 43de3b2e192afed40984d31aa8b8b4ce, type: 3}
 --- !u!1 &497743442
 GameObject:
   m_ObjectHideFlags: 0
