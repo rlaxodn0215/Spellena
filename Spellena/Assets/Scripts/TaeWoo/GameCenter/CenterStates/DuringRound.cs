@@ -35,11 +35,11 @@ public class DuringRound : CenterState
          if (targetPlayer != null && changedProps != null)
          {
              //pararmeter로 변경된 key값을 찾는다.
-
              string param = (string)targetPlayer.CustomProperties["Parameter"];
+             targetPlayer.CustomProperties["Parameter"] = "none";
 
-             switch (param)
-             {
+            switch (param)
+            {
                  case "TotalDamage":
                      if (gameCenter.globalUIView == null) break;
                     gameCenter.globalUIView.RPC("ShowDamageUI", targetPlayer);
@@ -51,9 +51,8 @@ public class DuringRound : CenterState
                          gameCenter.tempVictim, ((string)targetPlayer.CustomProperties["Team"] == "A"), targetPlayer.ActorNumber);
                      break;
                  case "DeadCount":
-                     targetPlayer.CustomProperties["IsAlive"] = false;
-                     targetPlayer.CustomProperties["DeadTime"] = gameCenter.globalTimer;
-                     targetPlayer.CustomProperties["ReSpawnTime"] = gameCenter.globalTimer + gameCenter.playerRespawnTime;
+                    GameCenterTest.ChangePlayerCustomProperties (targetPlayer, "IsAlive", false);
+                    GameCenterTest.ChangePlayerCustomProperties (targetPlayer, "ReSpawnTime", gameCenter.globalTimer + gameCenter.playerRespawnTime);
 
                     gameCenter.tempVictim = (string)targetPlayer.CustomProperties["Name"];
                     gameCenter.ShowTeamMateDead((string)targetPlayer.CustomProperties["Team"], (string)targetPlayer.CustomProperties["Name"]);
@@ -66,8 +65,6 @@ public class DuringRound : CenterState
                  default:
                      break;
              }
-
-             targetPlayer.CustomProperties["Parameter"] = "none";
 
          }
         
@@ -147,7 +144,6 @@ public class DuringRound : CenterState
             if ((float)player.CustomProperties["ReSpawnTime"] <= gameCenter.globalTimer)
             {
                 PhotonView view = PhotonView.Find((int)player.CustomProperties["CharacterViewID"]);
-                //player.CustomProperties["IsAlive"] = true;
                 GameCenterTest.ChangePlayerCustomProperties(player, "IsAlive", true);
 
                 if ((string)player.CustomProperties["Team"] == "A")

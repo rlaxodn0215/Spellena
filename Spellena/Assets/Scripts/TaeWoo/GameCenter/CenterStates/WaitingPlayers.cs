@@ -6,7 +6,7 @@ using Photon.Realtime;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 public class WaitingPlayers : CenterState
 {
-    private int tempNum = 1;
+    private int tempNum = 2;
     public override void StateExecution()
     {
         gameCenter.gameStateString = "다른 플레이어 기다리는 중...";
@@ -46,8 +46,10 @@ public class WaitingPlayers : CenterState
 
             // 보여주지 않는 데이터
             playerData.Add("CharacterViewID", 0);
-            playerData.Add("ReSpawnTime", -1.0f);
+            playerData.Add("ReSpawnTime", 0.0f);
             playerData.Add("SpawnPoint", new Vector3(0, 0, 0));
+
+            // 동기화 되지 않고 마스터 클라이언트만 가지는 Parameter
             playerData.Add("Parameter", null);
 
             player.SetCustomProperties(playerData);

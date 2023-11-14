@@ -48,6 +48,10 @@ public class DeadCamMove : MonoBehaviour
 
     void OnMove(InputValue value)
     {
+        // 죽은 플레이어의 카메라가 다른 아군 플레이어의 윗쪽 위치로 이동한다
+        // LookAt()으로 아군 플레이어 시선 고정
+        // 벽에 충돌 시 카메라 collider적용
+
         if (!isButtonDown && (bool)PhotonNetwork.LocalPlayer.CustomProperties["IsAlive"]==false)
         {
             Debug.Log("OnButton");
