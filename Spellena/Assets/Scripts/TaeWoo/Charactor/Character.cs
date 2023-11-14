@@ -48,7 +48,6 @@ namespace Player
 
         public GameObject Alive;
         public GameObject Dead;
-        public GameObject DeadCam;
 
         //실시간 갱신 데이터
         public string playerName;
@@ -108,10 +107,11 @@ namespace Player
         public Vector3 moveVec;
         private bool isGrounded = false;
         private bool isSitting = false;
-        private Vector3 cameraPos;
         private Transform avatarForOther;
         private Transform avatarForMe;
         private RaycastHit slopeHit;
+        private Vector3 cameraPos;
+        private Quaternion cameraRot;
 
         private Rigidbody[] ragdollRigid;
         private Vector3[] ragdollPos;
@@ -136,16 +136,6 @@ namespace Player
             SetPlayerKeys(PlayerActionState.Skill3, "Skill3");
             SetPlayerKeys(PlayerActionState.Skill4, "Skill4");
             currentSight = sight.transform.position;
-
-            ragdollRigid = Dead.GetComponentsInChildren<Rigidbody>(true);
-            ragdollPos = new Vector3[ragdollRigid.Length];
-            ragdollRot = new Quaternion[ragdollRigid.Length];
-
-            for(int i = 0; i < ragdollRigid.Length; i++)
-            {
-                ragdollPos[i] = ragdollRigid[i].transform.localPosition;
-                ragdollRot[i] = ragdollRigid[i].transform.localRotation;
-            }
 
         }
 
@@ -172,9 +162,24 @@ namespace Player
             animator = GetComponent<Animator>();
             rigidbody = GetComponent<Rigidbody>();
             Skills = new Dictionary<string, Ability>();
-            cameraPos = camera.transform.position;
+
+            cameraPos = camera.transform.localPosition;
+            cameraRot = camera.transform.localRotation;
+
+            ragdollRigid = Dead.GetComponentsInChildren<Rigidbody>(true);
+            ragdollPos = new Vector3[ragdollRigid.Length];
+            ragdollRot = new Quaternion[ragdollRigid.Length];
+
+            for (int i = 0; i < ragdollRigid.Length; i++)
+            {
+                ragdollPos[i] = ragdollRigid[i].transform.localPosition;
+                ragdollRot[i] = ragdollRigid[i].transform.localRotation;
+            }
+
 
         }
+
+
         protected virtual void Update()
         {
             if (PhotonNetwork.IsMasterClient)
@@ -185,6 +190,7 @@ namespace Player
             if (photonView.IsMine)
             {
                 animator.SetBool("Grounded", isGrounded);
+
                 if(isGrounded == true)
                 {
                     if (playerActionDatas[(int)PlayerActionState.Sit].isExecuting == true)//땅에 있고 앉아있으면
@@ -374,10 +380,9 @@ namespace Player
 
         void OnMove(InputValue value)
         {
-            if (photonView.IsMine)
+            if (photonView.IsMine && (bool)PhotonNetwork.LocalPlayer.CustomProperties["IsAlive"])
             {
                 moveVec = new Vector3(value.Get<Vector2>().x, 0, value.Get<Vector2>().y);
-                Debug.Log(moveVec);
 
                 if (moveVec.magnitude <= 0)
                     playerActionDatas[(int)PlayerActionState.Move].isExecuting = false;
@@ -389,11 +394,10 @@ namespace Player
         {
             if (playerActionDatas[(int)PlayerActionState.Jump].isExecuting) return;
 
-            if (photonView.IsMine)
+            if (photonView.IsMine && (bool)PhotonNetwork.LocalPlayer.CustomProperties["IsAlive"])
             {
                 if (isGrounded)
                 {
-                    //rigidbody.velocity = new Vector3(rigidbody.velocity.x, jumpHeight, rigidbody.velocity.z);
                     rigidbody.AddForce(Vector3.up * jumpHeight, ForceMode.Impulse);
                     playerActionDatas[(int)PlayerActionState.Jump].isExecuting = true;
                 }
@@ -401,7 +405,7 @@ namespace Player
         }
         void OnRun()
         {
-            if (photonView.IsMine)
+            if (photonView.IsMine && (bool)PhotonNetwork.LocalPlayer.CustomProperties["IsAlive"])
             {
                 if (!playerActionDatas[(int)PlayerActionState.Run].isExecuting)
                 {
@@ -419,7 +423,7 @@ namespace Player
 
         void OnSit()
         {
-            if(photonView.IsMine)
+            if(photonView.IsMine && (bool)PhotonNetwork.LocalPlayer.CustomProperties["IsAlive"])
             {
                 photonView.RPC("Sitting", RpcTarget.AllBuffered);
 
@@ -453,7 +457,7 @@ namespace Player
 
         void OnInteraction()
         {
-            if (photonView.IsMine)
+            if (photonView.IsMine && (bool)PhotonNetwork.LocalPlayer.CustomProperties["IsAlive"])
             {
                 Debug.Log("Interaction");
             }
@@ -505,7 +509,7 @@ namespace Player
                 for (int i = 0; i < avatarForOther.childCount; i++)
                 {
                     avatarForOther.GetChild(i).gameObject.layer = LayerMask.NameToLayer("Me");
-                    //avatarForOther.GetChild(i).gameObject.GetComponent<SkinnedMeshRenderer>().enabled = false;
+                    avatarForOther.GetChild(i).gameObject.GetComponent<SkinnedMeshRenderer>().enabled = false;
                 }
 
                 for (int i = 0; i < avatarForMe.childCount; i++)
@@ -575,9 +579,10 @@ namespace Player
                     //Debug.Log("Player Damaged !!  EnemyName: " + enemy);
                 }
 
+                // 마스터 클라이언트이기 때문에 동기화 안되도 게임센터의 값과 같다. 
                 if (PhotonNetwork.IsMasterClient)
                 {
-                    Photon.Realtime.Player killer = GameCenterTest.FindPlayerWithCustomProperty("CharacterViewID", enemy);
+                    var killer = GameCenterTest.FindPlayerWithCustomProperty("CharacterViewID", enemy);
 
                     if (killer == null)
                     {
@@ -595,8 +600,6 @@ namespace Player
 
                         int temp1 = (int)PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["DeadCount"];
                         PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["Parameter"] = "DeadCount";
-                        PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["ForceDirection"] = direction;
-                        PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["ForceSize"] = force;
 
                         GameCenterTest.ChangePlayerCustomProperties
                             (PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr], "DeadCount", temp1 + 1);
@@ -632,24 +635,33 @@ namespace Player
         }
 
         [PunRPC]
-        public void PlayerDead(Vector3 direction, float force)
+        public void PlayerDeadForAll()
         {
             // Ragdoll로 처리
             hp = dataHp;
             Dead.SetActive(true);
             Alive.SetActive(false);
             GetComponent<CapsuleCollider>().enabled = false;
-            rigidbody.AddForce(direction.normalized * force, ForceMode.Impulse);
+
+            rigidbody.AddForce(moveVec.normalized * 2.5f, ForceMode.Impulse);
         }
 
         [PunRPC]
-        public void PlayerDeadCam()
+        public void PlayerDeadPersonal()
         {
-            DeadCam.SetActive(true);
+            camera.transform.SetParent(Dead.transform);
+
+            camera.transform.Translate(new Vector3(0f, 1.5f, -1f));
+            camera.transform.Rotate(new Vector3(32, 0, 0));
+
+            camera.GetComponent<MouseControl>().enabled = false;
+            GetComponent<DeadCamMove>().enabled = true;
+            //playerInput.enabled = false;
+
         }
 
         [PunRPC]
-        public void PlayerReBorn(Vector3 pos)
+        public void PlayerReBornForAll(Vector3 pos)
         {
             gameObject.transform.position = pos;
             gameObject.transform.rotation = Quaternion.identity;
@@ -663,8 +675,25 @@ namespace Player
             
             Alive.SetActive(true);
             GetComponent<CapsuleCollider>().enabled = true;
-            DeadCam.SetActive(false);
             Dead.SetActive(false);
+        }
+
+        [PunRPC]
+        public void PlayerReBornPersonal()
+        {
+            camera.transform.SetParent(Alive.transform);
+
+            camera.transform.localPosition = cameraPos;
+            camera.transform.localRotation = cameraRot;
+
+            camera.GetComponent<MouseControl>().enabled = true;
+            GetComponent<DeadCamMove>().enabled = false;
+
+            camera.SetActive(true);
+            //playerInput.enabled = true;
+
+            //DeadCam.SetActive(false);
+            // 로컬에 있는 다른 플레이어 카메라 OFF
         }
 
         protected virtual void OnAnimatorIK()

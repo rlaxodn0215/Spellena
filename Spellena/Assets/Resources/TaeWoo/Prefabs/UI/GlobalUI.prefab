@@ -56,9 +56,6 @@ MonoBehaviour:
   roundEndTimerUI: 0
   teamCount: 1
   roundEndTimeUI: 5
-  damageActiveTime: 0.5
-  killActiveTime: 1
-  killLogActiveTime: 100
   playersA: []
   playersB: []
 --- !u!114 &3829482606500867166

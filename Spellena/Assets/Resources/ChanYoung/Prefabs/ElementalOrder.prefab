@@ -96493,7 +96493,6 @@ MonoBehaviour:
   UI: {fileID: 1576312012722347700}
   Alive: {fileID: 5742941989037182826}
   Dead: {fileID: 1006462216615846061}
-  DeadCam: {fileID: 0}
   playerName: ElementalOrderTester
   murder: 
   isOccupying: 0

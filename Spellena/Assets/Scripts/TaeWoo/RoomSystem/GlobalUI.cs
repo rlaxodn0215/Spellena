@@ -81,10 +81,10 @@ public class GlobalUI : MonoBehaviourPunCallbacks,IPunObservable
     public OccupyingTeam occupyingTeamUI;
     // 데미지 CrossHair 활성 시간
     [HideInInspector]
-    public float damageActiveTime = 0.75f;
+    private float damageActiveTime = 0.75f;
     // 킬 CrossHair 활성 시간
     [HideInInspector]
-    public float killActiveTime = 1f;
+    private float killActiveTime = 1f;
     // 킬 로그 활성 시간
     [HideInInspector]
     private float killLogActiveTime = 3f;

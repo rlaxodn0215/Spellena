@@ -164,7 +164,7 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
         // allPlayers = PhotonNetwork.PlayerList;
         // custom property로 값 저장 (ActorNumber, name, team)
 
-        int tempNum = 2;
+        int tempNum = 3;
         if (PhotonNetwork.CurrentRoom.PlayerCount >= tempNum)
         {
             globalTimer = loadingTime;
@@ -202,12 +202,9 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
 
             // 보여주지 않는 데이터
             playerData.Add("CharacterViewID", 0);
-            playerData.Add("DeadTime", -1.0f);
             playerData.Add("ReSpawnTime", -1.0f);
             playerData.Add("SpawnPoint", new Vector3(0, 0, 0));
             playerData.Add("Parameter", null);
-            playerData.Add("ForceDirection", new Vector3(0, 0, 0));
-            playerData.Add("ForceSize", 0.0f);
 
             player.SetCustomProperties(playerData);
         }
@@ -307,18 +304,20 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
             if ((float)player.CustomProperties["ReSpawnTime"] <= globalTimer)
             {
                 PhotonView view = PhotonView.Find((int)player.CustomProperties["CharacterViewID"]);
+                //player.CustomProperties["IsAlive"] = true;
+                ChangePlayerCustomProperties(player, "IsAlive", true);
 
                 if ((string)player.CustomProperties["Team"] == "A")
                 {
-                    view.RPC("PlayerReBorn", RpcTarget.AllBufferedViaServer, (Vector3)player.CustomProperties["SpawnPoint"]);
+                    view.RPC("PlayerReBornForAll", RpcTarget.AllBufferedViaServer, (Vector3)player.CustomProperties["SpawnPoint"]);                   
                 }
 
                 else if ((string)player.CustomProperties["Team"] == "B")
                 {
-                    view.RPC("PlayerReBorn", RpcTarget.AllBufferedViaServer, (Vector3)player.CustomProperties["SpawnPoint"]);
+                    view.RPC("PlayerReBornForAll", RpcTarget.AllBufferedViaServer, (Vector3)player.CustomProperties["SpawnPoint"]);
                 }
 
-                player.CustomProperties["IsAlive"] = true;
+                view.RPC("PlayerReBornPersonal", player);
 
                 // 팀원 부활 알리기
 
@@ -344,7 +343,7 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
 
     public static Photon.Realtime.Player FindPlayerWithCustomProperty(string key, string value)
     {
-        foreach (Photon.Realtime.Player player in PhotonNetwork.CurrentRoom.Players.Values)
+        foreach (var player in PhotonNetwork.CurrentRoom.Players.Values)
         {
             if (player.CustomProperties.ContainsKey(key) && player.CustomProperties[key].ToString() == value)
             {
@@ -355,6 +354,7 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
         return null;
     }
 
+    // 이 함수를 사용해야 클라이언트의 모든 변수가 동기화 된다. / 그냥 대입은 동기화 안됨
     public static void ChangePlayerCustomProperties(Photon.Realtime.Player player, string key, object value)
     {
         Hashtable temp = player.CustomProperties;
@@ -386,12 +386,10 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
                 switch (param)
                 {
                     case "TotalDamage":
-                        // 데이지 UI 활성화
                         if (globalUIView == null) break;
                         globalUIView.RPC("ShowDamageUI", targetPlayer);
                         break;
                     case "KillCount":
-                        // 킬 UI 활성화
                         if (globalUIView == null) break;
                         globalUIView.RPC("ShowKillUI", targetPlayer, tempVictim);
                         globalUIView.RPC("ShowKillLog", RpcTarget.AllBufferedViaServer, targetPlayer.CustomProperties["Name"],
@@ -407,14 +405,14 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
 
                         PhotonView view = PhotonView.Find((int)targetPlayer.CustomProperties["CharacterViewID"]);
                         if (view == null) break;
-
-                        view.RPC("PlayerDead", RpcTarget.AllBufferedViaServer, (Vector3)targetPlayer.CustomProperties["ForceDirection"], (float)targetPlayer.CustomProperties["ForceSize"]);
-                        view.RPC("PlayerDeadCam", targetPlayer);
-
+                        view.RPC("PlayerDeadForAll", RpcTarget.AllBufferedViaServer);
+                        view.RPC("PlayerDeadPersonal", targetPlayer);
                         break;
                     default:
                         break;
                 }
+
+                targetPlayer.CustomProperties["Parameter"] = "none";
 
             }
         }

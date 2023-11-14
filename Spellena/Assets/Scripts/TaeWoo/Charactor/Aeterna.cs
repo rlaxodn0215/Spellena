@@ -138,7 +138,7 @@ namespace Player
 
         void OnButtonCancel()
         {
-            if (photonView.IsMine)
+            if (photonView.IsMine && (bool)PhotonNetwork.LocalPlayer.CustomProperties["IsAlive"])
             {
                 foreach (KeyValuePair<string, Ability> keyValue in Skills)
                 {
@@ -156,7 +156,7 @@ namespace Player
 
         void OnSkill1()
         {
-            if (photonView.IsMine)
+            if (photonView.IsMine && (bool)PhotonNetwork.LocalPlayer.CustomProperties["IsAlive"])
             {
                 foreach (KeyValuePair<string, Ability> keyValue in Skills)
                 {
@@ -190,7 +190,7 @@ namespace Player
 
         void OnSkill2()
         {
-            if (photonView.IsMine)
+            if (photonView.IsMine && (bool)PhotonNetwork.LocalPlayer.CustomProperties["IsAlive"])
             {
                 foreach (KeyValuePair<string, Ability> keyValue in Skills)
                 {
@@ -230,7 +230,7 @@ namespace Player
 
         void OnSkill3()
         {
-            if (photonView.IsMine)
+            if (photonView.IsMine && (bool)PhotonNetwork.LocalPlayer.CustomProperties["IsAlive"])
             {
                 foreach (KeyValuePair<string, Ability> keyValue in Skills)
                 {
@@ -266,7 +266,7 @@ namespace Player
 
         void OnSkill4()
         {
-            if (photonView.IsMine)
+            if (photonView.IsMine && (bool)PhotonNetwork.LocalPlayer.CustomProperties["IsAlive"])
             {
                 foreach (KeyValuePair<string, Ability> keyValue in Skills)
                 {
@@ -292,7 +292,7 @@ namespace Player
 
         void OnMouseButton()
         {
-            if (photonView.IsMine)
+            if (photonView.IsMine && (bool)PhotonNetwork.LocalPlayer.CustomProperties["IsAlive"])
             {
                 isMouseButton = !isMouseButton;
 
