@@ -47,6 +47,7 @@ public class FirebaseLoginManager
         }
     }
 
+    [System.Serializable]
     public class FriendRequestData
     {
         public string senderUserId;
@@ -264,19 +265,43 @@ public class FirebaseLoginManager
         return null;
     }
 
-    public async void SendFriendRequest(string _senderUserId, string _recevierUserId)
+    public void SendFriendRequest(string _senderUserId, string _recevierUserId)
     {
-        FriendRequestData request = new FriendRequestData(_senderUserId, "pending");
-
-        // 데이터베이스에 요청 추가
-        string requestId = reference.Child("friendRequests").Child(_recevierUserId).Push().Key;
-        reference.Child("friendRequests").Child(_recevierUserId).Child(requestId).SetValueAsync(request);
-
+        FriendRequestData _user = new FriendRequestData(_senderUserId, "pending"); 
+        string _json = JsonUtility.ToJson(_user);
+        reference.Child("friendRequests").Child(_recevierUserId).Child(_senderUserId).SetRawJsonValueAsync(_json);
     }
 
-    public void SetUserStatus(string _userId, string _status)
+    public async Task<List<string>> GetFriendRequests(string _userId)
     {
-        reference.Child("users").Child(_userId).Child("status").SetValueAsync(_status);
+        List<string> _requestsList = new List<string>();
+
+        DatabaseReference _requestsRef = reference.Child("friendRequests");
+
+        DataSnapshot _receiverSnapshot = await _requestsRef.GetValueAsync();
+
+        if(_receiverSnapshot.HasChildren)
+        {
+            foreach(var _requestIdSnapshot in _receiverSnapshot.Children)
+            {
+                var _receiverIdSnapshot = _requestIdSnapshot.Child(_userId);
+                
+                if(_receiverIdSnapshot.HasChildren)
+                {
+                    foreach(var _senderUserIdSnapshot in _receiverIdSnapshot.Children)
+                    {
+                        var status = _senderUserIdSnapshot.Child("status").Value.ToString();
+                        if(!string.IsNullOrEmpty(status) && status == "pending")
+                        {
+                            string _senderUserId = _senderUserIdSnapshot.Child("senderUserId").Value.ToString();
+                            _requestsList.Add(_senderUserId);
+                        }
+                    }
+                }
+            }
+        }
+
+        return _requestsList;
     }
 
     public void AddFriend(string _userId, string _friendId)
@@ -289,6 +314,10 @@ public class FirebaseLoginManager
         reference.Child("users").Child(_userId).Child("friends").GetValueAsync();
     }
 
+    public void SetUserStatus(string _userId, string _status)
+    {
+        reference.Child("users").Child(_userId).Child("status").SetValueAsync(_status);
+    }
 
     public void SetNickname(string _nickName)
     {

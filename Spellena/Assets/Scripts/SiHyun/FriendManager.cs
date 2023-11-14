@@ -10,12 +10,44 @@ public class FriendManager : MonoBehaviour
     public Transform contentObjects;
     public InputField searchInputField;
     public Text nullResultText;
-
+    List<AlarmItem> alarmItemList = new List<AlarmItem>();
+    public AlarmItem alarmItem;
+    public Transform alarmSpace;
+    
     private void Start()
     {
         nullResultText.gameObject.SetActive(false);
         if (searchInputField != null)
+        {
             searchInputField.onEndEdit.AddListener(SearchUser);
+        }
+
+        GetRequestsAlarm();
+
+    }
+
+    private void Update()
+    {
+    }
+
+    async void GetRequestsAlarm()
+    {
+        foreach (var _item in alarmItemList)
+        {
+            Destroy(_item.gameObject);
+        }
+        alarmItemList.Clear();
+
+        List<string> _alarmList = await FirebaseLoginManager.Instance.GetFriendRequests(FirebaseLoginManager.Instance.GetUser().UserId);
+        
+        foreach (string _alarm in _alarmList)
+        {
+            string _senderName = await FirebaseLoginManager.Instance.ReadUserInfo(_alarm);
+            AlarmItem _alarmItem = Instantiate(alarmItem, alarmSpace);
+            _alarmItem.SetAlarmInfo(_alarm, _senderName);
+            alarmItemList.Add(_alarmItem);
+            Debug.Log(_alarm + " : " + _senderName);
+        }
     }
 
     async void SearchUser(string text)
