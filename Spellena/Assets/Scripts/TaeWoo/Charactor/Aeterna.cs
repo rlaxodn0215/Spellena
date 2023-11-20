@@ -35,11 +35,7 @@ namespace Player
         public float[] skillTimer;
 
         [HideInInspector]
-        public int ultimateCount = 0;
-        [HideInInspector]
         public int doUltimateNum = 0;
-        [HideInInspector]
-        public int chargeCount = 0;
         [HideInInspector]
         public float[] chargeCountTime; // index - 0: 3단계 까지 가기위한 총 시간, 1: 1단계, 2: 2단계 (3단계는 0초)
 

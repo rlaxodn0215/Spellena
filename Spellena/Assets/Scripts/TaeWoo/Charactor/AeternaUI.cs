@@ -18,9 +18,15 @@ namespace Player
 
         int skillNum = 0;
 
+        int chargeCount = 0;
+        int ultimateCount = 0;
+
         private void Start()
         {
             ConnectUI();
+
+            chargeCount = aeterna.chargeCount;
+            ultimateCount = aeterna.ultimateCount;
         }
 
         void ConnectUI()
@@ -38,7 +44,7 @@ namespace Player
 
             UIObjects["skill_4_Active"] = GlobalUI.FindObject(gameObject, "Skill_4_Active");
 
-            for(int i = 1; i <=4; i++)
+            for(int i = 1; i <= 4; i++)
             {
                 UIObjects["skill_"+i+"_Lock"] = GlobalUI.FindObject(gameObject, "Skill_"+i+"_Lock");
             }
@@ -59,7 +65,6 @@ namespace Player
             ShowHp();
             ShowSkillActive();
             ShowCoolTime();
-            ShowKill();
             ShowChargeBar();
             ShowCircleAble();
         }
@@ -108,19 +113,26 @@ namespace Player
             }
         }
 
-        public void ShowKill()
-        {
-
-        }
-
         void ShowChargeBar()
         {
-
+            if(chargeCount != aeterna.chargeCount)
+                skill4ChargeBarImage.fillAmount = 0.25f * aeterna.chargeCount;
         }
 
         void ShowCircleAble()
         {
+            if (ultimateCount != aeterna.ultimateCount)
+            {
+                for(int i = 1; i <= ultimateCount; i++)
+                {
+                    UIObjects["circleAble_" + i].SetActive(true);
+                }
 
+                for(int i = ultimateCount + 1; i <=10; i++)
+                {
+                    UIObjects["circleAble_" + i].SetActive(false);
+                }
+            }
         }
     }
 }

@@ -36,19 +36,32 @@ public class DuringRound : CenterState
          {
              //pararmeter로 변경된 key값을 찾는다.
              string param = (string)targetPlayer.CustomProperties["ParameterName"];
-             targetPlayer.CustomProperties["ParameterName"] = "none";
+             targetPlayer.CustomProperties["ParameterName"] = "";
 
             switch (param)
             {
                  case "TotalDamage":
                      if (gameCenter.globalUIView == null) break;
                     gameCenter.globalUIView.RPC("ShowDamageUI", targetPlayer);
-                     break;
+                    // 해당 플레이어에 대한 어시스트 타이머 연결
+                    string victimViewID = (string)targetPlayer.CustomProperties["PlayerAssistViewID"];
+                    if (victimViewID == null) break;
+                    targetPlayer.CustomProperties["PlayerAssistViewID"] = "";
+                    GameCenterTest.ChangePlayerCustomProperties(targetPlayer, "AssistTime_" + victimViewID, gameCenter.globalTimer + gameCenter.assistTime );
+                    break;
+                case "TotalHeal":
+                    string healedViewID = (string)targetPlayer.CustomProperties["PlayerAssistViewID"];
+                    if (healedViewID == null) break;
+                    targetPlayer.CustomProperties["PlayerAssistViewID"] = "";
+                    GameCenterTest.ChangePlayerCustomProperties(targetPlayer, "AssistTime_" + healedViewID, gameCenter.globalTimer + gameCenter.assistTime);
+                    break;
                  case "KillCount":
                      if (gameCenter.globalUIView == null) break;
                     gameCenter.globalUIView.RPC("ShowKillUI", targetPlayer, gameCenter.tempVictim);
+                    gameCenter.globalUIView.RPC("SetUltimatePoint", targetPlayer);
                     gameCenter.globalUIView.RPC("ShowKillLog", RpcTarget.AllBufferedViaServer, targetPlayer.CustomProperties["Name"],
                          gameCenter.tempVictim, ((string)targetPlayer.CustomProperties["Team"] == "A"), targetPlayer.ActorNumber);
+                    CheckPlayerHealAssist(targetPlayer);
                      break;
                  case "DeadCount":
                     GameCenterTest.ChangePlayerCustomProperties (targetPlayer, "IsAlive", false);
@@ -63,7 +76,9 @@ public class DuringRound : CenterState
                      view.RPC("PlayerDeadForAll", RpcTarget.AllBufferedViaServer, (string)targetPlayer.CustomProperties["DamagePart"],
                          (Vector3)targetPlayer.CustomProperties["DamageDirection"], (float)targetPlayer.CustomProperties["DamageForce"]);
                      view.RPC("PlayerDeadPersonal", targetPlayer);
-                     break;
+
+                    CheckPlayerDealAssist(targetPlayer);
+                    break;
                  default:
                      break;
              }
@@ -175,6 +190,73 @@ public class DuringRound : CenterState
                     foreach (var playerB in gameCenter.playersB)
                     {
                         gameCenter.globalUIView.RPC("ShowTeamLifeDead", playerB, (string)player.CustomProperties["Name"], false);
+                    }
+                }
+            }
+        }
+    }
+
+    void CheckPlayerDealAssist(Photon.Realtime.Player player)
+    {
+        if((string)player.CustomProperties["Team"]=="A")
+        {
+            foreach(var teamPlayer in gameCenter.playersB)
+            {
+                foreach (var assist in (Dictionary<string, float>)teamPlayer.CustomProperties["DealAssist"])
+                {
+                    if (assist.Value <= gameCenter.globalTimer)
+                    {
+                        Debug.Log("Deal Assist!!");
+                        photonView.RPC("SetChargePoint", player);
+                    }
+                }
+            }
+        }
+
+        else if((string)player.CustomProperties["Team"] == "B")
+        {
+            foreach (var teamPlayer in gameCenter.playersA)
+            {
+                foreach (var assist in (Dictionary<string, float>)teamPlayer.CustomProperties["DealAssist"])
+                {
+                    if (assist.Value <= gameCenter.globalTimer)
+                    {
+                        Debug.Log("Deal Assist!!");
+                        photonView.RPC("SetChargePoint", player);
+                    }
+                }
+            }
+        }
+        
+    }
+
+    void CheckPlayerHealAssist(Photon.Realtime.Player player)
+    {
+        if ((string)player.CustomProperties["Team"] == "A")
+        {
+            foreach (var teamPlayer in gameCenter.playersA)
+            {
+                foreach (var assist in (Dictionary<string, float>)teamPlayer.CustomProperties["HealAssist"])
+                {
+                    if (assist.Value <= gameCenter.globalTimer)
+                    {
+                        Debug.Log("Heal Assist!!");
+                        photonView.RPC("SetChargePoint", player);
+                    }
+                }
+            }
+        }
+
+        else if ((string)player.CustomProperties["Team"] == "B")
+        {
+            foreach (var teamPlayer in gameCenter.playersB)
+            {
+                foreach (var assist in (Dictionary<string, float>)teamPlayer.CustomProperties["HealAssist"])
+                {
+                    if (assist.Value <= gameCenter.globalTimer)
+                    {
+                        Debug.Log("Heal Assist!!");
+                        photonView.RPC("SetChargePoint", player);
                     }
                 }
             }

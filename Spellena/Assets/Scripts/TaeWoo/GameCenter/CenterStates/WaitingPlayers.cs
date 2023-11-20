@@ -6,7 +6,7 @@ using Photon.Realtime;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 public class WaitingPlayers : CenterState
 {
-    private int tempNum = 3;
+    private int tempNum = 2;
     public override void StateExecution()
     {
         gameCenter.gameStateString = "다른 플레이어 기다리는 중...";
@@ -40,6 +40,7 @@ public class WaitingPlayers : CenterState
             playerData.Add("Name", player.ActorNumber.ToString());
             playerData.Add("Team", "none");
             playerData.Add("TotalDamage", 0);
+            playerData.Add("TotalHeal", 0);
             playerData.Add("KillCount", 0);
             playerData.Add("DeadCount", 0);
             playerData.Add("IsAlive", true);
@@ -55,6 +56,8 @@ public class WaitingPlayers : CenterState
             playerData.Add("DamagePart", null);
             playerData.Add("DamageDirection", null);
             playerData.Add("DamageForce", null);
+
+            playerData.Add("PlayerAssistViewID", null);
 
             player.SetCustomProperties(playerData);
         }

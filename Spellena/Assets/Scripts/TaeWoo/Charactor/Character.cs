@@ -51,11 +51,11 @@ namespace Player
 
         //실시간 갱신 데이터
         public string playerName;
-        public string murder;
         public bool isOccupying = false;
+        public int chargeCount = 0;
+        public int ultimateCount = 0;
 
         public int hp;
-
         public float sitSpeed;
         public float sitSideSpeed;
         public float sitBackSpeed;
@@ -64,7 +64,6 @@ namespace Player
         public float backSpeed;
         public float sideSpeed;
         public float runSpeedRatio;
-
         public float jumpHeight;
 
         public float headShotRatio;
@@ -106,7 +105,6 @@ namespace Player
         // 임시 사용 데이터
         public Vector3 moveVec;
         private bool isGrounded = false;
-        private bool isSitting = false;
         private Transform avatarForOther;
         private Transform avatarForMe;
         private RaycastHit slopeHit;
@@ -136,7 +134,6 @@ namespace Player
             SetPlayerKeys(PlayerActionState.Skill3, "Skill3");
             SetPlayerKeys(PlayerActionState.Skill4, "Skill4");
             currentSight = sight.transform.position;
-
         }
 
         void SetPlayerKeys(PlayerActionState playerActionState, string action)
@@ -592,13 +589,12 @@ namespace Player
 
                     int temp = (int)killer.CustomProperties["TotalDamage"];
                     killer.CustomProperties["ParameterName"] = "TotalDamage";
+                    killer.CustomProperties["PlayerAssistViewID"] = photonView.ViewID.ToString();
                     GameCenterTest.ChangePlayerCustomProperties(killer, "TotalDamage", temp + damage);
 
                     // 사망시
                     if (hp <= 0)
                     {
-                        murder = enemy;
-
                         int temp1 = (int)PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["DeadCount"];
                         PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["ParameterName"] = "DeadCount";
 
@@ -631,6 +627,11 @@ namespace Player
                 if (hp < dataHp)
                 {
                     hp -= damage;
+                    var healer = GameCenterTest.FindPlayerWithCustomProperty("CharacterViewID", enemy);
+                    int temp = (int)healer.CustomProperties["TotalHeal"];
+                    healer.CustomProperties["ParameterName"] = "TotalHeal";
+                    healer.CustomProperties["PlayerAssistViewID"] = photonView.ViewID.ToString();
+                    GameCenterTest.ChangePlayerCustomProperties(healer, "TotalHeal", temp + (-damage));
                 }
 
                 //Debug.Log("Player Healing !!");
@@ -706,6 +707,25 @@ namespace Player
             camera.GetComponent<DeadCamera>().enabled = false;
         }
 
+        [PunRPC]
+        public void SetChargePoint()
+        {
+            chargeCount++;
+            if(chargeCount>=4)
+            {
+                chargeCount = 0;
+                if(ultimateCount < 10)
+                    ultimateCount++;
+            }
+        }
+
+        [PunRPC]
+        public void SetUltimatePoint()
+        {
+            if (ultimateCount < 10)
+                ultimateCount++;
+        }
+
         protected virtual void OnAnimatorIK()
         {
             SetLookAtObj();
@@ -735,7 +755,6 @@ namespace Player
             {
                 // 데이터를 보내는 부분
                 stream.SendNext(playerName);
-                stream.SendNext(murder);
                 stream.SendNext(hp);
                 stream.SendNext(isOccupying);
                 for (int i = 0; i < playerActionDatas.Count; i++)
@@ -750,7 +769,6 @@ namespace Player
             {
                 // 데이터를 받는 부분
                 playerName = (string)stream.ReceiveNext();
-                murder = (string)stream.ReceiveNext();
                 hp = (int)stream.ReceiveNext();
                 isOccupying = (bool)stream.ReceiveNext();
                 for (int i = 0; i < playerActionDatas.Count; i++)

@@ -116,6 +116,9 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
     // 플레이어 리스폰 타임
     [HideInInspector]
     public float playerRespawnTime = 6;
+    // 어시스트 타임
+    [HideInInspector]
+    public float assistTime = 10;
     // 거점 전환 원 먹는 비율
     [HideInInspector]
     public float occupyingGaugeRate = 300f;
@@ -210,17 +213,17 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
     {
         Hashtable temp = player.CustomProperties;
 
-        if (temp[key] != null)
+        if (temp[key] == null)
         {
-            temp[key] = value;
-            player.SetCustomProperties(temp);
+            temp.Add(key, value);
         }
 
         else
         {
-            Debug.LogError("해당 플레이어의 키 값을 찾을 수 없습니다.");
-            return;
+            temp[key] = value;
         }
+
+        player.SetCustomProperties(temp);
 
     }
 
