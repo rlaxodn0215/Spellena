@@ -569,7 +569,7 @@ namespace Player
         }
 
         [PunRPC]
-        public void PlayerDamaged(string enemy ,int damage, Vector3 direction, float force)
+        public void PlayerDamaged(string enemy ,int damage, string damgePart, Vector3 direction, float force)
         {
             if (damage > 0)
             {
@@ -591,15 +591,20 @@ namespace Player
                     }
 
                     int temp = (int)killer.CustomProperties["TotalDamage"];
-                    killer.CustomProperties["Parameter"] = "TotalDamage";
+                    killer.CustomProperties["ParameterName"] = "TotalDamage";
                     GameCenterTest.ChangePlayerCustomProperties(killer, "TotalDamage", temp + damage);
 
+                    // 사망시
                     if (hp <= 0)
                     {
                         murder = enemy;
 
                         int temp1 = (int)PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["DeadCount"];
-                        PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["Parameter"] = "DeadCount";
+                        PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["ParameterName"] = "DeadCount";
+
+                        PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["DamagePart"] = damgePart;
+                        PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["DamageDirection"] = direction;
+                        PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["DamageForce"] = force;
 
                         GameCenterTest.ChangePlayerCustomProperties
                             (PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr], "DeadCount", temp1 + 1);
@@ -609,7 +614,7 @@ namespace Player
                         if (killer1 != null)
                         {
                             int temp2 = (int)killer1.CustomProperties["KillCount"];
-                            killer1.CustomProperties["Parameter"] = "KillCount";
+                            killer1.CustomProperties["ParameterName"] = "KillCount";
                             GameCenterTest.ChangePlayerCustomProperties(killer1, "KillCount", temp2 + 1);
                         }
 
@@ -635,7 +640,7 @@ namespace Player
         }
 
         [PunRPC]
-        public void PlayerDeadForAll()
+        public void PlayerDeadForAll(string damgePart, Vector3 direction, float force)
         {
             // Ragdoll로 처리
             hp = dataHp;
@@ -643,7 +648,19 @@ namespace Player
             Alive.SetActive(false);
             GetComponent<CapsuleCollider>().enabled = false;
 
-            rigidbody.AddForce(moveVec.normalized * 2.5f, ForceMode.Impulse);
+            Rigidbody[] bodyParts = Dead.GetComponentsInChildren<Rigidbody>();
+            
+            foreach(Rigidbody rb in bodyParts)
+            {
+                if(rb.gameObject.name == damgePart)
+                {
+                    //Debug.Log(damgePart + " / " + direction + " / " + force);
+                    rb.AddForce(direction.normalized * force, ForceMode.Impulse);
+                    return;
+                }
+            }
+
+            //Debug.Log("No DamagePart");
         }
 
         [PunRPC]
@@ -655,8 +672,7 @@ namespace Player
             camera.transform.Rotate(new Vector3(32, 0, 0));
 
             camera.GetComponent<MouseControl>().enabled = false;
-            GetComponent<DeadCamMove>().enabled = true;
-            //playerInput.enabled = false;
+            camera.GetComponent<DeadCamera>().enabled = true;
 
         }
 
@@ -687,13 +703,7 @@ namespace Player
             camera.transform.localRotation = cameraRot;
 
             camera.GetComponent<MouseControl>().enabled = true;
-            GetComponent<DeadCamMove>().enabled = false;
-
-            camera.SetActive(true);
-            //playerInput.enabled = true;
-
-            //DeadCam.SetActive(false);
-            // 로컬에 있는 다른 플레이어 카메라 OFF
+            camera.GetComponent<DeadCamera>().enabled = false;
         }
 
         protected virtual void OnAnimatorIK()

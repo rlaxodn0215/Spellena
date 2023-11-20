@@ -5,7 +5,6 @@ using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
-
 public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
 {
     [HideInInspector]

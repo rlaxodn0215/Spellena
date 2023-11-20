@@ -25,7 +25,7 @@ namespace Player
         public override void OnEnable()
         {
             base.OnEnable();
-            Init();     
+            Init();
         }
 
         void Init()
@@ -143,7 +143,7 @@ namespace Player
                             //other.transform.root.GetComponent<Character>().PlayerDamaged(playerName, -healing);
 
                             other.transform.root.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBuffered,playerName,
-                                -healing, Vector3.zero, 0.0f);               
+                                -healing, null , Vector3.zero, 0.0f);               
                             DestorySpawnObject();
                         }
 
@@ -156,6 +156,8 @@ namespace Player
 
                 }
 
+                //string enemy ,int damage, string damgePart, Vector3 direction, float force
+
                 else
                 {
                     if (CompareTag("TeamA") && other.transform.root.CompareTag("TeamB") ||
@@ -164,9 +166,8 @@ namespace Player
                         if (other.transform.root.GetComponent<Character>())
                         {
                             //other.transform.root.GetComponent<Character>().PlayerDamaged(playerName, damage);
-                            other.transform.root.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBuffered, playerName,
-                                damage, transform.TransformDirection(transform.forward), 2.0f);
-                            Debug.Log(other.name);
+                            other.transform.root.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBufferedViaServer, playerName,
+                                damage, other.name, transform.TransformDirection(Vector3.forward), 20.0f);
                             DestorySpawnObject();
                         }
 

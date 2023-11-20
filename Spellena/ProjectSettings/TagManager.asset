@@ -8,6 +8,8 @@ TagManager:
   - Ground
   - TeamA
   - TeamB
+  - Aetherna Teleport Point
+  - Wall
   layers:
   - Default
   - TransparentFX

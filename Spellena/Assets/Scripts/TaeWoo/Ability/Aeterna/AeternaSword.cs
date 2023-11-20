@@ -115,7 +115,7 @@ namespace Player
                 else
                 {
                     if (other.transform.root.GetComponent<Character>())
-                        other.transform.root.GetComponent<Character>().PlayerDamaged(player.playerName, damage,new Vector3(0,0,0),0.0f);
+                        other.transform.root.GetComponent<Character>().PlayerDamaged(player.playerName, damage,null,new Vector3(0,0,0),0.0f);
                 }
             }
 

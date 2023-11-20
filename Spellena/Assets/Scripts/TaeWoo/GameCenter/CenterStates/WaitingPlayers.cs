@@ -49,8 +49,12 @@ public class WaitingPlayers : CenterState
             playerData.Add("ReSpawnTime", 0.0f);
             playerData.Add("SpawnPoint", new Vector3(0, 0, 0));
 
-            // 동기화 되지 않고 마스터 클라이언트만 가지는 Parameter
-            playerData.Add("Parameter", null);
+            // 동기화 되지 않고 마스터 클라이언트만 가지는 Parameter / 플레이어 사망시 사용
+            playerData.Add("ParameterName", null);
+
+            playerData.Add("DamagePart", null);
+            playerData.Add("DamageDirection", null);
+            playerData.Add("DamageForce", null);
 
             player.SetCustomProperties(playerData);
         }

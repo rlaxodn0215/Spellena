@@ -35,8 +35,8 @@ public class DuringRound : CenterState
          if (targetPlayer != null && changedProps != null)
          {
              //pararmeter로 변경된 key값을 찾는다.
-             string param = (string)targetPlayer.CustomProperties["Parameter"];
-             targetPlayer.CustomProperties["Parameter"] = "none";
+             string param = (string)targetPlayer.CustomProperties["ParameterName"];
+             targetPlayer.CustomProperties["ParameterName"] = "none";
 
             switch (param)
             {
@@ -59,7 +59,9 @@ public class DuringRound : CenterState
 
                      PhotonView view = PhotonView.Find((int)targetPlayer.CustomProperties["CharacterViewID"]);
                      if (view == null) break;
-                     view.RPC("PlayerDeadForAll", RpcTarget.AllBufferedViaServer);
+
+                     view.RPC("PlayerDeadForAll", RpcTarget.AllBufferedViaServer, (string)targetPlayer.CustomProperties["DamagePart"],
+                         (Vector3)targetPlayer.CustomProperties["DamageDirection"], (float)targetPlayer.CustomProperties["DamageForce"]);
                      view.RPC("PlayerDeadPersonal", targetPlayer);
                      break;
                  default:
