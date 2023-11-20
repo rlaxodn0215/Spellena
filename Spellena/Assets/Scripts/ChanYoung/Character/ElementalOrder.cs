@@ -1,10 +1,12 @@
 using ExitGames.Client.Photon;
 using ExitGames.Client.Photon.StructWrapping;
 using Photon.Pun;
+using Photon.Pun.UtilityScripts;
 using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -20,16 +22,33 @@ namespace Player
 
         public GameObject overlayCamera;
         public GameObject minimapCamera;
-        RenderTexture minimapRenderTexture;
-
-        Vector3 overlayCameraDefaultPos;
         public GameObject Aim;
         public GameObject OverlaySight;
-
         public GameObject overlayAnimatorObject;
-        Animator overlayAnimator;
+
+        public GameObject leftHandSpellFire;
+        public GameObject leftHandSpellStorm;
+        public GameObject leftHandSpellLand;
+        public GameObject rightHandSpellFire;
+        public GameObject rightHandSpellStorm;
+        public GameObject rightHandSpellLand;
+
+        public GameObject rangePointStrikeArea;
+        public GameObject rangeBoxArea;
+
+        public Animator overlayAnimator;
+
+        RenderTexture minimapRenderTexture;
+
+
+        //스킬 순서 11, 12, 13, 22, 23, 33 총 6개
+        List<int> commands = new List<int>();
+
+        Vector3 overlayCameraDefaultPos;
         Vector3 networkHandPoint;
         Vector3 currentHandPoint;
+
+        Vector3 pointStrike;
 
         float networkRightCurrentWeight;
         float networkLeftCurrentWeight;
@@ -42,17 +61,11 @@ namespace Player
 
         float targetWeight = 0.4f;
 
-        //스킬 순서 11, 12, 13, 22, 23, 33 총 6개
-        List<int> commands = new List<int>();
-
         bool isReadyToUseSkill = false;
         bool isClicked = false;
+        bool isPointStrike = false;
 
         Ray screenRay;
-
-        Vector3 pointStrike;
-        bool isPointStrike = false;
-        Vector3 arrivedVec;
 
         public enum SkillState
         {
@@ -61,37 +74,27 @@ namespace Player
 
         SkillState skillState = SkillState.None;
 
-        BurstFlare burstFlare;
-        GaiaTied gaiaTied;
-        EterialStorm eterialStorm;
-        MeteorStrike meteorStrike;
-        RagnaEdge ragnaEdge;
-        TerraBreak terraBreak;
+        RagnaEdge ragnaEdge = new RagnaEdge();
+        BurstFlare burstFlare = new BurstFlare();
+        GaiaTied gaiaTied = new GaiaTied();
+        MeteorStrike meteorStrike = new MeteorStrike();
+        TerraBreak terraBreak = new TerraBreak();
+        EterialStorm eterialStorm = new EterialStorm();
 
+
+        float ragnaEdgeCoolDownTime = 0f;
         float burstFlareCoolDownTime = 0f;
         float gaiaTiedCoolDownTime = 0f;
-        float eterialStormCoolDownTime = 0f;
         float meteorStrikeCoolDownTime = 0f;
-        float ragnaEdgeCoolDownTime = 0f;
         float terraBreakCoolDownTime = 0f;
-
-
-        public GameObject leftHandSpellFire;
-        public GameObject leftHandSpellStorm;
-        public GameObject leftHandSpellLand;
-        public GameObject rightHandSpellFire;
-        public GameObject rightHandSpellStorm;
-        public GameObject rightHandSpellLand;
-
-        public GameObject rangePointStrikeArea;
-        public GameObject rangeBoxArea;
+        float eterialStormCoolDownTime = 0f;
 
         //로컬 클라이언트에서 접근
-        bool isEterialStorm = false;
-        bool isMeteorStrike = false;
         bool isRagnaEdge = false;
-        bool isTerraBreak = false;
         bool isGaiaTied = false;
+        bool isMeteorStrike = false;
+        bool isTerraBreak = false;
+        bool isEterialStorm = false;
 
         private Vector3 handPoint;
 
@@ -127,6 +130,7 @@ namespace Player
             if (photonView.IsMine)
             {
                 CheckOverlayAnimator();
+                CheckAnimator();
                 CheckPoint();
                 CheckSkillOnMine();
             }
@@ -134,11 +138,6 @@ namespace Player
             if(PhotonNetwork.IsMasterClient)
             {
                 CheckCoolDown();
-                CheckAnimator();
-            }
-            for(int i = 0; i < commands.Count; i++)
-            {
-                Debug.Log(photonView.ViewID + " : " + commands[i]);
             }
         }
 
@@ -154,7 +153,6 @@ namespace Player
             sideSpeed = elementalOrderData.sideSpeed;
             backSpeed = elementalOrderData.backSpeed;
             jumpHeight = elementalOrderData.jumpHeight;
-            overlayAnimator = overlayAnimatorObject.GetComponent<Animator>();
             minimapRenderTexture = minimapCamera.GetComponent<Camera>().targetTexture;
         }
 
@@ -164,7 +162,8 @@ namespace Player
             overlayCamera.SetActive(true);
             minimapCamera.SetActive(true);
         }
-        //스킬
+
+        //쿨타임
         void CheckCoolDown()
         {
             if(burstFlare != null)
@@ -201,106 +200,198 @@ namespace Player
             {
                 meteorStrikeCoolDownTime -= Time.deltaTime;
             }
-
         }
 
-        void UseSkill(Vector3 origin, Vector3 direction)
+        //1. 로컬 플레이어 입력
+        void OnSkill1()
         {
-            if(skillState == SkillState.BurstFlare)
+            if (photonView.IsMine)
             {
-                if(burstFlare == null)
-                {
-                    burstFlare = new BurstFlare();
-                    burstFlare.Initialize();
-                }
-
-                if(burstFlare.CheckCoolDown() == false)
-                {
-                    return;
-                }
-
-                bool _result = burstFlare.ShootBullet();
-
-                object[] _data = new object[5];
-                _data[0] = name;
-                _data[1] = tag;
-                _data[2] = "BurstFlare";
-                _data[3] = origin + direction;
-                _data[4] = direction;
-
-                overlayAnimator.SetBool("Spell2", true);
-                animator.SetBool("Spell2", true);
-
-                PhotonNetwork.Instantiate("ChanYoung/Prefabs/BurstFlare", origin, Quaternion.identity, data: _data);
-
-                if (_result == true)
-                {
-                    skillState = SkillState.None;
-                    burstFlareCoolDownTime = burstFlare.GetSkillCoolDownTime();
-                    burstFlare = null;
-                }
+                photonView.RPC("AddCommand", RpcTarget.MasterClient, 1);
             }
-            else if(skillState == SkillState.EterialStorm)
+        }
+
+        void OnSkill2()
+        {
+            if (photonView.IsMine)
             {
-                if(eterialStorm == null)
-                {
-                    eterialStorm = new EterialStorm();
-                }
-                if (isPointStrike == true)
-                {
-                    object[] _data = new object[5];
-                    _data[0] = name;
-                    _data[1] = tag;
-                    _data[2] = "EterialStorm";
-
-                    overlayAnimator.SetBool("Spell6", true);
-                    animator.SetBool("Spell6", true);
-
-                    PhotonNetwork.Instantiate("ChanYoung/Prefabs/Cylinder", pointStrike, Quaternion.identity, data: _data);
-                    eterialStormCoolDownTime = eterialStorm.GetSkillCoolDownTime();
-                    skillState = SkillState.None;
-                    eterialStorm = null;
-                    isPointStrike = false;
-                }
+                photonView.RPC("AddCommand", RpcTarget.MasterClient, 2);
             }
-            else if(skillState == SkillState.MeteorStrike)
+        }
+
+        void OnSkill3()
+        {
+            if (photonView.IsMine)
             {
-                if(meteorStrike == null)
+                photonView.RPC("AddCommand", RpcTarget.MasterClient, 3);
+            }
+        }
+
+        void OnButtonCancel()
+        {
+            if (photonView.IsMine)
+            {
+                photonView.RPC("CancelSkill", RpcTarget.MasterClient);
+            }
+        }
+
+        void OnSkill4()
+        {
+            Debug.Log("4번 비어있음");
+        }
+
+        void OnMouseButton()
+        {
+            if (photonView.IsMine)
+            {
+                isClicked = !isClicked;
+                if (isClicked == true)
                 {
-                    meteorStrike = new MeteorStrike();
-                    isMeteorStrike = true;
-                }
-                else
-                {
-                    if(isPointStrike == true)
+                    //로컬 클라이언트 접근
+                    if (isEterialStorm || isRagnaEdge)
                     {
-                        object[] _data = new object[5];
-                        _data[0] = name;
-                        _data[1] = tag;
-                        _data[2] = "MeteorStrike";
+                        Ray _tempRay = minimapCamera.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
+                        RaycastHit _tempHit;
+                        int _tempLayerMask = ~(1 << LayerMask.NameToLayer("Minimap"));
+                        if (Physics.Raycast(_tempRay, out _tempHit, Mathf.Infinity, _tempLayerMask))
+                        {
+                            pointStrike = new Vector3(_tempHit.point.x, _tempHit.point.y, _tempHit.point.z);
+                            isPointStrike = true;
+                        }
+                    }
+                    else if (isMeteorStrike || isTerraBreak)
+                    {
+                        pointStrike = rangePointStrikeArea.transform.position;
+                        isPointStrike = true;
+                    }
+                    else if (isGaiaTied)
+                    {
+                        rangeBoxArea.transform.localPosition -= new Vector3(0, rangeBoxArea.transform.localScale.y / 2, rangeBoxArea.transform.localScale.z / 2);
+                        pointStrike = rangeBoxArea.transform.position;
 
-                        pointStrike += new Vector3(0, 0.05f, 0);
+                        isPointStrike = true;
+                    }
+                    SetPointStrike();
+                    photonView.RPC("ClickMouse", RpcTarget.MasterClient, screenRay.origin, screenRay.direction, photonView.OwnerActorNr);
+                }
+            }
+        }
 
-                        overlayAnimator.SetBool("Spell4", true);
-                        animator.SetBool("Spell4", true);
+        //2. 로컬 플레이어 입력 후 마스터 클라이언트에서 이벤트 발생
+        [PunRPC]
+        public void AddCommand(int command)
+        {
+            if (commands.Count < 2)
+            {
+                commands.Add(command);
+            }
 
-                        PhotonNetwork.Instantiate("ChanYoung/Prefabs/MeteorStrike", pointStrike, Quaternion.identity, data: _data);
-                        meteorStrikeCoolDownTime = meteorStrike.GetSkillCoolDownTime();
-                        meteorStrike = null;
-                        isPointStrike = false;
-                        skillState = SkillState.None;
+            if (commands.Count >= 2)
+            {
+                isReadyToUseSkill = true;
+            }
+            UpdateData();
+        }
+
+        [PunRPC]
+        public void CancelSkill()
+        {
+            isReadyToUseSkill = false;
+
+            if (skillState == SkillState.BurstFlare)
+            {
+                burstFlareCoolDownTime = burstFlare.GetSkillCoolDownTime();
+                burstFlare = null;
+            }
+            else if (skillState == SkillState.MeteorStrike)
+            {
+                meteorStrike = null;
+            }
+            else if (skillState == SkillState.TerraBreak)
+            {
+                terraBreak = null;
+            }
+            else if (skillState == SkillState.EterialStorm)
+            {
+                eterialStorm = null;
+            }
+            else if (skillState == SkillState.RagnaEdge)
+            {
+                ragnaEdge = null;
+            }
+            else if (skillState == SkillState.GaiaTied)
+            {
+                gaiaTied = null;
+            }
+
+            skillState = SkillState.None;
+            commands.Clear();
+            UpdateData();
+        }
+
+        [PunRPC]
+        public void ClickMouse(Vector3 origin, Vector3 direction, int ownerActorNum)
+        {
+            if (skillState == SkillState.None)
+            {
+                if (isReadyToUseSkill == true)
+                {
+                    if (((commands[0] == 1 && commands[1] == 3)
+                        || (commands[0] == 3 && commands[1] == 1)) && burstFlareCoolDownTime <= 0f)
+                    {
+                        skillState = SkillState.BurstFlare;
+                        CheckCommands(origin, direction, ownerActorNum);
+                    }
+                    else if (((commands[0] == 2 && commands[1] == 3)
+                        || (commands[0] == 3 && commands[1] == 2)) && gaiaTiedCoolDownTime <= 0f)
+                    {
+                        skillState = SkillState.GaiaTied;
+                        CheckCommands(origin, direction, ownerActorNum);
+                    }
+                    else if (commands[0] == 3 && commands[1] == 3 && eterialStormCoolDownTime <= 0f)
+                    {
+                        skillState = SkillState.EterialStorm;
+                        CheckCommands(origin, direction, ownerActorNum);
+                    }
+                    else if (commands[0] == 1 && commands[1] == 1 && meteorStrikeCoolDownTime <= 0f)
+                    {
+                        skillState = SkillState.MeteorStrike;
+                        CheckCommands(origin, direction, ownerActorNum);
+                    }
+                    else if (((commands[0] == 1 && commands[1] == 2)
+                        || (commands[0] == 2 && commands[1] == 1)) && ragnaEdgeCoolDownTime <= 0f)
+                    {
+                        skillState = SkillState.RagnaEdge;
+                        CheckCommands(origin, direction, ownerActorNum);
+                    }
+                    else if (commands[0] == 2 && commands[1] == 2 && terraBreakCoolDownTime <= 0f)
+                    {
+                        skillState = SkillState.TerraBreak;
+                        CheckCommands(origin, direction, ownerActorNum);
                     }
                 }
             }
-            else if(skillState == SkillState.RagnaEdge)
+            else
             {
-                if(ragnaEdge == null)
+                UseSkill(origin, direction, ownerActorNum);
+            }
+
+            UpdateData();
+            SetSkill();
+        }
+
+        //3. 마스터 클라이언트에서 데이터 처리
+        void UseSkill(Vector3 origin, Vector3 direction, int ownerActorNum)
+        {
+            if (skillState == SkillState.RagnaEdge)
+            {
+                if (ragnaEdge.CheckReady() == false)
                 {
-                    ragnaEdge = new RagnaEdge();
                     isRagnaEdge = true;
+                    ragnaEdge.Initialize();
                 }
 
-                if(isPointStrike == true)
+                if (isPointStrike == true)
                 {
                     object[] _data = new object[5];
                     _data[0] = name;
@@ -313,17 +404,106 @@ namespace Player
                     animator.SetBool("Spell1", true);
 
                     PhotonNetwork.Instantiate("ChanYoung/Prefabs/RagnaEdge", pointStrike, Quaternion.identity, data: _data);
-                    ragnaEdge = null;
                     isPointStrike = false;
                     skillState = SkillState.None;
+                    ragnaEdge.EndSkill();
+                }
+            }
+            else if (skillState == SkillState.BurstFlare)
+            {
+                if (burstFlare.CheckCoolDown() == false)
+                    return;
+                if (burstFlare.CheckReady() == false)
+                {
+                    burstFlare.Initialize();
+                    photonView.RPC("SetAnimation", RpcTarget.AllBuffered, "Spell2", true);
+                }
+                else
+                {
+                    bool _result = burstFlare.ShootBullet();
+
+                    object[] _data = new object[5];
+                    _data[0] = name;
+                    _data[1] = tag;
+                    _data[2] = "BurstFlare";
+                    _data[3] = origin + direction;
+                    _data[4] = direction;
+
+                    GameObject _tempObject = PhotonNetwork.Instantiate("ChanYoung/Prefabs/BurstFlare", origin, Quaternion.identity, data: _data);
+                    _tempObject.GetComponent<PhotonView>().TransferOwnership(ownerActorNum);
+
+                    if (_result == true)
+                    {
+                        skillState = SkillState.None;
+                        burstFlareCoolDownTime = burstFlare.GetSkillCoolDownTime();
+
+                        photonView.RPC("SetAnimation", RpcTarget.AllBuffered, "Spell6", false);
+
+                        burstFlare.EndSkill();
+                    }
+                }
+            }
+            else if (skillState == SkillState.GaiaTied)
+            {
+                if (gaiaTied.CheckReady() == false)
+                {
+                    gaiaTied.Initialize();
+                    isGaiaTied = true;
+                }
+
+                if (isPointStrike == true)
+                {
+                    object[] _data = new object[4];
+                    _data[0] = name;
+                    _data[1] = tag;
+                    _data[2] = "gaiaTied";
+                    _data[3] = direction;
+
+                    photonView.RPC("SetAnimation", RpcTarget.AllBuffered, "Spell3", true);
+
+                    GameObject _tempObject = PhotonNetwork.Instantiate("ChanYoung/Prefabs/GaiaTied", pointStrike, Quaternion.identity, data: _data);
+                    _tempObject.GetComponent<PhotonView>().TransferOwnership(ownerActorNum);
+                    gaiaTiedCoolDownTime = gaiaTied.GetSkillCoolDownTime();
+                    isPointStrike = false;
+                    skillState = SkillState.None;
+                    gaiaTied.EndSkill();
+                }
+            }
+            else if(skillState == SkillState.MeteorStrike)
+            {
+                if (meteorStrike.CheckReady() == false)
+                {
+                    isMeteorStrike = true;
+                    meteorStrike.Initialize();
+                }
+                else
+                {
+                    if (isPointStrike == true)
+                    {
+                        object[] _data = new object[3];
+                        _data[0] = name;
+                        _data[1] = tag;
+                        _data[2] = "MeteorStrike";
+
+                        pointStrike += new Vector3(0, 0.05f, 0);
+
+                        photonView.RPC("SetAnimation", RpcTarget.AllBuffered, "Spell4", true);
+
+                        GameObject _tempObject = PhotonNetwork.Instantiate("ChanYoung/Prefabs/MeteorStrike", pointStrike, Quaternion.identity, data: _data);
+                        _tempObject.GetComponent<PhotonView>().TransferOwnership(ownerActorNum);
+                        meteorStrikeCoolDownTime = meteorStrike.GetSkillCoolDownTime();
+                        isPointStrike = false;
+                        skillState = SkillState.None;
+                        meteorStrike.EndSkill();
+                    }
                 }
             }
             else if(skillState == SkillState.TerraBreak)
             {
-                if (terraBreak == null)
+                if (terraBreak.CheckReady() == false)
                 {
-                    terraBreak = new TerraBreak();
                     isTerraBreak = true;
+                    terraBreak.Initialize();
                 }
 
                 if (isPointStrike == true)
@@ -333,60 +513,91 @@ namespace Player
                     _data[1] = tag;
                     _data[2] = "TerraBreak";
 
-                    overlayAnimator.SetBool("Spell5", true);
-                    animator.SetBool("Spell5", true);
+                    photonView.RPC("SetAnimation", RpcTarget.AllBuffered, "Spell5", true);
 
-                    PhotonNetwork.Instantiate("ChanYoung/Prefabs/TerraBreak", pointStrike, Quaternion.identity, data: _data);
+                    GameObject _tempObject = PhotonNetwork.Instantiate("ChanYoung/Prefabs/TerraBreak", pointStrike, Quaternion.identity, data: _data);
+                    _tempObject.GetComponent<PhotonView>().TransferOwnership(ownerActorNum);
                     terraBreakCoolDownTime = terraBreak.GetSkillCoolDownTime();
-                    terraBreak = null;
                     isPointStrike = false;
                     skillState = SkillState.None;
+                    terraBreak.EndSkill();
                 }
             }
-            else if(skillState == SkillState.GaiaTied)
+            else if (skillState == SkillState.EterialStorm)
             {
-                if(gaiaTied == null)
+                isEterialStorm = true;
+                if (isPointStrike == true)
                 {
-                    gaiaTied = new GaiaTied();
-                    isGaiaTied = true;
-                }
-
-                if(isPointStrike == true)
-                {
-                    object[] _data = new object[5];
+                    object[] _data = new object[3];
                     _data[0] = name;
                     _data[1] = tag;
-                    _data[2] = "gaiaTied";
-                    _data[3] = direction;
+                    _data[2] = "EterialStorm";
 
-                    overlayAnimator.SetBool("Spell3", true);
-                    animator.SetBool("Spell3", true);
+                    photonView.RPC("SetAnimation", RpcTarget.AllBuffered, "Spell6", true);
 
-                    PhotonNetwork.Instantiate("ChanYoung/Prefabs/GaiaTied", pointStrike, Quaternion.identity, data: _data);
-                    gaiaTiedCoolDownTime = gaiaTied.GetSkillCoolDownTime();
-                    gaiaTied = null;
-                    isPointStrike = false;
+                    GameObject _tempObject = PhotonNetwork.Instantiate("ChanYoung/Prefabs/Cylinder", pointStrike, Quaternion.identity, data: _data);
+                    _tempObject.GetComponent<PhotonView>().TransferOwnership(ownerActorNum);
+                    eterialStormCoolDownTime = eterialStorm.GetSkillCoolDownTime();
                     skillState = SkillState.None;
+                    isPointStrike = false;
                 }
             }
         }
         //로컬 클라이언트에서 확인하는 요소
         void CheckSkillOnMine()
         {
-            if(skillState == SkillState.EterialStorm)
+            if (skillState == SkillState.None)
             {
-                if (isEterialStorm == false)
+                if (isRagnaEdge)
                 {
+                    minimapCamera.GetComponent<Camera>().targetTexture = minimapRenderTexture;
+                    minimapCamera.GetComponent<Camera>().clearFlags = CameraClearFlags.SolidColor;
+
+                    camera.GetComponent<MouseControl>().enabled = true;
+                    Cursor.visible = false;
+                    Cursor.lockState = CursorLockMode.Locked;
+                    ResetSkill();
+                }
+                else if (isGaiaTied)
+                {
+                    rangeBoxArea.SetActive(false);
+                    ResetSkill();
+                }
+                else if (isMeteorStrike)
+                {
+                    rangePointStrikeArea.SetActive(false);
+                    ResetSkill();
+                }
+                else if (isTerraBreak)
+                {
+                    rangePointStrikeArea.SetActive(false);
+                    ResetSkill();
+                }
+                else if (isEterialStorm)
+                {
+                    minimapCamera.GetComponent<Camera>().targetTexture = minimapRenderTexture;
+                    minimapCamera.GetComponent<Camera>().clearFlags = CameraClearFlags.SolidColor;
+
+                    camera.GetComponent<MouseControl>().enabled = true;
+                    Cursor.visible = false;
+                    Cursor.lockState = CursorLockMode.Locked;
+                    ResetSkill();
+                }
+            }
+            else if (skillState == SkillState.RagnaEdge)
+            {
+                if (isRagnaEdge == true)
+                {
+                    rangePointStrikeArea.transform.localScale = new Vector3(2.2f, 2.2f, 2.2f);
                     minimapCamera.GetComponent<Camera>().targetTexture = null;
                     minimapCamera.GetComponent<Camera>().clearFlags = CameraClearFlags.Nothing;
                     camera.GetComponent<MouseControl>().enabled = false;
                     Cursor.visible = true;
                     Cursor.lockState = CursorLockMode.None;
-                    isEterialStorm = true;
-                }  
+                }
             }
-            else if(skillState == SkillState.MeteorStrike || skillState == SkillState.TerraBreak
-                || skillState == SkillState.GaiaTied)
+            else if (skillState == SkillState.GaiaTied || skillState == SkillState.MeteorStrike
+                || skillState == SkillState.TerraBreak)
             {
                 if (isMeteorStrike == true || isTerraBreak == true || isGaiaTied == true)
                 {
@@ -398,10 +609,10 @@ namespace Player
                     if (skillState == SkillState.MeteorStrike)
                     {
                         MeteorStrike _localMeteorStrike = new MeteorStrike();
-                        _maxDistace =  _localMeteorStrike.maxDistance;
+                        _maxDistace = _localMeteorStrike.maxDistance;
                         rangePointStrikeArea.transform.localScale = new Vector3(1.25f, 1.25f, 1.25f);
                     }
-                    else if(skillState == SkillState.TerraBreak)
+                    else if (skillState == SkillState.TerraBreak)
                     {
                         TerraBreak _localTerraBreak = new TerraBreak();
                         _maxDistace = _localTerraBreak.maxDistance;
@@ -412,22 +623,22 @@ namespace Player
                         GaiaTied _localGaiaTied = new GaiaTied();
                         _maxDistace = _localGaiaTied.maxDistance;
                     }
-    
+
                     if (Physics.Raycast(_tempRay, out _tempRayHit, _maxDistace, _tempLayerMask))
                     {
                         Vector3 _hitPoint = _tempRayHit.point - _tempRay.direction * 0.05f;
                         Ray _bottomRay = new Ray(_hitPoint, Vector3.down);
                         RaycastHit _bottomRayHit;
-                        if(Physics.Raycast(_bottomRay, out _bottomRayHit, Mathf.Infinity, _tempLayerMask))
+                        if (Physics.Raycast(_bottomRay, out _bottomRayHit, Mathf.Infinity, _tempLayerMask))
                         {
                             _arrivedGroundVec = _bottomRayHit.point;
-                            if(_arrivedGroundVec.y < _bottomRayHit.collider.gameObject.transform.position.y)
+                            if (_arrivedGroundVec.y < _bottomRayHit.collider.gameObject.transform.position.y)
                                 _arrivedGroundVec = new Vector3(_arrivedGroundVec.x, _bottomRayHit.collider.gameObject.transform.position.y, _arrivedGroundVec.z);
                             if (isGaiaTied)
                             {
                                 rangeBoxArea.SetActive(true);
                                 rangeBoxArea.transform.position = _arrivedGroundVec;
-                                rangeBoxArea.transform.localPosition += 
+                                rangeBoxArea.transform.localPosition +=
                                     new Vector3(0, rangeBoxArea.transform.localScale.y / 2, rangeBoxArea.transform.localScale.z / 2);
                             }
                             else
@@ -489,264 +700,91 @@ namespace Player
                     }
                 }
             }
-            else if(skillState == SkillState.RagnaEdge)
+            else if (skillState == SkillState.EterialStorm)
             {
-                if(isRagnaEdge == true)
+                if (isEterialStorm)
                 {
-                    rangePointStrikeArea.transform.localScale = new Vector3(2.2f, 2.2f, 2.2f);
                     minimapCamera.GetComponent<Camera>().targetTexture = null;
                     minimapCamera.GetComponent<Camera>().clearFlags = CameraClearFlags.Nothing;
                     camera.GetComponent<MouseControl>().enabled = false;
                     Cursor.visible = true;
                     Cursor.lockState = CursorLockMode.None;
                 }
-
             }
-            else if(skillState == SkillState.None)
-            {
-                if(isEterialStorm == true)
-                {
-                    minimapCamera.GetComponent<Camera>().targetTexture = minimapRenderTexture;
-                    minimapCamera.GetComponent<Camera>().clearFlags = CameraClearFlags.SolidColor;
 
-                    camera.GetComponent<MouseControl>().enabled = true;
-                    Cursor.visible = false;
-                    Cursor.lockState = CursorLockMode.Locked;
-                    isEterialStorm = false;
-                }
-                else if(isMeteorStrike)
-                {
-                    isMeteorStrike = false;
-                    rangePointStrikeArea.SetActive(false);
-                }
-                else if(isRagnaEdge)
-                {
-                    minimapCamera.GetComponent<Camera>().targetTexture = minimapRenderTexture;
-                    minimapCamera.GetComponent<Camera>().clearFlags = CameraClearFlags.SolidColor;
-
-                    camera.GetComponent<MouseControl>().enabled = true;
-                    Cursor.visible = false;
-                    Cursor.lockState = CursorLockMode.Locked;
-                    isRagnaEdge= false;
-                }
-                else if(isTerraBreak)
-                {
-                    isTerraBreak = false;
-                    rangePointStrikeArea.SetActive(false);
-                }
-                else if(isGaiaTied)
-                {
-                    isGaiaTied = false;
-                    rangeBoxArea.SetActive(false);
-                }
-            }
-            
         }
 
-        //RPC
+        //데이터 연동 관련 요소
+
         [PunRPC]
-        public void AddCommand(int command)
-        {
-            if(commands.Count < 2)
-            {
-                commands.Add(command);
-            }
-
-            if(commands.Count >= 2)
-            {
-                isReadyToUseSkill = true;
-            }
-        }
-        [PunRPC]
-        public void CancelSkill()
-        {
-            isReadyToUseSkill = false;
-
-            if(skillState == SkillState.BurstFlare)
-            {
-                burstFlareCoolDownTime = burstFlare.GetSkillCoolDownTime();
-                burstFlare = null;
-            }
-            else if(skillState == SkillState.MeteorStrike)
-            {
-                meteorStrike = null;
-            }
-            else if(skillState == SkillState.TerraBreak)
-            {
-                terraBreak = null;
-            }
-            else if(skillState == SkillState.EterialStorm)
-            {
-                eterialStorm = null;
-            }
-            else if(skillState == SkillState.RagnaEdge)
-            {
-                ragnaEdge = null;
-            }
-            else if(skillState == SkillState.GaiaTied)
-            {
-                gaiaTied = null;
-            }
-
-            skillState = SkillState.None;
-            commands.Clear();
-        }
-        [PunRPC]
-        public void ClickMouse(Vector3 origin, Vector3 direction)
-        {
-            if(skillState == SkillState.None)
-            {
-                if(isReadyToUseSkill == true)
-                {
-                    if (((commands[0] == 1 && commands[1] == 3)
-                        || (commands[0] == 3 && commands[1] == 1)) && burstFlareCoolDownTime <= 0f)
-                    {
-                        skillState = SkillState.BurstFlare;
-                        CheckCommands(origin, direction);
-                    }
-                    else if (((commands[0] == 2 && commands[1] == 3)
-                        || (commands[0] == 3 && commands[1] == 2)) && gaiaTiedCoolDownTime <= 0f)
-                    {
-                        skillState = SkillState.GaiaTied;
-                        CheckCommands(origin, direction);
-                    }
-                    else if (commands[0] == 3 && commands[1] == 3 && eterialStormCoolDownTime <= 0f)
-                    {
-                        skillState = SkillState.EterialStorm;
-                        CheckCommands(origin, direction);
-                    }
-                    else if (commands[0] == 1 && commands[1] == 1 && meteorStrikeCoolDownTime <= 0f)
-                    {
-                        skillState = SkillState.MeteorStrike;
-                        CheckCommands(origin, direction);
-                    }
-                    else if (((commands[0] == 1 && commands[1] == 2)
-                        || (commands[0] == 2 && commands[1] == 1)) && ragnaEdgeCoolDownTime <= 0f)
-                    {
-                        skillState = SkillState.RagnaEdge;
-                        CheckCommands(origin, direction);
-                    }
-                    else if (commands[0] == 2 && commands[1] == 2 && terraBreakCoolDownTime <= 0f)
-                    {
-                        skillState = SkillState.TerraBreak;
-                        CheckCommands(origin, direction);
-                    }
-                }
-            }
-            else
-            {
-                UseSkill(origin, direction);
-            }
-        }
-
-        void CheckCommands(Vector3 origin, Vector3 direction)
-        {
-            isReadyToUseSkill = false;
-            UseSkill(origin, direction);
-            commands.Clear();
-        }
-
-        //입력
-        void OnSkill1()
-        {
-            if (photonView.IsMine)
-            {
-                photonView.RPC("AddCommand", RpcTarget.MasterClient, 1);
-            }
-        }
-
-        void OnSkill2()
-        {
-            if (photonView.IsMine)
-            {
-                photonView.RPC("AddCommand", RpcTarget.MasterClient, 2);
-            }
-        }
-        void OnSkill3()
-        {
-            if (photonView.IsMine)
-            {
-                photonView.RPC("AddCommand", RpcTarget.MasterClient, 3);
-            }
-        }
-
-        void OnButtonCancel()
+        public void SetAnimation(string stateName, bool isSpell)
         {
             if(photonView.IsMine)
             {
-                photonView.RPC("CancelSkill", RpcTarget.MasterClient);
+                overlayAnimator.SetBool(stateName, isSpell);
+                animator.SetBool(stateName, isSpell);
             }
         }
 
-        void OnSkill4()
+        public void SetPointStrike()
         {
-            Debug.Log("4번 비어있음");
-        }
-        void OnMouseButton()
-        {
-            if (photonView.IsMine)
-            {
-                isClicked = !isClicked;
-                if (isClicked == true)
-                {
-                    //로컬 클라이언트 접근
-                    if(isEterialStorm || isRagnaEdge)
-                    {
-                        Ray _tempRay = minimapCamera.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
-                        RaycastHit _tempHit;
-                        int _tempLayerMask = ~(1 << LayerMask.NameToLayer("Minimap"));
-                        if (Physics.Raycast(_tempRay, out _tempHit, Mathf.Infinity, _tempLayerMask))
-                        {
-                            pointStrike = new Vector3(_tempHit.point.x, _tempHit.point.y, _tempHit.point.z);
-                            isPointStrike = true;
-                        }
-                    }
-                    else if(isMeteorStrike || isTerraBreak)
-                    {
-                        pointStrike = rangePointStrikeArea.transform.position;
-                        isPointStrike = true;
-                    }
-                    else if(isGaiaTied)
-                    {
-                        rangeBoxArea.transform.localPosition -= new Vector3(0, rangeBoxArea.transform.localScale.y / 2, rangeBoxArea.transform.localScale.z / 2);
-                        pointStrike = rangeBoxArea.transform.position;
-
-                        isPointStrike = true;
-                    }
-
-                    photonView.RPC("ClickMouse", RpcTarget.MasterClient, screenRay.origin, screenRay.direction);
-                }
-            }
-        }
-
-
-        //동기화
-
-        public override void OnMasterClientSwitched(Photon.Realtime.Player newMasterClient)
-        {
-            base.OnMasterClientSwitched(newMasterClient);
-            int _tempLocalViewID = -1;
-            PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue("CharacterViewID", out _tempLocalViewID);
-            Debug.Log(_tempLocalViewID);
-            int _tempNewMasterViewID = -1;
-            newMasterClient.CustomProperties.TryGetValue("CharacterViewID", out _tempNewMasterViewID);
-
-            if (_tempLocalViewID != _tempNewMasterViewID)
-            {
-                int[] _tempCommands = commands.ToArray();
-                photonView.RPC("ExchangeToNewMasterClient", newMasterClient, _tempCommands);
-            }
+            photonView.RPC("SetPointStrikeServer", RpcTarget.AllBuffered, isPointStrike, pointStrike);
         }
 
         [PunRPC]
-        public void ExchangeToNewMasterClient(int[] testInt)
+        public void SetPointStrikeServer(bool isNewPointStrike, Vector3 newPointStrike)
         {
+            isPointStrike = isNewPointStrike;
+            pointStrike = newPointStrike;
+        }
+
+        public void ResetSkill()
+        {
+            photonView.RPC("ResetSkillServer", RpcTarget.MasterClient);
+        }
+
+        [PunRPC]
+        public void ResetSkillServer()
+        {
+            photonView.RPC("SetSkillServer", RpcTarget.AllBuffered, false, false, false, false, false);
+        }
+
+        public void SetSkill()
+        {
+            photonView.RPC("SetSkillServer", RpcTarget.OthersBuffered, isRagnaEdge, isGaiaTied, isMeteorStrike, isTerraBreak, isEterialStorm);
+        }
+
+        [PunRPC]
+        public void SetSkillServer(bool spell1, bool spell3, bool spell4, bool spell5, bool spell6)
+        {
+            isRagnaEdge = spell1;
+            isGaiaTied = spell3;
+            isMeteorStrike = spell4;
+            isTerraBreak = spell5;
+            isEterialStorm = spell6;
+        }
+
+        [PunRPC]
+        public void UpdateDataServer(int[] masterCommands, SkillState newSkillState, bool isReadyBurstFlare,
+            int burstFlareBullets)
+        {
+            commands = masterCommands.ToList();
+            skillState = newSkillState;
+            burstFlare.SetReady(isReadyBurstFlare);
+            burstFlare.SetBullet(burstFlareBullets);
+        }
+
+        void CheckCommands(Vector3 origin, Vector3 direction, int ownerActorNum)
+        {
+            isReadyToUseSkill = false;
+            UseSkill(origin, direction, ownerActorNum);
             commands.Clear();
-            for(int i = 0; i < testInt.Length; i++)
-            {
-                commands.Add(testInt[i]);
-            }
-            Debug.Log(photonView.ViewID);
+        }
+
+        void UpdateData()
+        {
+            photonView.RPC("UpdateDataServer", RpcTarget.OthersBuffered, commands.ToArray(), skillState, burstFlare.CheckReady(),
+                burstFlare.CheckCurrentBullet());
         }
 
 
@@ -758,32 +796,18 @@ namespace Player
                 stream.SendNext(handPoint);
                 stream.SendNext(rightCurrentWeight);
                 stream.SendNext(leftCurrentWeight);
-                stream.SendNext(skillState);
-                stream.SendNext(pointStrike);
-                stream.SendNext(isPointStrike);
-                stream.SendNext(isMeteorStrike);
-                stream.SendNext(isRagnaEdge);
-                stream.SendNext(isTerraBreak);
-                stream.SendNext(isGaiaTied);
-                stream.SendNext(arrivedVec);
             }
             else
             {
                 networkHandPoint = (Vector3)stream.ReceiveNext();
                 networkRightCurrentWeight = (float)stream.ReceiveNext();
                 networkLeftCurrentWeight = (float)stream.ReceiveNext();
-                skillState = (SkillState)stream.ReceiveNext();
-                pointStrike = (Vector3)stream.ReceiveNext();
-                isPointStrike = (bool)stream.ReceiveNext();
-                isMeteorStrike = (bool)stream.ReceiveNext();
-                isRagnaEdge = (bool)stream.ReceiveNext();
-                isTerraBreak = (bool)stream.ReceiveNext();
-                isGaiaTied = (bool)stream.ReceiveNext();
-                arrivedVec = (Vector3)stream.ReceiveNext();
             }
         }
 
         //애니메이션
+
+        //로컬에서 처리
         void CheckOverlayAnimator()
         {
             if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Spell1"))
@@ -796,10 +820,8 @@ namespace Player
             {
                 overlayCamera.transform.localPosition = Vector3.Lerp(overlayCamera.transform.localPosition,
                     overlayCameraDefaultPos + new Vector3(0, 0.2f, 0), Time.deltaTime * 32f);
-                if (burstFlare == null)
-                {
+                if (burstFlare.CheckReady() == false)
                     overlayAnimator.SetBool("Spell2", false);
-                }
             }
             else if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Spell3"))
             {
@@ -821,7 +843,6 @@ namespace Player
             {
                 overlayCamera.transform.localPosition = Vector3.Lerp(overlayCamera.transform.localPosition,
                   overlayCameraDefaultPos + new Vector3(0, 0.2f, 0), Time.deltaTime * 8f);
-
                 overlayAnimator.SetBool("Spell6", false);
             }
             else
@@ -829,21 +850,19 @@ namespace Player
                 overlayCamera.transform.localPosition = Vector3.Lerp(overlayCamera.transform.localPosition,
                     overlayCameraDefaultPos, Time.deltaTime);
             }
-            if(animator.GetCurrentAnimatorStateInfo(0).IsName("Spell1"))
-            {
-                animator.SetBool("Spell1", false);
-            }
 
         }
-
         void CheckAnimator()
         {
             if (animator.GetCurrentAnimatorStateInfo(0).IsName("Spell1"))
                 animator.SetBool("Spell1", false);
             else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Spell2"))
             {
-                if(burstFlare == null)
+                Debug.Log(animator.GetBool("Spell2"));
+                if (burstFlare.CheckReady() == false)
+                {
                     animator.SetBool("Spell2", false);
+                }
             }
             else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Spell3"))
                 animator.SetBool("Spell3", false);
@@ -898,7 +917,6 @@ namespace Player
                     leftHandSpellLand.SetActive(false);
                     leftHandSpellStorm.SetActive(false);
                 }
-                   
                 else if (typeLeft == 2)
                 {
                     leftHandSpellFire.SetActive(false);
@@ -917,8 +935,6 @@ namespace Player
         protected override void OnAnimatorIK()
         {
             base.OnAnimatorIK();
-
-
             if (photonView.IsMine)
             {
                 if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Idle"))
@@ -954,21 +970,12 @@ namespace Player
                 overlayAnimator.SetIKPositionWeight(AvatarIKGoal.RightHand, rightCurrentWeight);
                 overlayAnimator.SetIKPosition(AvatarIKGoal.RightHand, OverlaySight.transform.position);
 
-
-
                 if (commands.Count <= 0)
-                {
                     SetHandEffectPositionIK(0, 0);
-                }
                 else if(commands.Count == 1)
-                {
                     SetHandEffectPositionIK(commands[0], 0);
-                }
                 else
-                {
                     SetHandEffectPositionIK(commands[0], commands[1]);
-                }
-
 
                 animator.SetIKPosition(AvatarIKGoal.LeftHand, handPoint);
                 animator.SetIKPosition(AvatarIKGoal.RightHand, handPoint);
@@ -996,6 +1003,5 @@ namespace Player
             screenRay = camera.GetComponent<Camera>().ScreenPointToRay(Aim.transform.position);
             handPoint = screenRay.origin + screenRay.direction;
         }
-
     }
 }

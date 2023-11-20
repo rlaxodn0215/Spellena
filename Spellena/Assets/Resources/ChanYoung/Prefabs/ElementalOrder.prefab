@@ -96534,6 +96534,7 @@ MonoBehaviour:
   rightHandSpellLand: {fileID: 885673314318440236}
   rangePointStrikeArea: {fileID: 971714915861525344}
   rangeBoxArea: {fileID: 3906178940776099926}
+  overlayAnimator: {fileID: 986055834570080243}
 --- !u!114 &1355779567499457378
 MonoBehaviour:
   m_ObjectHideFlags: 0

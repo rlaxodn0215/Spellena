@@ -102,9 +102,11 @@ public class RagnaEdgeObject : SpawnObject, IPunObservable
         castingTime = elementalOrderData.ragnaEdgeCastingTime;
         floorLifeTime = elementalOrderData.ragnaEdgeFloorLifeTime;
         cylinderLifeTime = elementalOrderData.ragnaEdgeCylinderLifeTime;
+
         currentCastingTime = castingTime;
         currentFloorLifeTime = floorLifeTime;
         currentCylinderLifeTime = cylinderLifeTime;
+
         cylinder.SetActive(false);
         hitColliderObject.GetComponent<TriggerEventer>().hitTriggerEvent += triggerFloorEvent;
         cylinder.GetComponent<TriggerEventer>().hitTriggerEvent += triggerCylinderEvent;

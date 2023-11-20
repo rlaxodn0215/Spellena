@@ -104,6 +104,14 @@ MonoBehaviour:
   - ShowTeamState
   - PlayerDeadCam
   - ExchangeToNewMasterClient
+  - ExchangeDataToMasterClient
+  - UpdateDataByMaster
+  - UpdateData
+  - UpdateDataServer
+  - ResetSkillServer
+  - SetSkillServer
+  - SetPointStrikeServer
+  - SetAnimation
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1
