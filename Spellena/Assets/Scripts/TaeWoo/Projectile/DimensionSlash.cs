@@ -137,16 +137,15 @@ namespace Player
                     if (CompareTag("TeamA") && other.transform.root.CompareTag("TeamA") ||
                         CompareTag("TeamB") && other.transform.root.CompareTag("TeamB"))
                     {
-
                         if (other.transform.root.GetComponent<Character>() && other.gameObject.layer == LayerMask.NameToLayer("Other"))
                         {
                             //other.transform.root.GetComponent<Character>().PlayerDamaged(playerName, -healing);
 
                             other.transform.root.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBuffered,playerName,
                                 -healing, null , Vector3.zero, 0.0f);               
-                            DestorySpawnObject();
                         }
 
+                        DestorySpawnObject();
                     }
 
                     else if (other.CompareTag("Ground"))
@@ -155,8 +154,6 @@ namespace Player
                     }
 
                 }
-
-                //string enemy ,int damage, string damgePart, Vector3 direction, float force
 
                 else
                 {
@@ -168,9 +165,9 @@ namespace Player
                             //other.transform.root.GetComponent<Character>().PlayerDamaged(playerName, damage);
                             other.transform.root.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBufferedViaServer, playerName,
                                 damage, other.name, transform.TransformDirection(Vector3.forward), 20.0f);
-                            DestorySpawnObject();
                         }
 
+                        DestorySpawnObject();
                     }
 
                     else if (other.CompareTag("Ground"))

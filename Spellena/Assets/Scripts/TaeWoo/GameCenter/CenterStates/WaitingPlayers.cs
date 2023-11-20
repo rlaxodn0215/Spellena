@@ -6,7 +6,7 @@ using Photon.Realtime;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 public class WaitingPlayers : CenterState
 {
-    private int tempNum = 2;
+    private int tempNum = 1;
     public override void StateExecution()
     {
         gameCenter.gameStateString = "다른 플레이어 기다리는 중...";
@@ -18,6 +18,7 @@ public class WaitingPlayers : CenterState
             SetPlayerDatas();
 
             gameCenter.globalUIObj = PhotonNetwork.Instantiate("TaeWoo/Prefabs/UI/GlobalUI", Vector3.zero, Quaternion.identity);
+            gameCenter.angleStatue = PhotonNetwork.Instantiate("TaeWoo/Prefabs/AngelStatue", new Vector3(13.5f, 15.6f, -4.4f), Quaternion.Euler(0,-150,0));
             gameCenter.globalUIView = gameCenter.globalUIObj.GetComponent<PhotonView>();
             gameCenter.globalUI = gameCenter.globalUIObj.GetComponent<GlobalUI>();
 
@@ -44,6 +45,7 @@ public class WaitingPlayers : CenterState
             playerData.Add("KillCount", 0);
             playerData.Add("DeadCount", 0);
             playerData.Add("IsAlive", true);
+            playerData.Add("AngelStatue", 0.0f);
 
             // 보여주지 않는 데이터
             playerData.Add("CharacterViewID", 0);

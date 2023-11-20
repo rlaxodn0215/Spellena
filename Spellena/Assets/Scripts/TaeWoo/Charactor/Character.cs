@@ -100,11 +100,14 @@ namespace Player
         [HideInInspector]
         public Rigidbody rigidbody;
         [HideInInspector]
-        public RaycastHit hit;
+        public Ray lookRay;
+        [HideInInspector]
+        public RaycastHit lookHit;
 
         // 임시 사용 데이터
         public Vector3 moveVec;
         private bool isGrounded = false;
+        private bool canInteraction = false;
         private Transform avatarForOther;
         private Transform avatarForMe;
         private RaycastHit slopeHit;
@@ -186,6 +189,27 @@ namespace Player
 
             if (photonView.IsMine)
             {
+                lookRay = camera.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
+
+                if(Physics.Raycast(lookRay,out lookHit,2.0f))
+                {
+                    if(lookHit.collider.name ==" AngelStatue")
+                    {
+                        canInteraction = true;
+                    }
+
+                    else
+                    {
+                        canInteraction = false;
+                    }
+                }
+
+                else
+                {
+                    canInteraction = false;
+                }
+
+
                 animator.SetBool("Grounded", isGrounded);
 
                 if(isGrounded == true)
@@ -456,7 +480,11 @@ namespace Player
         {
             if (photonView.IsMine && (bool)PhotonNetwork.LocalPlayer.CustomProperties["IsAlive"])
             {
-                Debug.Log("Interaction");
+                // 자기 팀 거점인 것 확인 / 거점 점령시 석상 태그 팀으로 설정
+                if(canInteraction)
+                {
+                    Debug.Log("Interaction!!");
+                }
             }
         }
 

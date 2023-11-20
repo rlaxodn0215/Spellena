@@ -13,6 +13,8 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
     public PhotonView globalUIView;
     [HideInInspector]
     public GlobalUI globalUI;
+    [HideInInspector]
+    public GameObject angleStatue;
 
     [HideInInspector]
     public GameObject playerSpawnPoints;
