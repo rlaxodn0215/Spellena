@@ -118,6 +118,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7ca334b338680849af01eab505491fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  clampInDegrees: {x: 360, y: 120}
   sensitivity: {x: 6, y: 6}
   distance: 2
 --- !u!114 &3598417007937201718

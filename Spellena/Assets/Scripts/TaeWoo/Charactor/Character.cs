@@ -668,8 +668,8 @@ namespace Player
         {
             camera.transform.SetParent(Dead.transform);
 
-            camera.transform.Translate(new Vector3(0f, 1.5f, -1f));
-            camera.transform.Rotate(new Vector3(32, 0, 0));
+            //camera.transform.Translate(new Vector3(0f, 1.5f, -1f));
+            //camera.transform.Rotate(new Vector3(32, 0, 0));
 
             camera.GetComponent<MouseControl>().enabled = false;
             camera.GetComponent<DeadCamera>().enabled = true;

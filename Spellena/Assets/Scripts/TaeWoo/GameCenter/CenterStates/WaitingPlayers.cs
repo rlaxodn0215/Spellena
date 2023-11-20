@@ -6,7 +6,7 @@ using Photon.Realtime;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 public class WaitingPlayers : CenterState
 {
-    private int tempNum = 2;
+    private int tempNum = 3;
     public override void StateExecution()
     {
         gameCenter.gameStateString = "다른 플레이어 기다리는 중...";

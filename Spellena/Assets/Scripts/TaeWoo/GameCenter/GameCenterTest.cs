@@ -69,7 +69,9 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
     public int roundB = 0;
 
     // 점령 거점 차지하는 비율
+    [HideInInspector]
     public int teamAOccupying = 0;
+    [HideInInspector]
     public int teamBOccupying = 0;
 
     // 전체 타이머

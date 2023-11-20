@@ -7,14 +7,14 @@ using UnityEngine.InputSystem;
 public class DeadCamera : MonoBehaviour
 {
     [Header("Settings")]
+    public Vector2 clampInDegrees = new Vector2(360, 120);
     public Vector2 sensitivity = new Vector2(6, 6);
-    public float distance = 5;
+    public float distance = 2;
 
     int index = 0;
-    bool isButtonDown = false;
-
     GameObject targetPlayer;
     Vector3 rayDirection = new Vector3(0,0,1);
+    Vector3 offset = new Vector3(0.0f, 1.5f, 0.0f);
 
     private Vector2 mouseAbsolute;
     private Vector2 smoothMouse;
@@ -32,6 +32,8 @@ public class DeadCamera : MonoBehaviour
 
         foreach (var player in allPlayer)
         {
+            if (player.name == gameObject.name) continue;
+
             if (CompareTag(player.gameObject.tag))
             {
                 players.Add(player);
@@ -40,21 +42,20 @@ public class DeadCamera : MonoBehaviour
 
     }
 
-    void OnMouseButton()
-    {
-        if (!isButtonDown)
-        {
-            index++;
-            if (index < 0) index = players.Count - 1;
-            if (index >= players.Count) index = 0;
-            targetPlayer = players[index].gameObject;
-            isButtonDown = !isButtonDown;
-        }
-    }
-
     private void Update()
     {
+        if(Input.GetMouseButtonDown(0))
+            ChangePlayerCam();
+
         TPSView();
+    }
+
+    void ChangePlayerCam()
+    {
+        index++;
+        if (index < 0) index = players.Count - 1;
+        if (index >= players.Count) index = 0;
+        targetPlayer = players[index].gameObject;
     }
 
     void TPSView()
@@ -67,19 +68,37 @@ public class DeadCamera : MonoBehaviour
 
         mouseAbsolute += smoothMouse;
 
+        // 마우스 이동에 따는 ray 회전 
+        float rotationY = -mouseAbsolute.x;
+        float rotationX = mouseAbsolute.y;
+
+        if (clampInDegrees.x < 360)
+            mouseAbsolute.x = Mathf.Clamp(mouseAbsolute.x, -clampInDegrees.x * 0.5f, clampInDegrees.x * 0.5f);
+
+        if (clampInDegrees.y < 360)
+            mouseAbsolute.y = Mathf.Clamp(mouseAbsolute.y, -clampInDegrees.y * 0.5f, clampInDegrees.y * 0.5f);
+
         // 회전값을 Quaternion으로 변환
-        Quaternion xQuaternion = Quaternion.AngleAxis(-mouseAbsolute.y, Vector3.up);
-        Quaternion yQuaternion = Quaternion.AngleAxis(mouseAbsolute.x, Vector3.up);
+        Quaternion xQuaternion = Quaternion.AngleAxis(rotationX, Vector3.right);
+        Quaternion yQuaternion = Quaternion.AngleAxis(rotationY, -Vector3.up);
 
         // Ray의 방향을 회전값으로 설정
-        rayDirection = xQuaternion * yQuaternion * Vector3.forward;
+        rayDirection = yQuaternion * xQuaternion * Vector3.forward;
 
-        Ray ray = new Ray(targetPlayer.transform.position, rayDirection);
+        Ray ray = new Ray(targetPlayer.transform.position + offset, rayDirection);
         RaycastHit hit;
 
-        if(Physics.Raycast(ray,out hit,distance,LayerMask.NameToLayer("Ground") | LayerMask.NameToLayer("Wall")))
+        if(Physics.Raycast(ray,out hit,distance))
         {
-            transform.position = hit.point;
+            if (hit.collider.tag == "Ground")
+            {
+                transform.position = hit.point;
+            }
+
+            else
+            {
+                transform.position = ray.GetPoint(distance);
+            }
         }
 
         else
@@ -87,6 +106,6 @@ public class DeadCamera : MonoBehaviour
             transform.position = ray.GetPoint(distance);
         }
 
-        transform.LookAt(targetPlayer.transform);
+        transform.LookAt(targetPlayer.transform.position + offset);
     }
 }
