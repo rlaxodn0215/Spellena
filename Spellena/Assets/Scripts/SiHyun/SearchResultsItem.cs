@@ -29,7 +29,7 @@ public class SearchResultsItem : MonoBehaviour
         var _sendUser = FirebaseLoginManager.Instance.GetUser();
         string _sendUserId = _sendUser.UserId;
 
-        if(_sendUserId != userId)
+        if (_sendUserId != userId)
         {
             FirebaseLoginManager.Instance.SendFriendRequest(_sendUserId, userId);
         }

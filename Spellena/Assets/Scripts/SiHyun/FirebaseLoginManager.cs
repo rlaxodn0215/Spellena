@@ -60,7 +60,6 @@ public class FirebaseLoginManager
         }
     }
 
-
     public static FirebaseLoginManager Instance
     {
         get
@@ -69,20 +68,24 @@ public class FirebaseLoginManager
             {
                 instance = new FirebaseLoginManager();
             }
-
             return instance;
         }
     }
 
     public void Init()
     {
-        reference = FirebaseDatabase.DefaultInstance.RootReference;
         auth = FirebaseAuth.DefaultInstance;
+        reference = FirebaseDatabase.DefaultInstance.RootReference;
         if (auth.CurrentUser != null)
         {
             SignOut();
         }
         auth.StateChanged += OnChanged;
+    }
+
+    public DatabaseReference GetReference()
+    {
+        return reference;
     }
 
     private void OnChanged(object sender, EventArgs e)
@@ -265,43 +268,52 @@ public class FirebaseLoginManager
         return null;
     }
 
+    public void AddFriend(string _userId)
+    {
+        List<string> _userFriends =  GetFriendRequests(_userId).Result;
+
+        if(_userFriends != null)
+        {
+            foreach (var _friend in _userFriends)
+            {
+                reference.Child("users").Child(_userId).Child("friendsList").SetRawJsonValueAsync(_friend);
+            }
+        }
+    }
+
     public void SendFriendRequest(string _senderUserId, string _recevierUserId)
     {
         FriendRequestData _user = new FriendRequestData(_senderUserId, "pending"); 
         string _json = JsonUtility.ToJson(_user);
-        reference.Child("friendRequests").Child(_recevierUserId).Child(_senderUserId).SetRawJsonValueAsync(_json);
+        reference.Child("friendRequests").Child(_recevierUserId).Child("requestsUser:" + _senderUserId).SetRawJsonValueAsync(_json);
     }
 
     public async Task<List<string>> GetFriendRequests(string _userId)
     {
         List<string> _requestsList = new List<string>();
 
-        DatabaseReference _requestsRef = reference.Child("friendRequests");
+        DatabaseReference _requestsRef = reference.Child("friendRequests").Child(_userId);
 
-        DataSnapshot _receiverSnapshot = await _requestsRef.GetValueAsync();
+        var _requestsAlarm = _requestsRef.OrderByChild("status").EqualTo("accept");
 
-        if(_receiverSnapshot.HasChildren)
+        DataSnapshot _beforeProcessingSnapshot= await _requestsAlarm.GetValueAsync();
+
+        if(_beforeProcessingSnapshot.HasChildren)
         {
-            foreach(var _requestIdSnapshot in _receiverSnapshot.Children)
+            foreach(var _childrenSnapshot in _beforeProcessingSnapshot.Children)
             {
-                var _receiverIdSnapshot = _requestIdSnapshot.Child(_userId);
-                
-                if(_receiverIdSnapshot.HasChildren)
-                {
-                    foreach(var _senderUserIdSnapshot in _receiverIdSnapshot.Children)
-                    {
-                        var status = _senderUserIdSnapshot.Child("status").Value.ToString();
-                        if(!string.IsNullOrEmpty(status) && status == "pending")
-                        {
-                            string _senderUserId = _senderUserIdSnapshot.Child("senderUserId").Value.ToString();
-                            _requestsList.Add(_senderUserId);
-                        }
-                    }
-                }
+                string _senderUserId = _childrenSnapshot.Child("senderUserId").Value.ToString();
+                _requestsList.Add(_senderUserId);
             }
+            return _requestsList;
         }
 
-        return _requestsList;
+        return null;
+    }
+
+    public void SetFriendRequestStatus(string _senderUserId, string _recevierUserId, string _status)
+    {
+        reference.Child("friendRequests").Child(_recevierUserId).Child("requestsUser:" + _senderUserId).Child("status").SetValueAsync(_status);
     }
 
     public void AddFriend(string _userId, string _friendId)
