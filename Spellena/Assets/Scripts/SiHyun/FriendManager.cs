@@ -22,14 +22,13 @@ public class FriendManager : MonoBehaviour
     string userId;
 
     DatabaseReference reference;
+
     private void Start()
     {
         userId = FirebaseLoginManager.Instance.GetUser().UserId;
-        //FirebaseLoginManager.Instance.AddFriend(userId);
-
-        DatabaseReference dataRef = FirebaseLoginManager.Instance.GetReference().Child("friendRequests");
         reference = FirebaseLoginManager.Instance.GetReference();
 
+        DatabaseReference dataRef = FirebaseLoginManager.Instance.GetReference().Child("friendRequests");
         dataRef.ValueChanged += (sender, args) =>
         {
             if (args.DatabaseError != null)
@@ -50,6 +49,27 @@ public class FriendManager : MonoBehaviour
             }
         };
 
+        DatabaseReference friendsDataRef = FirebaseLoginManager.Instance.GetReference().Child("users").Child(userId).Child("friendList");
+        friendsDataRef.ValueChanged += (sender, args) =>
+        {
+            if (args.DatabaseError != null)
+            {
+                Debug.LogError(args.DatabaseError.Message);
+                return;
+            }
+            try
+            {
+                if (args.Snapshot != null && args.Snapshot.HasChildren)
+                {
+                    UpdateFriendList(userId);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError("Exception in ValueChanged event handler: " + ex.Message);
+            }
+        };
+
         nullResultText.gameObject.SetActive(false);
         if (searchInputField != null)
         {
@@ -59,39 +79,8 @@ public class FriendManager : MonoBehaviour
 
     public void AcceptFriend(string _userId, string _friendId)
     {
-        reference.Child("users").Child(_userId).Child("friendList").Child(_friendId).Child("status").SetValueAsync(true);
-        reference.Child("users").Child(_friendId).Child("friendList").Child(_userId).Child("status").SetValueAsync(true);
-    }
-
-    async void UpdateFriendList()
-    {
-        if(friendItemsList != null)
-        {
-            foreach(var item in friendItemsList)
-            {
-                Destroy(item.gameObject);
-            }
-            friendItemsList.Clear();
-        }
-        
-        DatabaseReference _friendListRef = reference.Child("users").Child(userId).Child("friendList");
-
-        var _friends = _friendListRef.OrderByChild("status").EqualTo(true);
-
-        DataSnapshot _friendsSnapshot = await _friends.GetValueAsync();
-
-        if(_friendsSnapshot.HasChildren && _friendsSnapshot != null)
-        {
-            foreach(var _friend in _friendsSnapshot.Children)
-            {
-                string _friendId = _friend.ToString();
-                string _friendNickName = await FirebaseLoginManager.Instance.ReadUserInfo(_friendId);
-                FriendItem _friendItem = Instantiate(friendItem, friendList);
-                _friendItem.SetFriendInfo(_friendId, _friendNickName);
-                friendItemsList.Add(_friendItem);
-            }
-        }
-
+        reference.Child("users").Child(_userId).Child("friendList").Child(_friendId).SetValueAsync("friend");
+        reference.Child("users").Child(_friendId).Child("friendList").Child(_userId).SetValueAsync("friend");
     }
 
     async void AddItems(DataSnapshot _data)
@@ -113,7 +102,6 @@ public class FriendManager : MonoBehaviour
                             string _friendId = _childrenSnapshot.Child("senderUserId").Value.ToString();
                             string _friendNickName = await FirebaseLoginManager.Instance.ReadUserInfo(_friendId);
                             AcceptFriend(userId, _friendId);
-                            UpdateFriendList();
                         }
                     }
                     else if (_requestStatus.Equals("pending"))
@@ -134,31 +122,20 @@ public class FriendManager : MonoBehaviour
         }
     }
 
-    async void AddAlarm(DataSnapshot _data)
+    async void UpdateFriendList(string _userId)
     {
-        DataSnapshot _ref = _data.Child(userId);
+        ResetResults(friendItemsList);
 
-        if (_ref.HasChildren && _ref != null)
+        List<string> _friendList = await FirebaseLoginManager.Instance.GetFriendsList(_userId);
+
+        if(_friendList != null)
         {
-            foreach (var _childrenSnapshot in _ref.Children)
+            foreach(var _friendId in _friendList)
             {
-                if (_childrenSnapshot != null)
-                {
-                    string _requestStatus = _childrenSnapshot.Child("status").Value.ToString();
-                    if (_requestStatus.Equals("pending"))
-                    {
-                        object _senderUserIdValue = _childrenSnapshot.Child("senderUserId")?.Value;
-                        if (_senderUserIdValue != null)
-                        {
-                            string _userId = _childrenSnapshot.Child("senderUserId").Value.ToString();
-                            string _userNicknName = await FirebaseLoginManager.Instance.ReadUserInfo(_userId);
-                            AlarmItem _alarmItem = Instantiate(alarmItem, alarmSpace);
-                            _alarmItem.SetAlarmInfo(_userId, _userNicknName, "친구 요청");
-                            alarmItemList.Add(_alarmItem);
-                            Debug.Log(_userId + " : " + _userNicknName);
-                        }
-                    }
-                }
+                string _friendNickname = await FirebaseLoginManager.Instance.ReadUserInfo(_friendId);
+                FriendItem _friendItem = Instantiate(friendItem, friendList);
+                _friendItem.SetFriendInfo(_friendId, _friendNickname);
+                friendItemsList.Add(_friendItem);
             }
         }
     }
@@ -208,4 +185,13 @@ public class FriendManager : MonoBehaviour
         _list.Clear();
     }
 
+    public void ResetResults(List<FriendItem> _list)
+    {
+        foreach (var item in _list)
+        {
+            Destroy(item.gameObject);
+        }
+
+        _list.Clear();
+    }
 }
