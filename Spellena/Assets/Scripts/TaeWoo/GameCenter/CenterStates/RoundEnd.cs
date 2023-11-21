@@ -5,29 +5,72 @@ using Photon.Pun;
 
 public class RoundEnd : CenterState
 {
+    bool isCheckTimer = false;
+    float tempTimer = 0.0f;
+
     public override void StateExecution()
     {
-        gameCenter.globalTimer -= Time.deltaTime;
-
-        photonView.RPC("TimeScaling", RpcTarget.AllBuffered, 0.3f);
-
-        if (gameCenter.globalTimer <= 0.0f)
+        if (!isCheckTimer)
         {
-            gameCenter.globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "roundWin", false);
-            gameCenter.globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "roundLoose", false);
+            isCheckTimer = !isCheckTimer;
+            tempTimer = gameCenter.globalTimer;
+            gameCenter.globalDesiredTimer = tempTimer + gameCenter.roundEndResultTime;
+        }
 
-            photonView.RPC("TimeScaling", RpcTarget.AllBuffered, 1.0f);
+        gameCenter.globalTimer += Time.deltaTime;
 
+        if (gameCenter.globalTimer >= gameCenter.globalDesiredTimer)
+        {
             if (gameCenter.roundA >= 2 || gameCenter.roundB >= 2)
             {
                 gameCenter.currentGameState = GameCenterTest.GameState.MatchEnd;
+                gameCenter.globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "victory", false);
+                gameCenter.globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "defeat", false);
                 Debug.Log("Game End");
             }
 
             else
             {
                 gameCenter.currentGameState = GameCenterTest.GameState.GameReady;
+                gameCenter.globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "roundWin", false);
+                gameCenter.globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "roundLoose", false);
+                isCheckTimer = !isCheckTimer;
+                ResetRound();
             }
         }
+    }
+
+    void ResetRound()
+    {
+        gameCenter.teamAOccupying = 0;
+        gameCenter.teamBOccupying = 0;
+        gameCenter.occupyingReturnTimer = 0.0f;
+        gameCenter.roundEndTimer = 0.0f;
+        gameCenter.currentOccupationTeam = "";
+        gameCenter.occupyingA.rate = 0.0f;
+        gameCenter.occupyingB.rate = 0.0f;
+        gameCenter.occupyingTeam.name = "";
+        gameCenter.occupyingTeam.rate = 0.0f;
+
+        gameCenter.globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "captured_Red", false);
+        gameCenter.globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "captured_Blue", false);
+        gameCenter.globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "extraObj", false);
+        gameCenter.globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "redExtraUI", true);
+        gameCenter.globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "redExtraObj", false);
+        gameCenter.globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "blueExtraUI", true);
+        gameCenter.globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "blueExtraObj", false);
+        gameCenter.globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "etcUI", true);
+
+        // 플레이어 소환 위치로 이동
+        foreach (var player in PhotonNetwork.CurrentRoom.Players.Values)
+        {
+            if (player.CustomProperties["SpawnPoint"] != null)
+            {
+                PhotonView view = PhotonView.Find((int)player.CustomProperties["CharacterViewID"]);
+                if (view == null) continue;
+                view.RPC("PlayerTeleport", RpcTarget.AllBufferedViaServer, (Vector3)player.CustomProperties["SpawnPoint"]);
+            }
+        }
+
     }
 }

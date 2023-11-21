@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 2210026083316286690}
   - component: {fileID: 3938620967942924257}
   - component: {fileID: 5607967604092204143}
+  - component: {fileID: 6051594028606843628}
   m_Layer: 0
   m_Name: AngelStatue
   m_TagString: Untagged
@@ -69,6 +70,18 @@ MonoBehaviour:
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
+--- !u!114 &6051594028606843628
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8103850703223568907}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 09a83414db5ca5c4992223b896c783ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &6318804717738487619
 PrefabInstance:
   m_ObjectHideFlags: 0

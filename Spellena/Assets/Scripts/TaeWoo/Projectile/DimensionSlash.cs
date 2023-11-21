@@ -162,7 +162,6 @@ namespace Player
                     {
                         if (other.transform.root.GetComponent<Character>())
                         {
-                            //other.transform.root.GetComponent<Character>().PlayerDamaged(playerName, damage);
                             other.transform.root.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBufferedViaServer, playerName,
                                 damage, other.name, transform.TransformDirection(Vector3.forward), 20.0f);
                         }

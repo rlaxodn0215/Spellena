@@ -15,12 +15,15 @@ public class DuringRound : CenterState
         if (gameCenter.currentOccupationTeam == gameCenter.teamA)
         {
             gameCenter.occupyingA.rate += Time.deltaTime * gameCenter.occupyingRate;//약 1.8초당 1씩 오름
+
             if (gameCenter.occupyingA.rate >= gameCenter.occupyingComplete)
                 gameCenter.occupyingA.rate = gameCenter.occupyingComplete;
         }
+
         else if (gameCenter.currentOccupationTeam == gameCenter.teamB)
         {
             gameCenter.occupyingB.rate += Time.deltaTime * gameCenter.occupyingRate;
+
             if (gameCenter.occupyingB.rate >= gameCenter.occupyingComplete)
                 gameCenter.occupyingB.rate = gameCenter.occupyingComplete;
         }
@@ -38,6 +41,9 @@ public class DuringRound : CenterState
              string param = (string)targetPlayer.CustomProperties["ParameterName"];
              targetPlayer.CustomProperties["ParameterName"] = "";
 
+            PhotonView view = PhotonView.Find((int)targetPlayer.CustomProperties["CharacterViewID"]);
+            if (view == null) return;
+
             switch (param)
             {
                  case "TotalDamage":
@@ -47,22 +53,28 @@ public class DuringRound : CenterState
                     string victimViewID = (string)targetPlayer.CustomProperties["PlayerAssistViewID"];
                     if (victimViewID == null) break;
                     targetPlayer.CustomProperties["PlayerAssistViewID"] = "";
-                    GameCenterTest.ChangePlayerCustomProperties(targetPlayer, "AssistTime_" + victimViewID, gameCenter.globalTimer + gameCenter.assistTime );
+
+                    Dictionary<string, float> temp = (Dictionary<string, float>)targetPlayer.CustomProperties["DealAssist"];
+                    temp["AssistTime_" + victimViewID] = gameCenter.globalTimer + gameCenter.assistTime;
+                    GameCenterTest.ChangePlayerCustomProperties(targetPlayer, "DealAssist", temp);
                     break;
                 case "TotalHeal":
                     string healedViewID = (string)targetPlayer.CustomProperties["PlayerAssistViewID"];
                     if (healedViewID == null) break;
                     targetPlayer.CustomProperties["PlayerAssistViewID"] = "";
-                    GameCenterTest.ChangePlayerCustomProperties(targetPlayer, "AssistTime_" + healedViewID, gameCenter.globalTimer + gameCenter.assistTime);
+
+                    Dictionary<string, float> temp1 = (Dictionary<string, float>)targetPlayer.CustomProperties["HealAssist"];
+                    temp1["AssistTime_" + healedViewID] = gameCenter.globalTimer + gameCenter.assistTime;
+                    GameCenterTest.ChangePlayerCustomProperties(targetPlayer, "HealAssist", temp1);
                     break;
                  case "KillCount":
                      if (gameCenter.globalUIView == null) break;
                     gameCenter.globalUIView.RPC("ShowKillUI", targetPlayer, gameCenter.tempVictim);
-                    gameCenter.globalUIView.RPC("SetUltimatePoint", targetPlayer);
                     gameCenter.globalUIView.RPC("ShowKillLog", RpcTarget.AllBufferedViaServer, targetPlayer.CustomProperties["Name"],
                          gameCenter.tempVictim, ((string)targetPlayer.CustomProperties["Team"] == "A"), targetPlayer.ActorNumber);
                     CheckPlayerHealAssist(targetPlayer);
-                     break;
+                    view.RPC("SetUltimatePoint", targetPlayer);
+                        break;
                  case "DeadCount":
                     GameCenterTest.ChangePlayerCustomProperties (targetPlayer, "IsAlive", false);
                     GameCenterTest.ChangePlayerCustomProperties (targetPlayer, "ReSpawnTime", gameCenter.globalTimer + gameCenter.playerRespawnTime);
@@ -70,14 +82,18 @@ public class DuringRound : CenterState
                     gameCenter.tempVictim = (string)targetPlayer.CustomProperties["Name"];
                     gameCenter.ShowTeamMateDead((string)targetPlayer.CustomProperties["Team"], (string)targetPlayer.CustomProperties["Name"]);
 
-                     PhotonView view = PhotonView.Find((int)targetPlayer.CustomProperties["CharacterViewID"]);
-                     if (view == null) break;
-
                      view.RPC("PlayerDeadForAll", RpcTarget.AllBufferedViaServer, (string)targetPlayer.CustomProperties["DamagePart"],
                          (Vector3)targetPlayer.CustomProperties["DamageDirection"], (float)targetPlayer.CustomProperties["DamageForce"]);
                      view.RPC("PlayerDeadPersonal", targetPlayer);
 
-                    CheckPlayerDealAssist(targetPlayer);
+                    CheckPlayerDealAssist(targetPlayer,(string)targetPlayer.CustomProperties["KillerName"]);
+                    break;
+                case "AngelStatueCoolTime":
+                    if(gameCenter.globalTimer >= (float)targetPlayer.CustomProperties["AngelStatueCoolTime"])
+                    {
+                        GameCenterTest.ChangePlayerCustomProperties(targetPlayer, "AngelStatueCoolTime", gameCenter.globalTimer + gameCenter.angelStatueCoolTime);
+                        StartCoroutine(AngelStatue(targetPlayer));
+                    }
                     break;
                  default:
                      break;
@@ -85,6 +101,18 @@ public class DuringRound : CenterState
 
          }
         
+    }
+
+    IEnumerator AngelStatue(Photon.Realtime.Player player)
+    {
+        for(int i = 0; i < gameCenter.angelStatueContinueTime; i++)
+        {
+            PhotonView view = PhotonView.Find((int)player.CustomProperties["CharacterViewID"]);
+            if (view == null) break;
+
+            view.RPC("AngelStatueHP", RpcTarget.AllBufferedViaServer, gameCenter.angelStatueHpPerTime);
+            yield return new WaitForSeconds(1);
+        }
     }
 
     void OccupyAreaCounts()//점령 지역에 플레이어가 몇 명 점령하고 있는지 확인
@@ -196,18 +224,28 @@ public class DuringRound : CenterState
         }
     }
 
-    void CheckPlayerDealAssist(Photon.Realtime.Player player)
+    void CheckPlayerDealAssist(Photon.Realtime.Player player, string killerName)
     {
+        // player은 죽은 플레이어
         if((string)player.CustomProperties["Team"]=="A")
         {
             foreach(var teamPlayer in gameCenter.playersB)
             {
+                // 살인자 제외
+                if ((string)teamPlayer.CustomProperties["Name"] == killerName)
+                {
+                    //Debug.LogError("killerName");
+                    continue;
+                }
+
                 foreach (var assist in (Dictionary<string, float>)teamPlayer.CustomProperties["DealAssist"])
                 {
-                    if (assist.Value <= gameCenter.globalTimer)
+                    if (assist.Value >= gameCenter.globalTimer)
                     {
-                        Debug.Log("Deal Assist!!");
-                        photonView.RPC("SetChargePoint", player);
+                        //Debug.LogError("Deal Assist!!");
+                        PhotonView view = PhotonView.Find((int)teamPlayer.CustomProperties["CharacterViewID"]);
+                        if (view == null) continue;
+                        view.RPC("SetChargePoint", teamPlayer);
                     }
                 }
             }
@@ -217,12 +255,21 @@ public class DuringRound : CenterState
         {
             foreach (var teamPlayer in gameCenter.playersA)
             {
+                // 살인자 제외
+                if ((string)teamPlayer.CustomProperties["Name"] == killerName)
+                {
+                    //Debug.LogError("killerName");
+                    continue;
+                }
+
                 foreach (var assist in (Dictionary<string, float>)teamPlayer.CustomProperties["DealAssist"])
                 {
-                    if (assist.Value <= gameCenter.globalTimer)
+                    if (assist.Value >= gameCenter.globalTimer)
                     {
-                        Debug.Log("Deal Assist!!");
-                        photonView.RPC("SetChargePoint", player);
+                        //Debug.LogError("Deal Assist!!");
+                        PhotonView view = PhotonView.Find((int)teamPlayer.CustomProperties["CharacterViewID"]);
+                        if (view == null) continue;
+                        view.RPC("SetChargePoint", teamPlayer);
                     }
                 }
             }
@@ -238,10 +285,12 @@ public class DuringRound : CenterState
             {
                 foreach (var assist in (Dictionary<string, float>)teamPlayer.CustomProperties["HealAssist"])
                 {
-                    if (assist.Value <= gameCenter.globalTimer)
+                    if (assist.Value >= gameCenter.globalTimer)
                     {
-                        Debug.Log("Heal Assist!!");
-                        photonView.RPC("SetChargePoint", player);
+                        //Debug.LogError("Heal Assist!!");
+                        PhotonView view = PhotonView.Find((int)teamPlayer.CustomProperties["CharacterViewID"]);
+                        if (view == null) continue;
+                        view.RPC("SetChargePoint", teamPlayer);
                     }
                 }
             }
@@ -253,10 +302,12 @@ public class DuringRound : CenterState
             {
                 foreach (var assist in (Dictionary<string, float>)teamPlayer.CustomProperties["HealAssist"])
                 {
-                    if (assist.Value <= gameCenter.globalTimer)
+                    if (assist.Value >= gameCenter.globalTimer)
                     {
-                        Debug.Log("Heal Assist!!");
-                        photonView.RPC("SetChargePoint", player);
+                        //Debug.LogError("Heal Assist!!");
+                        PhotonView view = PhotonView.Find((int)teamPlayer.CustomProperties["CharacterViewID"]);
+                        if (view == null) continue;
+                        view.RPC("SetChargePoint", teamPlayer);
                     }
                 }
             }
@@ -365,7 +416,7 @@ public class DuringRound : CenterState
 
             //라운드 종료
             gameCenter.currentGameState = GameCenterTest.GameState.RoundEnd;
-            gameCenter.globalTimer = gameCenter.roundEndResultTime;
+            //gameCenter.globalTimer = gameCenter.roundEndResultTime;
 
         }
     }

@@ -191,11 +191,12 @@ namespace Player
             {
                 lookRay = camera.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
 
-                if(Physics.Raycast(lookRay,out lookHit,2.0f))
+                if(Physics.Raycast(lookRay,out lookHit,1.5f))
                 {
-                    if(lookHit.collider.name ==" AngelStatue")
+                    if (lookHit.collider.name == "AngelStatue" && CompareTag(lookHit.collider.tag))
                     {
                         canInteraction = true;
+                        // 상태 UI 보이기
                     }
 
                     else
@@ -481,8 +482,13 @@ namespace Player
             if (photonView.IsMine && (bool)PhotonNetwork.LocalPlayer.CustomProperties["IsAlive"])
             {
                 // 자기 팀 거점인 것 확인 / 거점 점령시 석상 태그 팀으로 설정
+                // 캐릭터 각자 관리하면 프레임 차이로 인한 시간 차 발생
                 if(canInteraction)
                 {
+                    float temp = (float)PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["AngelStatueCoolTime"];
+                    PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["ParameterName"] = "AngelStatueCoolTime";
+                    GameCenterTest.ChangePlayerCustomProperties
+                            (PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr], "AngelStatueCoolTime", temp);
                     Debug.Log("Interaction!!");
                 }
             }
@@ -611,14 +617,10 @@ namespace Player
 
                     if (killer == null)
                     {
-                        Debug.Log("자해");
+                        if(hp<=0) Debug.Log("자살");
+                        else Debug.Log("자해");
                         return;
                     }
-
-                    int temp = (int)killer.CustomProperties["TotalDamage"];
-                    killer.CustomProperties["ParameterName"] = "TotalDamage";
-                    killer.CustomProperties["PlayerAssistViewID"] = photonView.ViewID.ToString();
-                    GameCenterTest.ChangePlayerCustomProperties(killer, "TotalDamage", temp + damage);
 
                     // 사망시
                     if (hp <= 0)
@@ -633,20 +635,21 @@ namespace Player
                         GameCenterTest.ChangePlayerCustomProperties
                             (PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr], "DeadCount", temp1 + 1);
 
-                        Photon.Realtime.Player killer1 = GameCenterTest.FindPlayerWithCustomProperty("CharacterViewID", enemy);
+                        //PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["ParameterName"] = "";
+                        //GameCenterTest.ChangePlayerCustomProperties
+                        //    (PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr], "KillerName", killer.CustomProperties["Name"]);
 
-                        if (killer1 != null)
-                        {
-                            int temp2 = (int)killer1.CustomProperties["KillCount"];
-                            killer1.CustomProperties["ParameterName"] = "KillCount";
-                            GameCenterTest.ChangePlayerCustomProperties(killer1, "KillCount", temp2 + 1);
-                        }
+                        PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["KillerName"] = killer.CustomProperties["Name"];
 
-                        else
-                        {
-                            Debug.Log("자살");
-                        }
+                        int temp2 = (int)killer.CustomProperties["KillCount"];
+                        killer.CustomProperties["ParameterName"] = "KillCount";
+                        GameCenterTest.ChangePlayerCustomProperties(killer, "KillCount", temp2 + 1);
                     }
+
+                    int temp = (int)killer.CustomProperties["TotalDamage"];
+                    killer.CustomProperties["ParameterName"] = "TotalDamage";
+                    killer.CustomProperties["PlayerAssistViewID"] = photonView.ViewID.ToString();
+                    GameCenterTest.ChangePlayerCustomProperties(killer, "TotalDamage", temp + damage);
                 }
             }
 
@@ -752,6 +755,15 @@ namespace Player
         {
             if (ultimateCount < 10)
                 ultimateCount++;
+        }
+
+        [PunRPC]
+        public void AngelStatueHP(int addHp)
+        {
+            if(hp<dataHp)
+            {
+                hp += addHp;
+            }
         }
 
         protected virtual void OnAnimatorIK()

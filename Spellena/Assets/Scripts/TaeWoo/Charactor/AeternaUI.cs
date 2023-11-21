@@ -115,15 +115,20 @@ namespace Player
 
         void ShowChargeBar()
         {
-            if(chargeCount != aeterna.chargeCount)
+            if (chargeCount != aeterna.chargeCount)
+            {
+                chargeCount = aeterna.chargeCount;
                 skill4ChargeBarImage.fillAmount = 0.25f * aeterna.chargeCount;
+            }
         }
 
         void ShowCircleAble()
         {
             if (ultimateCount != aeterna.ultimateCount)
             {
-                for(int i = 1; i <= ultimateCount; i++)
+                ultimateCount = aeterna.ultimateCount;
+
+                for (int i = 1; i <= ultimateCount; i++)
                 {
                     UIObjects["circleAble_" + i].SetActive(true);
                 }

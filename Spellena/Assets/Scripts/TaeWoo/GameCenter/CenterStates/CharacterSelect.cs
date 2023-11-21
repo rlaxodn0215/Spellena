@@ -6,19 +6,25 @@ using Player;
 
 public class CharacterSelect : CenterState
 {
+    bool isCheckTimer = false;
+    float tempTimer = 0.0f;
     public override void StateExecution()
     {
+        if (!isCheckTimer)
+        {
+            isCheckTimer = !isCheckTimer;
+            tempTimer = gameCenter.globalTimer;
+            gameCenter.globalDesiredTimer = tempTimer + gameCenter.characterSelectTime;
+        }
+
         gameCenter.gameStateString = "캐릭터 선택";
 
+        gameCenter.globalTimer += Time.deltaTime;
+
         // 캐릭터 선택
-        gameCenter.globalTimer -= Time.deltaTime;
 
-        if (gameCenter.globalTimer <= 0.0f)
+        if (gameCenter.globalTimer >= gameCenter.globalDesiredTimer)
         {
-            // 선택한 캐릭터로 소환 및 태그 설정
-            // 적 플레이어는 빨강 쉐이더 적용
-
-            gameCenter.globalTimer = gameCenter.readyTime;
             gameCenter.currentGameState = GameCenterTest.GameState.GameReady;
             gameCenter.globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "inGameUI", true);
 

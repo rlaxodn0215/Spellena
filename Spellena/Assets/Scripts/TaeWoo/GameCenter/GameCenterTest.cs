@@ -1,11 +1,9 @@
-using Player;
 using UnityEngine;
 using Photon.Pun;
-using Photon.Realtime;
-using System.Collections;
 using System.Collections.Generic;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
-public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
+
+public class GameCenterTest : MonoBehaviourPunCallbacks
 {
     [HideInInspector]
     public GameObject globalUIObj;
@@ -13,7 +11,7 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
     public PhotonView globalUIView;
     [HideInInspector]
     public GlobalUI globalUI;
-    [HideInInspector]
+
     public GameObject angleStatue;
 
     [HideInInspector]
@@ -79,6 +77,9 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
     // 전체 타이머
     [HideInInspector]
     public float globalTimer;
+    // 목표 전체 타이머 값
+    [HideInInspector]
+    public float globalDesiredTimer;
     // 거점 전환 타이머
     [HideInInspector]
     public float occupyingReturnTimer;
@@ -106,38 +107,35 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
     // 이 이하는 테스트용 일시적 정보이다.
     // Scriptable Object로 데이터 전달
 
-    // 맵, 캐릭터 로딩 타임
-    [HideInInspector]
+    [Tooltip("맵, 캐릭터 로딩 타임")]
     public float loadingTime = 1f;
-    // 캐릭터 선택 타임
-    [HideInInspector]
+    [Tooltip("캐릭터 선택 타임")]
     public float characterSelectTime = 1f;
-    // 대기실 준비 시간
-    [HideInInspector]
+    [Tooltip("대기실 준비 시간")]
     public float readyTime = 1f;
-    // 플레이어 리스폰 타임
-    [HideInInspector]
+    [Tooltip("플레이어 리스폰 타임")]
     public float playerRespawnTime = 6;
-    // 어시스트 타임
-    [HideInInspector]
+    [Tooltip("어시스트 타임")]
     public float assistTime = 10;
-    // 거점 전환 원 먹는 비율
-    [HideInInspector]
-    public float occupyingGaugeRate = 300f;
-    // 거점 전환하는 시간
-    [HideInInspector]
+
+    [Tooltip("민병대 쿨타임")]
+    public float angelStatueCoolTime = 30.0f;
+    [Tooltip("민병대 초당 체력 증가량")]
+    public int angelStatueHpPerTime = 10;
+    [Tooltip("민병대 효과 지속 시간")]
+    public int angelStatueContinueTime = 10;
+
+    [Tooltip("거점 전환 원 먹는 비율")]
+    public float occupyingGaugeRate = 40f;
+    [Tooltip("거점 전환하는 시간")]
     public float occupyingReturnTime = 3f;
-    // 거점 % 먹는 비율
-    [HideInInspector]
-    public float occupyingRate = 2f;
-    // 추가시간이 발생하는 기준 게이지
-    [HideInInspector]
+    [Tooltip("거점 % 먹는 비율")]
+    public float occupyingRate = 10f;
+    [Tooltip("추가시간이 발생하는 기준 게이지")]
     public float occupyingComplete = 99f;
-    //추가 시간
-    [HideInInspector]
+    [Tooltip("추가 시간")]
     public float roundEndTime = 5f;
-    // 라운드 결과 확인 시간
-    [HideInInspector]
+    [Tooltip("라운드 결과 확인 시간")]
     public float roundEndResultTime = 6f;
 
     // 팀 이름
@@ -188,13 +186,59 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
     {
         if (PhotonNetwork.IsMasterClient)
         {
+            //Debug.Log(globalTimer);
             currentCenterState.StateExecution();
             currentCenterState = centerStates[currentGameState];
 
+            photonView.RPC("SerializeGameCenterDatas", RpcTarget.AllBufferedViaServer, ToDoSerlize());
+
             if (globalUI != null)
+            {
                 GiveDataToUI();
+            }
         }
 
+    }
+
+    object[] ToDoSerlize()
+    {
+        object[] datas = new object[14];
+
+        datas[0] = currentGameState;
+        datas[1] = gameStateString;
+        datas[2] = roundA;
+        datas[3] = roundB;
+        datas[4] = teamAOccupying;
+        datas[5] = teamBOccupying;
+        datas[6] = globalTimer;
+        datas[7] = occupyingReturnTimer;
+        datas[8] = roundEndTimer;
+        datas[9] = currentOccupationTeam;
+        datas[10] = occupyingA.rate;
+        datas[11] = occupyingB.rate;
+        datas[12] = occupyingTeam.name;
+        datas[13] = occupyingTeam.rate;
+
+        return datas;
+    }
+
+    [PunRPC]
+    public void SerializeGameCenterDatas(object[] datas)
+    {
+        currentGameState = (GameState)datas[0];
+        gameStateString = (string)datas[1];
+        roundA = (int)datas[2];
+        roundB = (int)datas[3];
+        teamAOccupying = (int)datas[4];
+        teamBOccupying = (int)datas[5];
+        globalTimer = (float)datas[6];
+        occupyingReturnTimer = (float)datas[7];
+        roundEndTimer = (float)datas[8];
+        currentOccupationTeam = (string)datas[9];
+        occupyingA.rate = (float)datas[10];
+        occupyingB.rate = (float)datas[11];
+        occupyingTeam.name = (string)datas[12];
+        occupyingTeam.rate = (float)datas[13];
     }
 
     public static Photon.Realtime.Player FindPlayerWithCustomProperty(string key, string value)
@@ -226,7 +270,6 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
         }
 
         player.SetCustomProperties(temp);
-
     }
 
     public void ShowTeamMateDead(string team, string deadName)
@@ -307,6 +350,7 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
                     globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "extraObj", false);
                     globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "blueExtraObj", false);
                     globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "blueExtraUI", true);
+                    angleStatue.GetComponent<PhotonView>().RPC("ChangeTeam", RpcTarget.AllBufferedViaServer, "A");
                 }
 
                 else if (currentOccupationTeam == "B")
@@ -316,6 +360,7 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
                     globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "extraObj", false);
                     globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "redExtraObj", false);
                     globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "redExtraUI", true);
+                    angleStatue.GetComponent<PhotonView>().RPC("ChangeTeam", RpcTarget.AllBufferedViaServer, "B");
                 }
             }
         }
@@ -337,60 +382,17 @@ public class GameCenterTest : MonoBehaviourPunCallbacks, IPunObservable
         }
     }
 
-    [PunRPC]
-    public void TimeScaling(float ratio)
-    {
-        Time.timeScale = ratio;
-    }
-
     public void GiveDataToUI()
     {
+        if (globalUI == null) return;
         globalUI.gameStateString = gameStateString;
-        globalUI.globalTimerUI = globalTimer;
+        globalUI.globalTimerUI = globalDesiredTimer - globalTimer;
         globalUI.roundEndTimerUI = roundEndTimer;
         globalUI.roundEndTimeUI = roundEndTime;
         globalUI.occupyingAUI.rate = occupyingA.rate;
         globalUI.occupyingBUI.rate = occupyingB.rate;
         globalUI.occupyingTeamUI.name = occupyingTeam.name;
         globalUI.occupyingTeamUI.rate = occupyingTeam.rate;
-    }
-
-    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
-    {
-        if (stream.IsWriting)
-        {
-            stream.SendNext(currentGameState);
-            stream.SendNext(gameStateString);
-            stream.SendNext(roundA);
-            stream.SendNext(roundB);
-            stream.SendNext(teamAOccupying);
-            stream.SendNext(teamBOccupying);
-            stream.SendNext(globalTimer);
-            stream.SendNext(occupyingReturnTimer);
-            stream.SendNext(roundEndTimer);
-            stream.SendNext(currentOccupationTeam);
-            stream.SendNext(occupyingA.rate);
-            stream.SendNext(occupyingB.rate);
-            stream.SendNext(occupyingTeam.name);
-            stream.SendNext(occupyingTeam.rate);
-        }
-        else
-        {
-            currentGameState = (GameState)stream.ReceiveNext();
-            gameStateString = (string)stream.ReceiveNext();
-            roundA = (int)stream.ReceiveNext();
-            roundB = (int)stream.ReceiveNext();
-            teamAOccupying = (int)stream.ReceiveNext();
-            teamBOccupying = (int)stream.ReceiveNext();
-            globalTimer = (float)stream.ReceiveNext();
-            occupyingReturnTimer = (float)stream.ReceiveNext();
-            roundEndTimer = (float)stream.ReceiveNext();
-            currentOccupationTeam = (string)stream.ReceiveNext();
-            occupyingA.rate = (float)stream.ReceiveNext();
-            occupyingB.rate = (float)stream.ReceiveNext();
-            occupyingTeam.name = (string)stream.ReceiveNext();
-            occupyingTeam.rate = (float)stream.ReceiveNext();
-        }
     }
 
     //인게임 프레임 확인

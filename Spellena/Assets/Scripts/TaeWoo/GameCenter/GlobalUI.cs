@@ -30,11 +30,6 @@ public class GlobalUI : MonoBehaviourPunCallbacks,IPunObservable
     List<Text> victimNames = new List<Text>();
     List<Text> playerNames = new List<Text>();
 
-    [HideInInspector]
-    public int endKillLogIndex;
-    [HideInInspector]
-    public int maxKillLogIndex;
-
     KillLogData[] playerKillLogDatas;
 
     public struct KillLogData
@@ -88,6 +83,12 @@ public class GlobalUI : MonoBehaviourPunCallbacks,IPunObservable
     // 킬 로그 활성 시간
     [HideInInspector]
     private float killLogActiveTime = 3f;
+    // 끝 킬로그 인덱스
+    [HideInInspector]
+    public int endKillLogIndex;
+    // 최대 킬로그 인덱스
+    [HideInInspector]
+    public int maxKillLogIndex;
 
     public Photon.Realtime.Player[] allPlayers;
     public List<GameObject> playersA = new List<GameObject>(); // Red
@@ -206,35 +207,41 @@ public class GlobalUI : MonoBehaviourPunCallbacks,IPunObservable
 
     void Update()
     {
-        timerText.text = ((int)globalTimerUI + 1).ToString();
-        gameStateUIText.text = gameStateString;
-        redPayloadImage.fillAmount = occupyingAUI.rate * 0.01f;
-        bluePayloadImage.fillAmount = occupyingBUI.rate * 0.01f;
-        redPercentageText.text = string.Format((int)occupyingAUI.rate + "%");
-        bluePercentageText.text = string.Format((int)occupyingBUI.rate + "%");
-        extraTimerText.text = string.Format("{0:F2}", roundEndTimerUI);
-
-        DisableKillLog();
-
-        if (occupyingTeamUI.name == "A")
-            redFillCircleImage.fillAmount = occupyingTeamUI.rate * 0.01f;
-        else if (occupyingTeamUI.name == "B")
-            blueFillCircleImage.fillAmount = occupyingTeamUI.rate * 0.01f;
-        else
+        if (PhotonNetwork.IsMasterClient)
         {
-            redFillCircleImage.fillAmount = 0;
-            blueFillCircleImage.fillAmount = 0;
-        }
+            timerText.text = ((int)globalTimerUI + 1).ToString();
 
-        redCTFImage.fillAmount = roundEndTimerUI / roundEndTimeUI;
-        blueCTFImage.fillAmount = roundEndTimerUI / roundEndTimeUI;
+            gameStateUIText.text = gameStateString;
+            redPayloadImage.fillAmount = occupyingAUI.rate * 0.01f;
+            bluePayloadImage.fillAmount = occupyingBUI.rate * 0.01f;
+            redPercentageText.text = string.Format((int)occupyingAUI.rate + "%");
+            bluePercentageText.text = string.Format((int)occupyingBUI.rate + "%");
+            extraTimerText.text = string.Format("{0:F2}", roundEndTimerUI);
+
+            DisableKillLog();
+
+            if (occupyingTeamUI.name == "A")
+                redFillCircleImage.fillAmount = occupyingTeamUI.rate * 0.01f;
+            else if (occupyingTeamUI.name == "B")
+                blueFillCircleImage.fillAmount = occupyingTeamUI.rate * 0.01f;
+            else
+            {
+                redFillCircleImage.fillAmount = 0;
+                blueFillCircleImage.fillAmount = 0;
+            }
+
+            redCTFImage.fillAmount = roundEndTimerUI / roundEndTimeUI;
+            blueCTFImage.fillAmount = roundEndTimerUI / roundEndTimeUI;
+
+            photonView.RPC("SerializeGlobalUIDatas", RpcTarget.AllBufferedViaServer, ToDoSerlizeUI());
+        }
         
     }
 
     [PunRPC]
     public void ActiveUI(string uiName, bool isActive)
     {
-        if (UIObjects[uiName] == null) return;
+        if (UIObjects.ContainsKey("uiName")) return;
         UIObjects[uiName].SetActive(isActive);
     }
 
@@ -373,12 +380,10 @@ public class GlobalUI : MonoBehaviourPunCallbacks,IPunObservable
     void DisableKillLog()
     {
         if (endKillLogIndex < 1) return;
-       // Debug.Log("globalTimerUI : " + globalTimerUI + " / " + "killLogTimer : " + playerKillLogDatas[endKillLogIndex - 1].killLogTimer);
 
         if(globalTimerUI >= playerKillLogDatas[endKillLogIndex-1].killLogTimer)
         {
             UIObjects["killLog_" + endKillLogIndex].SetActive(false);
-            //Debug.LogError("DisableKillLog");
             endKillLogIndex--;
         }
     }
@@ -411,31 +416,25 @@ public class GlobalUI : MonoBehaviourPunCallbacks,IPunObservable
         return foundObject;
     }
 
+    object[] ToDoSerlizeUI()
+    {
+        object[] datas = new object[2];
+
+        datas[0] = endKillLogIndex;
+        datas[1] = maxKillLogIndex;
+
+        return datas;
+    }
+
+    [PunRPC]
+    public void SerializeGlobalUIDatas(object[] datas)
+    {
+        endKillLogIndex = (int)datas[0];
+        maxKillLogIndex = (int)datas[1];
+    }
+
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
-        if (stream.IsWriting)
-        {
-            stream.SendNext(gameStateString);
-            stream.SendNext(globalTimerUI);
-            stream.SendNext(roundEndTimerUI);
-            stream.SendNext(occupyingAUI.rate);
-            stream.SendNext(occupyingBUI.rate);
-            stream.SendNext(occupyingTeamUI.name);
-            stream.SendNext(occupyingTeamUI.rate);
-            stream.SendNext(endKillLogIndex);
-            stream.SendNext(maxKillLogIndex);
-        }
-        else
-        {
-            gameStateString = (string)stream.ReceiveNext();
-            globalTimerUI = (float)stream.ReceiveNext();
-            roundEndTimerUI = (float)stream.ReceiveNext();
-            occupyingAUI.rate = (float)stream.ReceiveNext();
-            occupyingBUI.rate = (float)stream.ReceiveNext();
-            occupyingTeamUI.name = (string)stream.ReceiveNext();
-            occupyingTeamUI.rate = (float)stream.ReceiveNext();
-            endKillLogIndex = (int)stream.ReceiveNext();
-            maxKillLogIndex = (int)stream.ReceiveNext();
-        }
+
     }
 }
