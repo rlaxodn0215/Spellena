@@ -135,19 +135,21 @@ public class FirebaseLoginManager
 
     }
 
-    public void SignIn(string email, string passward)
+    public void SignIn(string email, string passward, GameObject panel)
     {
         auth.SignInWithEmailAndPasswordAsync(email, passward).ContinueWith(task =>
         {
             if (task.IsCanceled)
             {
                 Debug.LogError("SignInWithEmailAndPasswordAsync was canceled.");
+                panel.SetActive(true);
                 return;
             }
             else if (task.IsFaulted)
             {
                 Debug.LogError("SignInWithEmailAndPasswordAsync encountered an error: "
                     + task.Exception);
+                panel.SetActive(true);
                 return;
             }
             else
@@ -268,19 +270,6 @@ public class FirebaseLoginManager
         return null;
     }
 
-    public void AddFriend(string _userId)
-    {
-        List<string> _userFriends =  GetFriendRequests(_userId).Result;
-
-        if(_userFriends != null)
-        {
-            foreach (var _friend in _userFriends)
-            {
-                reference.Child("users").Child(_userId).Child("friendsList").SetRawJsonValueAsync(_friend);
-            }
-        }
-    }
-
     public void SendFriendRequest(string _senderUserId, string _recevierUserId)
     {
         FriendRequestData _user = new FriendRequestData(_senderUserId, "pending"); 
@@ -288,13 +277,13 @@ public class FirebaseLoginManager
         reference.Child("friendRequests").Child(_recevierUserId).Child("requestsUser:" + _senderUserId).SetRawJsonValueAsync(_json);
     }
 
-    public async Task<List<string>> GetFriendRequests(string _userId)
+    public async Task<List<string>> GetFriendsList(string _userId)
     {
         List<string> _requestsList = new List<string>();
 
-        DatabaseReference _requestsRef = reference.Child("friendRequests").Child(_userId);
+        DatabaseReference _requestsRef = reference.Child("users").Child(_userId).Child("friendList");
 
-        var _requestsAlarm = _requestsRef.OrderByChild("status").EqualTo("accept");
+        var _requestsAlarm = _requestsRef.OrderByValue().EqualTo("friend");
 
         DataSnapshot _beforeProcessingSnapshot= await _requestsAlarm.GetValueAsync();
 
@@ -302,8 +291,8 @@ public class FirebaseLoginManager
         {
             foreach(var _childrenSnapshot in _beforeProcessingSnapshot.Children)
             {
-                string _senderUserId = _childrenSnapshot.Child("senderUserId").Value.ToString();
-                _requestsList.Add(_senderUserId);
+                string _friendId = _childrenSnapshot.Key;
+                _requestsList.Add(_friendId);
             }
             return _requestsList;
         }
@@ -316,15 +305,6 @@ public class FirebaseLoginManager
         reference.Child("friendRequests").Child(_recevierUserId).Child("requestsUser:" + _senderUserId).Child("status").SetValueAsync(_status);
     }
 
-    public void AddFriend(string _userId, string _friendId)
-    {
-        reference.Child("users").Child(_userId).Child("friends").Child("friendId").SetValueAsync(_friendId);
-    }
-
-    public void FriendList(string _userId)
-    {
-        reference.Child("users").Child(_userId).Child("friends").GetValueAsync();
-    }
 
     public void SetUserStatus(string _userId, string _status)
     {
