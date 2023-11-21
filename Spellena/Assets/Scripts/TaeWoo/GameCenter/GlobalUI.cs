@@ -207,34 +207,29 @@ public class GlobalUI : MonoBehaviourPunCallbacks,IPunObservable
 
     void Update()
     {
-        if (PhotonNetwork.IsMasterClient)
+        timerText.text = ((int)globalTimerUI + 1).ToString();
+
+        gameStateUIText.text = gameStateString;
+        redPayloadImage.fillAmount = occupyingAUI.rate * 0.01f;
+        bluePayloadImage.fillAmount = occupyingBUI.rate * 0.01f;
+        redPercentageText.text = string.Format((int)occupyingAUI.rate + "%");
+        bluePercentageText.text = string.Format((int)occupyingBUI.rate + "%");
+        extraTimerText.text = string.Format("{0:F2}", roundEndTimerUI);
+
+        DisableKillLog();
+
+        if (occupyingTeamUI.name == "A")
+            redFillCircleImage.fillAmount = occupyingTeamUI.rate * 0.01f;
+        else if (occupyingTeamUI.name == "B")
+            blueFillCircleImage.fillAmount = occupyingTeamUI.rate * 0.01f;
+        else
         {
-            timerText.text = ((int)globalTimerUI + 1).ToString();
-
-            gameStateUIText.text = gameStateString;
-            redPayloadImage.fillAmount = occupyingAUI.rate * 0.01f;
-            bluePayloadImage.fillAmount = occupyingBUI.rate * 0.01f;
-            redPercentageText.text = string.Format((int)occupyingAUI.rate + "%");
-            bluePercentageText.text = string.Format((int)occupyingBUI.rate + "%");
-            extraTimerText.text = string.Format("{0:F2}", roundEndTimerUI);
-
-            DisableKillLog();
-
-            if (occupyingTeamUI.name == "A")
-                redFillCircleImage.fillAmount = occupyingTeamUI.rate * 0.01f;
-            else if (occupyingTeamUI.name == "B")
-                blueFillCircleImage.fillAmount = occupyingTeamUI.rate * 0.01f;
-            else
-            {
-                redFillCircleImage.fillAmount = 0;
-                blueFillCircleImage.fillAmount = 0;
-            }
-
-            redCTFImage.fillAmount = roundEndTimerUI / roundEndTimeUI;
-            blueCTFImage.fillAmount = roundEndTimerUI / roundEndTimeUI;
-
-            photonView.RPC("SerializeGlobalUIDatas", RpcTarget.AllBufferedViaServer, ToDoSerlizeUI());
+            redFillCircleImage.fillAmount = 0;
+            blueFillCircleImage.fillAmount = 0;
         }
+
+        redCTFImage.fillAmount = roundEndTimerUI / roundEndTimeUI;
+        blueCTFImage.fillAmount = roundEndTimerUI / roundEndTimeUI;
         
     }
 
@@ -416,25 +411,31 @@ public class GlobalUI : MonoBehaviourPunCallbacks,IPunObservable
         return foundObject;
     }
 
-    object[] ToDoSerlizeUI()
-    {
-        object[] datas = new object[2];
-
-        datas[0] = endKillLogIndex;
-        datas[1] = maxKillLogIndex;
-
-        return datas;
-    }
-
-    [PunRPC]
-    public void SerializeGlobalUIDatas(object[] datas)
-    {
-        endKillLogIndex = (int)datas[0];
-        maxKillLogIndex = (int)datas[1];
-    }
-
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
-
+        if (stream.IsWriting)
+        {
+            stream.SendNext(gameStateString);
+            stream.SendNext(globalTimerUI);
+            stream.SendNext(roundEndTimerUI);
+            stream.SendNext(occupyingAUI.rate);
+            stream.SendNext(occupyingBUI.rate);
+            stream.SendNext(occupyingTeamUI.name);
+            stream.SendNext(occupyingTeamUI.rate);
+            stream.SendNext(endKillLogIndex);
+            stream.SendNext(maxKillLogIndex);
+        }
+        else
+        {
+            gameStateString = (string)stream.ReceiveNext();
+            globalTimerUI = (float)stream.ReceiveNext();
+            roundEndTimerUI = (float)stream.ReceiveNext();
+            occupyingAUI.rate = (float)stream.ReceiveNext();
+            occupyingBUI.rate = (float)stream.ReceiveNext();
+            occupyingTeamUI.name = (string)stream.ReceiveNext();
+            occupyingTeamUI.rate = (float)stream.ReceiveNext();
+            endKillLogIndex = (int)stream.ReceiveNext();
+            maxKillLogIndex = (int)stream.ReceiveNext();
+        }
     }
 }
