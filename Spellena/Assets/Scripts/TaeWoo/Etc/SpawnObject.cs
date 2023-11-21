@@ -19,10 +19,12 @@ namespace Player
         public string objectName;
         public object[] data;
 
+        
         public virtual void OnEnable()
         {
             Init();
         }
+        
 
         void Init()
         {

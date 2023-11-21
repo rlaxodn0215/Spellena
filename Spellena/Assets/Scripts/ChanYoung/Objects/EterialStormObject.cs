@@ -2,6 +2,7 @@ using Photon.Pun;
 using Player;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class EterialStormObject : SpawnObject,IPunObservable
@@ -11,7 +12,7 @@ public class EterialStormObject : SpawnObject,IPunObservable
     float lifeTime;
     float currentLifeTime = 0f;
 
-    List<GameObject> hitObjects = new List<GameObject>();
+    List<string> hitObjects = new List<string>();
     List<float> hitTimer = new List<float>();
 
     float castingTime;
@@ -29,10 +30,7 @@ public class EterialStormObject : SpawnObject,IPunObservable
 
     void Start()
     {
-        if (PhotonNetwork.IsMasterClient)
-        {
-            OnEnable();
-        }
+        Init();
     }
 
     void Update()
@@ -64,53 +62,82 @@ public class EterialStormObject : SpawnObject,IPunObservable
         else
         {
             if(isColliderOn == false)
-            {
-                isColliderOn = true;
-                for(int i = 0; i < hitEffect.transform.childCount; i++)
-                {
-                    hitEffect.transform.GetChild(i).GetComponent<ParticleSystem>().Play(true);
-                }
-            }
+                RequestRPC("ActiveCollider");
             else
             {
                 currentLifeTime -= Time.deltaTime;
 
                 if(currentLifeTime < 0f)
-                {
-                    PhotonNetwork.Destroy(gameObject);
-                }
+                    RequestRPC("RequestDestroy");
             }
         }
-
-    }
-
-    public override void OnEnable()
-    {
-        base.OnEnable();
-        Init();
+        RequestRPC("UpdateData");
     }
 
     void Init()
     {
         castingTime = elementalOrderData.eterialStormCastingTime;
         lifeTime = elementalOrderData.eterialStormLifeTime;
-
+        hitCollider.GetComponent<TriggerEventer>().hitTriggerEvent += TriggerEvent;
         currentCastingTime = castingTime;
         currentLifeTime = lifeTime;
-        hitCollider.GetComponent<TriggerEventer>().hitTriggerEvent += TriggerEvent;
     }
-    public override void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
-    {
-        base.OnPhotonSerializeView(stream, info);
-        if (stream.IsWriting)
-        {
 
+    void RequestRPC(string tunnelCommand)
+    {
+        object[] _tempData;
+        if (tunnelCommand == "UpdateData")
+        {
+            _tempData = new object[5];
+            _tempData[0] = tunnelCommand;
+            _tempData[1] = currentCastingTime;
+            _tempData[2] = currentLifeTime;
+            _tempData[3] = hitObjects.ToArray();
+            _tempData[4] = hitTimer.ToArray();
         }
         else
         {
+            _tempData = new object[2];
+            _tempData[0] = tunnelCommand;
+        }
 
+        photonView.RPC("CallRPCTunnelElementalOrderSpell6", RpcTarget.AllBuffered, _tempData);
+    }
+
+    [PunRPC]
+    public void CallRPCTunnelElementalOrderSpell6(object[] data)
+    {
+        if ((string)data[0] == "UpdateData")
+            UpdateData(data);
+        else if ((string)data[0] == "ActiveCollider")
+            ActiveCollider();
+        else if ((string)data[0] == "RequestDestroy")
+            RequestDestroy();
+    }
+
+    void UpdateData(object[] data)
+    {
+        currentCastingTime = (float)data[1];
+        currentLifeTime = (float)data[2];
+        hitObjects = ((string[])data[3]).ToList();
+        hitTimer = ((float[])data[4]).ToList();
+    }
+
+    void RequestDestroy()
+    {
+        if (photonView.IsMine)
+            PhotonNetwork.Destroy(gameObject);
+    }
+
+    void ActiveCollider()
+    {
+        isColliderOn = true;
+        for (int i = 0; i < hitEffect.transform.childCount; i++)
+        {
+            hitEffect.transform.GetChild(i).GetComponent<ParticleSystem>().Play(true);
         }
     }
+
 
     void TriggerEvent(GameObject hitObject)
     {
@@ -139,7 +166,7 @@ public class EterialStormObject : SpawnObject,IPunObservable
 
         for(int i = 0; i < hitObjects.Count; i++)
         {
-            if (hitObjects[i] == other.gameObject)
+            if (hitObjects[i] == other.gameObject.name)
             {
                 _check = 1;
                 _index = i;
@@ -161,7 +188,7 @@ public class EterialStormObject : SpawnObject,IPunObservable
         }
         else
         {
-            hitObjects.Add(other.gameObject);
+            hitObjects.Add(other.gameObject.name);
             hitTimer.Add(hitCoolDownTime);
             other.GetComponent<Rigidbody>().AddForce(_outsideVector * impulsePower, ForceMode.Impulse);
             if (_distance <= 3.0f)

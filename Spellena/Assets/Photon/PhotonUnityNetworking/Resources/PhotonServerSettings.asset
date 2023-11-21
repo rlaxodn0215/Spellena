@@ -112,6 +112,21 @@ MonoBehaviour:
   - SetSkillServer
   - SetPointStrikeServer
   - SetAnimation
+  - ActiveCollider
+  - ActiveCylinder
+  - ActiveFloor
+  - ReverseCylinder
+  - RequestDestroy
+  - CallRPCTunnel
+  - CallRPCElementalOrderMasterClient
+  - CallRPCTunnelSpell4
+  - CallRPCElementalOrderToOthers
+  - CallRPCElementalOrderToAll
+  - CallRPCTunnelElementalOrderSpell4
+  - CallRPCTunnelElementalOrderSpell6
+  - CallRPCTunnelElementalOrderSpell1
+  - CallRPCTunnelElementalOrderSpell5
+  - CallRPCTunnelElementalOrderSpell2
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1
