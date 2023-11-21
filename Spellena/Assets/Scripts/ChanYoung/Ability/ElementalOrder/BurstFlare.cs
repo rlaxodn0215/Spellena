@@ -11,9 +11,22 @@ public class BurstFlare
     float currentShootCoolDownTime = 0f;
     float skillCoolDownTime = 5f;
 
+    bool isReady = false;
+
+    public void EndSkill()
+    {
+        isReady = false;
+    }
+    public bool CheckReady()
+    {
+        return isReady;
+    }
+
     public void Initialize()
     {
         currentBullet = maxBullet;
+        currentShootCoolDownTime = 0f;
+        isReady = true;
     }
 
     public bool ShootBullet()
@@ -21,9 +34,7 @@ public class BurstFlare
         currentBullet--;
         currentShootCoolDownTime = shootCoolDownTime;
         if(currentBullet <= 0)
-        {
             return true;
-        }
         return false;
     }
 
@@ -50,5 +61,15 @@ public class BurstFlare
         {
             currentShootCoolDownTime -= Time.deltaTime;
         }
+    }
+
+    public void SetReady(bool isNewReady)
+    {
+        isReady = isNewReady;
+    }
+
+    public void SetBullet(int newBullet)
+    {
+        currentBullet = newBullet;
     }
 }
