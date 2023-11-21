@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TerraBreakObject : SpawnObject, IPunObservable
+public class TerraBreakObject : SpawnObject
 {
     public ElementalOrderData elementalOrderData;
 
@@ -29,14 +29,11 @@ public class TerraBreakObject : SpawnObject, IPunObservable
 
     public GameObject hitCollider;
 
-    List<GameObject> hitPlayers = new List<GameObject>();
+    List<string> hitPlayers = new List<string>();
 
     void Start()
     {
-        if (PhotonNetwork.IsMasterClient)
-        {
-            OnEnable();
-        }
+        Init();
     }
 
     void Update()
@@ -52,11 +49,8 @@ public class TerraBreakObject : SpawnObject, IPunObservable
         if(currentCastingTime > 0f)
         {
             currentCastingTime -= Time.deltaTime;
-
-            if(currentCastingTime <= 0f)
-            {
-                hitEffect.SetActive(true);
-            }
+            if (currentCastingTime <= 0f)
+                RequestRPC("ActiveHitEffect");
         }
         else
         {
@@ -64,7 +58,7 @@ public class TerraBreakObject : SpawnObject, IPunObservable
             {
                 currentHitCountTimer = hitCountTimer;
                 currentColliderTimer = colliderTimer;
-                isColliderOn = true;
+                RequestRPC("ActiveCollider");
             }
             else
             {
@@ -75,35 +69,91 @@ public class TerraBreakObject : SpawnObject, IPunObservable
 
                     if(currentColliderTimer <= 0f)
                     {
-                        isColliderOn = false;
+                        RequestRPC("InactiveCollider");
                         hitPlayers.Clear();
                     }
                 }
             }
             currentLifeTime -= Time.deltaTime;
             if(currentLifeTime <= 0f)
-            {
-                PhotonNetwork.Destroy(gameObject);
-            }
+                RequestRPC("RequestDestroy");
             
         }
     }
 
-    public override void OnEnable()
-    {
-        base.OnEnable();
-        Init();
-    }
-
     void Init()
     {
+        hitCountTimer = lifeTime / hitCount;
         castingTime = elementalOrderData.terraBreakCastingTime;
         lifeTime = elementalOrderData.terraBreakLifeTime;
+        hitCollider.GetComponent<TriggerEventer>().hitTriggerEvent += TriggerEvent;
 
         currentCastingTime = castingTime;
         currentLifeTime = lifeTime;
-        hitCountTimer = lifeTime / hitCount;
-        hitCollider.GetComponent<TriggerEventer>().hitTriggerEvent += TriggerEvent;
+    }
+
+    void RequestRPC(string tunnelCommand)
+    {
+        object[] _tempData;
+        if(tunnelCommand == "UpdateData")
+        {
+            _tempData = new object[5];
+            _tempData[0] = tunnelCommand;
+            _tempData[1] = currentCastingTime;
+            _tempData[2] = currentLifeTime;
+            _tempData[3] = currentHitCountTimer;
+            _tempData[4] = currentColliderTimer;
+        }
+        else
+        {
+            _tempData = new object[2];
+            _tempData[0] = tunnelCommand;
+        }
+
+        photonView.RPC("CallRPCTunnelElementalOrderSpell5", RpcTarget.AllBuffered, _tempData);
+    }
+    [PunRPC]
+    public void CallRPCTunnelElementalOrderSpell5(object[] data)
+    {
+        if ((string)data[0] == "UpdateData")
+            UpdateData(data);
+        else if ((string)data[0] == "ActiveCollider")
+            ActiveCollider();
+        else if ((string)data[0] == "InactiveCollider")
+            InactiveCollider();
+        else if ((string)data[0] == "RequestDestroy")
+            RequestDestroy();
+        else if ((string)data[0] == "ActiveHitEffect")
+            ActiveHitEffect();
+    }
+
+    void ActiveHitEffect()
+    {
+        hitEffect.SetActive(true);
+    }
+
+    void RequestDestroy()
+    {
+        if(photonView.IsMine)
+            PhotonNetwork.Destroy(gameObject);
+    }
+
+    void UpdateData(object[] data)
+    {
+        currentCastingTime = (float)data[1];
+        currentLifeTime = (float)data[2];
+        currentHitCountTimer = (float)data[3];
+        currentColliderTimer = (float)data[4];
+    }
+
+    void ActiveCollider()
+    {
+        isColliderOn = true;
+    }
+
+    void InactiveCollider()
+    {
+        isColliderOn = false;
     }
 
     void TriggerEvent(GameObject gameObject)
@@ -125,7 +175,7 @@ public class TerraBreakObject : SpawnObject, IPunObservable
                     bool _isCheck = false;
                     for (int i = 0; i < hitPlayers.Count; i++)
                     {
-                        if (hitPlayers[i] == other.gameObject)
+                        if (hitPlayers[i] == other.gameObject.name)
                         {
                             _isCheck = true;
                         }
@@ -135,25 +185,11 @@ public class TerraBreakObject : SpawnObject, IPunObservable
                         return;
                     else
                     {
-                        hitPlayers.Add(other.gameObject);
+                        hitPlayers.Add(other.gameObject.name);
                         Debug.Log("µ¥¹ÌÁö");
                     }
                 }
             }
-        }
-    }
-
-    public override void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
-    {
-        base.OnPhotonSerializeView(stream, info);
-
-        if(stream.IsWriting)
-        {
-
-        }
-        else
-        {
-
         }
     }
 }

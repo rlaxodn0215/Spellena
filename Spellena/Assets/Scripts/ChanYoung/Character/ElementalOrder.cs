@@ -3,6 +3,7 @@ using ExitGames.Client.Photon.StructWrapping;
 using Photon.Pun;
 using Photon.Pun.UtilityScripts;
 using Photon.Realtime;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -133,6 +134,10 @@ namespace Player
                 CheckAnimator();
                 CheckPoint();
                 CheckSkillOnMine();
+
+                Debug.Log(skillState);
+                Debug.Log(pointStrike);
+                Debug.Log(isPointStrike);
             }
 
             if(PhotonNetwork.IsMasterClient)
@@ -206,38 +211,37 @@ namespace Player
         void OnSkill1()
         {
             if (photonView.IsMine)
-            {
-                photonView.RPC("AddCommand", RpcTarget.MasterClient, 1);
-            }
+                RequestAddCommand(1);
         }
 
         void OnSkill2()
         {
             if (photonView.IsMine)
-            {
-                photonView.RPC("AddCommand", RpcTarget.MasterClient, 2);
-            }
+                RequestAddCommand(2);
         }
 
         void OnSkill3()
         {
             if (photonView.IsMine)
-            {
-                photonView.RPC("AddCommand", RpcTarget.MasterClient, 3);
-            }
+                RequestAddCommand(3);
+        }
+
+        void RequestAddCommand(int num)
+        {
+            object[] _tempData = new object[2];
+            _tempData[0] = "AddCommand";
+            _tempData[1] = num;
+            RequestRPCCall(_tempData);
         }
 
         void OnButtonCancel()
         {
             if (photonView.IsMine)
             {
-                photonView.RPC("CancelSkill", RpcTarget.MasterClient);
+                object[] _tempData = new object[2];
+                _tempData[0] = "CancelSkill";
+                RequestRPCCall(_tempData);
             }
-        }
-
-        void OnSkill4()
-        {
-            Debug.Log("4번 비어있음");
         }
 
         void OnMouseButton()
@@ -268,69 +272,67 @@ namespace Player
                     {
                         rangeBoxArea.transform.localPosition -= new Vector3(0, rangeBoxArea.transform.localScale.y / 2, rangeBoxArea.transform.localScale.z / 2);
                         pointStrike = rangeBoxArea.transform.position;
-
                         isPointStrike = true;
                     }
-                    SetPointStrike();
-                    photonView.RPC("ClickMouse", RpcTarget.MasterClient, screenRay.origin, screenRay.direction, photonView.OwnerActorNr);
+                    object[] _tempPointStrikeData = new object[3];
+                    _tempPointStrikeData[0] = "SetPointStrike";
+                    _tempPointStrikeData[1] = isPointStrike;
+                    _tempPointStrikeData[2] = pointStrike;
+                    RequestRPCCall(_tempPointStrikeData);
+
+                    object[] _tempData = new object[4];
+                    _tempData[0] = "ClickMouse";
+                    _tempData[1] = screenRay.origin;
+                    _tempData[2] = screenRay.direction;
+                    _tempData[3] = photonView.OwnerActorNr;
+                    RequestRPCCall(_tempData);
                 }
             }
         }
 
         //2. 로컬 플레이어 입력 후 마스터 클라이언트에서 이벤트 발생
-        [PunRPC]
-        public void AddCommand(int command)
-        {
-            if (commands.Count < 2)
-            {
-                commands.Add(command);
-            }
 
-            if (commands.Count >= 2)
-            {
-                isReadyToUseSkill = true;
-            }
-            UpdateData();
+        //마스터 클라이언트로 요청
+        void RequestRPCCall(object[] data)
+        {
+            photonView.RPC("CallRPCElementalOrderMasterClient", RpcTarget.MasterClient, data);
         }
 
         [PunRPC]
-        public void CancelSkill()
+        public void CallRPCElementalOrderMasterClient(object[] data)
+        {
+            if ((string)data[0] == "AddCommand")
+                AddCommand((int)data[1]);
+            else if ((string)data[0] == "CancelSkill")
+                CancelSkill();
+            else if ((string)data[0] == "ClickMouse")
+                ClickMouse((Vector3)data[1], (Vector3)data[2], (int)data[3]);
+            else if ((string)data[0] == "ResetSkill")
+                ResetSkillResponse();
+            else if ((string)data[0] == "SetPointStrike")
+                SetPointStrike(data);
+        }
+
+        void AddCommand(int command)
+        {
+            if (commands.Count < 2)
+                commands.Add(command);
+
+            if (commands.Count >= 2)
+                isReadyToUseSkill = true;
+            UpdateData();
+        }
+
+        void CancelSkill()
         {
             isReadyToUseSkill = false;
-
-            if (skillState == SkillState.BurstFlare)
-            {
-                burstFlareCoolDownTime = burstFlare.GetSkillCoolDownTime();
-                burstFlare = null;
-            }
-            else if (skillState == SkillState.MeteorStrike)
-            {
-                meteorStrike = null;
-            }
-            else if (skillState == SkillState.TerraBreak)
-            {
-                terraBreak = null;
-            }
-            else if (skillState == SkillState.EterialStorm)
-            {
-                eterialStorm = null;
-            }
-            else if (skillState == SkillState.RagnaEdge)
-            {
-                ragnaEdge = null;
-            }
-            else if (skillState == SkillState.GaiaTied)
-            {
-                gaiaTied = null;
-            }
-
+            burstFlareCoolDownTime = burstFlare.GetSkillCoolDownTime();
             skillState = SkillState.None;
             commands.Clear();
             UpdateData();
         }
-
-        [PunRPC]
-        public void ClickMouse(Vector3 origin, Vector3 direction, int ownerActorNum)
+        
+        void ClickMouse(Vector3 origin, Vector3 direction, int ownerActorNum)
         {
             if (skillState == SkillState.None)
             {
@@ -372,15 +374,131 @@ namespace Player
                 }
             }
             else
-            {
                 UseSkill(origin, direction, ownerActorNum);
-            }
 
             UpdateData();
             SetSkill();
         }
 
-        //3. 마스터 클라이언트에서 데이터 처리
+        void CheckCommands(Vector3 origin, Vector3 direction, int ownerActorNum)
+        {
+            isReadyToUseSkill = false;
+            UseSkill(origin, direction, ownerActorNum);
+            commands.Clear();
+        }
+
+        void ResetSkill()
+        {
+            object[] _tempData = new object[2];
+            _tempData[0] = "ResetSkill";
+            RequestRPCCall(_tempData);
+        }
+
+        void ResetSkillResponse()
+        {
+            object[] _tempData = new object[2];
+            _tempData[0] = "ResetSkillResponse";
+            ResponseRPCCall((_tempData));
+        }
+
+        void SetPointStrike(object[] data)
+        {
+            isPointStrike = (bool)data[1];
+            pointStrike = (Vector3)data[2];
+        }
+
+
+        //마스터 클라이언트의 응답
+
+        void ResponseRPCCall(object[] data)
+        {
+            photonView.RPC("CallRPCElementalOrderToAll", RpcTarget.AllBuffered, data);
+        }
+
+        [PunRPC]
+        public void CallRPCElementalOrderToAll(object[] data)
+        {
+            if (((string)data[0] == "UpdateData"))
+                UpdateDataServer(data);
+            else if (((string)data[0] == "SetSkill"))
+                SetSkillServer(data);
+            else if (((string)data[0] == "SetAnimation"))
+                SetAnimationServer(data);
+            else if (((string)data[0] == "ResetSkillResponse"))
+                ResetSkillServer();
+        }
+
+        void SetAnimation(string spell, bool isSpell)
+        {
+            object[] _tempData = new object[3];
+            _tempData[0] = "SetAnimation";
+            _tempData[1] = spell;
+            _tempData[2] = isSpell;
+            ResponseRPCCall(_tempData);
+        }
+
+        void SetAnimationServer(object[] data)
+        {
+            if (photonView.IsMine)
+            {
+                overlayAnimator.SetBool((string)data[1], (bool)data[2]);
+                animator.SetBool((string)data[1], (bool)data[2]);
+            }
+        }
+
+        void UpdateData()
+        {
+            object[] _tempData = new object[6];
+            _tempData[0] = "UpdateData";
+            _tempData[1] = commands.ToArray();
+            _tempData[2] = skillState;
+            _tempData[3] = burstFlare.CheckReady();
+            _tempData[4] = burstFlare.CheckCurrentBullet();
+            _tempData[5] = isPointStrike;
+            ResponseRPCCall(_tempData);
+        }
+
+        void UpdateDataServer(object[] data)
+        {
+            commands = ((int[])data[1]).ToList();
+            skillState = (SkillState)data[2];
+            burstFlare.SetReady((bool)data[3]);
+            burstFlare.SetBullet((int)data[4]);
+            isPointStrike = (bool)data[5];
+        }
+
+
+        public void SetSkill()
+        {
+            object[] _tempData = new object[6];
+            _tempData[0] = "SetSkill";
+            _tempData[1] = isRagnaEdge;
+            _tempData[2] = isGaiaTied;
+            _tempData[3] = isMeteorStrike;
+            _tempData[4] = isTerraBreak;
+            _tempData[5] = isEterialStorm;
+            ResponseRPCCall(_tempData);
+        }
+
+        void SetSkillServer(object[] data)
+        {
+            isRagnaEdge = (bool)data[1];
+            isGaiaTied = (bool)data[2];
+            isMeteorStrike = (bool)data[3];
+            isTerraBreak = (bool)data[4];
+            isEterialStorm = (bool)data[5];
+        }
+
+        void ResetSkillServer()
+        {
+            isRagnaEdge = false;
+            isGaiaTied = false;
+            isMeteorStrike = false;
+            isTerraBreak = false;
+            isEterialStorm = false;
+        }
+
+        //마스터 클라이언트에서 데이터 처리
         void UseSkill(Vector3 origin, Vector3 direction, int ownerActorNum)
         {
             if (skillState == SkillState.RagnaEdge)
@@ -393,20 +511,20 @@ namespace Player
 
                 if (isPointStrike == true)
                 {
-                    object[] _data = new object[5];
+                    object[] _data = new object[3];
                     _data[0] = name;
                     _data[1] = tag;
                     _data[2] = "RagnaEdge";
 
-                    ragnaEdgeCoolDownTime = ragnaEdge.GetSkillCoolDownTime();
+                    SetAnimation("Spell1", true);
 
-                    overlayAnimator.SetBool("Spell1", true);
-                    animator.SetBool("Spell1", true);
+                    GameObject _tempObject = PhotonNetwork.Instantiate("ChanYoung/Prefabs/RagnaEdge", pointStrike, Quaternion.identity, data: _data);
+                    _tempObject.GetComponent<PhotonView>().TransferOwnership(ownerActorNum);
 
-                    PhotonNetwork.Instantiate("ChanYoung/Prefabs/RagnaEdge", pointStrike, Quaternion.identity, data: _data);
                     isPointStrike = false;
-                    skillState = SkillState.None;
+                    ragnaEdgeCoolDownTime = ragnaEdge.GetSkillCoolDownTime();
                     ragnaEdge.EndSkill();
+                    skillState = SkillState.None;
                 }
             }
             else if (skillState == SkillState.BurstFlare)
@@ -416,7 +534,7 @@ namespace Player
                 if (burstFlare.CheckReady() == false)
                 {
                     burstFlare.Initialize();
-                    photonView.RPC("SetAnimation", RpcTarget.AllBuffered, "Spell2", true);
+                    SetAnimation("Spell2", true);
                 }
                 else
                 {
@@ -434,12 +552,10 @@ namespace Player
 
                     if (_result == true)
                     {
-                        skillState = SkillState.None;
+                        SetAnimation("Spell2", false);
                         burstFlareCoolDownTime = burstFlare.GetSkillCoolDownTime();
-
-                        photonView.RPC("SetAnimation", RpcTarget.AllBuffered, "Spell6", false);
-
                         burstFlare.EndSkill();
+                        skillState = SkillState.None;
                     }
                 }
             }
@@ -459,14 +575,15 @@ namespace Player
                     _data[2] = "gaiaTied";
                     _data[3] = direction;
 
-                    photonView.RPC("SetAnimation", RpcTarget.AllBuffered, "Spell3", true);
+                    SetAnimation("Spell3", true);
 
                     GameObject _tempObject = PhotonNetwork.Instantiate("ChanYoung/Prefabs/GaiaTied", pointStrike, Quaternion.identity, data: _data);
                     _tempObject.GetComponent<PhotonView>().TransferOwnership(ownerActorNum);
-                    gaiaTiedCoolDownTime = gaiaTied.GetSkillCoolDownTime();
+
                     isPointStrike = false;
-                    skillState = SkillState.None;
+                    gaiaTiedCoolDownTime = gaiaTied.GetSkillCoolDownTime();
                     gaiaTied.EndSkill();
+                    skillState = SkillState.None;
                 }
             }
             else if(skillState == SkillState.MeteorStrike)
@@ -487,14 +604,15 @@ namespace Player
 
                         pointStrike += new Vector3(0, 0.05f, 0);
 
-                        photonView.RPC("SetAnimation", RpcTarget.AllBuffered, "Spell4", true);
+                        SetAnimation("Spell4", true);
 
                         GameObject _tempObject = PhotonNetwork.Instantiate("ChanYoung/Prefabs/MeteorStrike", pointStrike, Quaternion.identity, data: _data);
                         _tempObject.GetComponent<PhotonView>().TransferOwnership(ownerActorNum);
-                        meteorStrikeCoolDownTime = meteorStrike.GetSkillCoolDownTime();
+
                         isPointStrike = false;
-                        skillState = SkillState.None;
+                        meteorStrikeCoolDownTime = meteorStrike.GetSkillCoolDownTime();
                         meteorStrike.EndSkill();
+                        skillState = SkillState.None;
                     }
                 }
             }
@@ -513,14 +631,15 @@ namespace Player
                     _data[1] = tag;
                     _data[2] = "TerraBreak";
 
-                    photonView.RPC("SetAnimation", RpcTarget.AllBuffered, "Spell5", true);
+                    SetAnimation("Spell5", true);
 
                     GameObject _tempObject = PhotonNetwork.Instantiate("ChanYoung/Prefabs/TerraBreak", pointStrike, Quaternion.identity, data: _data);
                     _tempObject.GetComponent<PhotonView>().TransferOwnership(ownerActorNum);
-                    terraBreakCoolDownTime = terraBreak.GetSkillCoolDownTime();
+
                     isPointStrike = false;
-                    skillState = SkillState.None;
+                    terraBreakCoolDownTime = terraBreak.GetSkillCoolDownTime();
                     terraBreak.EndSkill();
+                    skillState = SkillState.None;
                 }
             }
             else if (skillState == SkillState.EterialStorm)
@@ -533,16 +652,18 @@ namespace Player
                     _data[1] = tag;
                     _data[2] = "EterialStorm";
 
-                    photonView.RPC("SetAnimation", RpcTarget.AllBuffered, "Spell6", true);
+                    SetAnimation("Spell6", true);
 
                     GameObject _tempObject = PhotonNetwork.Instantiate("ChanYoung/Prefabs/Cylinder", pointStrike, Quaternion.identity, data: _data);
                     _tempObject.GetComponent<PhotonView>().TransferOwnership(ownerActorNum);
+
+                    isPointStrike = false;
                     eterialStormCoolDownTime = eterialStorm.GetSkillCoolDownTime();
                     skillState = SkillState.None;
-                    isPointStrike = false;
                 }
             }
         }
+
         //로컬 클라이언트에서 확인하는 요소
         void CheckSkillOnMine()
         {
@@ -690,7 +811,6 @@ namespace Player
                                     rangePointStrikeArea.GetComponent<ParticleSystem>().Simulate(0.3f);
                                 }
                             }
-
                         }
                         else
                         {
@@ -714,79 +834,8 @@ namespace Player
 
         }
 
-        //데이터 연동 관련 요소
 
-        [PunRPC]
-        public void SetAnimation(string stateName, bool isSpell)
-        {
-            if(photonView.IsMine)
-            {
-                overlayAnimator.SetBool(stateName, isSpell);
-                animator.SetBool(stateName, isSpell);
-            }
-        }
-
-        public void SetPointStrike()
-        {
-            photonView.RPC("SetPointStrikeServer", RpcTarget.AllBuffered, isPointStrike, pointStrike);
-        }
-
-        [PunRPC]
-        public void SetPointStrikeServer(bool isNewPointStrike, Vector3 newPointStrike)
-        {
-            isPointStrike = isNewPointStrike;
-            pointStrike = newPointStrike;
-        }
-
-        public void ResetSkill()
-        {
-            photonView.RPC("ResetSkillServer", RpcTarget.MasterClient);
-        }
-
-        [PunRPC]
-        public void ResetSkillServer()
-        {
-            photonView.RPC("SetSkillServer", RpcTarget.AllBuffered, false, false, false, false, false);
-        }
-
-        public void SetSkill()
-        {
-            photonView.RPC("SetSkillServer", RpcTarget.OthersBuffered, isRagnaEdge, isGaiaTied, isMeteorStrike, isTerraBreak, isEterialStorm);
-        }
-
-        [PunRPC]
-        public void SetSkillServer(bool spell1, bool spell3, bool spell4, bool spell5, bool spell6)
-        {
-            isRagnaEdge = spell1;
-            isGaiaTied = spell3;
-            isMeteorStrike = spell4;
-            isTerraBreak = spell5;
-            isEterialStorm = spell6;
-        }
-
-        [PunRPC]
-        public void UpdateDataServer(int[] masterCommands, SkillState newSkillState, bool isReadyBurstFlare,
-            int burstFlareBullets)
-        {
-            commands = masterCommands.ToList();
-            skillState = newSkillState;
-            burstFlare.SetReady(isReadyBurstFlare);
-            burstFlare.SetBullet(burstFlareBullets);
-        }
-
-        void CheckCommands(Vector3 origin, Vector3 direction, int ownerActorNum)
-        {
-            isReadyToUseSkill = false;
-            UseSkill(origin, direction, ownerActorNum);
-            commands.Clear();
-        }
-
-        void UpdateData()
-        {
-            photonView.RPC("UpdateDataServer", RpcTarget.OthersBuffered, commands.ToArray(), skillState, burstFlare.CheckReady(),
-                burstFlare.CheckCurrentBullet());
-        }
-
+        //요청
 
         public override void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
         {
@@ -858,7 +907,6 @@ namespace Player
                 animator.SetBool("Spell1", false);
             else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Spell2"))
             {
-                Debug.Log(animator.GetBool("Spell2"));
                 if (burstFlare.CheckReady() == false)
                 {
                     animator.SetBool("Spell2", false);

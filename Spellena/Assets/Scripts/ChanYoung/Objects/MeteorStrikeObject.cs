@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MeteorStrikeObject : SpawnObject, IPunObservable
+public class MeteorStrikeObject : SpawnObject
 {
     public ElementalOrderData elementalOrderData;
 
@@ -19,60 +19,44 @@ public class MeteorStrikeObject : SpawnObject, IPunObservable
     bool isColliderOn = false;
     void Start()
     {
-        if (PhotonNetwork.IsMasterClient)
-        {
-            OnEnable();
-        }
+        Init();
     }
 
     void Update()
     {
         if (PhotonNetwork.IsMasterClient)
-        {
             CheckTimer();
-        }
     }
 
     void CheckTimer()
     {
         if(currentCastingTime > 0f)
-        {
             currentCastingTime -= Time.deltaTime;
-        }
         else
         {
             if(isColliderOn == false)
-            {
-                isColliderOn = true;
-                hitEffect.SetActive(true);
-            }
+                RequestRPC("ActiveCollider");
             if(currentLifeTime > 0f)
             {
                 currentLifeTime -= Time.deltaTime;
                 if(currentLifeTime <= 0f)
-                {
-                    PhotonNetwork.Destroy(gameObject);
-                }
+                    RequestRPC("RequestDestroy");
             }
         }
-    }
-
-    public override void OnEnable()
-    {
-        base.OnEnable();
-        Init();
+        RequestRPC("UpdateData");
     }
 
     void Init()
     {
         castingTime = elementalOrderData.meteorStrikeCastingTime;
         lifeTime = elementalOrderData.meteorStrikeLifeTime;
+        hitCollider.GetComponent<TriggerEventer>().hitTriggerEvent += TriggerEvent;
+
         currentCastingTime = castingTime;
         currentLifeTime = lifeTime;
-        hitCollider.GetComponent<TriggerEventer>().hitTriggerEvent += triggerEvent;
     }
 
-    void triggerEvent(GameObject gameObject)
+    void TriggerEvent(GameObject gameObject)
     {
         if (isColliderOn)
         {
@@ -80,16 +64,50 @@ public class MeteorStrikeObject : SpawnObject, IPunObservable
         }
     }
 
-    public override void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    void RequestRPC(string tunnelCommand)
     {
-        base.OnPhotonSerializeView(stream, info);
-        if (stream.IsWriting)
+        object[] _tempData;
+        if (tunnelCommand == "UpdateData")
         {
-
+            _tempData = new object[3];
+            _tempData[0] = tunnelCommand;
+            _tempData[1] = currentCastingTime;
+            _tempData[2] = currentLifeTime;
         }
         else
         {
-
+            _tempData = new object[2];
+            _tempData[0] = tunnelCommand;
         }
+        
+        photonView.RPC("CallRPCTunnelElementalOrderSpell4", RpcTarget.AllBuffered, _tempData);
+    }
+
+    [PunRPC]
+    public void CallRPCTunnelElementalOrderSpell4(object[] data)
+    {
+        if ((string)data[0] == "ActiveCollider")
+            ActiveCollider();
+        else if ((string)data[0] == "RequestDestroy")
+            RequestDestroy();
+        else if ((string)data[0] == "UpdateData")
+            UpdateData(data);
+    }
+    void ActiveCollider()
+    {
+        isColliderOn = true;
+        hitEffect.SetActive(true);
+    }
+    
+    void RequestDestroy()
+    {
+        if(photonView.IsMine)
+            PhotonNetwork.Destroy(gameObject);
+    }
+    
+    void UpdateData(object[] data)
+    {
+        currentCastingTime = (float)data[1];
+        currentLifeTime = (float)data[2];
     }
 }

@@ -9,6 +9,7 @@ public class LoginSystem : MonoBehaviour
     // 로그인
     public InputField email;
     public InputField passward;
+    public GameObject faultPanel;
 
     // 회원 가입
     private bool readyToRegister = false;
@@ -20,6 +21,7 @@ public class LoginSystem : MonoBehaviour
     public InputField birthDate;
     public InputField phoneNumber;
     public InputField nickNameField;
+    public Text nickNameCheckText;
 
     // 아이디 찾기
     public InputField userNameInput;
@@ -37,6 +39,7 @@ public class LoginSystem : MonoBehaviour
     void Start()
     {
         FirebaseLoginManager.Instance.Init();
+        faultPanel.SetActive(false);
     }
 
     // Update is called once per frame
@@ -45,17 +48,21 @@ public class LoginSystem : MonoBehaviour
         if (string.IsNullOrEmpty(registerPasswardCheck.text))
         {
             passwardOkText.text = "";
-            readyToRegister = false;
         }
         else if (registerPassward.text == registerPasswardCheck.text)
         {
             passwardOkText.text = "확인되었습니다.";
-            readyToRegister = true;
         }
         else
         {
             passwardOkText.text = "비밀번호가 일치하지 않습니다.";
-            readyToRegister = false;
+        }
+
+        if(nickNameField.text != null && userName.text != null && birthDate.text != null
+            && birthDate.text != null && phoneNumber.text != null &&
+            registerPassward.text == registerPasswardCheck.text)
+        {
+            readyToRegister = true;
         }
     }
 
@@ -66,7 +73,7 @@ public class LoginSystem : MonoBehaviour
 
     public void SignIn()
     {
-        FirebaseLoginManager.Instance.SignIn(email.text, passward.text);
+        FirebaseLoginManager.Instance.SignIn(email.text, passward.text, faultPanel);
     }
 
     public void SignOut()
@@ -84,6 +91,11 @@ public class LoginSystem : MonoBehaviour
             FirebaseLoginManager.Instance.SetPhoneNumber(phoneNumber.text);
             Register();
         }
+    }
+
+    public void OnClickCheckNickName()
+    {
+        nickNameCheckText.text = nickNameField.text;
     }
 
     public void OnClickFindID()

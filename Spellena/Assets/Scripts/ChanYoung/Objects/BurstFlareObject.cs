@@ -2,9 +2,11 @@ using Photon.Pun;
 using Player;
 using UnityEngine;
 
-public class BurstFlareObject : SpawnObject, IPunObservable
+public class BurstFlareObject : SpawnObject
 {
     public ElementalOrderData elementalOrderData;
+
+    public int instantiateCode = -1;
 
     Vector3 direction;
 
@@ -15,24 +17,13 @@ public class BurstFlareObject : SpawnObject, IPunObservable
     public ParticleSystem explodeParticle;
     void Start()
     {
-        if (PhotonNetwork.IsMasterClient)
-        {
-            OnEnable();
-        }
-    }
-
-    public override void OnEnable()
-    {
-        base.OnEnable();
         Init();
     }
 
     private void Update()
     {
         if (PhotonNetwork.IsMasterClient)
-        {
             CheckTime();
-        }
     }
 
     void CheckTime()
@@ -40,9 +31,49 @@ public class BurstFlareObject : SpawnObject, IPunObservable
         currentLifeTime -= Time.deltaTime;
         if(currentLifeTime <= 0f)
         {
-            DestorySpawnObject();
+            RequestRPC("RequestDestroy");
         }
     }
+
+    void RequestRPC(string tunnelCommand)
+    {
+        object[] _tempData;
+        if(tunnelCommand == "UpdateData")
+        {
+            _tempData = new object[2];
+            _tempData[0] = tunnelCommand;
+            _tempData[1] = currentLifeTime;
+        }
+        else
+        {
+            _tempData = new object[2];
+            _tempData[0] = tunnelCommand;
+        }
+
+        photonView.RPC("CallRPCTunnelElementalOrderSpell2", RpcTarget.AllBuffered, _tempData);
+    }
+
+    [PunRPC]
+    public void CallRPCTunnelElementalOrderSpell2(object[] data)
+    {
+        if ((string)data[0] == "UpdateData")
+            UpdateData();
+        else if ((string)data[0] == "RequestDestroy")
+            RequestDestroy();
+    }
+
+    void RequestDestroy()
+    {
+        if(photonView.IsMine)
+            PhotonNetwork.Destroy(gameObject);
+    }
+
+    void UpdateData()
+    {
+        currentLifeTime = (float)data[1];
+    }
+
+
 
     void Init()
     {
@@ -63,18 +94,5 @@ public class BurstFlareObject : SpawnObject, IPunObservable
         shootParticle.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
         explodeParticle.transform.position = pos;
         explodeParticle.Play(true);
-    }
-
-    public override void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
-    {
-        base.OnPhotonSerializeView(stream, info);
-        if(stream.IsWriting)
-        {
-
-        }
-        else
-        {
-
-        }
     }
 }

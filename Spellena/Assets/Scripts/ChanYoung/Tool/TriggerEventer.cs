@@ -7,9 +7,9 @@ public class TriggerEventer : MonoBehaviour
 {
     public event Action<GameObject> hitTriggerEvent;
 
-
     private void OnTriggerStay(Collider other)
     {
-        hitTriggerEvent(other.gameObject);
+        if(hitTriggerEvent != null)
+            hitTriggerEvent(other.gameObject);
     }
 }

@@ -30,10 +30,7 @@ public class GaiaTiedObject : SpawnObject, IPunObservable
 
     void Start()
     {
-        if (PhotonNetwork.IsMasterClient)
-        {
-            OnEnable();
-        }
+        Init();
     }
     void Update()
     {
@@ -104,12 +101,6 @@ public class GaiaTiedObject : SpawnObject, IPunObservable
         }
     }
 
-    public override void OnEnable()
-    {
-        base.OnEnable();
-        Init();
-    }
-
     void Init()
     {
         castingTime = elementalOrderData.gaiaTiedCastingTime;
@@ -133,7 +124,6 @@ public class GaiaTiedObject : SpawnObject, IPunObservable
             cylinders[i].GetComponent<TriggerEventer>().hitTriggerEvent += triggerCylinderEvent;
             reverseScale.Add(false);
         }
-
     }
 
     void triggerCylinderEvent(GameObject gameObject)
