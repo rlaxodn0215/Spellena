@@ -96494,8 +96494,9 @@ MonoBehaviour:
   Alive: {fileID: 5742941989037182826}
   Dead: {fileID: 1006462216615846061}
   playerName: ElementalOrderTester
-  murder: 
   isOccupying: 0
+  chargeCount: 0
+  ultimateCount: 0
   hp: 0
   sitSpeed: 0
   sitSideSpeed: 0

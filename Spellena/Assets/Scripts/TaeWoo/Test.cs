@@ -1,13 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Photon.Pun;
 
-public class Test : MonoBehaviourPunCallbacks,IPunObservable
+public class Test : MonoBehaviour
 {
-
-    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    private void Update()
     {
-        
+        if(Input.GetKeyDown(KeyCode.Space))
+        {
+            LoadSceneManager.LoadNextScene("TaeWooScene_3");
+        }
     }
+
 }
