@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
+using Photon.Realtime;
 using UnityEngine.SceneManagement;
 
 public class LoadSceneManager : MonoBehaviour
@@ -11,7 +13,7 @@ public class LoadSceneManager : MonoBehaviour
     public static void LoadNextScene(string sceneName)
     {
         nextScene = sceneName;
-        SceneManager.LoadScene("TaeWoo_LoadingScene");
+        PhotonNetwork.LoadLevel("TaeWoo_LoadingScene");
     }
 
     void Start()

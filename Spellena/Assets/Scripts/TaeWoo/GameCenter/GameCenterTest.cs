@@ -23,8 +23,7 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
 
     public enum GameState
     {
-        WaitingAllPlayer,
-        DataLoading,
+        InitPlayerData,
         CharacterSelect,
         GameReady,
         DuringRound,
@@ -144,13 +143,9 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
 
     private void Awake()
     {
-        WaitingPlayers temp = gameObject.AddComponent<WaitingPlayers>();
+        InitPlayerData temp = gameObject.AddComponent<InitPlayerData>();
         temp.ConnectCenter(this);
-        centerStates.Add(GameState.WaitingAllPlayer, temp);
-
-        DataLoading temp1 = gameObject.AddComponent<DataLoading>();
-        temp1.ConnectCenter(this);
-        centerStates.Add(GameState.DataLoading, temp1);
+        centerStates.Add(GameState.InitPlayerData, temp);
 
         CharacterSelect temp2 = gameObject.AddComponent<CharacterSelect>();
         temp2.ConnectCenter(this);
@@ -176,7 +171,7 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
         temp7.ConnectCenter(this);
         centerStates.Add(GameState.GameResult, temp7);
 
-        currentGameState = GameState.WaitingAllPlayer;
+        currentGameState = GameState.InitPlayerData;
         currentCenterState = centerStates[currentGameState];
     }
 
