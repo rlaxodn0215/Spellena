@@ -12,21 +12,45 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fafd9958282b7b34ba039a1c3f944018, type: 3}
   m_Name: ElementalOrderData
   m_EditorClassIdentifier: 
-  hp: 100
-  sitSpeed: 5
+  hp: 600
+  moveSpeed: 10
+  backSpeed: 8
+  sideSpeed: 9
+  runSpeedRatio: 1.2
+  sitSpeed: 6
   sitSideSpeed: 5
-  sitBackSpeed: 5
-  moveSpeed: 5
-  backSpeed: 5
-  sideSpeed: 5
-  runSpeedRatio: 1
+  sitBackSpeed: 4
   jumpHeight: 5
+  headShotRatio: 3
+  ragnaEdgeFloorDamage: 150
+  ragnaEdgeCylinderDamage: 150
+  rangaEdgeCoolDownTime: 10
   ragnaEdgeCastingTime: 2
-  ragnaEdgeFloorLifeTime: 1
-  ragnaEdgeCylinderLifeTime: 2
+  ragnaEdgeFloorLifeTime: 2.5
+  ragnaEdgeCylinderLifeTime: 1.5
+  rangaEdgeCylinderDebuff: burn
+  burstFlareBullet: 5
+  burstFlareDamage: 50
+  burstFlareCoolDownTime: 6
+  burstFlareCastingTime: 0.5
   burstFlareLifeTime: 4
+  gaiaTiedDamage:
+  - 200
+  - 200
+  - 200
+  - 200
+  - 200
+  - 200
+  gaiaTiedCoolDownTime: 200
   gaiaTiedCastingTime: 2
-  gaiaTiedLifeTime: 3
+  gaiaTiedMaxDistace: 15
+  gaiaTiedLifeTime:
+  - 0.5
+  - 0.5
+  - 0.5
+  - 0.5
+  - 0.5
+  - 0.5
   meteorStrikeCastingTime: 3.5
   meteorStrikeLifeTime: 10
   terraBreakCastingTime: 4.5

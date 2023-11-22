@@ -30,9 +30,7 @@ public class BurstFlareObject : SpawnObject
     {
         currentLifeTime -= Time.deltaTime;
         if(currentLifeTime <= 0f)
-        {
             RequestRPC("RequestDestroy");
-        }
     }
 
     void RequestRPC(string tunnelCommand)
@@ -48,6 +46,9 @@ public class BurstFlareObject : SpawnObject
         {
             _tempData = new object[2];
             _tempData[0] = tunnelCommand;
+
+            if (tunnelCommand == "RequestDestroy")
+                Debug.Log(photonView.ViewID);
         }
 
         photonView.RPC("CallRPCTunnelElementalOrderSpell2", RpcTarget.AllBuffered, _tempData);
@@ -72,8 +73,6 @@ public class BurstFlareObject : SpawnObject
     {
         currentLifeTime = (float)data[1];
     }
-
-
 
     void Init()
     {

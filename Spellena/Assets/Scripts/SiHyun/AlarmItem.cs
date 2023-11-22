@@ -26,9 +26,11 @@ public class AlarmItem : MonoBehaviour
 
     private void OnButtonClick(GameObject _quickMatchUI, GameObject _mainUI, string _alarmType)
     {
-        if(_alarmType == "파티 요청")
-        _quickMatchUI.SetActive(true);
-        _mainUI.SetActive(false);
+        if (_alarmType == "파티 요청")
+        {
+            _quickMatchUI.SetActive(true);
+            _mainUI.SetActive(false);
+        }
         Debug.Log("수락 버튼 눌림");
     }
 

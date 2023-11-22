@@ -82,6 +82,7 @@ namespace Player
         TerraBreak terraBreak = new TerraBreak();
         EterialStorm eterialStorm = new EterialStorm();
 
+        float spell1DefaultAnimationLength;
 
         float ragnaEdgeCoolDownTime = 0f;
         float burstFlareCoolDownTime = 0f;
@@ -110,6 +111,7 @@ namespace Player
                 //테스트 정보
                 HashTable _tempTable = new HashTable();
                 _tempTable.Add("CharacterViewID", photonView.ViewID);
+                _tempTable.Add("IsAlive", true);
                 PhotonNetwork.LocalPlayer.SetCustomProperties(_tempTable);
             }
 
@@ -134,10 +136,6 @@ namespace Player
                 CheckAnimator();
                 CheckPoint();
                 CheckSkillOnMine();
-
-                Debug.Log(skillState);
-                Debug.Log(pointStrike);
-                Debug.Log(isPointStrike);
             }
 
             if(PhotonNetwork.IsMasterClient)
@@ -326,7 +324,7 @@ namespace Player
         void CancelSkill()
         {
             isReadyToUseSkill = false;
-            burstFlareCoolDownTime = burstFlare.GetSkillCoolDownTime();
+            burstFlareCoolDownTime = elementalOrderData.burstFlareCoolDownTime;
             skillState = SkillState.None;
             commands.Clear();
             UpdateData();
@@ -521,9 +519,11 @@ namespace Player
                     GameObject _tempObject = PhotonNetwork.Instantiate("ChanYoung/Prefabs/RagnaEdge", pointStrike, Quaternion.identity, data: _data);
                     _tempObject.GetComponent<PhotonView>().TransferOwnership(ownerActorNum);
 
+
                     isPointStrike = false;
-                    ragnaEdgeCoolDownTime = ragnaEdge.GetSkillCoolDownTime();
+                    ragnaEdgeCoolDownTime = elementalOrderData.rangaEdgeCoolDownTime;
                     ragnaEdge.EndSkill();
+
                     skillState = SkillState.None;
                 }
             }
@@ -553,7 +553,7 @@ namespace Player
                     if (_result == true)
                     {
                         SetAnimation("Spell2", false);
-                        burstFlareCoolDownTime = burstFlare.GetSkillCoolDownTime();
+                        burstFlareCoolDownTime = elementalOrderData.burstFlareCoolDownTime;
                         burstFlare.EndSkill();
                         skillState = SkillState.None;
                     }
@@ -861,12 +861,22 @@ namespace Player
         {
             if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Spell1"))
             {
+                float _animationLength = overlayAnimator.GetCurrentAnimatorStateInfo(1).length;
+                //3.31초의 클립을 2초에 보여주기 위한 애니메이션 속도 처리
+                float _normalizedSpeed = _animationLength / elementalOrderData.ragnaEdgeCastingTime;
+                overlayAnimator.SetFloat("Spell1Speed", _normalizedSpeed);
+
                 overlayCamera.transform.localPosition = Vector3.Lerp(overlayCamera.transform.localPosition,
                     overlayCameraDefaultPos + new Vector3(0, 0.2f, 0), Time.deltaTime * 8f);
                 overlayAnimator.SetBool("Spell1", false);
             }
             else if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Spell2"))
             {
+
+                float _animationLength = overlayAnimator.GetCurrentAnimatorStateInfo(1).length;
+                float _normalizedSpeed = _animationLength / elementalOrderData.burstFlareCastingTime;
+                overlayAnimator.SetFloat("Spell2Speed", _normalizedSpeed);
+
                 overlayCamera.transform.localPosition = Vector3.Lerp(overlayCamera.transform.localPosition,
                     overlayCameraDefaultPos + new Vector3(0, 0.2f, 0), Time.deltaTime * 32f);
                 if (burstFlare.CheckReady() == false)
@@ -896,6 +906,7 @@ namespace Player
             }
             else
             {
+                //대기 상태시에는 애니메이터의 속도는 0이다
                 overlayCamera.transform.localPosition = Vector3.Lerp(overlayCamera.transform.localPosition,
                     overlayCameraDefaultPos, Time.deltaTime);
             }
@@ -904,9 +915,17 @@ namespace Player
         void CheckAnimator()
         {
             if (animator.GetCurrentAnimatorStateInfo(0).IsName("Spell1"))
+            {
+                float _animationLength = animator.GetCurrentAnimatorStateInfo(0).length;
+                float _normalizedSpeed = _animationLength / elementalOrderData.ragnaEdgeCastingTime;
+                animator.SetFloat("Spell1Speed", _normalizedSpeed);
                 animator.SetBool("Spell1", false);
+            }
             else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Spell2"))
             {
+                float _animationLength = animator.GetCurrentAnimatorStateInfo(0).length;
+                float _normalizedSpeed = _animationLength / elementalOrderData.burstFlareCastingTime;
+                animator.SetFloat("Spell2Speed", _normalizedSpeed);
                 if (burstFlare.CheckReady() == false)
                 {
                     animator.SetBool("Spell2", false);

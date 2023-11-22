@@ -53,18 +53,6 @@ public class MatchMaking : MonoBehaviourPunCallbacks
         }
     }
 
-    public void JoinParty()
-    {
-        /*if (!FirebaseLoginManager.Instance.IsLobbyMaster(FirebaseLoginManager.Instance.GetUser().UserId))
-        {
-        }*/
-        if(ismaster)
-        {
-            matchStartButton.SetActive(true);
-            ismaster = false;
-        }
-    }
-
     public void JoinRandomOrCreateRoom()
     {
         PhotonNetwork.JoinRandomOrCreateRoom(

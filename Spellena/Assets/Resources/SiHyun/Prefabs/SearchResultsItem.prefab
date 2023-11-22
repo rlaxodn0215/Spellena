@@ -173,6 +173,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   userName: {fileID: 8393768761063308108}
+  inviteButton: {fileID: 1268758216009467350}
 --- !u!1 &5443256500427199697
 GameObject:
   m_ObjectHideFlags: 0

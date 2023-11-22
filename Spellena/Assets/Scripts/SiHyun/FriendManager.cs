@@ -31,15 +31,21 @@ public class FriendManager : MonoBehaviour
 
     public GameObject matchUI;
     public GameObject mainUI;
+    public GameObject friendUI;
 
     string userId;
 
     DatabaseReference reference;
 
+    private bool isLobbyMaster;
+    public GameObject matchButton;
+
     private void Start()
     {
         userId = FirebaseLoginManager.Instance.GetUser().UserId;
         reference = FirebaseLoginManager.Instance.GetReference();
+
+        IsLobbyMaster(userId);
 
         DatabaseReference friendRef = FirebaseLoginManager.Instance.GetReference().Child("friendRequests");
         friendRef.ValueChanged += (sender, args) =>
@@ -130,6 +136,11 @@ public class FriendManager : MonoBehaviour
         {
             searchInputField.onEndEdit.AddListener(SearchUser);
         }
+    }
+
+    async void IsLobbyMaster(string _userId)
+    {
+        isLobbyMaster = await FirebaseLoginManager.Instance.IsLobbyMasterAsync(_userId);
     }
 
     public void AcceptFriend(string _userId, string _friendId)
@@ -227,7 +238,6 @@ public class FriendManager : MonoBehaviour
                             _alarmItem.SetAlarmInfo(_userId, _userNickName, "파티 요청");
                             _alarmItem.SetUpButtons(matchUI, mainUI);
                             alarmItemList.Add(_alarmItem);
-                            Debug.Log(_userId + " : " + _userNickName);
                         }
                     }
                 }
@@ -279,6 +289,7 @@ public class FriendManager : MonoBehaviour
                 string _nickName = await FirebaseLoginManager.Instance.ReadUserInfo(_userId);
                 SearchResultsItem _resultsUser = Instantiate(searchResultsItem, contentObjects);
                 _resultsUser.SetItemInfo(_userId, _nickName);
+                _resultsUser.SetUpButtons(matchUI, mainUI, friendUI, UpdatePartyMemberList);
                 resultsNickNameList.Add(_resultsUser);
             }
         }
@@ -301,5 +312,17 @@ public class FriendManager : MonoBehaviour
     public void OnClickUpdate()
     {
         UpdatePartyMemberList(userId);
+    }
+
+    private void Update()
+    {
+        if(isLobbyMaster)
+        {
+            matchButton.SetActive(true);
+        }
+        else
+        {
+            matchButton.SetActive(false);
+        }
     }
 }
