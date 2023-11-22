@@ -13,6 +13,7 @@ public class GoogleSheetManager : EditorWindow
     private GoogleSheetData googleSheetData;
 
     private AeternaData aeternaData;
+    private ElementalOrderData elementalOrderData;
 
     // URL
     private string URL;
@@ -33,6 +34,7 @@ public class GoogleSheetManager : EditorWindow
         googleSheetData = (GoogleSheetData)EditorGUILayout.ObjectField("SheetData", googleSheetData, typeof(GoogleSheetData), true);
         EditorGUILayout.LabelField("");
         aeternaData = (AeternaData)EditorGUILayout.ObjectField("AeternaData", aeternaData, typeof(AeternaData), true);
+        elementalOrderData = (ElementalOrderData)EditorGUILayout.ObjectField("ElementalOrderData", elementalOrderData, typeof(ElementalOrderData), true);
 
         if (GUILayout.Button("데이터 불러오고 저장하기"))
         {
@@ -64,7 +66,6 @@ public class GoogleSheetManager : EditorWindow
             }
 
             string Data = www.downloadHandler.text;
-
             Debug.Log("데이터 가져오기 성공");
 
             DividText(Data);
@@ -102,10 +103,55 @@ public class GoogleSheetManager : EditorWindow
         switch (index)
         {
             case 0:
-                GiveAeternaData();
+                //GiveAeternaData();
+                break;
+            case 1:
+                GiveElementalOrderData();
                 break;
             default:
                 break;
+        }
+    }
+
+    void GiveElementalOrderData()
+    {
+        elementalOrderData.hp = int.Parse(dividData[28, 0]);
+        elementalOrderData.moveSpeed = float.Parse(dividData[29, 0]);
+        elementalOrderData.backSpeed = float.Parse(dividData[30, 0]);
+        elementalOrderData.sideSpeed = float.Parse(dividData[31, 0]);
+        elementalOrderData.runSpeedRatio = float.Parse(dividData[32, 0]);
+        elementalOrderData.sitSpeed = float.Parse(dividData[33, 0]);
+        elementalOrderData.sitBackSpeed = float.Parse(dividData[34, 0]);
+        elementalOrderData.sitSideSpeed = float.Parse(dividData[35, 0]);
+        elementalOrderData.jumpHeight = float.Parse(dividData[36, 0]);
+        elementalOrderData.headShotRatio = float.Parse(dividData[38, 0]);
+        //스킬 1
+        elementalOrderData.ragnaEdgeFloorDamage = float.Parse(dividData[8, 1]);
+        elementalOrderData.ragnaEdgeCylinderDamage = float.Parse(dividData[8, 2]);
+        elementalOrderData.rangaEdgeCoolDownTime = float.Parse(dividData[9, 2]);
+        elementalOrderData.ragnaEdgeCastingTime = float.Parse(dividData[10, 1]);
+        elementalOrderData.ragnaEdgeFloorLifeTime = float.Parse(dividData[16, 1]);
+        elementalOrderData.ragnaEdgeCylinderLifeTime = float.Parse(dividData[16, 2]);
+        elementalOrderData.rangaEdgeCylinderDebuff = dividData[19, 2];
+        //스킬 2
+        elementalOrderData.burstFlareBullet = int.Parse(dividData[4, 9]);
+        elementalOrderData.burstFlareDamage = float.Parse(dividData[8, 9]);
+        elementalOrderData.burstFlareCoolDownTime = float.Parse(dividData[9, 9]);
+        elementalOrderData.burstFlareCastingTime = float.Parse(dividData[10, 9]);
+        elementalOrderData.burstFlareLifeTime = float.Parse(dividData[16, 9]);
+        //스킬 3
+        elementalOrderData.gaiaTiedDamage = new float[6];
+        for (int i = 0; i < 6; i++)
+        {
+            elementalOrderData.gaiaTiedDamage[i] = float.Parse(dividData[8, 3 + i]);
+        }
+        elementalOrderData.gaiaTiedCoolDownTime = float.Parse(dividData[8, 8]);
+        elementalOrderData.gaiaTiedCastingTime = float.Parse(dividData[10, 3]);
+        elementalOrderData.gaiaTiedMaxDistace = float.Parse(dividData[12, 3]);
+        elementalOrderData.gaiaTiedLifeTime = new float[6];
+        for (int i = 0; i < 6; i++)
+        {
+            elementalOrderData.gaiaTiedLifeTime[i] = float.Parse(dividData[16, 3 + i]);
         }
     }
 

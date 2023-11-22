@@ -39,8 +39,11 @@ public class MeteorStrikeObject : SpawnObject
             if(currentLifeTime > 0f)
             {
                 currentLifeTime -= Time.deltaTime;
-                if(currentLifeTime <= 0f)
+                if (currentLifeTime <= 0f)
+                {
                     RequestRPC("RequestDestroy");
+                    Debug.Log("»Ñ½¤");
+                }
             }
         }
         RequestRPC("UpdateData");

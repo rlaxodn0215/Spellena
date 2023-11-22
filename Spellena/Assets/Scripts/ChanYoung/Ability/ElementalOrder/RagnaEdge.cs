@@ -5,14 +5,7 @@ using Player;
 
 public class RagnaEdge
 {
-    float skillCoolDownTime = 10f;
-
     bool isReady = false;
-
-    public float GetSkillCoolDownTime()
-    {
-        return skillCoolDownTime;
-    }
 
     public void Initialize()
     {

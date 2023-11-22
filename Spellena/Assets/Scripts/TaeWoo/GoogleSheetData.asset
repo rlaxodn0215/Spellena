@@ -17,5 +17,9 @@ MonoBehaviour:
     address: https://docs.google.com/spreadsheets/d/1F9yGxGXeHoRzCnQsCOKARQh5ySId8cM9fkFSHiC1kHA/
     range_1: D6
     range_2: AQ17
+  - name: "\uC5D8\uB9AC\uBA58\uD0C8 \uC624\uB354"
+    address: https://docs.google.com/spreadsheets/d/1K4TGXe3SSfbxL0s2vpzVl1ETSarZHiA0G8YuX8W0qIA/
+    range_1: D6
+    range_2: BH23
   exportFormattsv: export?format=tsv
   andRange: '&range='

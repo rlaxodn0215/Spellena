@@ -12,10 +12,13 @@ public class RagnaEdgeObject : SpawnObject
     public GameObject floor;
     public GameObject cylinder;
     public GameObject hitColliderObject;
+    public GameObject RangeArea;
+
+    float floorDamage;
+    float cylinderDamage;
 
     float castingTime;
     float currentCastingTime = 0f;
-
     float floorLifeTime;
     float currentFloorLifeTime = 0f;
     float cylinderLifeTime;
@@ -23,8 +26,10 @@ public class RagnaEdgeObject : SpawnObject
 
     bool isCylinderColliderOn = false;
     bool isFloorColliderOn = false;
-
     bool isReverse = false;
+
+    Vector3 localScaleLerp;
+    Vector3 localPositionLerp;
 
     void Start()
     {
@@ -34,9 +39,14 @@ public class RagnaEdgeObject : SpawnObject
     void Update()
     {
         if (PhotonNetwork.IsMasterClient)
-        {
             CheckTimer();
-        }
+        LerpCylinder();
+    }
+
+    void LerpCylinder()
+    {
+        cylinder.transform.localScale = Vector3.Lerp(cylinder.transform.localScale, localScaleLerp, Time.deltaTime * 10);
+        cylinder.transform.localPosition = Vector3.Lerp(cylinder.transform.localPosition, localPositionLerp, Time.deltaTime * 10);
     }
 
     void CheckTimer()
@@ -52,14 +62,17 @@ public class RagnaEdgeObject : SpawnObject
                 if (isReverse == false)
                 {
                     cylinder.transform.localScale = new Vector3(cylinder.transform.localScale.x,
-                        cylinder.transform.localScale.y + Time.deltaTime * cylinderLifeTime * 2, cylinder.transform.localScale.z);
+                        cylinder.transform.localScale.y + Time.deltaTime * 4 / cylinderLifeTime * 1.1f, cylinder.transform.localScale.z);
                     if (cylinder.transform.localScale.y > 2f)
                         RequestRPC("ReverseCylinder");
                 }
                 else
                 {
-                    cylinder.transform.localScale = new Vector3(cylinder.transform.localScale.x,
-                        Mathf.Lerp(cylinder.transform.localScale.y, 0f, Time.deltaTime * 4), cylinder.transform.localScale.z);
+                    if (cylinder.transform.localScale.y > 0f)
+                    {
+                        cylinder.transform.localScale = new Vector3(cylinder.transform.localScale.x,
+                            cylinder.transform.localScale.y - Time.deltaTime * 4 / cylinderLifeTime * 1.1f, cylinder.transform.localScale.z);
+                    }
                 }
                 cylinder.transform.localPosition = new Vector3(cylinder.transform.localPosition.x,
                     cylinder.transform.localScale.y, cylinder.transform.localPosition.z);
@@ -85,6 +98,8 @@ public class RagnaEdgeObject : SpawnObject
 
     void Init()
     {
+        floorDamage = elementalOrderData.ragnaEdgeFloorDamage;
+        cylinderDamage = elementalOrderData.ragnaEdgeCylinderDamage;
         castingTime = elementalOrderData.ragnaEdgeCastingTime;
         floorLifeTime = elementalOrderData.ragnaEdgeFloorLifeTime;
         cylinderLifeTime = elementalOrderData.ragnaEdgeCylinderLifeTime;
@@ -96,6 +111,21 @@ public class RagnaEdgeObject : SpawnObject
         currentCastingTime = castingTime;
         currentFloorLifeTime = floorLifeTime;
         currentCylinderLifeTime = cylinderLifeTime;
+
+        localPositionLerp = cylinder.transform.localPosition;
+        localScaleLerp = cylinder.transform.localScale;
+
+        BalanceAnimation();
+    }
+
+    void BalanceAnimation()
+    {
+        RangeArea.GetComponent<ParticleSystem>().startLifetime = castingTime * 0.85f;
+
+        for (int i = 0; i < 3; i++)
+        {
+            floor.transform.GetChild(i).GetComponent<ParticleSystem>().startLifetime = floorLifeTime;
+        }
     }
 
     void RequestRPC(string tunnelCommand)
@@ -140,7 +170,11 @@ public class RagnaEdgeObject : SpawnObject
     {
         if (isFloorColliderOn)
         {
-            Debug.Log("히트");
+            if(gameObject.GetComponent<Character>() != null)
+            {
+                if (gameObject.tag != tag)
+                    Debug.Log("데미지");
+            }
         }
     }
 
@@ -148,7 +182,11 @@ public class RagnaEdgeObject : SpawnObject
     {
         if (isCylinderColliderOn)
         {
-            Debug.Log("히트");
+            if (gameObject.GetComponent<Character>() != null)
+            {
+                if (gameObject.tag != tag)
+                    Debug.Log("데미지");
+            }
         }
     }
     
@@ -161,6 +199,7 @@ public class RagnaEdgeObject : SpawnObject
     {
         isCylinderColliderOn = true;
         cylinder.SetActive(true);
+        isFloorColliderOn = false;
     }
     
     void ActiveFloor()
@@ -177,8 +216,8 @@ public class RagnaEdgeObject : SpawnObject
         currentCastingTime = (float)data[1];
         currentFloorLifeTime = (float)data[2];
         currentCylinderLifeTime = (float)data[3];
-        cylinder.transform.localScale = (Vector3)data[4];
-        cylinder.transform.localPosition = (Vector3)data[5];
+        localScaleLerp = (Vector3)data[4];
+        localPositionLerp = (Vector3)data[5];
     }
     
     void RequestDestroy()
