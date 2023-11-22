@@ -3,22 +3,21 @@ using Photon.Pun;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 public class WaitingPlayers : CenterState
 {
-    private int tempNum = 2;
+    private int tempNum = 1;
     public override void StateExecution()
     {
-        gameCenter.gameStateString = "다른 플레이어 기다리는 중...";
-
         if (PhotonNetwork.CurrentRoom.PlayerCount >= tempNum)
         {
             gameCenter.globalTimer = 0.0f;
 
             SetPlayerDatas();
 
-            gameCenter.globalUIObj = PhotonNetwork.Instantiate("TaeWoo/Prefabs/UI/GlobalUI", Vector3.zero, Quaternion.identity);
-            gameCenter.globalUIView = gameCenter.globalUIObj.GetComponent<PhotonView>();
-            gameCenter.globalUI = gameCenter.globalUIObj.GetComponent<GlobalUI>();
+            if (gameCenter.globalUIObj != null)
+            {
+                gameCenter.globalUIView = gameCenter.globalUIObj.GetComponent<PhotonView>();
+                gameCenter.globalUI = gameCenter.globalUIObj.GetComponent<GlobalUI>();
+            }
 
-            gameCenter.playerSpawnPoints = PhotonNetwork.Instantiate("TaeWoo/Prefabs/PlayerSpawnPoints", Vector3.zero, Quaternion.identity);
             MakeSpawnPoint();
 
             gameCenter.currentGameState = GameCenterTest.GameState.DataLoading;
@@ -36,6 +35,7 @@ public class WaitingPlayers : CenterState
             // 보여주는 데이터
             playerData.Add("Name", player.ActorNumber.ToString());
             playerData.Add("Team", "none");
+            playerData.Add("Character", null);
             playerData.Add("TotalDamage", 0);
             playerData.Add("TotalHeal", 0);
             playerData.Add("KillCount", 0);

@@ -15,8 +15,6 @@ public class DataLoading : CenterState
             gameCenter.globalDesiredTimer = tempTimer + gameCenter.loadingTime;
         }
 
-        gameCenter.gameStateString = "데이터 불러오는 중...";
-
         gameCenter.globalTimer += Time.deltaTime;
 
         // 맵 및 캐릭터 데이터 로딩

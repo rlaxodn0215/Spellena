@@ -5,17 +5,14 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 public class GameCenterTest : MonoBehaviourPunCallbacks
 {
-    [HideInInspector]
+    public GameObject angleStatue;
+    public GameObject playerSpawnPoints;
     public GameObject globalUIObj;
+
     [HideInInspector]
     public PhotonView globalUIView;
     [HideInInspector]
     public GlobalUI globalUI;
-
-    public GameObject angleStatue;
-
-    [HideInInspector]
-    public GameObject playerSpawnPoints;
 
     // 플레이어 소환 좌표
     [HideInInspector]
@@ -54,9 +51,9 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
     [HideInInspector]
     public CenterState currentCenterState;
 
-    // 일시적인 게임 상태 string 테이터
-    [HideInInspector]
-    public string gameStateString;
+    //// 일시적인 게임 상태 string 테이터
+    //[HideInInspector]
+    //public string gameStateString;
 
     // 일시적인 죽은 플레이어
     [HideInInspector]
@@ -186,7 +183,7 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
     {
         if (PhotonNetwork.IsMasterClient)
         {
-            //Debug.Log(globalTimer);
+            Debug.Log(currentGameState);
             currentCenterState.StateExecution();
             currentCenterState = centerStates[currentGameState];
 
@@ -205,7 +202,6 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
         object[] datas = new object[14];
 
         datas[0] = currentGameState;
-        datas[1] = gameStateString;
         datas[2] = roundA;
         datas[3] = roundB;
         datas[4] = teamAOccupying;
@@ -226,7 +222,6 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
     public void SerializeGameCenterDatas(object[] datas)
     {
         currentGameState = (GameState)datas[0];
-        gameStateString = (string)datas[1];
         roundA = (int)datas[2];
         roundB = (int)datas[3];
         teamAOccupying = (int)datas[4];
@@ -385,7 +380,6 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
     public void GiveDataToUI()
     {
         if (globalUI == null) return;
-        globalUI.gameStateString = gameStateString;
         globalUI.globalTimerUI = globalDesiredTimer - globalTimer;
         globalUI.roundEndTimerUI = roundEndTimer;
         globalUI.roundEndTimeUI = roundEndTime;

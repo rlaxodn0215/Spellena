@@ -47,7 +47,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inGameUI: {fileID: 8816560580522957930}
-  etcUI: {fileID: 0}
   gameStateString: 
   globalTimerUI: 0
   roundEndTimerUI: 0

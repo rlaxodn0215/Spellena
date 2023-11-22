@@ -16,22 +16,23 @@ public class CharacterSelect : CenterState
             tempTimer = gameCenter.globalTimer;
             gameCenter.globalDesiredTimer = tempTimer + gameCenter.characterSelectTime;
         }
-
-        gameCenter.gameStateString = "캐릭터 선택";
-
         gameCenter.globalTimer += Time.deltaTime;
 
         // 캐릭터 선택
 
         if (gameCenter.globalTimer >= gameCenter.globalDesiredTimer)
         {
-            gameCenter.currentGameState = GameCenterTest.GameState.GameReady;
             gameCenter.globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "inGameUI", true);
+            gameCenter.currentGameState = GameCenterTest.GameState.GameReady;
 
             MakeCharacter();
             MakeTeamStateUI();
         }
     }
+
+
+
+
     void MakeCharacter()
     {
         int aTeamIndex = 1;

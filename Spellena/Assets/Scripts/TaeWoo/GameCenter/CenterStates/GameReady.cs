@@ -14,7 +14,6 @@ public class GameReady : CenterState
         {
             isCheckTimer = !isCheckTimer;
             tempTimer = gameCenter.globalTimer;
-            gameCenter.gameStateString = "Ready";
             gameCenter.globalDesiredTimer = tempTimer + gameCenter.readyTime;
             gameCenter.globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "etcUI", true);
         }

@@ -7,7 +7,6 @@ using UnityEngine.UI;
 public class GlobalUI : MonoBehaviourPunCallbacks,IPunObservable
 {
     public GameObject inGameUI;
-    public GameObject etcUI;
 
     Dictionary<string, GameObject> UIObjects = new Dictionary<string, GameObject>();
 
@@ -103,7 +102,6 @@ public class GlobalUI : MonoBehaviourPunCallbacks,IPunObservable
     void ConnectUI()
     {
         UIObjects["inGameUI"] = inGameUI;
-        UIObjects["etcUI"] = etcUI;
 
         UIObjects["unContested"] = FindObject(inGameUI, "UnContested");
         UIObjects["captured_Red"] = FindObject(inGameUI, "RedCapture");
@@ -136,11 +134,6 @@ public class GlobalUI : MonoBehaviourPunCallbacks,IPunObservable
         ConnectMyTeamStatus();
         ConnectOutcome();
 
-        UIObjects["gameStateUI"] = FindObject(etcUI, "GameState");
-        UIObjects["timer"] = FindObject(etcUI, "Timer");
-
-        timerText = UIObjects["timer"].GetComponent<Text>();
-        gameStateUIText = UIObjects["gameStateUI"].GetComponent<Text>();
         redPayloadImage = UIObjects["redPayload"].GetComponent<Image>();
         bluePayloadImage = UIObjects["bluePayload"].GetComponent<Image>();
         redPercentageText = UIObjects["redPercentage"].GetComponent<Text>();
@@ -202,14 +195,10 @@ public class GlobalUI : MonoBehaviourPunCallbacks,IPunObservable
     void InitUI()
     {
         UIObjects["inGameUI"].SetActive(false);
-        UIObjects["etcUI"].SetActive(true);
     }
 
     void Update()
     {
-        timerText.text = ((int)globalTimerUI + 1).ToString();
-
-        gameStateUIText.text = gameStateString;
         redPayloadImage.fillAmount = occupyingAUI.rate * 0.01f;
         bluePayloadImage.fillAmount = occupyingBUI.rate * 0.01f;
         redPercentageText.text = string.Format((int)occupyingAUI.rate + "%");
