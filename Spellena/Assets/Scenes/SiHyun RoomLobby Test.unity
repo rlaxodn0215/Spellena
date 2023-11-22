@@ -7310,6 +7310,7 @@ MonoBehaviour:
   lobbyPanel: {fileID: 1296738879}
   roomPanel: {fileID: 21892154}
   roomName: {fileID: 1417388527}
+  startButton: {fileID: 1500513608}
   roomItemPrefab: {fileID: 315107433254511670, guid: 659871ab7399f7c44b12d22cb87809b6, type: 3}
   contentObjects: {fileID: 888688695}
   timeBetweenUpdates: 1.5
