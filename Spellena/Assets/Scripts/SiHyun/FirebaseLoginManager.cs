@@ -60,6 +60,19 @@ public class FirebaseLoginManager
         }
     }
 
+    [System.Serializable]
+    public class PartyRequestData
+    {
+        public string senderUserId;
+        public string status;
+
+        public PartyRequestData(string _senderUserId, string _status)
+        {
+            this.senderUserId = _senderUserId;
+            this.status = _status;
+        }
+    }
+
     public static FirebaseLoginManager Instance
     {
         get
@@ -166,6 +179,7 @@ public class FirebaseLoginManager
     {
         user = auth.CurrentUser;
         SetUserStatus(user.UserId, "오프라인");
+        SetLobbyMaster(user.UserId, false);
         auth.SignOut();
     }
 
@@ -193,6 +207,11 @@ public class FirebaseLoginManager
             return _nickName;
         }
         return null;
+    }
+
+    public void SetPhotonId(string _userId, string _photonId)
+    {
+        reference.Child("users").Child(_userId).Child("photonId").SetValueAsync(_photonId);
     }
 
     public async Task<string> FindUserEmail(string _userName, string _phoneNumber)
@@ -300,11 +319,57 @@ public class FirebaseLoginManager
         return null;
     }
 
+    public void SendPartyRequest(string _senderUserId, string _recevierUserId)
+    {
+        PartyRequestData _user = new PartyRequestData(_senderUserId, "pending");
+        string _json = JsonUtility.ToJson(_user);
+        reference.Child("partyRequests").Child(_recevierUserId).Child("requestsUser:" + _senderUserId).SetRawJsonValueAsync(_json);
+    }
+
+    public async Task<List<string>> GetPartyMemberList(string _userId)
+    {
+        List<string> _requestsList = new List<string>();
+
+        DatabaseReference _requestsRef = reference.Child("users").Child(_userId).Child("partyMemberList");
+
+        var _requestsAlarm = _requestsRef.OrderByValue().EqualTo("party");
+
+        DataSnapshot _beforeProcessingSnapshot = await _requestsAlarm.GetValueAsync();
+
+        if (_beforeProcessingSnapshot.HasChildren)
+        {
+            foreach (var _childrenSnapshot in _beforeProcessingSnapshot.Children)
+            {
+                string _friendId = _childrenSnapshot.Key;
+                _requestsList.Add(_friendId);
+            }
+            return _requestsList;
+        }
+
+        return null;
+    }
+
+    public void SetLobbyMaster(string _userId, bool _type)
+    {
+        reference.Child("users").Child(_userId).Child("isLobbyMaster?").SetValueAsync(_type);
+    }
+
+    public async Task<bool> IsLobbyMasterAsync(string userId)
+    {
+        var dataSnapshot = await reference.Child("users").Child(userId).Child("isLobbyMaster").GetValueAsync().ConfigureAwait(false);
+
+        return dataSnapshot.Exists && dataSnapshot.Value is bool isLobbyMaster && isLobbyMaster;
+    }
+
     public void SetFriendRequestStatus(string _senderUserId, string _recevierUserId, string _status)
     {
         reference.Child("friendRequests").Child(_recevierUserId).Child("requestsUser:" + _senderUserId).Child("status").SetValueAsync(_status);
     }
 
+    public void SetPartyRequestStatus(string _senderUserId, string _recevierUserId, string _status)
+    {
+        reference.Child("partyRequests").Child(_recevierUserId).Child("requestsUser:" + _senderUserId).Child("status").SetValueAsync(_status);
+    }
 
     public void SetUserStatus(string _userId, string _status)
     {

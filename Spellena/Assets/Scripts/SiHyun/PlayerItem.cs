@@ -37,6 +37,14 @@ public class PlayerItem : MonoBehaviourPunCallbacks
         {
             popUpButton.SetActive(false);
         }
+        if(PhotonNetwork.CurrentRoom.PlayerCount < 5)
+        {
+            TeamChanged("TeamAList");
+        }
+        else
+        {
+            TeamChanged("TeamBList");
+        }
     }
 
     private void OnEnable()

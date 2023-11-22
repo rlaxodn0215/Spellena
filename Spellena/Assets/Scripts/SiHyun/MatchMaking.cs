@@ -16,17 +16,28 @@ public class MatchMaking : MonoBehaviourPunCallbacks
     private LoadBalancingClient loadBalancingClient;
     EnterRoomParams enterRoomParams = new EnterRoomParams();
 
+    public GameObject matchStartButton;
+
+    static bool ismaster = true;
+
     private void Awake()
-    {
+    { 
         PhotonNetwork.AutomaticallySyncScene = true;
 
         loadingPanel.SetActive(false);
+
+        // OnConnectedToMaster 이벤트에 대한 리스너 등록
+        PhotonNetwork.AddCallbackTarget(this);
+    }
+
+    private void OnDestroy()
+    {
+        PhotonNetwork.RemoveCallbackTarget(this);
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        Debug.Log("서버 연결 시도");
         PhotonNetwork.ConnectUsingSettings();
         GetUserName();
     }
@@ -42,18 +53,27 @@ public class MatchMaking : MonoBehaviourPunCallbacks
         }
     }
 
+    public void JoinParty()
+    {
+        /*if (!FirebaseLoginManager.Instance.IsLobbyMaster(FirebaseLoginManager.Instance.GetUser().UserId))
+        {
+        }*/
+        if(ismaster)
+        {
+            matchStartButton.SetActive(true);
+            ismaster = false;
+        }
+    }
+
     public void JoinRandomOrCreateRoom()
     {
-        Debug.Log("랜덤 매칭 시작.");
-        byte _maxPlayers = 10;
-
-        RoomOptions _roomOptions = new RoomOptions();
-        _roomOptions.MaxPlayers = _maxPlayers;
-
         PhotonNetwork.JoinRandomOrCreateRoom(
             expectedCustomRoomProperties: new ExitGames.Client.Photon.Hashtable(),
-            expectedMaxPlayers: _maxPlayers, // 참가할 때의 기준.
-            roomOptions: _roomOptions);      // 생성할 때의 기준.
+            expectedMaxPlayers: 10,
+            matchingType: MatchmakingMode.FillRoom,
+            typedLobby: null,
+            sqlLobbyFilter: "",
+            expectedUsers: null);
     }
 
     public void CancelMatching()
@@ -84,9 +104,12 @@ public class MatchMaking : MonoBehaviourPunCallbacks
     //포톤 콜백 함수
     #region 
 
+    // PhotonNetwork 연결이 완료되면 호출되는 콜백
     public override void OnConnectedToMaster()
     {
         print("서버 접속 완료.");
+        FirebaseLoginManager.Instance.SetPhotonId(FirebaseLoginManager.Instance.GetUser().UserId, PhotonNetwork.LocalPlayer.UserId);
+        Debug.Log(PhotonNetwork.LocalPlayer.UserId);
     }
 
     public override void OnJoinedRoom()

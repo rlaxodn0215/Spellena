@@ -95,6 +95,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   alarmType: {fileID: 2124010249884880516}
   senderName: {fileID: 2124010251167743077}
+  acceptButton: {fileID: 2124010250622650046}
 --- !u!1 &2124010249884880522
 GameObject:
   m_ObjectHideFlags: 0
