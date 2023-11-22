@@ -14,6 +14,8 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     public GameObject roomPanel;
     public Text roomName;
 
+    public Button startButton;
+
     List<RoomItem> roomItemList = new List<RoomItem>();
     public RoomItem roomItemPrefab;
     public Transform contentObjects;
@@ -165,7 +167,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
             _playerItem.transform.SetParent(playerItemParentA);
             if(_playerItem.photonView.IsMine)
             {
-            _playerItem.SetPlayerInfo(_newPlayer.UserId, _newPlayer.NickName);
+                _playerItem.SetPlayerInfo(_newPlayer.UserId, _newPlayer.NickName);
             }
 
             CanvasScaler canvasScaler = playerItemParentA.GetComponentInParent<CanvasScaler>();
@@ -237,6 +239,15 @@ public class LobbyManager : MonoBehaviourPunCallbacks
             {
                 SceneManager.LoadScene("SiHyun MainLobby Test");
             }
+        }
+
+        if(!PhotonNetwork.IsMasterClient)
+        {
+            startButton.gameObject.SetActive(false);
+        }
+        else
+        {
+            startButton.gameObject.SetActive(true);
         }
     }
 }
