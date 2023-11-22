@@ -29,10 +29,23 @@ public class StartGame : MonoBehaviour
             // 보여주는 데이터
             playerData.Add("Name", player.NickName);
 
-            //foreach(GameObject gameObject in redTeam.)
+            for(int i = 0; i < redTeam.transform.childCount; i++)
+            {
+                if(player.ActorNumber == redTeam.transform.GetChild(i).GetComponent<PhotonView>().OwnerActorNr)
+                {
+                    playerData.Add("Team", "A");
+                    break;
+                }
+            }
 
-            playerData.Add("Team", "none");
-
+            for (int i = 0; i < blueTeam.transform.childCount; i++)
+            {
+                if (player.ActorNumber == blueTeam.transform.GetChild(i).GetComponent<PhotonView>().OwnerActorNr)
+                {
+                    playerData.Add("Team", "B");
+                    break;
+                }
+            }
 
             playerData.Add("Character", null);
             playerData.Add("TotalDamage", 0);
