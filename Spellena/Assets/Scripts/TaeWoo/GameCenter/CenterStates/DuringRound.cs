@@ -47,8 +47,8 @@ public class DuringRound : CenterState
             switch (param)
             {
                  case "TotalDamage":
-                     if (gameCenter.globalUIView == null) break;
-                    gameCenter.globalUIView.RPC("ShowDamageUI", targetPlayer);
+                     if (gameCenter.inGameUIView == null) break;
+                    gameCenter.inGameUIView.RPC("ShowDamageUI", targetPlayer);
                     // 해당 플레이어에 대한 어시스트 타이머 연결
                     string victimViewID = (string)targetPlayer.CustomProperties["PlayerAssistViewID"];
                     if (victimViewID == null) break;
@@ -68,9 +68,9 @@ public class DuringRound : CenterState
                     GameCenterTest.ChangePlayerCustomProperties(targetPlayer, "HealAssist", temp1);
                     break;
                  case "KillCount":
-                     if (gameCenter.globalUIView == null) break;
-                    gameCenter.globalUIView.RPC("ShowKillUI", targetPlayer, gameCenter.tempVictim);
-                    gameCenter.globalUIView.RPC("ShowKillLog", RpcTarget.AllBufferedViaServer, targetPlayer.CustomProperties["Name"],
+                     if (gameCenter.inGameUIView == null) break;
+                    gameCenter.inGameUIView.RPC("ShowKillUI", targetPlayer, gameCenter.tempVictim);
+                    gameCenter.inGameUIView.RPC("ShowKillLog", RpcTarget.AllBufferedViaServer, targetPlayer.CustomProperties["Name"],
                          gameCenter.tempVictim, ((string)targetPlayer.CustomProperties["Team"] == "A"), targetPlayer.ActorNumber);
                     CheckPlayerHealAssist(targetPlayer);
                     view.RPC("SetUltimatePoint", targetPlayer);
@@ -209,7 +209,7 @@ public class DuringRound : CenterState
                 {
                     foreach (var playerA in gameCenter.playersA)
                     {
-                        gameCenter.globalUIView.RPC("ShowTeamLifeDead", playerA, (string)player.CustomProperties["Name"], false);
+                        gameCenter.inGameUIView.RPC("ShowTeamLifeDead", playerA, (string)player.CustomProperties["Name"], false);
                     }
                 }
 
@@ -217,7 +217,7 @@ public class DuringRound : CenterState
                 {
                     foreach (var playerB in gameCenter.playersB)
                     {
-                        gameCenter.globalUIView.RPC("ShowTeamLifeDead", playerB, (string)player.CustomProperties["Name"], false);
+                        gameCenter.inGameUIView.RPC("ShowTeamLifeDead", playerB, (string)player.CustomProperties["Name"], false);
                     }
                 }
             }
@@ -319,18 +319,18 @@ public class DuringRound : CenterState
         if (gameCenter.occupyingA.rate >= gameCenter.occupyingComplete &&
             gameCenter.currentOccupationTeam == gameCenter.teamA && gameCenter.teamBOccupying <= 0)
         {
-            gameCenter.globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "extraObj", true);
-            gameCenter.globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "redExtraUI", false);
-            gameCenter.globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "redExtraObj", true);
+            gameCenter.inGameUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "extraObj", true);
+            gameCenter.inGameUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "redExtraUI", false);
+            gameCenter.inGameUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "redExtraObj", true);
             gameCenter.roundEndTimer -= Time.deltaTime;
 
         }
         else if (gameCenter.occupyingB.rate >= gameCenter.occupyingComplete &&
             gameCenter.currentOccupationTeam == gameCenter.teamB && gameCenter.teamAOccupying <= 0)
         {
-            gameCenter.globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "extraObj", true);
-            gameCenter.globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "blueExtraUI", false);
-            gameCenter.globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "blueExtraObj", true);
+            gameCenter.inGameUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "extraObj", true);
+            gameCenter.inGameUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "blueExtraUI", false);
+            gameCenter.inGameUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "blueExtraObj", true);
             gameCenter.roundEndTimer -= Time.deltaTime;
         }
         else
@@ -348,31 +348,31 @@ public class DuringRound : CenterState
 
                 if (gameCenter.roundA == 1)
                 {
-                    gameCenter.globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "redFirstPoint", true);
+                    gameCenter.inGameUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "redFirstPoint", true);
 
                     foreach (var player in gameCenter.playersA)
                     {
-                        gameCenter.globalUIView.RPC("ShowRoundWin", player, gameCenter.roundA + gameCenter.roundB);
+                        gameCenter.inGameUIView.RPC("ShowRoundWin", player, gameCenter.roundA + gameCenter.roundB);
                     }
 
                     foreach (var player in gameCenter.playersB)
                     {
-                        gameCenter.globalUIView.RPC("ShowRoundLoose", player, gameCenter.roundA + gameCenter.roundB);
+                        gameCenter.inGameUIView.RPC("ShowRoundLoose", player, gameCenter.roundA + gameCenter.roundB);
                     }
                 }
 
                 else if (gameCenter.roundA == 2)
                 {
-                    gameCenter.globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "redSecondPoint", true);
+                    gameCenter.inGameUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "redSecondPoint", true);
 
                     foreach (var player in gameCenter.playersA)
                     {
-                        gameCenter.globalUIView.RPC("ActiveUI", player, "victory", true);
+                        gameCenter.inGameUIView.RPC("ActiveUI", player, "victory", true);
                     }
 
                     foreach (var player in gameCenter.playersB)
                     {
-                        gameCenter.globalUIView.RPC("ActiveUI", player, "defeat", true);
+                        gameCenter.inGameUIView.RPC("ActiveUI", player, "defeat", true);
                     }
                 }
 
@@ -385,31 +385,31 @@ public class DuringRound : CenterState
 
                 if (gameCenter.roundB == 1)
                 {
-                    gameCenter.globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "blueFirstPoint", true);
+                    gameCenter.inGameUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "blueFirstPoint", true);
 
                     foreach (var player in gameCenter.playersB)
                     {
-                        gameCenter.globalUIView.RPC("ShowRoundWin", player, gameCenter.roundA + gameCenter.roundB);
+                        gameCenter.inGameUIView.RPC("ShowRoundWin", player, gameCenter.roundA + gameCenter.roundB);
                     }
 
                     foreach (var player in gameCenter.playersA)
                     {
-                        gameCenter.globalUIView.RPC("ShowRoundLoose", player, gameCenter.roundA + gameCenter.roundB);
+                        gameCenter.inGameUIView.RPC("ShowRoundLoose", player, gameCenter.roundA + gameCenter.roundB);
                     }
                 }
 
                 else if (gameCenter.roundB == 2)
                 {
-                    gameCenter.globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "blueSecondPoint", true);
+                    gameCenter.inGameUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "blueSecondPoint", true);
 
                     foreach (var player in gameCenter.playersB)
                     {
-                        gameCenter.globalUIView.RPC("ActiveUI", player, "victory", true);
+                        gameCenter.inGameUIView.RPC("ActiveUI", player, "victory", true);
                     }
 
                     foreach (var player in gameCenter.playersA)
                     {
-                        gameCenter.globalUIView.RPC("ActiveUI", player, "defeat", true);
+                        gameCenter.inGameUIView.RPC("ActiveUI", player, "defeat", true);
                     }
                 }
             }

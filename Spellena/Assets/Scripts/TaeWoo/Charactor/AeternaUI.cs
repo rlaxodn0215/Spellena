@@ -31,22 +31,22 @@ namespace Player
 
         void ConnectUI()
         {
-            UIObjects["hpBar"] = GlobalUI.FindObject(gameObject, "HpBar");
-            UIObjects["hpText"] = GlobalUI.FindObject(gameObject, "HpText");
-            UIObjects["chargeBar"] = GlobalUI.FindObject(gameObject, "ChargeBar");
+            UIObjects["hpBar"] = GameCenterTest.FindObject(gameObject, "HpBar");
+            UIObjects["hpText"] = GameCenterTest.FindObject(gameObject, "HpText");
+            UIObjects["chargeBar"] = GameCenterTest.FindObject(gameObject, "ChargeBar");
 
             for (int i = 1; i <= 3; i++)
             {
-                UIObjects["skill_" + i + "_Active"] = GlobalUI.FindObject(gameObject, "Skill_" + i + "_Active");
-                UIObjects["skill_" + i + "_CoolTime"] = GlobalUI.FindObject(gameObject, "Skill_" + i + "_CoolTime");
+                UIObjects["skill_" + i + "_Active"] = GameCenterTest.FindObject(gameObject, "Skill_" + i + "_Active");
+                UIObjects["skill_" + i + "_CoolTime"] = GameCenterTest.FindObject(gameObject, "Skill_" + i + "_CoolTime");
                 skillCooltimes.Add(UIObjects["skill_" + i + "_CoolTime"].GetComponent<Text>());
             }
 
-            UIObjects["skill_4_Active"] = GlobalUI.FindObject(gameObject, "Skill_4_Active");
+            UIObjects["skill_4_Active"] = GameCenterTest.FindObject(gameObject, "Skill_4_Active");
 
             for(int i = 1; i <= 4; i++)
             {
-                UIObjects["skill_"+i+"_Lock"] = GlobalUI.FindObject(gameObject, "Skill_"+i+"_Lock");
+                UIObjects["skill_"+i+"_Lock"] = GameCenterTest.FindObject(gameObject, "Skill_"+i+"_Lock");
             }
 
             hpBarImage = UIObjects["hpBar"].GetComponent<Image>();
@@ -55,7 +55,7 @@ namespace Player
 
             for (int i = 1; i <= 10; i++)
             {
-                UIObjects["circleAble_" + i] = GlobalUI.FindObject(gameObject, "CircleAble_" + i);
+                UIObjects["circleAble_" + i] = GameCenterTest.FindObject(gameObject, "CircleAble_" + i);
             }
 
         }

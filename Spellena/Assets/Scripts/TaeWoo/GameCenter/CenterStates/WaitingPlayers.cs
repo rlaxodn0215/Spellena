@@ -12,10 +12,10 @@ public class WaitingPlayers : CenterState
 
             SetPlayerDatas();
 
-            if (gameCenter.globalUIObj != null)
+            if (gameCenter.inGameUIObj != null)
             {
-                gameCenter.globalUIView = gameCenter.globalUIObj.GetComponent<PhotonView>();
-                gameCenter.globalUI = gameCenter.globalUIObj.GetComponent<GlobalUI>();
+                gameCenter.inGameUIView = gameCenter.inGameUIObj.GetComponent<PhotonView>();
+                gameCenter.inGameUI = gameCenter.inGameUIObj.GetComponent<InGameUI>();
             }
 
             MakeSpawnPoint();
@@ -65,8 +65,8 @@ public class WaitingPlayers : CenterState
 
     void MakeSpawnPoint()
     {
-        gameCenter.playerSpawnA = gameCenter.FindObject(gameCenter.playerSpawnPoints, "TeamA").GetComponentsInChildren<Transform>(true);
-        gameCenter.playerSpawnB = gameCenter.FindObject(gameCenter.playerSpawnPoints, "TeamB").GetComponentsInChildren<Transform>(true);
+        gameCenter.playerSpawnA = GameCenterTest.FindObject(gameCenter.playerSpawnPoints, "TeamA").GetComponentsInChildren<Transform>(true);
+        gameCenter.playerSpawnB = GameCenterTest.FindObject(gameCenter.playerSpawnPoints, "TeamB").GetComponentsInChildren<Transform>(true);
     }
 
 

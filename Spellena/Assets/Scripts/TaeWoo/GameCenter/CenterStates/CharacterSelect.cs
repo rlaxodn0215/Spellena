@@ -22,15 +22,13 @@ public class CharacterSelect : CenterState
 
         if (gameCenter.globalTimer >= gameCenter.globalDesiredTimer)
         {
-            gameCenter.globalUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "inGameUI", true);
+            gameCenter.inGameUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "inGameUI", true);
             gameCenter.currentGameState = GameCenterTest.GameState.GameReady;
 
             MakeCharacter();
             MakeTeamStateUI();
         }
     }
-
-
 
 
     void MakeCharacter()
@@ -86,7 +84,7 @@ public class CharacterSelect : CenterState
             {
                 foreach (var playerA in gameCenter.playersA)
                 {
-                    gameCenter.globalUIView.RPC("ShowTeamState", player, playerA.CustomProperties["Name"], "Aeterna");
+                    gameCenter.inGameUIView.RPC("ShowTeamState", player, playerA.CustomProperties["Name"], "Aeterna");
                 }
             }
 
@@ -94,7 +92,7 @@ public class CharacterSelect : CenterState
             {
                 foreach (var playerB in gameCenter.playersB)
                 {
-                    gameCenter.globalUIView.RPC("ShowTeamState", player, playerB.CustomProperties["Name"], "Aeterna");
+                    gameCenter.inGameUIView.RPC("ShowTeamState", player, playerB.CustomProperties["Name"], "Aeterna");
                 }
             }
         }
