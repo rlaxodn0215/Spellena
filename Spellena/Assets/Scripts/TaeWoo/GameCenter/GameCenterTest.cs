@@ -7,6 +7,7 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
 {
     public GameObject angleStatue;
     public GameObject playerSpawnPoints;
+    public GameObject bgmManager;
 
     public GameObject characterSelectObj;
     public GameObject inGameUIObj;
@@ -173,6 +174,9 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
 
         currentGameState = GameState.CharacterSelect;
         currentCenterState = centerStates[currentGameState];
+
+        bgmManager = GameObject.Find("BGMManager");
+        //if (bgmManager != null) Debug.Log("매니저 할당");
     }
 
     void Update()
