@@ -159,6 +159,7 @@ namespace Player
             minimapRenderTexture = minimapCamera.GetComponent<Camera>().targetTexture;
         }
 
+        [PunRPC]
         public override void IsLocalPlayer()
         {
             base.IsLocalPlayer();

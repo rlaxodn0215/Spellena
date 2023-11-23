@@ -28,13 +28,13 @@ public class CharacterSelect : CenterState
 
         // 캐릭터 선택
 
-        if(gameCenter.globalDesiredTimer - gameCenter.globalTimer <= soundDecreaseTime)
-        {
-            if (gameCenter.bgmManagerView != null)
-            {
-                gameCenter.bgmManagerView.RPC("VolumeControl", RpcTarget.AllBufferedViaServer, soundDecreaseSpeed * Time.deltaTime / 10, false);
-            }
-        }
+        //if(gameCenter.globalDesiredTimer - gameCenter.globalTimer <= soundDecreaseTime)
+        //{
+        //    if (gameCenter.bgmManagerView != null)
+        //    {
+        //        gameCenter.bgmManagerView.RPC("VolumeControl", RpcTarget.AllBufferedViaServer, soundDecreaseSpeed * Time.deltaTime / 10, false);
+        //    }
+        //}
 
         if (gameCenter.globalTimer >= gameCenter.globalDesiredTimer)
         {
@@ -43,7 +43,7 @@ public class CharacterSelect : CenterState
             ConnectInGameUI();
             MakeCharacter();
 
-            gameCenter.bgmManagerView.RPC("PlayBGM", RpcTarget.AllBufferedViaServer, "DuringRound", 0.3f, true);
+            //gameCenter.bgmManagerView.RPC("PlayBGM", RpcTarget.AllBufferedViaServer, "DuringRound", 0.3f, true);
             gameCenter.currentGameState = GameCenterTest.GameState.GameReady;
         }
     }
@@ -64,15 +64,24 @@ public class CharacterSelect : CenterState
 
         foreach (var player in PhotonNetwork.CurrentRoom.Players.Values)
         {
-            string choseCharacter = "Aeterna";
+            //string choseCharacter = "Aeterna";
             // 캐릭터 프리팹 한 파일로 통일
-            //string choseCharacter = (string)player.CustomProperties["Character"];
+            string choseCharacter = (string)player.CustomProperties["Character"];
             if (choseCharacter == null) GameCenterTest.ChangePlayerCustomProperties(player, "Character", "Aeterna");
 
             if ((string)player.CustomProperties["Team"]=="A")     // A 팀 (Red)
             {
-                GameObject playerCharacter
-                    = PhotonNetwork.Instantiate("TaeWoo/Prefabs/" + choseCharacter, gameCenter.playerSpawnA[aTeamIndex].position, Quaternion.identity);
+                GameObject playerCharacter;
+
+                if (choseCharacter=="Aeterna")
+                {
+                    playerCharacter = PhotonNetwork.Instantiate("TaeWoo/Prefabs/" + choseCharacter, gameCenter.playerSpawnA[aTeamIndex].position, Quaternion.identity);
+                }
+
+                else
+                {
+                    playerCharacter = PhotonNetwork.Instantiate("ChanYoung/Prefabs/" + choseCharacter, gameCenter.playerSpawnA[aTeamIndex].position, Quaternion.identity);
+                }
 
                 playerCharacter.GetComponent<PhotonView>().TransferOwnership(player.ActorNumber);
                 playerCharacter.GetComponent<PhotonView>().RPC("IsLocalPlayer", player);
@@ -86,8 +95,17 @@ public class CharacterSelect : CenterState
 
             else if((string)player.CustomProperties["Team"] == "B")    // B 팀 (Blue)
             {
-                GameObject playerCharacter
-                    = PhotonNetwork.Instantiate("TaeWoo/Prefabs/" + choseCharacter, gameCenter.playerSpawnB[bTeamIndex].position, Quaternion.identity);
+                GameObject playerCharacter;
+
+                if (choseCharacter == "Aeterna")
+                {
+                    playerCharacter = PhotonNetwork.Instantiate("TaeWoo/Prefabs/" + choseCharacter, gameCenter.playerSpawnB[bTeamIndex].position, Quaternion.identity);
+                }
+
+                else
+                {
+                    playerCharacter = PhotonNetwork.Instantiate("ChanYoung/Prefabs/" + choseCharacter, gameCenter.playerSpawnB[bTeamIndex].position, Quaternion.identity);
+                }
 
                 playerCharacter.GetComponent<PhotonView>().TransferOwnership(player.ActorNumber);
                 playerCharacter.GetComponent<PhotonView>().RPC("IsLocalPlayer", player);
