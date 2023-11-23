@@ -180,6 +180,8 @@ public class FirebaseLoginManager
         user = auth.CurrentUser;
         SetUserStatus(user.UserId, "오프라인");
         SetLobbyMaster(user.UserId, false);
+        PartyListReset(user.UserId);
+        //RemovePartyMember(user.UserId);
         auth.SignOut();
     }
 
@@ -319,6 +321,20 @@ public class FirebaseLoginManager
         return null;
     }
 
+    public async Task<string> IsFriendOnline(string _friendId)
+    {
+        DatabaseReference _friendRef = reference.Child("users").Child(_friendId);
+        DataSnapshot _friendSnapshot = await _friendRef.GetValueAsync();
+
+        if(_friendSnapshot != null)
+        {
+            string _status = _friendSnapshot.Child("status").Value.ToString();
+            return _status;
+        }
+
+        return null;
+    }
+
     public void SendPartyRequest(string _senderUserId, string _recevierUserId)
     {
         PartyRequestData _user = new PartyRequestData(_senderUserId, "pending");
@@ -347,6 +363,55 @@ public class FirebaseLoginManager
         }
 
         return null;
+    }
+
+    public void PartyListReset(string _userId)
+    {
+        Dictionary<string, string> emptyPartyMemberList = new Dictionary<string, string>();
+        reference.Child("users").Child(_userId).Child("partyMemberList").SetValueAsync(emptyPartyMemberList);
+    }
+
+    public void RemovePartyMember(string _userId)
+    {
+        try
+        {
+            DatabaseReference _removeMemberRef = reference.Child("users");
+
+            var ad = _removeMemberRef.GetValueAsync();
+
+            DataSnapshot _userSnapshot = ad.Result;
+
+            foreach (var _userChild in _userSnapshot.Children)
+            {
+                DataSnapshot _partyMemberSnapshot = _userChild.Child("partyMemberList");
+
+                if (_partyMemberSnapshot.Exists)
+                {
+                    Dictionary<string, string> partyMemberList =
+                        _partyMemberSnapshot.Value as Dictionary<string, string>;
+
+                    if (partyMemberList != null && partyMemberList.ContainsKey(_userId))
+                    {
+                        // Remove the member from the partyMemberList
+                        partyMemberList.Remove(_userId);
+
+                        // Check if partyMemberList is empty and update it
+                        if (partyMemberList.Count == 0)
+                        {
+                            _userChild.Reference.Child("partyMemberList").RemoveValueAsync();
+                        }
+                        else
+                        {
+                            _userChild.Reference.Child("partyMemberList").SetValueAsync(partyMemberList);
+                        }
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred: {ex.Message}");
+        }
     }
 
     public void SetLobbyMaster(string _userId, bool _type)
