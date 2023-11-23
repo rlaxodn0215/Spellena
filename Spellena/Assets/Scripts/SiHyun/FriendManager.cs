@@ -14,11 +14,16 @@ public class FriendManager : MonoBehaviour
     public InputField searchInputField;
     public Text nullResultText;
 
-    // 알림
-    List<AlarmItem> alarmItemList = new List<AlarmItem>();
-    public AlarmItem alarmItem;
+    // 친구 초대 알림
+    List<FriendRequestItem> friendRequestAlarmItemList = new List<FriendRequestItem>();
+    public FriendRequestItem friendRequestAlarmItem;
+
+    //파티 초대 알림
+    List<PartyRequestItem> partyRequestAlarmItemList = new List<PartyRequestItem>();
+    public PartyRequestItem partyRequestAlarmItem;
+
     public Transform alarmSpace;
-    
+
     // 친구 목록
     List<FriendItem> friendItemsList = new List<FriendItem>();
     public FriendItem friendItem;
@@ -37,15 +42,10 @@ public class FriendManager : MonoBehaviour
 
     DatabaseReference reference;
 
-    private bool isLobbyMaster;
-    public GameObject matchButton;
-
     private void Start()
     {
         userId = FirebaseLoginManager.Instance.GetUser().UserId;
         reference = FirebaseLoginManager.Instance.GetReference();
-
-        IsLobbyMaster(userId);
 
         DatabaseReference friendRef = FirebaseLoginManager.Instance.GetReference().Child("friendRequests");
         friendRef.ValueChanged += (sender, args) =>
@@ -59,7 +59,7 @@ public class FriendManager : MonoBehaviour
             {
                 if (args.Snapshot != null && args.Snapshot.HasChildren)
                 {
-                    AddItems(args.Snapshot);
+                    FriendRequestAlarm(args.Snapshot);
                 }
             }
             catch(Exception ex)
@@ -80,7 +80,7 @@ public class FriendManager : MonoBehaviour
             {
                 if (args.Snapshot != null && args.Snapshot.HasChildren)
                 {
-                    AddAlarm(args.Snapshot);
+                    PartyRequestAlarm(args.Snapshot);
                 }
             }
             catch (Exception ex)
@@ -138,18 +138,13 @@ public class FriendManager : MonoBehaviour
         }
     }
 
-    async void IsLobbyMaster(string _userId)
-    {
-        isLobbyMaster = await FirebaseLoginManager.Instance.IsLobbyMasterAsync(_userId);
-    }
-
     public void AcceptFriend(string _userId, string _friendId)
     {
         reference.Child("users").Child(_userId).Child("friendList").Child(_friendId).SetValueAsync("friend");
         reference.Child("users").Child(_friendId).Child("friendList").Child(_userId).SetValueAsync("friend");
     }
 
-    async void AddItems(DataSnapshot _data)
+    async void FriendRequestAlarm(DataSnapshot _data)
     {
         DataSnapshot _ref = _data.Child(userId);
 
@@ -166,7 +161,6 @@ public class FriendManager : MonoBehaviour
                         if (_senderUserIdValue != null)
                         {
                             string _friendId = _childrenSnapshot.Child("senderUserId").Value.ToString();
-                            string _friendNickName = await FirebaseLoginManager.Instance.ReadUserInfo(_friendId);
                             AcceptFriend(userId, _friendId);
                         }
                     }
@@ -177,9 +171,9 @@ public class FriendManager : MonoBehaviour
                         {
                             string _userId = _childrenSnapshot.Child("senderUserId").Value.ToString();
                             string _userNickName = await FirebaseLoginManager.Instance.ReadUserInfo(_userId);
-                            AlarmItem _alarmItem = Instantiate(alarmItem, alarmSpace);
-                            _alarmItem.SetAlarmInfo(_userId, _userNickName, "친구 요청");
-                            alarmItemList.Add(_alarmItem);
+                            FriendRequestItem _alarmItem = Instantiate(friendRequestAlarmItem, alarmSpace);
+                            _alarmItem.SetAlarmInfo(_userId, _userNickName);
+                            friendRequestAlarmItemList.Add(_alarmItem);
                             Debug.Log(_userId + " : " + _userNickName);
                         }
                     }
@@ -199,14 +193,16 @@ public class FriendManager : MonoBehaviour
             foreach(var _friendId in _friendList)
             {
                 string _friendNickname = await FirebaseLoginManager.Instance.ReadUserInfo(_friendId);
+                string _friendStatus = await FirebaseLoginManager.Instance.IsFriendOnline(_friendId);
                 FriendItem _friendItem = Instantiate(friendItem, friendList);
-                _friendItem.SetFriendInfo(_friendId, _friendNickname);
+                _friendItem.SetFriendInfo(_friendId, _friendNickname, _friendStatus);
+                _friendItem.SetUpButtons(matchUI, mainUI, friendUI, UpdatePartyMemberList);
                 friendItemsList.Add(_friendItem);
             }
         }
     }
 
-    async void AddAlarm(DataSnapshot _data)
+    async void PartyRequestAlarm(DataSnapshot _data)
     {
         DataSnapshot _ref = _data.Child(userId);
 
@@ -223,7 +219,6 @@ public class FriendManager : MonoBehaviour
                         if (_senderUserIdValue != null)
                         {
                             string _friendId = _childrenSnapshot.Child("senderUserId").Value.ToString();
-                            string _friendNickName = await FirebaseLoginManager.Instance.ReadUserInfo(_friendId);
                             AcceptParty(userId, _friendId);
                         }
                     }
@@ -234,10 +229,10 @@ public class FriendManager : MonoBehaviour
                         {
                             string _userId = _childrenSnapshot.Child("senderUserId").Value.ToString();
                             string _userNickName = await FirebaseLoginManager.Instance.ReadUserInfo(_userId);
-                            AlarmItem _alarmItem = Instantiate(alarmItem, alarmSpace);
-                            _alarmItem.SetAlarmInfo(_userId, _userNickName, "파티 요청");
-                            _alarmItem.SetUpButtons(matchUI, mainUI);
-                            alarmItemList.Add(_alarmItem);
+                            PartyRequestItem _alarmItem = Instantiate(partyRequestAlarmItem, alarmSpace);
+                            _alarmItem.SetAlarmInfo(_userId, _userNickName, "일반 대전");
+                            _alarmItem.SetUpButtons(matchUI, mainUI, friendUI);
+                            partyRequestAlarmItemList.Add(_alarmItem);
                         }
                     }
                 }
@@ -312,17 +307,5 @@ public class FriendManager : MonoBehaviour
     public void OnClickUpdate()
     {
         UpdatePartyMemberList(userId);
-    }
-
-    private void Update()
-    {
-        if(isLobbyMaster)
-        {
-            matchButton.SetActive(true);
-        }
-        else
-        {
-            matchButton.SetActive(false);
-        }
     }
 }
