@@ -24,7 +24,7 @@ public class EterialStormObject : SpawnObject,IPunObservable
     public GameObject hitEffect;
     public GameObject rangeArea;
 
-    float hitCoolDownTime = 0.4f;
+    float hitCoolDownTime;
     float impulsePower = 4f;
 
 
@@ -81,6 +81,19 @@ public class EterialStormObject : SpawnObject,IPunObservable
         hitCollider.GetComponent<TriggerEventer>().hitTriggerEvent += TriggerEvent;
         currentCastingTime = castingTime;
         currentLifeTime = lifeTime;
+
+        hitCoolDownTime = lifeTime / 8;
+
+        BalanceAnimation();
+    }
+
+    void BalanceAnimation()
+    {
+        rangeArea.GetComponent<ParticleSystem>().startLifetime = elementalOrderData.eterialStormCastingTime;
+        for(int i = 0; i < 5; i++)
+        {
+            hitEffect.transform.GetChild(i).GetComponent<ParticleSystem>().startLifetime = castingTime;
+        }
     }
 
     void RequestRPC(string tunnelCommand)
@@ -145,10 +158,12 @@ public class EterialStormObject : SpawnObject,IPunObservable
         {
             if (isColliderOn)
             {
-                if (hitObject.GetComponent<Character>() != null)
+                if (hitObject.transform.root.gameObject.name != hitObject.name)
                 {
-                    CheckHitCount(hitObject);
-                    Debug.Log(hitObject.GetComponent<Character>().hp);
+                    if (hitObject.transform.root.GetComponent<Character>() != null)
+                    {
+                        CheckHitCount(hitObject.transform.gameObject);
+                    }
                 }
             }
         }
@@ -156,6 +171,13 @@ public class EterialStormObject : SpawnObject,IPunObservable
 
     void CheckHitCount(GameObject other)
     {
+        GameObject _rootObject = other.transform.root.gameObject;
+
+        if(tag == _rootObject.tag)
+        {
+            return;
+        }
+
         float _xPos = other.transform.position.x - transform.position.x;
         float _zPos = other.transform.position.z - transform.position.z;
         float _distance = _xPos * _xPos + _zPos * _zPos;
@@ -166,7 +188,7 @@ public class EterialStormObject : SpawnObject,IPunObservable
 
         for(int i = 0; i < hitObjects.Count; i++)
         {
-            if (hitObjects[i] == other.gameObject.name)
+            if (hitObjects[i] == _rootObject.name)
             {
                 _check = 1;
                 _index = i;
@@ -179,21 +201,23 @@ public class EterialStormObject : SpawnObject,IPunObservable
             if(hitTimer[_index] <= 0f)
             {
                 hitTimer[_index] = hitCoolDownTime;
-                other.GetComponent<Rigidbody>().AddForce(_outsideVector * impulsePower, ForceMode.Impulse);
+                _rootObject.GetComponent<Rigidbody>().AddForce(_outsideVector * impulsePower, ForceMode.Impulse);
                 if(_distance <= 3.0f)
                 {
-                    other.GetComponent<Character>().hp -= 5;
+                    _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.MasterClient,
+                         playerName, (int)(elementalOrderData.eterialStormDamage / 8), other.name, _outsideVector, 20f);
                 }
             }
         }
         else
         {
-            hitObjects.Add(other.gameObject.name);
+            hitObjects.Add(_rootObject.name);
             hitTimer.Add(hitCoolDownTime);
-            other.GetComponent<Rigidbody>().AddForce(_outsideVector * impulsePower, ForceMode.Impulse);
+            _rootObject.GetComponent<Rigidbody>().AddForce(_outsideVector * impulsePower, ForceMode.Impulse);
             if (_distance <= 3.0f)
             {
-                other.GetComponent<Character>().hp -= 5;
+                _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.MasterClient,
+                         playerName, (int)(elementalOrderData.eterialStormDamage / 8), other.name, _outsideVector, 20f);
             }
         }
     }

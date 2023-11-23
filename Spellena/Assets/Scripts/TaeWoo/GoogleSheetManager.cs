@@ -140,12 +140,8 @@ public class GoogleSheetManager : EditorWindow
         elementalOrderData.burstFlareCastingTime = float.Parse(dividData[10, 9]);
         elementalOrderData.burstFlareLifeTime = float.Parse(dividData[16, 9]);
         //스킬 3
-        elementalOrderData.gaiaTiedDamage = new float[6];
-        for (int i = 0; i < 6; i++)
-        {
-            elementalOrderData.gaiaTiedDamage[i] = float.Parse(dividData[8, 3 + i]);
-        }
-        elementalOrderData.gaiaTiedCoolDownTime = float.Parse(dividData[8, 8]);
+        elementalOrderData.gaiaTiedDamage = float.Parse(dividData[8, 3]);
+        elementalOrderData.gaiaTiedCoolDownTime = float.Parse(dividData[9, 8]);
         elementalOrderData.gaiaTiedCastingTime = float.Parse(dividData[10, 3]);
         elementalOrderData.gaiaTiedMaxDistace = float.Parse(dividData[12, 3]);
         elementalOrderData.gaiaTiedLifeTime = new float[6];
@@ -153,6 +149,25 @@ public class GoogleSheetManager : EditorWindow
         {
             elementalOrderData.gaiaTiedLifeTime[i] = float.Parse(dividData[16, 3 + i]);
         }
+        //스킬 4
+        elementalOrderData.meteorStrikeDamage = float.Parse(dividData[8, 10]);
+        elementalOrderData.meteorStrikeCoolDownTime = float.Parse(dividData[9, 10]);
+        elementalOrderData.meteorStrikeCastingTime = float.Parse(dividData[10, 10]);
+        elementalOrderData.meteorStrikeMaxDistance = float.Parse(dividData[12, 10]);
+        elementalOrderData.meteorStrikeLifeTime = float.Parse(dividData[16, 10]);
+        //스킬 5
+        elementalOrderData.terraBreakDamageFirst = float.Parse(dividData[8, 11]);
+        elementalOrderData.terraBreakDamage = float.Parse(dividData[8, 12]);
+        elementalOrderData.terraBreakCoolDownTime = float.Parse(dividData[9, 12]);
+        elementalOrderData.terraBreakCastingTime = float.Parse(dividData[10, 12]);
+        elementalOrderData.terraBreakMaxDistance = float.Parse(dividData[12, 11]);
+        elementalOrderData.terraBreakLifeTimeFirst = float.Parse(dividData[16, 11]);
+        elementalOrderData.terraBreakLifeTime = float.Parse(dividData[16, 12]);
+        //스킬 6
+        elementalOrderData.eterialStormDamage = float.Parse(dividData[8, 13]);
+        elementalOrderData.eterialStormCoolDownTime = float.Parse(dividData[9, 13]);
+        elementalOrderData.eterialStormCastingTime = float.Parse(dividData[10, 13]);
+        elementalOrderData.eterialStormLifeTime = float.Parse(dividData[16, 13]);
     }
 
     void GiveAeternaData()

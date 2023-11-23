@@ -15,8 +15,8 @@ public class GaiaTiedObject : SpawnObject
     float lifeTime;
     float currentLifeTime = 0f;
 
-    float cylinderLifeTime;
-    float currentCylinderLifeTime = 0f;
+    float cylinderCheckTime;
+    float currentCylinderCheckTime = 0f;
 
 
     Vector3 scaleCorrect = new Vector3(0.3f, 0.5f, 0.3f);
@@ -27,6 +27,7 @@ public class GaiaTiedObject : SpawnObject
     List<bool> reverseScale = new List<bool>();
     List<Vector3> cylindersLerpScale = new List<Vector3>();
     List<Vector3> cylindersLerpPos = new List<Vector3>();
+    List<string> hitObjects = new List<string>();
 
     int currentCylinderCount = -1;
 
@@ -62,16 +63,16 @@ public class GaiaTiedObject : SpawnObject
         }
         else
         {
-            if(currentCylinderLifeTime <= 0f)
+            if(currentCylinderCheckTime <= 0f)
             {
                 if (currentCylinderCount < cylinderCount - 1)
                 {
-                    currentCylinderLifeTime = cylinderLifeTime;
                     currentCylinderCount++;
+                    currentCylinderCheckTime = cylinderCheckTime;
                     RequestRPC("ActiveCollider", currentCylinderCount);
                 }
                 else
-                    currentCylinderLifeTime = 10f;
+                    currentCylinderCheckTime = 100f;
             }
             else
             {
@@ -82,26 +83,24 @@ public class GaiaTiedObject : SpawnObject
                         if (reverseScale[i] == false)
                         {
                             cylinders[i].transform.localScale = new Vector3(scaleCorrect.x,
-                                Mathf.Lerp(cylinders[i].transform.localScale.y, 2f * scaleCorrect.y, Time.deltaTime * 2 * scaleCorrect.y), scaleCorrect.z);
+                                cylinders[i].transform.localScale.y + elementalOrderData.gaiaTiedLifeTime[i] * Time.deltaTime * 2, scaleCorrect.z);
                         }
                         else
                         {
-                            cylinders[i].transform.localScale = new Vector3(scaleCorrect.x,
-                                Mathf.Lerp(cylinders[i].transform.localScale.y, -0.5f * scaleCorrect.y, Time.deltaTime * 2 * scaleCorrect.y), scaleCorrect.z);
-
-                            if(cylinders[i].transform.localScale.y < 0f)
+                            if (cylinders[i].transform.localScale.y >= 0f)
                             {
-                                RequestRPC("InactiveCollider", i);
+                                cylinders[i].transform.localScale = new Vector3(scaleCorrect.x,
+                                   cylinders[i].transform.localScale.y - elementalOrderData.gaiaTiedLifeTime[i] * Time.deltaTime * 2, scaleCorrect.z);
                             }
+                            if(cylinders[i].transform.localScale.y <= 0f)
+                                RequestRPC("InactiveCollider", i);
                         }
                         cylinders[i].transform.localPosition = new Vector3(cylinders[i].transform.localPosition.x, cylinders[i].transform.localScale.y, cylinders[i].transform.localPosition.z);
                         if (cylinders[i].transform.localScale.y > scaleCorrect.y)
-                        {
                             reverseScale[i] = true;
-                        }
                     }
                 }
-                currentCylinderLifeTime -= Time.deltaTime;
+                currentCylinderCheckTime -= Time.deltaTime;
             }
             currentLifeTime -= Time.deltaTime;
             if(currentLifeTime <= 0f)
@@ -115,16 +114,15 @@ public class GaiaTiedObject : SpawnObject
 
     void Init()
     {
-        cylinderCount = elementalOrderData.gaiaTiedDamage.Length;
+        cylinderCount = elementalOrderData.gaiaTiedLifeTime.Length;
         castingTime = elementalOrderData.gaiaTiedCastingTime;
+
         float _tempLifeTime = 0;
         for(int i = 0; i < 6; i++)
         {
             _tempLifeTime += elementalOrderData.gaiaTiedLifeTime[i];
         }
-        lifeTime = _tempLifeTime;
-
-        Debug.Log(lifeTime);
+        lifeTime = _tempLifeTime + 0.5f;
 
         Vector3 _target = (Vector3)data[3];
         transform.rotation = Quaternion.LookRotation(_target);
@@ -134,7 +132,7 @@ public class GaiaTiedObject : SpawnObject
         currentLifeTime = lifeTime;
 
         //cylinderLifeTime = lifeTime / cylinderCount;
-        cylinderLifeTime = 0.1f;
+        cylinderCheckTime = lifeTime / cylinderCount / 5;
 
         for (int i = 0; i < cylinderCount; i++)
         {
@@ -153,11 +151,11 @@ public class GaiaTiedObject : SpawnObject
         object[] _tempData;
         if(tunnelCommand == "UpdateData")
         {
-            _tempData = new object[6 + cylinderCount * 2];
+            _tempData = new object[6 + cylinderCount * 2 + 1];
             _tempData[0] = tunnelCommand;
             _tempData[1] = currentCastingTime;
             _tempData[2] = currentLifeTime;
-            _tempData[3] = currentCylinderLifeTime;
+            _tempData[3] = currentCylinderCheckTime;
             _tempData[4] = currentCylinderCount;
             _tempData[5] = reverseScale.ToArray();
 
@@ -170,6 +168,8 @@ public class GaiaTiedObject : SpawnObject
             {
                 _tempData[6 + cylinderCount + i] = cylinders[i].transform.localPosition;
             }
+
+            _tempData[18] = hitObjects.ToArray();
         }
         else
         {
@@ -226,7 +226,7 @@ public class GaiaTiedObject : SpawnObject
     {
         currentCastingTime = (float)data[1];
         currentLifeTime = (float)data[2];
-        currentCylinderLifeTime = (float)data[3];
+        currentCylinderCheckTime = (float)data[3];
         currentCylinderCount = (int)data[4];
         reverseScale = ((bool[])data[5]).ToList();
 
@@ -239,13 +239,33 @@ public class GaiaTiedObject : SpawnObject
         {
             cylindersLerpPos[i] = (Vector3)data[6 + cylinderCount + i];
         }
+
+        hitObjects = ((string[])data[18]).ToList();
     }
 
-    void TriggerCylinderEvent(GameObject gameObject)
+    void TriggerCylinderEvent(GameObject hitObject)
     {
-        if(gameObject.layer != 11)
+        if (PhotonNetwork.IsMasterClient)
         {
-            Debug.Log("Å¸°Ý");
+            if(hitObject.transform.root.gameObject.name != hitObject.name)
+            {
+                GameObject _rootObject = hitObject.transform.root.gameObject;
+                if (_rootObject.GetComponent<Character>() != null)
+                {
+                    if (tag != _rootObject.tag)
+                    {
+                        for (int i = 0; i < hitObjects.Count; i++)
+                        {
+                            if (hitObjects[i] == _rootObject.name)
+                                return;
+                        }
+
+                        hitObjects.Add(_rootObject.name);
+                        _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.MasterClient,
+                                playerName, (int)elementalOrderData.gaiaTiedDamage, hitObject.name, transform.forward, 20f);
+                    }
+                }
+            }
         }
     }
 }

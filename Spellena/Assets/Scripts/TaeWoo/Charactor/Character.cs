@@ -600,10 +600,11 @@ namespace Player
         {
             if (damage > 0)
             {
+                Debug.Log("맞음");
                 if (hp <= dataHp)
                 {
                     hp -= damage;
-                    //Debug.Log("Player Damaged !!  EnemyName: " + enemy);
+                    Debug.Log("Player Damaged !!  EnemyName: " + enemy);
                 }
 
                 // 마스터 클라이언트이기 때문에 동기화 안되도 게임센터의 값과 같다. 

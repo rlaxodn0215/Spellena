@@ -37,21 +37,31 @@ public class ElementalOrderData : ScriptableObject
     public float burstFlareLifeTime;
 
     //스킬3
-    public float[] gaiaTiedDamage;
+    public float gaiaTiedDamage;
     public float gaiaTiedCoolDownTime;
     public float gaiaTiedCastingTime;
     public float gaiaTiedMaxDistace;
     public float[] gaiaTiedLifeTime;
 
     //스킬4
+    public float meteorStrikeDamage;
+    public float meteorStrikeCoolDownTime;
     public float meteorStrikeCastingTime;
+    public float meteorStrikeMaxDistance;
     public float meteorStrikeLifeTime;
 
     //스킬5
+    public float terraBreakDamageFirst;
+    public float terraBreakDamage;
+    public float terraBreakCoolDownTime;
     public float terraBreakCastingTime;
+    public float terraBreakMaxDistance;
+    public float terraBreakLifeTimeFirst;
     public float terraBreakLifeTime;
 
     //스킬6
+    public float eterialStormDamage;
+    public float eterialStormCoolDownTime;
     public float eterialStormCastingTime;
     public float eterialStormLifeTime;
 
