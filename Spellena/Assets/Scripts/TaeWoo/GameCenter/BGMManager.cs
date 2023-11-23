@@ -20,17 +20,6 @@ public class BGMManager : MonoBehaviourPunCallbacks
         public AudioClip clip;
     }
 
-    void Awake()
-    {
-        DontDestroyOnLoad(gameObject);
-
-        if (photonView != null && photonView.ViewID !=0)
-        {
-            photonView.ViewID = 0;
-            PhotonNetwork.RegisterPhotonView(photonView);
-        }
-    }
-
     // Start is called before the first frame update
     void Start()
     {
@@ -70,6 +59,18 @@ public class BGMManager : MonoBehaviourPunCallbacks
         if (audioDatas.ContainsKey(key))
             audioSource.clip = audioDatas[key];
 
+        audioSource.volume = vol;
+        audioSource.Play();
+        audioSource.loop = isLoop;
+    }
+
+    [PunRPC]
+    public void PlayBGM(string key, float vol, bool isLoop, float time)
+    {
+        if (audioDatas.ContainsKey(key))
+            audioSource.clip = audioDatas[key];
+
+        audioSource.time = time;
         audioSource.volume = vol;
         audioSource.Play();
         audioSource.loop = isLoop;

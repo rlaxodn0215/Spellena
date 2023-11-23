@@ -20,6 +20,10 @@ public class CharacterSelect : CenterState
             tempTimer = gameCenter.globalTimer;
             gameCenter.globalDesiredTimer = tempTimer + gameCenter.characterSelectTime;
             ConnectCharacterSelect();
+
+            if (PhotonNetwork.CurrentRoom.Players[PhotonNetwork.CurrentRoom.masterClientId].CustomProperties["LoadingTime"] != null)
+                gameCenter.bgmManager.PlayBGM("LoadingCharacter", 1.0f, true,
+                    (float)PhotonNetwork.CurrentRoom.Players[PhotonNetwork.CurrentRoom.masterClientId].CustomProperties["LoadingTime"]);
         }
 
         gameCenter.globalTimer += Time.deltaTime;
@@ -28,13 +32,13 @@ public class CharacterSelect : CenterState
 
         // 캐릭터 선택
 
-        //if(gameCenter.globalDesiredTimer - gameCenter.globalTimer <= soundDecreaseTime)
-        //{
-        //    if (gameCenter.bgmManagerView != null)
-        //    {
-        //        gameCenter.bgmManagerView.RPC("VolumeControl", RpcTarget.AllBufferedViaServer, soundDecreaseSpeed * Time.deltaTime / 10, false);
-        //    }
-        //}
+        if (gameCenter.globalDesiredTimer - gameCenter.globalTimer <= soundDecreaseTime)
+        {
+            if (gameCenter.bgmManagerView != null)
+            {
+                gameCenter.bgmManagerView.RPC("VolumeControl", RpcTarget.AllBufferedViaServer, soundDecreaseSpeed * Time.deltaTime / 10, false);
+            }
+        }
 
         if (gameCenter.globalTimer >= gameCenter.globalDesiredTimer)
         {
@@ -43,7 +47,7 @@ public class CharacterSelect : CenterState
             ConnectInGameUI();
             MakeCharacter();
 
-            //gameCenter.bgmManagerView.RPC("PlayBGM", RpcTarget.AllBufferedViaServer, "DuringRound", 0.3f, true);
+            gameCenter.bgmManagerView.RPC("PlayBGM", RpcTarget.AllBufferedViaServer, "DuringRound", 0.3f, true);
             gameCenter.currentGameState = GameCenterTest.GameState.GameReady;
         }
     }

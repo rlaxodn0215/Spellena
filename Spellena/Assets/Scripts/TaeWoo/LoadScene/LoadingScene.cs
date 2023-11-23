@@ -50,20 +50,10 @@ public class LoadingScene : MonoBehaviourPunCallbacks
     // Update is called once per frame
     void Update()
     {
-        if (PhotonNetwork.IsMasterClient)
-        {
-            timer += Time.deltaTime;
-            photonView.RPC("SyncTimer", RpcTarget.AllBufferedViaServer, timer);
-        }
-
+        timer += Time.deltaTime;
         LoadingSignRotate();
     }
     
-    [PunRPC]
-    public void SyncTimer(float time)
-    {
-        timer = time;
-    }
 
     void LoadingSignRotate()
     {

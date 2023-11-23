@@ -7,7 +7,7 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
 {
     public GameObject angleStatue;
     public GameObject playerSpawnPoints;
-    //public GameObject bgmManagerObj;
+    public GameObject bgmManagerObj;
 
     public GameObject characterSelectObj;
     public GameObject inGameUIObj;
@@ -20,10 +20,10 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
     public PhotonView inGameUIView;
     [HideInInspector]
     public InGameUI inGameUI;
-    //[HideInInspector]
-    //public BGMManager bgmManager;
-    //[HideInInspector]
-    //public PhotonView bgmManagerView;
+    [HideInInspector]
+    public BGMManager bgmManager;
+    [HideInInspector]
+    public PhotonView bgmManagerView;
 
     // 플레이어 소환 좌표
     [HideInInspector]
@@ -176,21 +176,15 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
         temp7.ConnectCenter(this);
         centerStates.Add(GameState.GameResult, temp7);
 
+        bgmManager = bgmManagerObj.GetComponent<BGMManager>();
+        bgmManagerView = bgmManagerObj.GetComponent<PhotonView>();
+
         currentGameState = GameState.CharacterSelect;
         currentCenterState = centerStates[currentGameState];
 
     }
     void Start()
     {
-        //bgmManagerObj = GameObject.Find("BGMManager");
-        //bgmManager = bgmManagerObj.GetComponent<BGMManager>();
-
-        //bgmManagerView = bgmManagerObj.AddComponent<PhotonView>();
-
-        //if (PhotonNetwork.IsMasterClient)
-        //{
-        //    bgmManagerView.ViewID = PhotonNetwork.AllocateViewID(true);
-        //}
 
     }
 

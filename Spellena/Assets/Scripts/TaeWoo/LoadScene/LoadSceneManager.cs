@@ -56,6 +56,9 @@ public class LoadSceneManager : MonoBehaviourPunCallbacks
                 //progressbar.fillamount = Mathf.Lerp(0.9f,1f,timer)
                 if(timer >= loadingTime)
                 {
+                    GameCenterTest.ChangePlayerCustomProperties(PhotonNetwork.CurrentRoom.Players
+                        [PhotonNetwork.CurrentRoom.masterClientId],"LoadingTime", timer);
+
                     op.allowSceneActivation = true;
                     yield break;
                 }
