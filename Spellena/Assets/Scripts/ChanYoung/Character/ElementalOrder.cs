@@ -125,7 +125,7 @@ namespace Player
                 Initialize();
                 overlayCameraDefaultPos = overlayCamera.transform.localPosition;
             }
-
+            dataHp = elementalOrderData.hp;
         }
         protected override void Update()
         {
@@ -324,7 +324,11 @@ namespace Player
         void CancelSkill()
         {
             isReadyToUseSkill = false;
-            burstFlareCoolDownTime = elementalOrderData.burstFlareCoolDownTime;
+            if (burstFlare.CheckReady() == true)
+            {
+                burstFlareCoolDownTime = elementalOrderData.burstFlareCoolDownTime;
+                burstFlare.SetReady(false);
+            }
             skillState = SkillState.None;
             commands.Clear();
             UpdateData();
@@ -581,7 +585,7 @@ namespace Player
                     _tempObject.GetComponent<PhotonView>().TransferOwnership(ownerActorNum);
 
                     isPointStrike = false;
-                    gaiaTiedCoolDownTime = gaiaTied.GetSkillCoolDownTime();
+                    gaiaTiedCoolDownTime = elementalOrderData.gaiaTiedCoolDownTime;
                     gaiaTied.EndSkill();
                     skillState = SkillState.None;
                 }
@@ -610,7 +614,7 @@ namespace Player
                         _tempObject.GetComponent<PhotonView>().TransferOwnership(ownerActorNum);
 
                         isPointStrike = false;
-                        meteorStrikeCoolDownTime = meteorStrike.GetSkillCoolDownTime();
+                        meteorStrikeCoolDownTime = elementalOrderData.meteorStrikeCoolDownTime;
                         meteorStrike.EndSkill();
                         skillState = SkillState.None;
                     }
@@ -658,7 +662,7 @@ namespace Player
                     _tempObject.GetComponent<PhotonView>().TransferOwnership(ownerActorNum);
 
                     isPointStrike = false;
-                    eterialStormCoolDownTime = eterialStorm.GetSkillCoolDownTime();
+                    eterialStormCoolDownTime = elementalOrderData.eterialStormCoolDownTime;
                     skillState = SkillState.None;
                 }
             }
@@ -872,7 +876,6 @@ namespace Player
             }
             else if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Spell2"))
             {
-
                 float _animationLength = overlayAnimator.GetCurrentAnimatorStateInfo(1).length;
                 float _normalizedSpeed = _animationLength / elementalOrderData.burstFlareCastingTime;
                 overlayAnimator.SetFloat("Spell2Speed", _normalizedSpeed);
@@ -884,22 +887,37 @@ namespace Player
             }
             else if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Spell3"))
             {
+                float _animationLength = overlayAnimator.GetCurrentAnimatorStateInfo(1).length;
+                float _normalizedSpeed = _animationLength / elementalOrderData.gaiaTiedCastingTime;
+                overlayAnimator.SetFloat("Spell3Speed", _normalizedSpeed);
+
                 overlayCamera.transform.localPosition = Vector3.Lerp(overlayCamera.transform.localPosition,
                     overlayCameraDefaultPos + new Vector3(0, 0.1f, 0), Time.deltaTime * 8f);
                 overlayAnimator.SetBool("Spell3", false);
             }
             else if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Spell4"))
             {
+                float _animationLength = overlayAnimator.GetCurrentAnimatorStateInfo(1).length;
+                float _normalizedSpeed = _animationLength / elementalOrderData.meteorStrikeCastingTime;
+                overlayAnimator.SetFloat("Spell4Speed", _normalizedSpeed);
+
                 overlayCamera.transform.localPosition = Vector3.Lerp(overlayCamera.transform.localPosition,
                    overlayCameraDefaultPos + new Vector3(0, 0.1f, 0), Time.deltaTime * 8f);
                 overlayAnimator.SetBool("Spell4", false);
             }
             else if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Spell5"))
             {
+                float _animationLength = overlayAnimator.GetCurrentAnimatorStateInfo(1).length;
+                float _normalizedSpeed = _animationLength / elementalOrderData.terraBreakCastingTime;
+                overlayAnimator.SetFloat("Spell5Speed", _normalizedSpeed);
                 overlayAnimator.SetBool("Spell5", false);
             }
             else if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Spell6"))
             {
+                float _animationLength = overlayAnimator.GetCurrentAnimatorStateInfo(1).length;
+                float _normalizedSpeed = _animationLength / elementalOrderData.eterialStormCastingTime;
+                overlayAnimator.SetFloat("Spell6Speed", _normalizedSpeed);
+
                 overlayCamera.transform.localPosition = Vector3.Lerp(overlayCamera.transform.localPosition,
                   overlayCameraDefaultPos + new Vector3(0, 0.2f, 0), Time.deltaTime * 8f);
                 overlayAnimator.SetBool("Spell6", false);
@@ -932,13 +950,33 @@ namespace Player
                 }
             }
             else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Spell3"))
+            {
+                float _animationLength = animator.GetCurrentAnimatorStateInfo(0).length;
+                float _normalizedSpeed = _animationLength / elementalOrderData.gaiaTiedCastingTime;
+                animator.SetFloat("Spell3Speed", _normalizedSpeed);
                 animator.SetBool("Spell3", false);
+            }
             else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Spell4"))
+            {
+                float _animationLength = animator.GetCurrentAnimatorStateInfo(0).length;
+                float _normalizedSpeed = _animationLength / elementalOrderData.meteorStrikeCastingTime;
+                animator.SetFloat("Spell4Speed", _normalizedSpeed);
                 animator.SetBool("Spell4", false);
+            }
             else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Spell5"))
+            {
+                float _animationLength = animator.GetCurrentAnimatorStateInfo(0).length;
+                float _normalizedSpeed = _animationLength / elementalOrderData.terraBreakCastingTime;
+                animator.SetFloat("Spell5Speed", _normalizedSpeed);
                 animator.SetBool("Spell5", false);
+            }
             else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Spell6"))
+            {
+                float _animationLength = animator.GetCurrentAnimatorStateInfo(0).length;
+                float _normalizedSpeed = _animationLength / elementalOrderData.eterialStormCastingTime;
+                animator.SetFloat("Spell6Speed", _normalizedSpeed);
                 animator.SetBool("Spell6", false);
+            }
         }
 
         void SetHandEffectPositionIK(int typeRight, int typeLeft)

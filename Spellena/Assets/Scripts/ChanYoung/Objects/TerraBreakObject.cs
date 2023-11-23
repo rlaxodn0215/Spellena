@@ -2,6 +2,8 @@ using Photon.Pun;
 using Player;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class TerraBreakObject : SpawnObject
@@ -18,18 +20,16 @@ public class TerraBreakObject : SpawnObject
     float currentLifeTime = 0f;
 
     float hitCountTimer;
+    float hitCountTimerFirst;
     float currentHitCountTimer = 0f;
 
-    float colliderTimer = 0.1f;
-    float currentColliderTimer = 0f;
-
-    int hitCount = 5;
+    bool isFirst = true;
 
     bool isColliderOn = false;
 
     public GameObject hitCollider;
 
-    List<string> hitPlayers = new List<string>();
+    List<string> hitObjects = new List<string>();
 
     void Start()
     {
@@ -50,30 +50,29 @@ public class TerraBreakObject : SpawnObject
         {
             currentCastingTime -= Time.deltaTime;
             if (currentCastingTime <= 0f)
-                RequestRPC("ActiveHitEffect");
+            {
+                RequestRPC("ActiveCollider");
+            }
         }
         else
         {
             if (currentHitCountTimer <= 0f)
             {
-                currentHitCountTimer = hitCountTimer;
-                currentColliderTimer = colliderTimer;
-                RequestRPC("ActiveCollider");
+                hitObjects.Clear();
+                RequestRPC("ActiveHitEffect");
+                if (isFirst == true)
+                    currentHitCountTimer = hitCountTimerFirst;
+                else
+                    currentHitCountTimer = hitCountTimer;
             }
-            else
+            else if(isFirst == true)
             {
                 currentHitCountTimer -= Time.deltaTime;
-                if (isColliderOn)
-                {
-                    currentColliderTimer -= Time.deltaTime;
-
-                    if(currentColliderTimer <= 0f)
-                    {
-                        RequestRPC("InactiveCollider");
-                        hitPlayers.Clear();
-                    }
-                }
+                if (currentHitCountTimer <= 0f)
+                    isFirst = false;
             }
+            else
+                currentHitCountTimer -= Time.deltaTime;
             currentLifeTime -= Time.deltaTime;
             if(currentLifeTime <= 0f)
                 RequestRPC("RequestDestroy");
@@ -83,13 +82,27 @@ public class TerraBreakObject : SpawnObject
 
     void Init()
     {
-        hitCountTimer = lifeTime / hitCount;
         castingTime = elementalOrderData.terraBreakCastingTime;
-        lifeTime = elementalOrderData.terraBreakLifeTime;
+        //2.5 + 0.5 총 3초
+        lifeTime = elementalOrderData.terraBreakLifeTime + elementalOrderData.terraBreakLifeTimeFirst;
+        hitCountTimer = elementalOrderData.terraBreakLifeTime / 4;
+        hitCountTimerFirst = elementalOrderData.terraBreakLifeTimeFirst;
+
         hitCollider.GetComponent<TriggerEventer>().hitTriggerEvent += TriggerEvent;
 
         currentCastingTime = castingTime;
         currentLifeTime = lifeTime;
+
+        BalanceAnimation();
+    }
+
+    void BalanceAnimation()
+    {
+        rangeArea.GetComponent<ParticleSystem>().startLifetime = castingTime;
+        for(int i = 0; i < 6; i++)
+        {
+            hitEffect.transform.GetChild(i).GetComponent<ParticleSystem>().startLifetime = hitCountTimerFirst;
+        }
     }
 
     void RequestRPC(string tunnelCommand)
@@ -97,12 +110,19 @@ public class TerraBreakObject : SpawnObject
         object[] _tempData;
         if(tunnelCommand == "UpdateData")
         {
-            _tempData = new object[5];
+            _tempData = new object[6];
             _tempData[0] = tunnelCommand;
             _tempData[1] = currentCastingTime;
             _tempData[2] = currentLifeTime;
             _tempData[3] = currentHitCountTimer;
-            _tempData[4] = currentColliderTimer;
+            _tempData[4] = isFirst;
+            _tempData[5] = hitObjects.ToArray();
+        }
+        else if(tunnelCommand == "ActiveHitEffect")
+        {
+            _tempData = new object[2];
+            _tempData[0] = tunnelCommand;
+            _tempData[1] = isFirst;
         }
         else
         {
@@ -119,17 +139,24 @@ public class TerraBreakObject : SpawnObject
             UpdateData(data);
         else if ((string)data[0] == "ActiveCollider")
             ActiveCollider();
-        else if ((string)data[0] == "InactiveCollider")
-            InactiveCollider();
         else if ((string)data[0] == "RequestDestroy")
             RequestDestroy();
         else if ((string)data[0] == "ActiveHitEffect")
-            ActiveHitEffect();
+            ActiveHitEffect(data);
     }
 
-    void ActiveHitEffect()
+    void ActiveHitEffect(object[] data)
     {
         hitEffect.SetActive(true);
+        if ((bool)data[1] == false)
+        {
+            for (int i = 0; i < 6; i++)
+            {
+                hitEffect.transform.GetChild(i).GetComponent<ParticleSystem>().Stop(false, ParticleSystemStopBehavior.StopEmittingAndClear);
+                hitEffect.transform.GetChild(i).GetComponent<ParticleSystem>().startLifetime = hitCountTimer;
+                hitEffect.transform.GetChild(i).GetComponent<ParticleSystem>().Play();
+            }
+        }
     }
 
     void RequestDestroy()
@@ -143,7 +170,8 @@ public class TerraBreakObject : SpawnObject
         currentCastingTime = (float)data[1];
         currentLifeTime = (float)data[2];
         currentHitCountTimer = (float)data[3];
-        currentColliderTimer = (float)data[4];
+        isFirst = (bool)data[4];
+        hitObjects = ((string[])data[5]).ToList();
     }
 
     void ActiveCollider()
@@ -151,45 +179,38 @@ public class TerraBreakObject : SpawnObject
         isColliderOn = true;
     }
 
-    void InactiveCollider()
+    void TriggerEvent(GameObject hitObject)
     {
-        isColliderOn = false;
-    }
-
-    void TriggerEvent(GameObject gameObject)
-    {
-        if(isColliderOn)
+        if(PhotonNetwork.IsMasterClient)
         {
-            Debug.Log("히트");
-        }
-    }    
-
-    private void OnTriggerStay(Collider other)
-    {
-        if (PhotonNetwork.IsMasterClient)
-        {
-            if (isColliderOn == true)
+            if (isColliderOn)
             {
-                if (other.gameObject.GetComponent<Character>() != null)
+                if (hitObject.transform.root.gameObject.name != hitObject.name)
                 {
-                    bool _isCheck = false;
-                    for (int i = 0; i < hitPlayers.Count; i++)
+                    GameObject _rootObject = hitObject.transform.root.gameObject;
+                    if (_rootObject.tag != tag)
                     {
-                        if (hitPlayers[i] == other.gameObject.name)
+                        for (int i = 0; i < hitObjects.Count; i++)
                         {
-                            _isCheck = true;
+                            if (_rootObject.name == hitObjects[i])
+                                return;
                         }
-                    }
 
-                    if (_isCheck)
-                        return;
-                    else
-                    {
-                        hitPlayers.Add(other.gameObject.name);
-                        Debug.Log("데미지");
+                        hitObjects.Add(_rootObject.name);
+                        Vector3 _tempDirection = (_rootObject.transform.position - transform.position).normalized;
+                        if (isFirst == true)
+                        {
+                            _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.MasterClient,
+                                 playerName, (int)(elementalOrderData.terraBreakDamageFirst), hitObject.name, _tempDirection, 20f);
+                        }
+                        else
+                        {
+                            _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.MasterClient,
+                                 playerName, (int)(elementalOrderData.terraBreakDamage / 4), hitObject.name, _tempDirection, 20f);
+                        }
                     }
                 }
             }
         }
-    }
+    }    
 }

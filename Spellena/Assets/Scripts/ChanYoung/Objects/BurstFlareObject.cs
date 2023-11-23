@@ -46,9 +46,6 @@ public class BurstFlareObject : SpawnObject
         {
             _tempData = new object[2];
             _tempData[0] = tunnelCommand;
-
-            if (tunnelCommand == "RequestDestroy")
-                Debug.Log(photonView.ViewID);
         }
 
         photonView.RPC("CallRPCTunnelElementalOrderSpell2", RpcTarget.AllBuffered, _tempData);
@@ -85,7 +82,31 @@ public class BurstFlareObject : SpawnObject
         transform.rotation = Quaternion.LookRotation(direction);
         currentLifeTime = lifeTime;
         explodeParticle.Stop();
-        shootParticle.GetComponent<ParticleEventCall>().explodeEvent += RunExplode;
+        shootParticle.GetComponent<ParticleEventCall>().explodeEvent += TriggerParticle;
+    }
+
+    void TriggerParticle(GameObject hitObject, Vector3 pos)
+    {
+        if(hitObject.layer == 11)
+        {
+            RunExplode(pos);
+            return;
+        }
+        if(PhotonNetwork.IsMasterClient)
+        {
+            if(hitObject.transform.root.gameObject.name != hitObject.name)
+            {
+                GameObject _rootObject = hitObject.transform.root.gameObject;
+                if(_rootObject.GetComponent<Character>() != null)
+                {
+                    if(_rootObject.tag != tag)
+                    {
+                        _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.MasterClient,
+                         playerName, (int)(elementalOrderData.burstFlareDamage), hitObject.name, transform.forward, 20f);
+                    }
+                }
+            }
+        }
     }
 
     void RunExplode(Vector3 pos)
