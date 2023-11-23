@@ -8,6 +8,7 @@ public class CharacterSelect : CenterState
 {
     bool isCheckTimer = false;
     float tempTimer = 0.0f;
+
     public override void StateExecution()
     {
         if (!isCheckTimer)
@@ -15,21 +16,34 @@ public class CharacterSelect : CenterState
             isCheckTimer = !isCheckTimer;
             tempTimer = gameCenter.globalTimer;
             gameCenter.globalDesiredTimer = tempTimer + gameCenter.characterSelectTime;
+            ConnectCharacterSelect();
         }
+
         gameCenter.globalTimer += Time.deltaTime;
+        gameCenter.characterSelectView.RPC("ReceiveTimerCount", RpcTarget.AllBufferedViaServer,
+            gameCenter.globalDesiredTimer - gameCenter.globalTimer);
 
         // 캐릭터 선택
 
         if (gameCenter.globalTimer >= gameCenter.globalDesiredTimer)
         {
-            gameCenter.inGameUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "inGameUI", true);
-            gameCenter.currentGameState = GameCenterTest.GameState.GameReady;
-
-            MakeCharacter();
+            MakeSpawnPoint();
             MakeTeamStateUI();
+            ConnectInGameUI();
+            MakeCharacter();
+
+            gameCenter.currentGameState = GameCenterTest.GameState.GameReady;
         }
     }
 
+    void ConnectCharacterSelect()
+    {
+        if (gameCenter.characterSelectObj != null)
+        {
+            gameCenter.characterSelectView = gameCenter.characterSelectObj.GetComponent<PhotonView>();
+            gameCenter.characterSelect = gameCenter.characterSelectObj.GetComponent<SelectingCharacter>();
+        }
+    }
 
     void MakeCharacter()
     {
@@ -38,11 +52,12 @@ public class CharacterSelect : CenterState
 
         foreach (var player in PhotonNetwork.CurrentRoom.Players.Values)
         {
-            //현재 캐릭터는 에테르나 고정, 접속 순서에 따라 A,B 팀 나뉨
-            //if((string)player.CustomProperties["Team"]=="A")
             string choseCharacter = "Aeterna";
+            // 캐릭터 프리팹 한 파일로 통일
+            //string choseCharacter = (string)player.CustomProperties["Character"];
+            if (choseCharacter == null) GameCenterTest.ChangePlayerCustomProperties(player, "Character", "Aeterna");
 
-            if (player.ActorNumber % 2 == 0)     // A 팀 (Red)
+            if ((string)player.CustomProperties["Team"]=="A")     // A 팀 (Red)
             {
                 GameObject playerCharacter
                     = PhotonNetwork.Instantiate("TaeWoo/Prefabs/" + choseCharacter, gameCenter.playerSpawnA[aTeamIndex].position, Quaternion.identity);
@@ -52,13 +67,12 @@ public class CharacterSelect : CenterState
                 playerCharacter.GetComponent<Character>().SetTagServer("TeamA");
 
                 GameCenterTest.ChangePlayerCustomProperties(player, "CharacterViewID", playerCharacter.GetComponent<PhotonView>().ViewID);
-                GameCenterTest.ChangePlayerCustomProperties(player, "Team", "A");
                 GameCenterTest.ChangePlayerCustomProperties(player, "SpawnPoint", gameCenter.playerSpawnA[aTeamIndex].position);
                 aTeamIndex++;
                 gameCenter.playersA.Add(player);
             }
 
-            else                // B 팀 (Blue)
+            else if((string)player.CustomProperties["Team"] == "B")    // B 팀 (Blue)
             {
                 GameObject playerCharacter
                     = PhotonNetwork.Instantiate("TaeWoo/Prefabs/" + choseCharacter, gameCenter.playerSpawnB[bTeamIndex].position, Quaternion.identity);
@@ -68,7 +82,6 @@ public class CharacterSelect : CenterState
                 playerCharacter.GetComponent<Character>().SetTagServer("TeamB");
 
                 GameCenterTest.ChangePlayerCustomProperties(player, "CharacterViewID", playerCharacter.GetComponent<PhotonView>().ViewID);
-                GameCenterTest.ChangePlayerCustomProperties(player, "Team", "B");
                 GameCenterTest.ChangePlayerCustomProperties(player, "SpawnPoint", gameCenter.playerSpawnB[bTeamIndex].position);
                 bTeamIndex++;
                 gameCenter.playersB.Add(player);
@@ -96,6 +109,24 @@ public class CharacterSelect : CenterState
                 }
             }
         }
+    }
+
+    void ConnectInGameUI()
+    {
+        if (gameCenter.inGameUIObj != null)
+        {
+            gameCenter.inGameUI = gameCenter.inGameUIObj.GetComponent<InGameUI>();
+            gameCenter.inGameUIView = gameCenter.inGameUIObj.GetComponent<PhotonView>();
+
+            gameCenter.photonView.RPC("ActiveObject", RpcTarget.AllBufferedViaServer, "inGameUIObj", true);
+            gameCenter.photonView.RPC("ActiveObject", RpcTarget.AllBufferedViaServer, "characterSelectObj", false);
+        }
+    }
+
+    void MakeSpawnPoint()
+    {
+        gameCenter.playerSpawnA = GameCenterTest.FindObject(gameCenter.playerSpawnPoints, "TeamA").GetComponentsInChildren<Transform>(true);
+        gameCenter.playerSpawnB = GameCenterTest.FindObject(gameCenter.playerSpawnPoints, "TeamB").GetComponentsInChildren<Transform>(true);
     }
 
 

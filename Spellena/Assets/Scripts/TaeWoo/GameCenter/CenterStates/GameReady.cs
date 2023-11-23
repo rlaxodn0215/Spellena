@@ -15,7 +15,6 @@ public class GameReady : CenterState
             isCheckTimer = !isCheckTimer;
             tempTimer = gameCenter.globalTimer;
             gameCenter.globalDesiredTimer = tempTimer + gameCenter.readyTime;
-            gameCenter.inGameUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "etcUI", true);
         }
 
         gameCenter.globalTimer += Time.deltaTime;
@@ -32,7 +31,6 @@ public class GameReady : CenterState
             }
 
             gameCenter.currentGameState = GameCenterTest.GameState.DuringRound;
-            gameCenter.inGameUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "etcUI", false);
             isCheckTimer = !isCheckTimer;
         }
 

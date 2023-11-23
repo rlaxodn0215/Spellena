@@ -11,15 +11,19 @@ public class InitPlayerData : CenterState
         {
             gameCenter.globalTimer = 0.0f;
 
-            if (gameCenter.inGameUIObj != null)
-            {
-                gameCenter.inGameUIView = gameCenter.inGameUIObj.GetComponent<PhotonView>();
-                gameCenter.inGameUI = gameCenter.inGameUIObj.GetComponent<InGameUI>();
-            }
-
+            ConnectInGameUI();
             MakeSpawnPoint();
 
             gameCenter.currentGameState = GameCenterTest.GameState.CharacterSelect;
+        }
+    }
+
+    void ConnectInGameUI()
+    {
+        if (gameCenter.inGameUIObj != null)
+        {
+            gameCenter.inGameUIView = gameCenter.inGameUIObj.GetComponent<PhotonView>();
+            gameCenter.inGameUI = gameCenter.inGameUIObj.GetComponent<InGameUI>();
         }
     }
 

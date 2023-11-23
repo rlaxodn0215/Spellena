@@ -24,16 +24,16 @@ public class RoundEnd : CenterState
             if (gameCenter.roundA >= 2 || gameCenter.roundB >= 2)
             {
                 gameCenter.currentGameState = GameCenterTest.GameState.MatchEnd;
-                gameCenter.inGameUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "victory", false);
-                gameCenter.inGameUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "defeat", false);
+                gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "victory", false);
+                gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "defeat", false);
                 Debug.Log("Game End");
             }
 
             else
             {
                 gameCenter.currentGameState = GameCenterTest.GameState.GameReady;
-                gameCenter.inGameUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "roundWin", false);
-                gameCenter.inGameUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "roundLoose", false);
+                gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "roundWin", false);
+                gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "roundLoose", false);
                 isCheckTimer = !isCheckTimer;
                 ResetRound();
             }
@@ -52,14 +52,14 @@ public class RoundEnd : CenterState
         gameCenter.occupyingTeam.name = "";
         gameCenter.occupyingTeam.rate = 0.0f;
 
-        gameCenter.inGameUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "captured_Red", false);
-        gameCenter.inGameUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "captured_Blue", false);
-        gameCenter.inGameUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "extraObj", false);
-        gameCenter.inGameUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "redExtraUI", true);
-        gameCenter.inGameUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "redExtraObj", false);
-        gameCenter.inGameUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "blueExtraUI", true);
-        gameCenter.inGameUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "blueExtraObj", false);
-        gameCenter.inGameUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "etcUI", true);
+        gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "captured_Red", false);
+        gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "captured_Blue", false);
+        gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "extraObj", false);
+        gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "redExtraUI", true);
+        gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "redExtraObj", false);
+        gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "blueExtraUI", true);
+        gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "blueExtraObj", false);
+        gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "etcUI", true);
 
         // 플레이어 소환 위치로 이동
         foreach (var player in PhotonNetwork.CurrentRoom.Players.Values)

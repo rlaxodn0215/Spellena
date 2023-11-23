@@ -1,17 +1,59 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Photon.Pun;
 
 public class SelectingCharacter : MonoBehaviour
 {
+    Dictionary<string, GameObject> UIObjects = new Dictionary<string, GameObject>();
+
+    Text timeCountText;
+
     public List<GameObject> avatar;
+
     public GameObject confirm;
     public GameObject reSelect;
 
     private string selectName;
 
-   public void SelectCharacter(string name)
+    [HideInInspector]
+    public float timer = 0.0f;
+
+    private void Start()
+    {
+        ConnectUI();
+    }
+    void ConnectUI()
+    {
+        UIObjects["timeCount"] = GameCenterTest.FindObject(gameObject, "TimeCount");
+        timeCountText = UIObjects["timeCount"].GetComponent<Text>();
+    }
+
+    private void Update()
+    {
+        ShowTimer();
+    }
+
+    [PunRPC]
+    public void ReceiveTimerCount(float time)
+    {
+        timer = time;
+    }
+
+    [PunRPC]
+    public void ActiveCharacterSelectObj(string uiName, bool isActive)
+    {
+        if (!UIObjects.ContainsKey(uiName)) return;
+        UIObjects[uiName].SetActive(isActive);
+    }
+
+    void ShowTimer()
+    {
+        timeCountText.text = string.Format("{0:F0}", timer);
+    }
+
+    public void SelectCharacter(string name)
    {
         switch (name)
         {
@@ -37,8 +79,6 @@ public class SelectingCharacter : MonoBehaviour
         confirm.SetActive(false);
         reSelect.SetActive(true);
         GameCenterTest.ChangePlayerCustomProperties(PhotonNetwork.LocalPlayer, "Character", selectName);
-        // 시간 초과시 마지막에 선택한 캐릭터가 된다
-        // 아무 선택 안하면 랜덤으로 소환
     }
 
     public void ReSelectCharacter()
@@ -46,7 +86,5 @@ public class SelectingCharacter : MonoBehaviour
         confirm.SetActive(true);
         reSelect.SetActive(false);
     }
-
-
 
 }

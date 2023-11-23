@@ -92,7 +92,6 @@ public class InGameUI : MonoBehaviourPunCallbacks,IPunObservable
     void Start()
     {
         ConnectUI();
-        InitUI();
     }
 
     void ConnectUI()
@@ -186,11 +185,6 @@ public class InGameUI : MonoBehaviourPunCallbacks,IPunObservable
         UIObjects["defeat"] = GameCenterTest.FindObject(gameObject, "Defeat");
     }
 
-    void InitUI()
-    {
-        UIObjects["inGameUI"].SetActive(false);
-    }
-
     void Update()
     {
         redPayloadImage.fillAmount = occupyingAUI.rate * 0.01f;
@@ -217,23 +211,23 @@ public class InGameUI : MonoBehaviourPunCallbacks,IPunObservable
     }
 
     [PunRPC]
-    public void ActiveUI(string uiName, bool isActive)
+    public void ActiveInGameUIObj(string uiName, bool isActive)
     {
-        if (UIObjects.ContainsKey("uiName")) return;
+        if (!UIObjects.ContainsKey(uiName)) return;
         UIObjects[uiName].SetActive(isActive);
     }
 
     [PunRPC]
     public void ShowRoundWin(int round)
     {
-        ActiveUI("roundWin", true);
+        ActiveInGameUIObj("roundWin", true);
         roundWinText.text = string.Format(round + " 라운드 승리!");
     }
 
     [PunRPC]
     public void ShowRoundLoose(int round)
     {
-        ActiveUI("roundLoose", true);
+        ActiveInGameUIObj("roundLoose", true);
         roundLooseText.text = string.Format(round + " 라운드 패배!");
     }
 

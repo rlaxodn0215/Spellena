@@ -7,9 +7,14 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
 {
     public GameObject angleStatue;
     public GameObject playerSpawnPoints;
-    public GameObject characterSelect;
+
+    public GameObject characterSelectObj;
     public GameObject inGameUIObj;
 
+    [HideInInspector]
+    public PhotonView characterSelectView;
+    [HideInInspector]
+    public SelectingCharacter characterSelect;
     [HideInInspector]
     public PhotonView inGameUIView;
     [HideInInspector]
@@ -23,7 +28,6 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
 
     public enum GameState
     {
-        InitPlayerData,
         CharacterSelect,
         GameReady,
         DuringRound,
@@ -73,7 +77,7 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
 
     // 전체 타이머
     [HideInInspector]
-    public float globalTimer;
+    public float globalTimer = 0.0f;
     // 목표 전체 타이머 값
     [HideInInspector]
     public float globalDesiredTimer;
@@ -143,10 +147,6 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
 
     private void Awake()
     {
-        InitPlayerData temp = gameObject.AddComponent<InitPlayerData>();
-        temp.ConnectCenter(this);
-        centerStates.Add(GameState.InitPlayerData, temp);
-
         CharacterSelect temp2 = gameObject.AddComponent<CharacterSelect>();
         temp2.ConnectCenter(this);
         centerStates.Add(GameState.CharacterSelect, temp2);
@@ -171,7 +171,7 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
         temp7.ConnectCenter(this);
         centerStates.Add(GameState.GameResult, temp7);
 
-        currentGameState = GameState.InitPlayerData;
+        currentGameState = GameState.CharacterSelect;
         currentCenterState = centerStates[currentGameState];
     }
 
@@ -179,7 +179,6 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
     {
         if (PhotonNetwork.IsMasterClient)
         {
-            Debug.Log(currentGameState);
             currentCenterState.StateExecution();
             currentCenterState = centerStates[currentGameState];
 
@@ -230,6 +229,23 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
         occupyingB.rate = (float)datas[11];
         occupyingTeam.name = (string)datas[12];
         occupyingTeam.rate = (float)datas[13];
+    }
+
+    [PunRPC]
+    public void ActiveObject(string name, bool isActive)
+    {
+        switch(name)
+        {
+            case "characterSelectObj":
+                characterSelectObj.SetActive(isActive);
+                break;
+            case "inGameUIObj":
+                inGameUIObj.SetActive(isActive);
+                break;
+            default:
+                Debug.LogWarning("잘못된 게임 오브젝트 이름 사용");
+                break;
+        }
     }
 
     public static Photon.Realtime.Player FindPlayerWithCustomProperty(string key, string value)
@@ -336,21 +352,21 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
 
                 if (currentOccupationTeam == "A")
                 {
-                    inGameUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "captured_Red", true);
-                    inGameUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "captured_Blue", false);
-                    inGameUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "extraObj", false);
-                    inGameUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "blueExtraObj", false);
-                    inGameUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "blueExtraUI", true);
+                    inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "captured_Red", true);
+                    inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "captured_Blue", false);
+                    inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "extraObj", false);
+                    inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "blueExtraObj", false);
+                    inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "blueExtraUI", true);
                     angleStatue.GetComponent<PhotonView>().RPC("ChangeTeam", RpcTarget.AllBufferedViaServer, "A");
                 }
 
                 else if (currentOccupationTeam == "B")
                 {
-                    inGameUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "captured_Red", false);
-                    inGameUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "captured_Blue", true);
-                    inGameUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "extraObj", false);
-                    inGameUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "redExtraObj", false);
-                    inGameUIView.RPC("ActiveUI", RpcTarget.AllBufferedViaServer, "redExtraUI", true);
+                    inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "captured_Red", false);
+                    inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "captured_Blue", true);
+                    inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "extraObj", false);
+                    inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "redExtraObj", false);
+                    inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "redExtraUI", true);
                     angleStatue.GetComponent<PhotonView>().RPC("ChangeTeam", RpcTarget.AllBufferedViaServer, "B");
                 }
             }
@@ -376,7 +392,8 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
     public void GiveDataToUI()
     {
         if (inGameUI == null) return;
-        inGameUI.globalTimerUI = globalDesiredTimer - globalTimer;
+
+        inGameUI.globalTimerUI = globalTimer;
         inGameUI.roundEndTimerUI = roundEndTimer;
         inGameUI.roundEndTimeUI = roundEndTime;
         inGameUI.occupyingAUI.rate = occupyingA.rate;

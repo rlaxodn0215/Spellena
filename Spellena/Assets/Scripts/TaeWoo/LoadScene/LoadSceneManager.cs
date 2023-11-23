@@ -2,23 +2,35 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
-using Photon.Realtime;
 using UnityEngine.SceneManagement;
+using Hashtable = ExitGames.Client.Photon.Hashtable;
 
-public class LoadSceneManager : MonoBehaviour
+public class LoadSceneManager : MonoBehaviourPunCallbacks
 {
     public static string nextScene;
+    public static List<int> redTeamActorNums = new List<int>();
+    public static List<int> blueTeamActorNums = new List<int>();
     public float loadingTime = 5.0f;
 
-    public static void LoadNextScene(string sceneName)
+    public static void LoadNextScene(string sceneName, List<int> redTeam, List<int> blueTeam)
     {
         nextScene = sceneName;
+        redTeamActorNums = redTeam;
+        blueTeamActorNums = blueTeam;
+
         PhotonNetwork.LoadLevel("TaeWoo_LoadingScene");
     }
 
     void Start()
     {
+        if (PhotonNetwork.IsMasterClient) ToDoMaster();
         StartCoroutine(LoadSceneProcess());
+    }
+
+    void ToDoMaster()
+    {
+       photonView.RPC("SyncNextScene", RpcTarget.AllBufferedViaServer, nextScene);
+       SetPlayerDatas(); 
     }
 
     IEnumerator LoadSceneProcess()
@@ -50,4 +62,67 @@ public class LoadSceneManager : MonoBehaviour
             }
         }
     }
+
+    [PunRPC]
+    public void SyncNextScene(string sceneName)
+    {
+        nextScene = sceneName;
+    }
+
+    void SetPlayerDatas()
+    {
+        foreach (var player in PhotonNetwork.CurrentRoom.Players.Values)
+        {
+            // 플레이어 이름, 캐릭터의 게임 오브젝트, 팀, 총 데미지 수, 킬 수, 죽은 수
+            Hashtable playerData = new Hashtable();
+
+            // 보여주는 데이터
+            playerData.Add("Name", player.NickName);
+
+            foreach(int num in redTeamActorNums)
+            {
+                if(player.ActorNumber==num)
+                {
+                    playerData.Add("Team", "A");
+                    break;
+                }
+            }
+
+            foreach (int num in blueTeamActorNums)
+            {
+                if (player.ActorNumber == num)
+                {
+                    playerData.Add("Team", "B");
+                    break;
+                }
+            }
+
+            playerData.Add("Character", null);
+            playerData.Add("TotalDamage", 0);
+            playerData.Add("TotalHeal", 0);
+            playerData.Add("KillCount", 0);
+            playerData.Add("DeadCount", 0);
+            playerData.Add("IsAlive", true);
+            playerData.Add("AngelStatueCoolTime", 0.0f);
+            playerData.Add("KillerName", null);
+
+            // 보여주지 않는 데이터
+            playerData.Add("CharacterViewID", 0);
+            playerData.Add("ReSpawnTime", 0.0f);
+            playerData.Add("SpawnPoint", new Vector3(0, 0, 0));
+
+            // 동기화 되지 않고 마스터 클라이언트만 가지는 Parameter / 플레이어 사망시 사용
+            playerData.Add("ParameterName", null);
+
+            playerData.Add("DamagePart", null);
+            playerData.Add("DamageDirection", null);
+            playerData.Add("DamageForce", null);
+
+            playerData.Add("PlayerAssistViewID", null);
+
+            player.SetCustomProperties(playerData);
+        }
+
+    }
+
 }

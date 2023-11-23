@@ -2,8 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Photon.Pun;
 
-public class LoadingScene : MonoBehaviour
+public class LoadingScene : MonoBehaviourPunCallbacks
 {
     public GameObject mapName;
     public GameObject helpBackImage;
@@ -49,12 +50,23 @@ public class LoadingScene : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        timer += Time.deltaTime;
+        if (PhotonNetwork.IsMasterClient)
+        {
+            timer += Time.deltaTime;
+            photonView.RPC("SyncTimer", RpcTarget.AllBufferedViaServer, timer);
+        }
+
         LoadingSignRotate();
+    }
+    
+    [PunRPC]
+    public void SyncTimer(float time)
+    {
+        timer = time;
     }
 
     void LoadingSignRotate()
     {
-        loadingSignRectTransform.Rotate(0, 0, loadingSignRotateSpeed * Mathf.Abs(Mathf.Sin(loadingSignRotateFrequency * timer)));
+        loadingSignRectTransform.Rotate(0, 0, -loadingSignRotateSpeed * Mathf.Abs(Mathf.Sin(loadingSignRotateFrequency * timer)));
     }
 }
