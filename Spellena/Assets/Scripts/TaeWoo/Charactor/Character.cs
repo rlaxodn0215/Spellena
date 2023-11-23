@@ -1,11 +1,7 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using Photon.Pun;
-using Photon.Realtime;
-using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 namespace Player
 {
@@ -498,7 +494,7 @@ namespace Player
         {
             if(photonView.IsMine)
             {
-                if (collision.gameObject.tag == "Ground")
+                if (collision.gameObject.layer == LayerMask.NameToLayer("Map"))
                 {
                     isGrounded = true;
                     playerActionDatas[(int)PlayerActionState.Jump].isExecuting = false;
@@ -510,7 +506,7 @@ namespace Player
         {
             if(photonView.IsMine)
             {
-                if (collision.gameObject.tag == "Ground")
+                if (collision.gameObject.layer == LayerMask.NameToLayer("Map"))
                 {
                     isGrounded = false;
                     playerActionDatas[(int)PlayerActionState.Jump].isExecuting = true;

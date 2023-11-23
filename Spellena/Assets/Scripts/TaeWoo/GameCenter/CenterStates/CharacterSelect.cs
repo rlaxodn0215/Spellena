@@ -9,6 +9,9 @@ public class CharacterSelect : CenterState
     bool isCheckTimer = false;
     float tempTimer = 0.0f;
 
+    float soundDecreaseTime = 5;
+    float soundDecreaseSpeed = 1.5f;
+
     public override void StateExecution()
     {
         if (!isCheckTimer)
@@ -20,10 +23,18 @@ public class CharacterSelect : CenterState
         }
 
         gameCenter.globalTimer += Time.deltaTime;
-        gameCenter.characterSelectView.RPC("ReceiveTimerCount", RpcTarget.AllBufferedViaServer,
-            gameCenter.globalDesiredTimer - gameCenter.globalTimer);
+
+        gameCenter.characterSelectView.RPC("ReceiveTimerCount", RpcTarget.AllBufferedViaServer, gameCenter.globalDesiredTimer - gameCenter.globalTimer);
 
         // 캐릭터 선택
+
+        if(gameCenter.globalDesiredTimer - gameCenter.globalTimer <= soundDecreaseTime)
+        {
+            if (gameCenter.bgmManagerView != null)
+            {
+                gameCenter.bgmManagerView.RPC("VolumeControl", RpcTarget.AllBufferedViaServer, soundDecreaseSpeed * Time.deltaTime / 10, false);
+            }
+        }
 
         if (gameCenter.globalTimer >= gameCenter.globalDesiredTimer)
         {
@@ -32,6 +43,7 @@ public class CharacterSelect : CenterState
             ConnectInGameUI();
             MakeCharacter();
 
+            gameCenter.bgmManagerView.RPC("PlayBGM", RpcTarget.AllBufferedViaServer, "DuringRound", 0.3f, true);
             gameCenter.currentGameState = GameCenterTest.GameState.GameReady;
         }
     }

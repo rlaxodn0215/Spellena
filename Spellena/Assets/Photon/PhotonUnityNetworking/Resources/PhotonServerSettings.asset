@@ -140,6 +140,9 @@ MonoBehaviour:
   - SyncNextScene
   - StartGameToAll
   - SyncTimer
+  - PlayBGM
+  - PlayDuringRoundBGM
+  - VolumeControl
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

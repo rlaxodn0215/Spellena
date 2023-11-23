@@ -5,6 +5,8 @@ using Photon.Pun;
 
 public class BGMManager : MonoBehaviourPunCallbacks
 {
+    public static BGMManager instance;
+
     [HideInInspector]
     public AudioSource audioSource;
 
@@ -22,7 +24,7 @@ public class BGMManager : MonoBehaviourPunCallbacks
     {
         DontDestroyOnLoad(gameObject);
 
-        if (photonView != null && photonView.ViewID != 0)
+        if (photonView != null && photonView.ViewID !=0)
         {
             photonView.ViewID = 0;
             PhotonNetwork.RegisterPhotonView(photonView);
@@ -35,7 +37,7 @@ public class BGMManager : MonoBehaviourPunCallbacks
         audioSource = GetComponent<AudioSource>();
         LinkDatas();
 
-        PlayLoadingCharacterBGM();
+        PlayBGM("LoadingCharacter",1.0f, true);
     }
 
     void LinkDatas()
@@ -46,28 +48,31 @@ public class BGMManager : MonoBehaviourPunCallbacks
         }
     }
 
-    public void VolumeControl(float vol)
+    [PunRPC]
+    public void VolumeControl(float size, bool isIncrease)
     {
         if (audioSource.clip == null) return;
+
+        if(isIncrease)
+        {
+            audioSource.volume += size;
+        }
+
+        else
+        {
+            audioSource.volume -= size;
+        }
     }
 
-
-    public void PlayLoadingCharacterBGM()
+    [PunRPC]
+    public void PlayBGM(string key, float vol, bool isLoop)
     {
-        if(audioDatas.ContainsKey("LoadingCharacter"))
-            audioSource.clip = audioDatas["LoadingCharacter"];
+        if (audioDatas.ContainsKey(key))
+            audioSource.clip = audioDatas[key];
+
+        audioSource.volume = vol;
         audioSource.Play();
-        audioSource.loop = true;
+        audioSource.loop = isLoop;
     }
-
-    public void PlayDuringRoundBGM()
-    {
-        if (audioDatas.ContainsKey("DuringRound"))
-            audioSource.clip = audioDatas["DuringRound"];
-        audioSource.Play();
-        audioSource.loop = true;
-    }
-
-
 
 }

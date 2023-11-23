@@ -937,7 +937,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -198.33, y: 112}
+  m_AnchoredPosition: {x: -200, y: -55}
   m_SizeDelta: {x: 400, y: 68.9585}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1139915258
@@ -1594,7 +1594,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1532866560}
   - component: {fileID: 1532866562}
-  - component: {fileID: 1532866561}
   - component: {fileID: 1532866563}
   m_Layer: 0
   m_Name: BGMManager
@@ -1618,28 +1617,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1532866561
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1532866559}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ObservedComponentsFoldoutOpen: 1
-  Group: 0
-  prefixField: -1
-  Synchronization: 3
-  OwnershipTransfer: 0
-  observableSearch: 2
-  ObservedComponents: []
-  sceneViewId: 3
-  InstantiationId: 0
-  isRuntimeInstantiated: 0
 --- !u!114 &1532866562
 MonoBehaviour:
   m_ObjectHideFlags: 0
