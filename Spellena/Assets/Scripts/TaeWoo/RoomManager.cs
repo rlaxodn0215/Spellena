@@ -58,7 +58,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
             _gameCenter = PhotonNetwork.Instantiate("ChanYoung/Prefabs/GameCenter", spawnPoint.position, Quaternion.identity);
         }
 
-        player = PhotonNetwork.Instantiate("ChanYoung/Prefabs/ElementalOrder", spawnPoint.position, Quaternion.identity);
+        player = PhotonNetwork.Instantiate("ChanYoung/Prefabs/Cultist/Cultist", spawnPoint.position, Quaternion.identity);
         player.GetComponent<Player.Character>().IsLocalPlayer();
     }
 }
