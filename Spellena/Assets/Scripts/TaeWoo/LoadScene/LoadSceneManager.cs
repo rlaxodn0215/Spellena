@@ -56,9 +56,6 @@ public class LoadSceneManager : MonoBehaviourPunCallbacks
                 //progressbar.fillamount = Mathf.Lerp(0.9f,1f,timer)
                 if(timer >= loadingTime)
                 {
-                    GameCenterTest.ChangePlayerCustomProperties(PhotonNetwork.CurrentRoom.Players
-                        [PhotonNetwork.CurrentRoom.masterClientId],"LoadingTime", timer);
-
                     op.allowSceneActivation = true;
                     yield break;
                 }
@@ -80,7 +77,6 @@ public class LoadSceneManager : MonoBehaviourPunCallbacks
             Hashtable playerData = new Hashtable();
 
             // 보여주는 데이터
-            playerData.Add("Name", player.NickName);
 
             foreach(int num in redTeamActorNums)
             {
@@ -100,11 +96,17 @@ public class LoadSceneManager : MonoBehaviourPunCallbacks
                 }
             }
 
+            playerData.Add("Name", player.NickName);
             playerData.Add("Character", null);
-            playerData.Add("TotalDamage", 0);
-            playerData.Add("TotalHeal", 0);
+
             playerData.Add("KillCount", 0);
             playerData.Add("DeadCount", 0);
+            playerData.Add("AsisstCount", 0);
+            playerData.Add("UltimateCount", 0);
+            playerData.Add("Ping", 0);
+
+            playerData.Add("TotalDamage", 0);
+            playerData.Add("TotalHeal", 0);
             playerData.Add("IsAlive", true);
             playerData.Add("AngelStatueCoolTime", 0.0f);
             playerData.Add("KillerName", null);

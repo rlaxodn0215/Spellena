@@ -13,13 +13,13 @@ public class RoundEnd : CenterState
         if (!isCheckTimer)
         {
             isCheckTimer = !isCheckTimer;
-            tempTimer = gameCenter.globalTimer;
+            tempTimer = GameCenterTest.globalTimer;
             gameCenter.globalDesiredTimer = tempTimer + gameCenter.roundEndResultTime;
         }
 
-        gameCenter.globalTimer += Time.deltaTime;
+        GameCenterTest.globalTimer += Time.deltaTime;
 
-        if (gameCenter.globalTimer >= gameCenter.globalDesiredTimer)
+        if (GameCenterTest.globalTimer >= gameCenter.globalDesiredTimer)
         {
             if (gameCenter.roundA >= 2 || gameCenter.roundB >= 2)
             {

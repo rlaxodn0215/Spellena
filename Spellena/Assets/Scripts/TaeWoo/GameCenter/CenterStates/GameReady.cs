@@ -13,13 +13,13 @@ public class GameReady : CenterState
         if (!isCheckTimer)
         {
             isCheckTimer = !isCheckTimer;
-            tempTimer = gameCenter.globalTimer;
+            tempTimer = GameCenterTest.globalTimer;
             gameCenter.globalDesiredTimer = tempTimer + gameCenter.readyTime;
         }
 
-        gameCenter.globalTimer += Time.deltaTime;
+        GameCenterTest.globalTimer += Time.deltaTime;
 
-        if (gameCenter.globalTimer >= gameCenter.globalDesiredTimer)
+        if (GameCenterTest.globalTimer >= gameCenter.globalDesiredTimer)
         {
             if(gameCenter.roundA == 0 && gameCenter.roundB == 0)
             {

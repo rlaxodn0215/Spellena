@@ -9,7 +9,7 @@ public class InitPlayerData : CenterState
     {
         if (PhotonNetwork.IsMasterClient)
         {
-            gameCenter.globalTimer = 0.0f;
+            GameCenterTest.globalTimer = 0.0f;
 
             ConnectInGameUI();
             MakeSpawnPoint();

@@ -19,6 +19,4 @@ public class AngelStatue : MonoBehaviour
         }
     }
 
-
-
 }

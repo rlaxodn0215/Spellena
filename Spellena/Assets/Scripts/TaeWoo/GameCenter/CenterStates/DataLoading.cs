@@ -11,15 +11,15 @@ public class DataLoading : CenterState
         if (!isCheckTimer)
         {
             isCheckTimer = !isCheckTimer;
-            tempTimer = gameCenter.globalTimer;
+            tempTimer = GameCenterTest.globalTimer;
             gameCenter.globalDesiredTimer = tempTimer + gameCenter.loadingTime;
         }
 
-        gameCenter.globalTimer += Time.deltaTime;
+        GameCenterTest.globalTimer += Time.deltaTime;
 
         // 맵 및 캐릭터 데이터 로딩
 
-        if (gameCenter.globalTimer >= gameCenter.globalDesiredTimer)
+        if (GameCenterTest.globalTimer >= gameCenter.globalDesiredTimer)
         {
             gameCenter.currentGameState = GameCenterTest.GameState.CharacterSelect;
         }

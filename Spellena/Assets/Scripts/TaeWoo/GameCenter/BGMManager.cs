@@ -54,24 +54,15 @@ public class BGMManager : MonoBehaviourPunCallbacks
     [PunRPC]
     public void PlayBGM(string key, float vol, bool isLoop)
     {
-        if (audioDatas.ContainsKey(key))
-            audioSource.clip = audioDatas[key];
+        if (!audioDatas.ContainsKey(key)) return;
 
+        // 같은 음악 재생하면 그대로 return 
+        if (audioSource.clip == audioDatas[key]) return;
+
+        audioSource.clip = audioDatas[key];
         audioSource.volume = vol;
-        audioSource.Play();
         audioSource.loop = isLoop;
-    }
-
-    [PunRPC]
-    public void PlayBGM(string key, float vol, bool isLoop, float time)
-    {
-        if (audioDatas.ContainsKey(key))
-            audioSource.clip = audioDatas[key];
-
-        audioSource.time = time;
-        audioSource.volume = vol;
         audioSource.Play();
-        audioSource.loop = isLoop;
     }
 
 }

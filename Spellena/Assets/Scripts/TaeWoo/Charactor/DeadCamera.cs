@@ -1,8 +1,6 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Player;
-using UnityEngine.InputSystem;
 
 public class DeadCamera : MonoBehaviour
 {
@@ -10,6 +8,9 @@ public class DeadCamera : MonoBehaviour
     public Vector2 clampInDegrees = new Vector2(360, 120);
     public Vector2 sensitivity = new Vector2(6, 6);
     public float distance = 2;
+
+    [HideInInspector]
+    public DeathCamUI deathCamUI;
 
     int index = 0;
     GameObject targetPlayer;
@@ -22,6 +23,10 @@ public class DeadCamera : MonoBehaviour
     private Vector2 mouseDelta;
 
     List<Character> players = new List<Character>();
+    private void Start()
+    {
+        deathCamUI = GameObject.Find("DeathUI").GetComponent<DeathCamUI>();
+    }
 
     // 활성화 될 때 현재 같은 팀에있는 플레이어의 리스트를 받는다 -> 중간 탈주 고려
     void OnEnable()
@@ -44,8 +49,11 @@ public class DeadCamera : MonoBehaviour
 
     private void Update()
     {
-        if(Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0))
+        {
             ChangePlayerCam();
+            ChangeCamera(targetPlayer.name);
+        }
 
         TPSView();
     }
@@ -56,6 +64,12 @@ public class DeadCamera : MonoBehaviour
         if (index < 0) index = players.Count - 1;
         if (index >= players.Count) index = 0;
         targetPlayer = players[index].gameObject;
+    }
+
+    void ChangeCamera(string name)
+    {
+        deathCamUI.showPlayerCamID.text = name;
+        deathCamUI.SwitchCam();
     }
 
     void TPSView()

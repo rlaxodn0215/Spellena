@@ -17,22 +17,17 @@ public class CharacterSelect : CenterState
         if (!isCheckTimer)
         {
             isCheckTimer = !isCheckTimer;
-            tempTimer = gameCenter.globalTimer;
+            tempTimer = GameCenterTest.globalTimer;
             gameCenter.globalDesiredTimer = tempTimer + gameCenter.characterSelectTime;
             ConnectCharacterSelect();
-
-            if (PhotonNetwork.CurrentRoom.Players[PhotonNetwork.CurrentRoom.masterClientId].CustomProperties["LoadingTime"] != null)
-                gameCenter.bgmManager.PlayBGM("LoadingCharacter", 1.0f, true,
-                    (float)PhotonNetwork.CurrentRoom.Players[PhotonNetwork.CurrentRoom.masterClientId].CustomProperties["LoadingTime"]);
         }
 
-        gameCenter.globalTimer += Time.deltaTime;
+        GameCenterTest.globalTimer += Time.deltaTime;
 
-        gameCenter.characterSelectView.RPC("ReceiveTimerCount", RpcTarget.AllBufferedViaServer, gameCenter.globalDesiredTimer - gameCenter.globalTimer);
-
+        gameCenter.characterSelectView.RPC("ReceiveTimerCount", RpcTarget.AllBufferedViaServer, gameCenter.globalDesiredTimer - GameCenterTest.globalTimer);
         
         // 일정 시간이 지나면 소리가 점차 감소됨
-        if (gameCenter.globalDesiredTimer - gameCenter.globalTimer <= soundDecreaseTime)
+        if (gameCenter.globalDesiredTimer - GameCenterTest.globalTimer <= soundDecreaseTime)
         {
             if (gameCenter.bgmManagerView != null)
             {
@@ -40,7 +35,7 @@ public class CharacterSelect : CenterState
             }
         }
 
-        if (gameCenter.globalTimer >= gameCenter.globalDesiredTimer)
+        if (GameCenterTest.globalTimer >= gameCenter.globalDesiredTimer)
         {
             MakeSpawnPoint();
             MakeTeamStateUI();
@@ -91,6 +86,8 @@ public class CharacterSelect : CenterState
 
                 playerCharacter.GetComponent<PhotonView>().TransferOwnership(player.ActorNumber);
                 playerCharacter.GetComponent<PhotonView>().RPC("IsLocalPlayer", player);
+                playerCharacter.GetComponent<PhotonView>().RPC("ChangeName", RpcTarget.AllBufferedViaServer, (string)player.CustomProperties["Name"]);
+
                 playerCharacter.GetComponent<Character>().SetTagServer("TeamA");
 
                 GameCenterTest.ChangePlayerCustomProperties(player, "CharacterViewID", playerCharacter.GetComponent<PhotonView>().ViewID);
@@ -115,6 +112,8 @@ public class CharacterSelect : CenterState
 
                 playerCharacter.GetComponent<PhotonView>().TransferOwnership(player.ActorNumber);
                 playerCharacter.GetComponent<PhotonView>().RPC("IsLocalPlayer", player);
+                playerCharacter.GetComponent<PhotonView>().RPC("ChangeName", RpcTarget.AllBufferedViaServer, (string)player.CustomProperties["Name"]);
+
                 playerCharacter.GetComponent<Character>().SetTagServer("TeamB");
 
                 GameCenterTest.ChangePlayerCustomProperties(player, "CharacterViewID", playerCharacter.GetComponent<PhotonView>().ViewID);

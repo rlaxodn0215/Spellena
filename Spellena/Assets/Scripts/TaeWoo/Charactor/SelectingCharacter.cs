@@ -12,13 +12,14 @@ public class SelectingCharacter : MonoBehaviour
 
     public List<GameObject> avatar;
 
+    public GameObject noChoose;
     public GameObject confirm;
     public GameObject reSelect;
 
     private string selectName;
 
     [HideInInspector]
-    public float timer = 0.0f;
+    public float timer = -1.0f;
 
     private void Start()
     {
@@ -50,7 +51,16 @@ public class SelectingCharacter : MonoBehaviour
 
     void ShowTimer()
     {
-        timeCountText.text = string.Format("{0:F0}", timer);
+        if(timer < 0)
+        {
+            timeCountText.text = null;
+        }
+
+        else
+        {
+            timeCountText.text = string.Format("{0:F0}", timer);
+        }
+
     }
 
     public void SelectCharacter(string name)
@@ -61,11 +71,13 @@ public class SelectingCharacter : MonoBehaviour
                 selectName = name;
                 avatar[0].SetActive(true);
                 avatar[1].SetActive(false);
+                noChoose.SetActive(false);
                 break;
             case "ElementalOrder":
                 selectName = name;
                 avatar[0].SetActive(false);
                 avatar[1].SetActive(true);
+                noChoose.SetActive(false);
                 break;
             default:
                 break;

@@ -151,10 +151,6 @@ namespace Player
 
         void Initialize()
         {
-            //임시적으로 만듬
-            playerName = GetComponent<PhotonView>().ViewID.ToString();
-
-            gameObject.name = "Player_" + playerName;
             animator = GetComponent<Animator>();
             rigidbody = GetComponent<Rigidbody>();
             Skills = new Dictionary<string, Ability>();
@@ -171,8 +167,6 @@ namespace Player
                 ragdollPos[i] = ragdollRigid[i].transform.localPosition;
                 ragdollRot[i] = ragdollRigid[i].transform.localRotation;
             }
-
-
         }
 
 
@@ -525,6 +519,12 @@ namespace Player
         }
 
         [PunRPC]
+        public void ChangeName(string name)
+        {
+            gameObject.name = playerName = name;
+        }
+
+        [PunRPC]
         public virtual void IsLocalPlayer()
         {
             if (photonView.IsMine)
@@ -610,7 +610,7 @@ namespace Player
                 // 마스터 클라이언트이기 때문에 동기화 안되도 게임센터의 값과 같다. 
                 if (PhotonNetwork.IsMasterClient)
                 {
-                    var killer = GameCenterTest.FindPlayerWithCustomProperty("CharacterViewID", enemy);
+                    var killer = GameCenterTest.FindPlayerWithCustomProperty("Name", enemy);
 
                     if (killer == null)
                     {
@@ -628,15 +628,10 @@ namespace Player
                         PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["DamagePart"] = damgePart;
                         PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["DamageDirection"] = direction;
                         PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["DamageForce"] = force;
+                        PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["KillerName"] = killer.CustomProperties["Name"];
 
                         GameCenterTest.ChangePlayerCustomProperties
                             (PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr], "DeadCount", temp1 + 1);
-
-                        //PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["ParameterName"] = "";
-                        //GameCenterTest.ChangePlayerCustomProperties
-                        //    (PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr], "KillerName", killer.CustomProperties["Name"]);
-
-                        PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["KillerName"] = killer.CustomProperties["Name"];
 
                         int temp2 = (int)killer.CustomProperties["KillCount"];
                         killer.CustomProperties["ParameterName"] = "KillCount";
@@ -742,8 +737,7 @@ namespace Player
             if(chargeCount>=4)
             {
                 chargeCount = 0;
-                if(ultimateCount < 10)
-                    ultimateCount++;
+                SetUltimatePoint();
             }
         }
 
@@ -751,7 +745,11 @@ namespace Player
         public void SetUltimatePoint()
         {
             if (ultimateCount < 10)
+            {
                 ultimateCount++;
+                int temp = (int)PhotonNetwork.LocalPlayer.CustomProperties["UltimateCount"];
+                GameCenterTest.ChangePlayerCustomProperties(PhotonNetwork.LocalPlayer, "UltimateCount", temp + 1);
+            }
         }
 
         [PunRPC]

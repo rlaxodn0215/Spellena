@@ -121,6 +121,7 @@ MonoBehaviour:
   clampInDegrees: {x: 360, y: 120}
   sensitivity: {x: 6, y: 6}
   distance: 2
+  deathCamUI: {fileID: 0}
 --- !u!114 &3598417007937201718
 MonoBehaviour:
   m_ObjectHideFlags: 0

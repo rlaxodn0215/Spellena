@@ -11,6 +11,7 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
 
     public GameObject characterSelectObj;
     public GameObject inGameUIObj;
+    public GameObject deathUIObj;
 
     [HideInInspector]
     public PhotonView characterSelectView;
@@ -29,6 +30,11 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
     public GameObject betweenBGMObj;
     [HideInInspector]
     public AudioSource betweenBGMSource;
+
+    [HideInInspector]
+    public DeathCamUI deathUI;
+    [HideInInspector]
+    public PhotonView deathUIView;
 
     // 플레이어 소환 좌표
     [HideInInspector]
@@ -65,10 +71,6 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
     [HideInInspector]
     public CenterState currentCenterState;
 
-    //// 일시적인 게임 상태 string 테이터
-    //[HideInInspector]
-    //public string gameStateString;
-
     // 일시적인 죽은 플레이어
     [HideInInspector]
     public string tempVictim = "";
@@ -87,7 +89,7 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
 
     // 전체 타이머
     [HideInInspector]
-    public float globalTimer = 0.0f;
+    public static float globalTimer = 0.0f;
     // 목표 전체 타이머 값
     [HideInInspector]
     public float globalDesiredTimer;
@@ -188,6 +190,8 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
 
         bgmManager = bgmManagerObj.GetComponent<BGMManager>();
         bgmManagerView = bgmManagerObj.GetComponent<PhotonView>();
+        deathUI = deathUIObj.GetComponent<DeathCamUI>();
+        deathUIView = deathUIObj.GetComponent<PhotonView>();
 
         ConnectBetweenBGM("LoadingCharacterBGM");
 
@@ -209,6 +213,8 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
 
     void Update()
     {
+        //ChangePlayerCustomProperties(PhotonNetwork.LocalPlayer, "Ping", PhotonNetwork.GetPing());
+
         if (PhotonNetwork.IsMasterClient)
         {
             currentCenterState.StateExecution();
@@ -221,7 +227,6 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
                 GiveDataToUI();
             }
         }
-
     }
 
     object[] ToDoSerlize()
@@ -408,7 +413,10 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
                     inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "extraObj", false);
                     inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "blueExtraObj", false);
                     inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "blueExtraUI", true);
+
                     angleStatue.GetComponent<PhotonView>().RPC("ChangeTeam", RpcTarget.AllBufferedViaServer, "A");
+
+                    bgmManagerView.RPC("PlayBGM", RpcTarget.AllBufferedViaServer, "DuringRound", 0.3f, true);
                 }
 
                 else if (currentOccupationTeam == "B")
@@ -418,7 +426,10 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
                     inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "extraObj", false);
                     inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "redExtraObj", false);
                     inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "redExtraUI", true);
+
                     angleStatue.GetComponent<PhotonView>().RPC("ChangeTeam", RpcTarget.AllBufferedViaServer, "B");
+
+                    bgmManagerView.RPC("PlayBGM", RpcTarget.AllBufferedViaServer, "DuringRound", 0.3f, true);
                 }
             }
         }

@@ -22,6 +22,8 @@ namespace Player
         [HideInInspector]
         public bool isHealingSword = false;
 
+        Collider collider;
+
         public override void OnEnable()
         {
             base.OnEnable();
@@ -126,56 +128,6 @@ namespace Player
         private void Move()
         {
             transform.Translate(Vector3.forward * speed * Time.deltaTime);
-        }
-
-        private void OnTriggerEnter(Collider other)
-        {
-            if (PhotonNetwork.IsMasterClient)
-            {
-                if (isHealingSword)
-                {
-                    if (CompareTag("TeamA") && other.transform.root.CompareTag("TeamA") ||
-                        CompareTag("TeamB") && other.transform.root.CompareTag("TeamB"))
-                    {
-                        if (other.transform.root.GetComponent<Character>() && other.gameObject.layer == LayerMask.NameToLayer("Other"))
-                        {
-                            //other.transform.root.GetComponent<Character>().PlayerDamaged(playerName, -healing);
-
-                            other.transform.root.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBuffered,playerName,
-                                -healing, null , Vector3.zero, 0.0f);               
-                        }
-
-                        DestorySpawnObject();
-                    }
-
-                    else if (other.CompareTag("Ground"))
-                    {
-                        DestorySpawnObject();
-                    }
-
-                }
-
-                else
-                {
-                    if (CompareTag("TeamA") && other.transform.root.CompareTag("TeamB") ||
-                        CompareTag("TeamB") && other.transform.root.CompareTag("TeamA"))
-                    {
-                        if (other.transform.root.GetComponent<Character>())
-                        {
-                            other.transform.root.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBufferedViaServer, playerName,
-                                damage, other.name, transform.TransformDirection(Vector3.forward), 20.0f);
-                        }
-
-                        DestorySpawnObject();
-                    }
-
-                    else if (other.CompareTag("Ground"))
-                    {
-                        DestorySpawnObject();
-                    }
-                }
-
-            }
         }
     }
 }
