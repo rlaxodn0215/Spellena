@@ -6,6 +6,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine.SceneManagement;
 using Photon.Pun.UtilityScripts;
+using ExitGames.Client.Photon;
 
 public class LobbyManager : MonoBehaviourPunCallbacks
 { 
@@ -19,6 +20,8 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     List<RoomItem> roomItemList = new List<RoomItem>();
     public RoomItem roomItemPrefab;
     public Transform contentObjects;
+
+    public Dropdown maxPlayers;
 
     public float timeBetweenUpdates = 1.5f;
     float nextUpdateTime;
@@ -38,12 +41,25 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     {
         if(roomInputField.text.Length >= 1)
         {
-            PhotonNetwork.CreateRoom(roomInputField.text, new RoomOptions()
+            RoomOptions roomOptions = new RoomOptions()
             {
-                MaxPlayers = 10
-            });
+                MaxPlayers = -(maxPlayers.value - 10),
+                IsOpen = true,
+                IsVisible = true,
+            };
+            ExitGames.Client.Photon.Hashtable customProperties =
+                new ExitGames.Client.Photon.Hashtable() 
+                { 
+                    { "GameState", "Waiting" },
+                    { "MasterName", PhotonNetwork.LocalPlayer.NickName }
+                };
+            roomOptions.CustomRoomProperties = customProperties;
+            roomOptions.CustomRoomPropertiesForLobby = new string[] { "GameState", "MasterName" };
+
+            PhotonNetwork.CreateRoom(roomInputField.text, roomOptions);
         }
     }
+
 
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
     {
@@ -56,7 +72,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
     void UpdateRoomList(List<RoomInfo> list)
     {
-        foreach(RoomItem item in roomItemList)
+        foreach(var item in roomItemList)
         {
             Destroy(item.gameObject);
         }
@@ -64,8 +80,13 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
         foreach(RoomInfo room in list)
         {
+            string masterClientName = room.CustomProperties.ContainsKey("MasterName")
+                ? (string)room.CustomProperties["MasterName"] : "N/A";
+            string gameState = room.CustomProperties.ContainsKey("GameState")
+                ? (string)room.CustomProperties["GameState"] : "Waiting";
+
             RoomItem newRoom = Instantiate(roomItemPrefab, contentObjects);
-            newRoom.SetRoomName(room.Name);
+            newRoom.SetRoomInfo(room.Name, room.PlayerCount, room.MaxPlayers, masterClientName, gameState);
             roomItemList.Add(newRoom);
         }
     }
