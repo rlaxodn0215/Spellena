@@ -25,8 +25,6 @@ public class BGMManager : MonoBehaviourPunCallbacks
     {
         audioSource = GetComponent<AudioSource>();
         LinkDatas();
-
-        PlayBGM("LoadingCharacter",1.0f, true);
     }
 
     void LinkDatas()

@@ -25,6 +25,11 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
     [HideInInspector]
     public PhotonView bgmManagerView;
 
+    [HideInInspector]
+    public GameObject betweenBGMObj;
+    [HideInInspector]
+    public AudioSource betweenBGMSource;
+
     // 플레이어 소환 좌표
     [HideInInspector]
     public Transform[] playerSpawnA;
@@ -150,7 +155,12 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
     [HideInInspector]
     public string teamB = "B";
 
-    private void Awake()
+    void Start()
+    {
+        InitManager();
+    }
+
+    void InitManager()
     {
         CharacterSelect temp2 = gameObject.AddComponent<CharacterSelect>();
         temp2.ConnectCenter(this);
@@ -179,13 +189,22 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
         bgmManager = bgmManagerObj.GetComponent<BGMManager>();
         bgmManagerView = bgmManagerObj.GetComponent<PhotonView>();
 
+        ConnectBetweenBGM("LoadingCharacterBGM");
+
         currentGameState = GameState.CharacterSelect;
         currentCenterState = centerStates[currentGameState];
-
     }
-    void Start()
-    {
 
+    void ConnectBetweenBGM(string objName)
+    {
+        betweenBGMObj = GameObject.Find(objName);
+        if(betweenBGMObj == null)
+        {
+            Debug.LogError("씬 연속 BGM 게임 오브젝트를 찾을 수 없음");
+            return;
+        }
+
+        betweenBGMSource = betweenBGMObj.GetComponent<AudioSource>();
     }
 
     void Update()
@@ -255,9 +274,28 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
             case "inGameUIObj":
                 inGameUIObj.SetActive(isActive);
                 break;
+            case "betweenBGMObj":
+                betweenBGMObj.SetActive(isActive);
+                break;
             default:
                 Debug.LogWarning("잘못된 게임 오브젝트 이름 사용");
                 break;
+        }
+    }
+
+    [PunRPC]
+    public void BetweenBGMVolumControl(float size, bool isIncrease)
+    {
+        if (betweenBGMSource.clip == null) return;
+
+        if (isIncrease)
+        {
+            betweenBGMSource.volume += size;
+        }
+
+        else
+        {
+            betweenBGMSource.volume -= size;
         }
     }
 

@@ -30,13 +30,13 @@ public class CharacterSelect : CenterState
 
         gameCenter.characterSelectView.RPC("ReceiveTimerCount", RpcTarget.AllBufferedViaServer, gameCenter.globalDesiredTimer - gameCenter.globalTimer);
 
-        // 캐릭터 선택
-
+        
+        // 일정 시간이 지나면 소리가 점차 감소됨
         if (gameCenter.globalDesiredTimer - gameCenter.globalTimer <= soundDecreaseTime)
         {
             if (gameCenter.bgmManagerView != null)
             {
-                gameCenter.bgmManagerView.RPC("VolumeControl", RpcTarget.AllBufferedViaServer, soundDecreaseSpeed * Time.deltaTime / 10, false);
+                gameCenter.photonView.RPC("BetweenBGMVolumControl", RpcTarget.AllBufferedViaServer, soundDecreaseSpeed * Time.deltaTime / 10, false);
             }
         }
 
@@ -47,7 +47,9 @@ public class CharacterSelect : CenterState
             ConnectInGameUI();
             MakeCharacter();
 
+            gameCenter.photonView.RPC("ActiveObject", RpcTarget.AllBufferedViaServer, "betweenBGMObj", false);
             gameCenter.bgmManagerView.RPC("PlayBGM", RpcTarget.AllBufferedViaServer, "DuringRound", 0.3f, true);
+
             gameCenter.currentGameState = GameCenterTest.GameState.GameReady;
         }
     }
