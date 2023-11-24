@@ -593,11 +593,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 2348458300079429452}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 859e514ee8612ed4da018183643e971e, type: 3}
+  m_Script: {fileID: 11500000, guid: e254e9e8209a75643a66b5ada5b867ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   playerName: {fileID: 5499581094619960308}
-  popUpButton: {fileID: 438018344272142300}
+  popUpButton: {fileID: 234058252557629243}
   playerItem: {fileID: 2348458300079429452}
 --- !u!114 &6791798440595302129
 MonoBehaviour:
