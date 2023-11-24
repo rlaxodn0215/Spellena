@@ -220,6 +220,8 @@ public class FriendManager : MonoBehaviour
                         {
                             string _friendId = _childrenSnapshot.Child("senderUserId").Value.ToString();
                             AcceptParty(userId, _friendId);
+
+                            await _childrenSnapshot.Reference.RemoveValueAsync();
                         }
                     }
                     else if (_requestStatus.Equals("pending"))
