@@ -33,6 +33,15 @@
                     "initialStateCheck": true
                 },
                 {
+                    "name": "MouseButton2",
+                    "type": "Value",
+                    "id": "d461b346-707c-4314-bafe-14410b1a730d",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
                     "name": "Run",
                     "type": "Value",
                     "id": "54b3753b-b01d-4f90-bbb5-32b7c43bbcd2",
@@ -268,6 +277,17 @@
                     "processors": "",
                     "groups": "PC",
                     "action": "ButtonCancel",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "cd90ea70-8c5e-4378-be66-559487dc12d4",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "PC",
+                    "action": "MouseButton2",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

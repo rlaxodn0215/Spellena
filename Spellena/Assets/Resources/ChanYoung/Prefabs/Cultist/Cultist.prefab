@@ -3382,8 +3382,9 @@ MonoBehaviour:
   animator: {fileID: 0}
   rigidbody: {fileID: 0}
   moveVec: {x: 0, y: 0, z: 0}
-  overlaycamera: {fileID: 0}
-  Aim: {fileID: 0}
+  overlaycamera: {fileID: 522942226218127384}
+  Aim: {fileID: 6912070572442915939}
+  overlayAnimator: {fileID: 2830320426819166705}
 --- !u!1 &522942227599709230
 GameObject:
   m_ObjectHideFlags: 0

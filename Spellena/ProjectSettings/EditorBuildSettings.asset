@@ -15,7 +15,7 @@ EditorBuildSettings:
     path: Assets/Scenes/SiHyunScene/SiHyun RoomLobby Test.unity
     guid: 5ac601c64d5cbcd419b6dddc645a9456
   - enabled: 0
-    path: Assets/Scenes/OccupyingSystem Test.unity
+    path: Assets/Scenes/ChanYoungScene/OccupyingSystem Test.unity
     guid: 89a4b448b88e0dc42a4dcea97e9f72ac
   - enabled: 1
     path: Assets/Scenes/TaeWoo_LoadingScene.unity
