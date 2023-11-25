@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class RoomItem : MonoBehaviour
 {
-    public Text roomName;
+    public Text roomNameText;
     public Text masterPlayerName;
     public Text entryStatusText;
     public Text playerCountText;
@@ -16,6 +16,8 @@ public class RoomItem : MonoBehaviour
     public int maxChar = 10;
     LobbyManager manager;
 
+    private string roomName;
+
     private void Start()
     {
         manager = FindObjectOfType<LobbyManager>();
@@ -24,9 +26,10 @@ public class RoomItem : MonoBehaviour
     public void SetRoomInfo(string _roomName, int _playerCount, int _maxPlayer, string _masterClientName,
         string _gameState)
     {
+        roomName = _roomName;
         if(_roomName.Length > maxChar)
         {
-            roomName.text = _roomName.Substring(0, maxChar) + "...";
+            roomNameText.text = _roomName.Substring(0, maxChar) + "...";
         }
         playerCountText.text = $"{_playerCount} / {_maxPlayer}";
         masterPlayerName.text = _masterClientName;
@@ -47,8 +50,8 @@ public class RoomItem : MonoBehaviour
 
     public void OnClickItem()
     {
-        Debug.Log(roomName.text + " : 방 입장");
-        manager.JoinRoom(roomName.text);
+        Debug.Log(roomName + " : 방 입장");
+        manager.JoinRoom(roomName);
     }
 
 }

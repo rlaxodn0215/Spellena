@@ -6,7 +6,6 @@ using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine.SceneManagement;
 using Photon.Pun.UtilityScripts;
-using ExitGames.Client.Photon;
 
 public class LobbyManager : MonoBehaviourPunCallbacks
 { 
@@ -64,7 +63,8 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
     {
         if(Time.time >=nextUpdateTime)
-        {            
+        {
+            Debug.Log("방 목록 업데이트");
             UpdateRoomList(roomList);
             nextUpdateTime = Time.time + timeBetweenUpdates;
         }
@@ -72,7 +72,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
     void UpdateRoomList(List<RoomInfo> list)
     {
-        foreach(var item in roomItemList)
+        foreach(RoomItem item in roomItemList)
         {
             Destroy(item.gameObject);
         }
