@@ -7,6 +7,14 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 public class DuringRound : CenterState
 {
+    public enum RoundState
+    {
+        None,
+        Occupying,
+        Occupied,
+
+    }
+
     public override void StateExecution()
     {
         GameCenterTest.globalTimer += Time.deltaTime;
@@ -366,7 +374,7 @@ public class DuringRound : CenterState
 
                     gameCenter.angleStatue.GetComponent<PhotonView>().RPC("ChangeTeam", RpcTarget.AllBufferedViaServer, "A");
 
-                    gameCenter.bgmManagerView.RPC("PlayBGM", RpcTarget.AllBufferedViaServer, "DuringRound", 0.3f, true);
+                    //gameCenter.bgmManagerView.RPC("PlayBGM", RpcTarget.AllBufferedViaServer, "DuringRound", 0.3f, true);
                 }
 
                 else if (gameCenter.currentOccupationTeam == "B")
@@ -379,7 +387,7 @@ public class DuringRound : CenterState
 
                     gameCenter.angleStatue.GetComponent<PhotonView>().RPC("ChangeTeam", RpcTarget.AllBufferedViaServer, "B");
 
-                    gameCenter.bgmManagerView.RPC("PlayBGM", RpcTarget.AllBufferedViaServer, "DuringRound", 0.3f, true);
+                    //gameCenter.bgmManagerView.RPC("PlayBGM", RpcTarget.AllBufferedViaServer, "DuringRound", 0.3f, true);
                 }
             }
         }
@@ -412,7 +420,7 @@ public class DuringRound : CenterState
 
             gameCenter.roundEndTimer -= Time.deltaTime;
 
-            gameCenter.bgmManagerView.RPC("PlayBGM", RpcTarget.AllBufferedViaServer, "RoundAlmostEnd", 1.0f, true);
+            //gameCenter.bgmManagerView.RPC("PlayBGM", RpcTarget.AllBufferedViaServer, "RoundAlmostEnd", 1.0f, true);
 
         }
 
@@ -425,7 +433,7 @@ public class DuringRound : CenterState
 
             gameCenter.roundEndTimer -= Time.deltaTime;
 
-            gameCenter.bgmManagerView.RPC("PlayBGM", RpcTarget.AllBufferedViaServer, "RoundAlmostEnd", 1.0f, true);
+            //gameCenter.bgmManagerView.RPC("PlayBGM", RpcTarget.AllBufferedViaServer, "RoundAlmostEnd", 1.0f, true);
         }
 
         else

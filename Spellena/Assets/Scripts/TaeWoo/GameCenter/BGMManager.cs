@@ -24,6 +24,7 @@ public class BGMManager : MonoBehaviourPunCallbacks
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
+
         LinkDatas();
     }
 
@@ -63,6 +64,8 @@ public class BGMManager : MonoBehaviourPunCallbacks
         audioSource.volume = vol;
         audioSource.loop = isLoop;
         audioSource.Play();
+
+        Debug.Log("BGM »£√‚");
     }
 
 }

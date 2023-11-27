@@ -511,7 +511,7 @@ namespace Player
         {
             if (PhotonNetwork.IsMasterClient)
             {
-                if (other.tag == "OccupationArea")
+                if (other.tag == "OccupationArea" && (bool)PhotonNetwork.LocalPlayer.CustomProperties["IsAlive"])
                 {
                     isOccupying = true;
                 }
@@ -598,6 +598,8 @@ namespace Player
         [PunRPC]
         public void PlayerDamaged(string enemy ,int damage, string damgePart, Vector3 direction, float force)
         {
+            if (!(bool)PhotonNetwork.LocalPlayer.CustomProperties["IsAlive"]) return;
+
             if (damage > 0)
             {
                 Debug.Log("맞음");
