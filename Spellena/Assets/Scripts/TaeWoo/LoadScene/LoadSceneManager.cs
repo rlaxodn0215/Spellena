@@ -21,6 +21,13 @@ public class LoadSceneManager : MonoBehaviourPunCallbacks
         PhotonNetwork.LoadLevel("TaeWoo_LoadingScene");
     }
 
+    public static void GoBackToMenu(string sceneName)
+    {
+        nextScene = sceneName;
+
+        PhotonNetwork.LoadLevel("TaeWoo_BackToMainLoadingScene");
+    }
+
     void Start()
     {
         if (PhotonNetwork.IsMasterClient) ToDoMaster();
@@ -124,6 +131,14 @@ public class LoadSceneManager : MonoBehaviourPunCallbacks
             playerData.Add("DamageForce", null);
 
             playerData.Add("PlayerAssistViewID", null);
+
+            playerData.Add("RoomInfo", null);
+
+            // 마스터 클라이언트에 방 정보를 넣는다.
+            if(player.IsMasterClient)
+            {
+                playerData["RoomInfo"] = "UserGame";
+            }
 
             player.SetCustomProperties(playerData);
         }

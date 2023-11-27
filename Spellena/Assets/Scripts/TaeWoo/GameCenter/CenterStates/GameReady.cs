@@ -21,7 +21,7 @@ public class GameReady : CenterState
 
         if (GameCenterTest.globalTimer >= gameCenter.globalDesiredTimer)
         {
-            if(gameCenter.roundA == 0 && gameCenter.roundB == 0)
+            if(GameCenterTest.roundA == 0 && GameCenterTest.roundB == 0)
             {
                 foreach (var player in PhotonNetwork.CurrentRoom.Players.Values)
                 {

@@ -23,4 +23,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/TaeWooScene/TaeWooScene_3.unity
     guid: 5562859327b34c742a1b99760187f580
+  - enabled: 1
+    path: Assets/Scenes/TaeWooScene/TaeWoo_BackToMainLoadingScene.unity
+    guid: b3e07c6fc352c7a47b586facdf2f26eb
   m_configObjects: {}

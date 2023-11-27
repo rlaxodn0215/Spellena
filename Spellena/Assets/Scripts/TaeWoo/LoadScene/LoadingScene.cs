@@ -12,9 +12,13 @@ public class LoadingScene : MonoBehaviourPunCallbacks
     public GameObject helpWords;
     public GameObject loadingSign;
 
+    public string name;
+    public string words;
+
     private Text mapNameText;
-    private Image helpBackImageComponent;
     private Text helpWordsText;
+
+    private Image helpBackImageComponent;
     private RectTransform loadingSignRectTransform;
 
     private float timer = 0.0f;
@@ -29,8 +33,8 @@ public class LoadingScene : MonoBehaviourPunCallbacks
         helpWordsText = helpWords.GetComponent<Text>();
         loadingSignRectTransform = loadingSign.GetComponent<RectTransform>();
 
-        mapNameText.text = "잊혀진 성전";
-        helpWordsText.text = "거점의 천사 석상을 활용하면 체력을 회복시킬 수 있습니다!";
+        mapNameText.text = name;
+        helpWordsText.text = words;
 
         StartCoroutine(SlideHelpBackImage());
     }

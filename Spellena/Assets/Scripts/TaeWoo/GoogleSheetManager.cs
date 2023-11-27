@@ -179,8 +179,9 @@ public class GoogleSheetManager : EditorWindow
         aeternaData.runSpeedRatio = float.Parse(dividData[32, 0]);
         aeternaData.sitSpeed = float.Parse(dividData[33, 0]);
         aeternaData.sitBackSpeed = float.Parse(dividData[34, 0]);
-        aeternaData.jumpHeight = float.Parse(dividData[35, 0]);
-        aeternaData.headShotRatio = float.Parse(dividData[38, 0]);
+        aeternaData.sitSideSpeed = float.Parse(dividData[35, 0]);
+        aeternaData.jumpHeight = float.Parse(dividData[36, 0]);
+        aeternaData.headShotRatio = float.Parse(dividData[39, 0]);
 
         //[Tooltip("기본 공격 쿨 타임")]
         aeternaData.basicAttackTime = float.Parse(dividData[9, 1]);
@@ -196,7 +197,7 @@ public class GoogleSheetManager : EditorWindow
         //[Tooltip("기본 공격 데미지")]
         aeternaData.DimenstionSlash_0_Damage = int.Parse(dividData[8, 6]);
         //[Tooltip("기본 공격 스피드")]
-        aeternaData.DimenstionSlash_0_Speed = (int)(float.Parse(dividData[47, 12]));
+        aeternaData.DimenstionSlash_0_Speed = (int)(float.Parse(dividData[46, 12]));
         //[Tooltip("기본 공격 힐량")]
         aeternaData.DimenstionSlash_0_Healing = -int.Parse(dividData[8, 9]);
 
@@ -234,7 +235,7 @@ public class GoogleSheetManager : EditorWindow
         //[Tooltip("1단계 공격 데미지")]
         aeternaData.DimenstionSlash_1_Damage = int.Parse(dividData[8, 6]);
         //[Tooltip("1단계 공격 스피드")]
-        aeternaData.DimenstionSlash_1_Speed = (int)(float.Parse(dividData[47, 14]));
+        aeternaData.DimenstionSlash_1_Speed = (int)(float.Parse(dividData[46, 14]));
         //[Tooltip("1단계 공격 힐량")]
         aeternaData.DimenstionSlash_1_Healing = -int.Parse(dividData[8, 9]);
 
@@ -246,7 +247,7 @@ public class GoogleSheetManager : EditorWindow
         //[Tooltip("2단계 공격 데미지")]
         aeternaData.DimenstionSlash_2_Damage = int.Parse(dividData[8, 7]);
         //[Tooltip("2단계 공격 스피드")]
-        aeternaData.DimenstionSlash_2_Speed = (int)(float.Parse(dividData[47, 15]));
+        aeternaData.DimenstionSlash_2_Speed = (int)(float.Parse(dividData[46, 15]));
         //[Tooltip("2단계 공격 힐량")]
         aeternaData.DimenstionSlash_2_Healing = -int.Parse(dividData[8, 10]);
 
@@ -258,7 +259,7 @@ public class GoogleSheetManager : EditorWindow
         //[Tooltip("3단계 공격 데미지")]
         aeternaData.DimenstionSlash_3_Damage = int.Parse(dividData[8, 8]);
         //[Tooltip("3단계 공격 스피드")]
-        aeternaData.DimenstionSlash_3_Speed = (int)(float.Parse(dividData[47, 16]));
+        aeternaData.DimenstionSlash_3_Speed = (int)(float.Parse(dividData[46, 16]));
         //[Tooltip("3단계 공격 힐량")]
         aeternaData.DimenstionSlash_3_Healing = -int.Parse(dividData[8, 11]);
     }

@@ -533,12 +533,12 @@ namespace Player
                 camera.SetActive(true);
                 avatarForOther = transform.GetChild(0).GetChild(0).GetChild(0);//다른 사람들이 보는 자신의 아바타
                 avatarForMe = transform.GetChild(0).GetChild(1).GetChild(0);//자신이 보는 자신의 아바타
-                /*for (int i = 0; i < avatarForOther.childCount; i++)
+                for (int i = 0; i < avatarForOther.childCount; i++)
                 {
                     avatarForOther.GetChild(i).gameObject.layer = LayerMask.NameToLayer("Me");
                     avatarForOther.GetChild(i).gameObject.GetComponent<SkinnedMeshRenderer>().enabled = false;
-                }*/
-                avatarForMe.gameObject.SetActive(false);
+                }
+                //avatarForMe.gameObject.SetActive(false);
 
                 for (int i = 0; i < avatarForMe.childCount; i++)
                 {

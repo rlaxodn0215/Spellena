@@ -89,7 +89,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: -8.737927e-22, y: 6.416296e+19, z: 9.643862e+13, w: 2.75865e-40}
+  m_BoundingSphereOverride: {x: 1.7753217e+28, y: 1.8523599e+28, z: 1.7077718e+19, w: 6.9776278e+22}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0
@@ -14881,8 +14881,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.30757, y: 0.18377784, z: 0.34914112}
-  m_Center: {x: 0.16232266, y: -0.027713016, z: 1.4590871}
+  m_Size: {x: 0.31774968, y: 0.18377784, z: 0.5369923}
+  m_Center: {x: 0.35568818, y: -0.027713016, z: 1.1316607}
 --- !u!54 &5902995143293683742
 Rigidbody:
   m_ObjectHideFlags: 0

@@ -12,6 +12,7 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
     public GameObject characterSelectObj;
     public GameObject inGameUIObj;
     public GameObject deathUIObj;
+    public GameObject gameResultObj;
 
     [HideInInspector]
     public PhotonView characterSelectView;
@@ -48,7 +49,6 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
         GameReady,
         DuringRound,
         RoundEnd,
-        MatchEnd,
         GameResult
     }
 
@@ -77,9 +77,9 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
 
     // 라운드 점수
     [HideInInspector]
-    public int roundA = 0;
+    public static int roundA = 0;
     [HideInInspector]
-    public int roundB = 0;
+    public static int roundB = 0;
 
     // 점령 거점 차지하는 비율
     [HideInInspector]
@@ -179,10 +179,6 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
         RoundEnd temp5 = gameObject.AddComponent<RoundEnd>();
         temp5.ConnectCenter(this);
         centerStates.Add(GameState.RoundEnd, temp5);
-
-        MatchEnd temp6 = gameObject.AddComponent<MatchEnd>();
-        temp6.ConnectCenter(this);
-        centerStates.Add(GameState.MatchEnd, temp6);
 
         GameResult temp7 = gameObject.AddComponent<GameResult>();
         temp7.ConnectCenter(this);
@@ -335,25 +331,6 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
         player.SetCustomProperties(temp);
     }
 
-    public void ShowTeamMateDead(string team, string deadName)
-    {
-        if(team=="A")
-        {
-            foreach(var player in playersA)
-            {
-                inGameUIView.RPC("ShowTeamLifeDead", player, deadName,true);
-            }
-        }
-
-        else if(team=="B")
-        {
-            foreach (var player in playersB)
-            {
-                inGameUIView.RPC("ShowTeamLifeDead", player, deadName,true);
-            }
-        }
-    }
-
     public static GameObject FindObject(GameObject parrent ,string name)
     {
         GameObject foundObject = null;
@@ -376,7 +353,7 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
         return foundObject;
     }
 
-    public GameObject FindObjectWithViewID(int viewID)
+    public static GameObject FindObjectWithViewID(int viewID)
     {
         PhotonView photonView = PhotonView.Find(viewID);
 
@@ -389,65 +366,6 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
         else
         {
             return photonView.gameObject;
-        }
-    }
-
-    
-    public void ChangeOccupyingRate(int num, string name) //점령 게이지 변화
-    {
-        if (occupyingTeam.name == name)
-        {
-            if (currentOccupationTeam == name)
-                return;
-            occupyingTeam.rate += occupyingGaugeRate * Time.deltaTime;
-            if (occupyingTeam.rate >= 100)
-            {
-                currentOccupationTeam = name;
-                occupyingTeam.name = "";
-                occupyingTeam.rate = 0f;
-
-                if (currentOccupationTeam == "A")
-                {
-                    inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "captured_Red", true);
-                    inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "captured_Blue", false);
-                    inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "extraObj", false);
-                    inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "blueExtraObj", false);
-                    inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "blueExtraUI", true);
-
-                    angleStatue.GetComponent<PhotonView>().RPC("ChangeTeam", RpcTarget.AllBufferedViaServer, "A");
-
-                    bgmManagerView.RPC("PlayBGM", RpcTarget.AllBufferedViaServer, "DuringRound", 0.3f, true);
-                }
-
-                else if (currentOccupationTeam == "B")
-                {
-                    inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "captured_Red", false);
-                    inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "captured_Blue", true);
-                    inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "extraObj", false);
-                    inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "redExtraObj", false);
-                    inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "redExtraUI", true);
-
-                    angleStatue.GetComponent<PhotonView>().RPC("ChangeTeam", RpcTarget.AllBufferedViaServer, "B");
-
-                    bgmManagerView.RPC("PlayBGM", RpcTarget.AllBufferedViaServer, "DuringRound", 0.3f, true);
-                }
-            }
-        }
-        else if (occupyingTeam.name == "")
-        {
-            if (currentOccupationTeam == name)
-                return;
-            occupyingTeam.name = name;
-            occupyingTeam.rate += occupyingGaugeRate * Time.deltaTime;
-        }
-        else
-        {
-            occupyingTeam.rate -= occupyingGaugeRate * Time.deltaTime;
-            if (occupyingTeam.rate < 0)
-            {
-                occupyingTeam.name = "";
-                occupyingTeam.rate = 0;
-            }
         }
     }
 

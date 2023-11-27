@@ -21,9 +21,11 @@ public class RoundEnd : CenterState
 
         if (GameCenterTest.globalTimer >= gameCenter.globalDesiredTimer)
         {
-            if (gameCenter.roundA >= 2 || gameCenter.roundB >= 2)
+            gameCenter.bgmManagerView.RPC("PlayBGM", RpcTarget.AllBufferedViaServer, "DuringRound", 1.0f, true);
+
+            if (GameCenterTest.roundA >= 2 || GameCenterTest.roundB >= 2)
             {
-                gameCenter.currentGameState = GameCenterTest.GameState.MatchEnd;
+                gameCenter.currentGameState = GameCenterTest.GameState.GameResult;
                 gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "victory", false);
                 gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "defeat", false);
                 Debug.Log("Game End");

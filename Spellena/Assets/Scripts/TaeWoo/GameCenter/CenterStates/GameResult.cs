@@ -7,6 +7,7 @@ public class GameResult : CenterState
     public override void StateExecution()
     {
         // Á¾·á
+        gameCenter.gameResultObj.SetActive(true);
     }
 }
 
