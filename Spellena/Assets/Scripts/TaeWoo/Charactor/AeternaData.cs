@@ -40,8 +40,8 @@ public class AeternaData : ScriptableObject
     public float skill1DoorSpawnMaxRange;
     [Tooltip("스킬1 포탈 적용 범위")]
     public float skill1DoorRange;
-    [Tooltip("스킬1 포탈 디버프 비율")]
-    public float skill1DeBuffRatio;
+    [Tooltip("스킬1 중앙 적용 힘")]
+    public float skill1InnerForce;
 
     [Header("에테르나 스킬2 데이터")]
     [Tooltip("스킬2 지속 시간")]

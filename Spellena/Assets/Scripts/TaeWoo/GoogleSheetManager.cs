@@ -103,7 +103,7 @@ public class GoogleSheetManager : EditorWindow
         switch (index)
         {
             case 0:
-                //GiveAeternaData();
+                GiveAeternaData();
                 break;
             case 1:
                 GiveElementalOrderData();
@@ -179,91 +179,88 @@ public class GoogleSheetManager : EditorWindow
         aeternaData.runSpeedRatio = float.Parse(dividData[32, 0]);
         aeternaData.sitSpeed = float.Parse(dividData[33, 0]);
         aeternaData.sitBackSpeed = float.Parse(dividData[34, 0]);
-        aeternaData.jumpHeight = float.Parse(dividData[36, 0]);
+        aeternaData.jumpHeight = float.Parse(dividData[35, 0]);
         aeternaData.headShotRatio = float.Parse(dividData[38, 0]);
 
         //[Tooltip("기본 공격 쿨 타임")]
-        aeternaData.basicAttackTime = float.Parse(dividData[8, 1]);
+        aeternaData.basicAttackTime = float.Parse(dividData[9, 1]);
         //[Tooltip("스킬1 포탈 쿨 타임")]
-        aeternaData.skill1DoorCoolTime = float.Parse(dividData[8, 2]);
+        aeternaData.skill1DoorCoolTime = float.Parse(dividData[9, 2]);
         //[Tooltip("스킬2 쿨 타임")]
-        aeternaData.skill2CoolTime = float.Parse(dividData[8, 3]);
+        aeternaData.skill2CoolTime = float.Parse(dividData[9, 3]);
         //[Tooltip("스킬3 쿨 타임")]
-        aeternaData.skill3CoolTime = float.Parse(dividData[8, 5]);
+        aeternaData.skill3CoolTime = float.Parse(dividData[9, 5]);
 
         //[Tooltip("기본 공격 수명")]
-        //aeternaData.DimenstionSlash_0_lifeTime;
+        aeternaData.DimenstionSlash_0_lifeTime = float.Parse(dividData[47, 12]) / float.Parse(dividData[46, 12]);
         //[Tooltip("기본 공격 데미지")]
-        //aeternaData.DimenstionSlash_0_Damage;
+        aeternaData.DimenstionSlash_0_Damage = int.Parse(dividData[8, 6]);
         //[Tooltip("기본 공격 스피드")]
-        //aeternaData.DimenstionSlash_0_Speed;
+        aeternaData.DimenstionSlash_0_Speed = (int)(float.Parse(dividData[47, 12]));
         //[Tooltip("기본 공격 힐량")]
-        //aeternaData.DimenstionSlash_0_Healing;
+        aeternaData.DimenstionSlash_0_Healing = -int.Parse(dividData[8, 9]);
 
         //[Header("에테르나 스킬1 데이터")]
         //[Tooltip("스킬1 포탈 수명")]
-        //aeternaData.skill1Time;
-
-        //[Tooltip("스킬1 포탈 소환 최대 고리")]
-        //aeternaData.skill1DoorSpawnMaxRange;
+        aeternaData.skill1Time = 5;
+        //[Tooltip("스킬1 포탈 소환 최대 사거리")]
+        aeternaData.skill1DoorSpawnMaxRange = 8;
         //[Tooltip("스킬1 포탈 적용 범위")]
-        //aeternaData.skill1DoorRange;
-        //[Tooltip("스킬1 포탈 디버프 비율")]
-        //aeternaData.skill1DeBuffRatio;
+        aeternaData.skill1DoorRange = 3;
+        //[Tooltip("스킬1 포탈 중심 힘")]
+        aeternaData.skill1InnerForce = float.Parse(dividData[43, 13]);
 
         //[Header("에테르나 스킬2 데이터")]
         //[Tooltip("스킬2 지속 시간")]
-        //aeternaData.skill2DurationTime;
+        aeternaData.skill2DurationTime = 10;
         //[Tooltip("스킬2 투사체 가지고 있는 시간")]
-        //aeternaData.skill2HoldTime;
+        aeternaData.skill2HoldTime = 10;
 
         //[Header("에테르나 스킬3 데이터")]
         //[Tooltip("스킬3 지속 시간")]
-        //aeternaData.skill3DurationTime;
-        //[Tooltip("스킬3 쿨 타임")]
-        //aeternaData.skill3CoolTime;
+        aeternaData.skill3DurationTime  = 10;
 
         //[Header("에테르나 스킬4 데이터")]
         //[Tooltip("스킬4 궁극기 코스트")]
-        //aeternaData.skill4Cost;
+        aeternaData.skill4Cost = int.Parse(dividData[12, 6]);
         //[Tooltip("스킬4 지속 시간")]
-        //aeternaData.skill4DurationTime;
+        aeternaData.skill4DurationTime = 12;
 
         //[Header("스킬4 1단계 데이터")]
         //[Tooltip("스킬4 1단계 도달 시간")]
-        //aeternaData.skill4Phase1Time;
+        aeternaData.skill4Phase1Time = float.Parse(dividData[11, 6]);
         //[Tooltip("1단계 공격 수명")]
-        //aeternaData.DimenstionSlash_1_lifeTime;
+        aeternaData.DimenstionSlash_1_lifeTime = float.Parse(dividData[47, 14]) / int.Parse(dividData[46, 14]);
         //[Tooltip("1단계 공격 데미지")]
-        //aeternaData.DimenstionSlash_1_Damage;
+        aeternaData.DimenstionSlash_1_Damage = int.Parse(dividData[8, 6]);
         //[Tooltip("1단계 공격 스피드")]
-        //aeternaData.DimenstionSlash_1_Speed;
+        aeternaData.DimenstionSlash_1_Speed = (int)(float.Parse(dividData[47, 14]));
         //[Tooltip("1단계 공격 힐량")]
-        //aeternaData.DimenstionSlash_1_Healing;
+        aeternaData.DimenstionSlash_1_Healing = -int.Parse(dividData[8, 9]);
 
         //[Header("스킬4 2단계 데이터")]
         //[Tooltip("스킬4 2단계 도달 시간")]
-        //aeternaData.skill4Phase2Time;
+        aeternaData.skill4Phase2Time = float.Parse(dividData[11, 7]);
         //[Tooltip("2단계 공격 수명")]
-        //aeternaData.DimenstionSlash_2_lifeTime;
+        aeternaData.DimenstionSlash_2_lifeTime = float.Parse(dividData[47, 15]) / int.Parse(dividData[46, 15]);
         //[Tooltip("2단계 공격 데미지")]
-        //aeternaData.DimenstionSlash_2_Damage;
+        aeternaData.DimenstionSlash_2_Damage = int.Parse(dividData[8, 7]);
         //[Tooltip("2단계 공격 스피드")]
-        //aeternaData.DimenstionSlash_2_Speed;
+        aeternaData.DimenstionSlash_2_Speed = (int)(float.Parse(dividData[47, 15]));
         //[Tooltip("2단계 공격 힐량")]
-        //aeternaData.DimenstionSlash_2_Healing;
+        aeternaData.DimenstionSlash_2_Healing = -int.Parse(dividData[8, 10]);
 
         //[Header("스킬4 3단계 데이터")]
         //[Tooltip("스킬4 3단계 도달 시간")]
-        //aeternaData.skill4Phase3Time;
+        aeternaData.skill4Phase3Time = float.Parse(dividData[11, 8]);
         //[Tooltip("3단계 공격 수명")]
-        //aeternaData.DimenstionSlash_3_lifeTime;
+        aeternaData.DimenstionSlash_3_lifeTime = float.Parse(dividData[47, 16]) / int.Parse(dividData[46, 16]);
         //[Tooltip("3단계 공격 데미지")]
-        //aeternaData.DimenstionSlash_3_Damage;
+        aeternaData.DimenstionSlash_3_Damage = int.Parse(dividData[8, 8]);
         //[Tooltip("3단계 공격 스피드")]
-        //aeternaData.DimenstionSlash_3_Speed;
+        aeternaData.DimenstionSlash_3_Speed = (int)(float.Parse(dividData[47, 16]));
         //[Tooltip("3단계 공격 힐량")]
-        //aeternaData.DimenstionSlash_3_Healing;
+        aeternaData.DimenstionSlash_3_Healing = -int.Parse(dividData[8, 11]);
     }
 }
 

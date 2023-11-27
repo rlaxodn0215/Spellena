@@ -8,8 +8,7 @@ namespace Player
     public class DimensionDoor : SpawnObject
     {
         public AeternaData aeternaData;
-        [HideInInspector]
-        public float InnerForce = 1.5f;
+        private float InnerForce;
 
         private string enemyTag;
         private List<string> playerInArea;
@@ -34,7 +33,9 @@ namespace Player
             }
 
             playerInArea = new List<string>();
+
             GetComponent<SphereCollider>().radius = aeternaData.skill1DoorRange;
+            InnerForce = aeternaData.skill1InnerForce;
 
             StartCoroutine(Gone());
         }
@@ -141,11 +142,6 @@ namespace Player
 
             playerInArea.Add(temp.name);
             playerInAreaObject.Add(temp.GetComponent<Rigidbody>());
-
-            //temp.GetComponent<Character>().sitSpeed *= aeternaData.skill1DeBuffRatio;
-            //temp.GetComponent<Character>().walkSpeed *= aeternaData.skill1DeBuffRatio;
-            //temp.GetComponent<Character>().runSpeed *= aeternaData.skill1DeBuffRatio;
-            //temp.GetComponent<Character>().jumpHeight *= aeternaData.skill1DeBuffRatio;
         }
 
         [PunRPC]
@@ -158,10 +154,6 @@ namespace Player
             {
                 if (player == temp.name)
                 {
-                    //temp.GetComponent<Character>().sitSpeed = temp.GetComponent<Character>().dataSitSpeed;
-                    //temp.GetComponent<Character>().walkSpeed = temp.GetComponent<Character>().dataWalkSpeed;
-                    //temp.GetComponent<Character>().runSpeed = temp.GetComponent<Character>().dataRunSpeed;
-                    //temp.GetComponent<Character>().jumpHeight = temp.GetComponent<Character>().dataJumpHeight;
 
                     playerInArea.Remove(player);
                     playerInAreaObject.Remove(temp.GetComponent<Rigidbody>());
@@ -179,11 +171,6 @@ namespace Player
             if (temp != null)
             {
                 Debug.Log("EnBuffWhenDestory");
-
-                //temp.GetComponent<Character>().sitSpeed = temp.GetComponent<Character>().dataSitSpeed;
-                //temp.GetComponent<Character>().walkSpeed = temp.GetComponent<Character>().dataWalkSpeed;
-                //temp.GetComponent<Character>().runSpeed = temp.GetComponent<Character>().dataRunSpeed;
-                //temp.GetComponent<Character>().jumpHeight = temp.GetComponent<Character>().dataJumpHeight;
             }
             
         }
