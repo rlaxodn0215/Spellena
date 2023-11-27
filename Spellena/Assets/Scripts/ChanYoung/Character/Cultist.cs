@@ -6,19 +6,44 @@ using Photon.Pun;
 using ExitGames.Client.Photon;
 using System.Linq;
 using HashTable = ExitGames.Client.Photon.Hashtable;
+using static UnityEditor.Progress;
 
 public class Cultist : Character, IPunObservable
 {
-    public GameObject overlaycamera;
-    public GameObject Aim;
+    public CultistData CultistData;
+    public GameObject overlayCamera;
+    public GameObject overlaySightRight;
+    public GameObject overlaySightLeft;
+    public GameObject minimapCamera;
+    public GameObject aim;
+
+    public GameObject dagger;
+    public GameObject overlayDagger;
+
     public Animator overlayAnimator;
+
+    public GameObject lungeEffect;
+    public GameObject throwPosition;
 
     Vector3 defaultCameraLocalVec;
 
     //데이터 테이블 테스트 값
-    float skill1CastingTime = 1.5f;
-    float skill2CastingTime = 2f;
-    float skill3CastingTime = 1.5f;
+    float invocationCastingTime;
+    float lungeHoldingTime;
+    float lungeAttackTime;
+    float throwTime;
+    float skill1CastingTime;
+    float skill1Time;
+    float skill2CastingTime;
+    float skill2ChannelingTime;
+    float skill3CastingTime;
+    float skill3ChannelingTime;
+    float skill4Time;
+
+    float skill4Weight = 0f;
+
+    float overlayLeftHandWeight = 0.4f;
+    float overlayRightHandWeight = 0.4f;
 
     public enum SkillStateCultist
     {
@@ -31,6 +56,7 @@ public class Cultist : Character, IPunObservable
     SkillStateCultist skillState = SkillStateCultist.None;
 
     bool isClicked = false;
+    bool isClicked2 = false;
 
     float[] coolDownTime = new float[4];
     float globalCastingTime = 0f;
@@ -58,6 +84,31 @@ public class Cultist : Character, IPunObservable
     void Init()
     {
         defaultCameraLocalVec = camera.transform.localPosition;
+        dataHp = CultistData.hp;
+        hp = CultistData.hp;
+        moveSpeed = CultistData.moveSpeed;
+        backSpeed = CultistData.backSpeed;
+        sideSpeed = CultistData.sideSpeed;
+        runSpeedRatio = CultistData.runSpeedRatio;
+        sitSpeed = CultistData.sitSpeed;
+        sitSideSpeed = CultistData.sitSideSpeed;
+        sitBackSpeed = CultistData.sitBackSpeed;
+        jumpHeight = CultistData.jumpHeight;
+        headShotRatio = CultistData.headShotRatio;
+
+        invocationCastingTime = CultistData.invocationCastingTime;
+        lungeHoldingTime = CultistData.lungeHoldingTime;
+        lungeAttackTime = CultistData.lungeAttackTime;
+        throwTime = CultistData.throwTime;
+        skill1CastingTime = CultistData.skill1CastingTime;
+        skill1Time = CultistData.skill1Time;
+        skill2CastingTime = CultistData.skill2CastingTime;
+        skill2ChannelingTime = CultistData.skill2ChannelingTime;
+        skill3CastingTime = CultistData.skill3CastingTime;
+        skill3ChannelingTime = CultistData.skill3ChannelingTime;
+        skill4Time = CultistData.skill4Time;
+
+        overlayDagger.SetActive(false);
     }
 
     protected override void Update()
@@ -67,7 +118,6 @@ public class Cultist : Character, IPunObservable
         {
             CheckCoolDownTime();
             UpdateData();
-            Debug.Log(skillState);
         }
 
         if(photonView.IsMine)
@@ -86,11 +136,27 @@ public class Cultist : Character, IPunObservable
         base.FixedUpdate();
     }
 
+    [PunRPC]
+    public override void IsLocalPlayer()
+    {
+        base.IsLocalPlayer();
+        overlayCamera.SetActive(true);
+        minimapCamera.SetActive(true);
+        dagger.SetActive(false);
+    }
+
     void CheckChanneling()
     {
-        if(skillState == SkillStateCultist.Skill2Channeling)
+        if(skillState == SkillStateCultist.Skill2Channeling
+            || skillState == SkillStateCultist.Skill4Casting)
+            moveVec = Vector3.zero;
+
+        if (skillState == SkillStateCultist.Lunge)
         {
             moveVec = Vector3.zero;
+            rigidbody.MovePosition(rigidbody.transform.position + transform.forward * moveSpeed * runSpeedRatio * Time.deltaTime);
+            animator.SetInteger("VerticalSpeed", (int)moveVec.z);
+            animator.SetInteger("HorizontalSpeed", (int)moveVec.x);
         }
     }
 
@@ -114,6 +180,20 @@ public class Cultist : Character, IPunObservable
         }
         else if (skillState == SkillStateCultist.Lunge || skillState == SkillStateCultist.Throw)
         {
+            if (animator.GetCurrentAnimatorStateInfo(0).IsName("Throw"))
+            {
+                if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.35f)
+                {
+                    if (overlayDagger.active == true)
+                    {
+                        Ray _tempRay = camera.GetComponent<Camera>().ScreenPointToRay(aim.transform.position);
+                        Quaternion _tempQ = Quaternion.LookRotation(_tempRay.direction);
+                        PhotonNetwork.Instantiate("ChanYoung/Prefabs/Cultist/Dagger", _tempRay.origin + _tempRay.direction * 0.5f, _tempQ);
+                        overlayDagger.SetActive(false);
+                    }
+                }
+            }
+
             if (globalCastingTime <= 0f)
             {
                 CallResetAnimation();
@@ -138,7 +218,7 @@ public class Cultist : Character, IPunObservable
         {
             if(globalCastingTime <= 0f)
             {
-                globalChannelingTime = 5f;
+                globalChannelingTime = skill2ChannelingTime;
                 skillState = SkillStateCultist.Skill2Channeling;
             }
         }
@@ -155,7 +235,7 @@ public class Cultist : Character, IPunObservable
         {
             if(globalCastingTime <= 0f)
             {
-                globalChannelingTime = 5f;
+                globalChannelingTime = skill3ChannelingTime;
                 skillState = SkillStateCultist.Skill3Channeling;
             }
         }
@@ -237,7 +317,6 @@ public class Cultist : Character, IPunObservable
         if (photonView.IsMine)
         {
             isClicked = !isClicked;
-
             if (isClicked)
             {
                 object[] _tempData = new object[2];
@@ -260,11 +339,15 @@ public class Cultist : Character, IPunObservable
     {
         if(photonView.IsMine)
         {
-            if(skillState == SkillStateCultist.Invocation)
+            isClicked2 = !isClicked2;
+            if (isClicked2)
             {
-                object[] _tempData = new object[2];
-                _tempData[0] = "ClickMouse2";
-                RequestRPCCall(_tempData);
+                if (skillState == SkillStateCultist.Invocation)
+                {
+                    object[] _tempData = new object[2];
+                    _tempData[0] = "ClickMouse2";
+                    RequestRPCCall(_tempData);
+                }
             }
         }
     }
@@ -295,21 +378,31 @@ public class Cultist : Character, IPunObservable
     {
         if (coolDownTime[(int)data[1] - 1] <= 0f)
         {
-            if ((int)data[1] == 1)
-                skillState = SkillStateCultist.Skill1Ready;
-            else if ((int)data[1] == 2)
-                skillState = SkillStateCultist.Skill2Ready;
-            else if ((int)data[1] == 3)
-                skillState = SkillStateCultist.Skill3Ready;
-            else if ((int)data[1] == 4)
-                skillState = SkillStateCultist.Skill4Ready;
+            {
+                if (skillState == SkillStateCultist.Skill1Ready ||
+                    skillState == SkillStateCultist.Skill2Ready ||
+                    skillState == SkillStateCultist.Skill3Ready ||
+                    skillState == SkillStateCultist.Skill4Ready ||
+                    skillState == SkillStateCultist.None)
+                {
+                    if ((int)data[1] == 1)
+                        skillState = SkillStateCultist.Skill1Ready;
+                    else if ((int)data[1] == 2)
+                        skillState = SkillStateCultist.Skill2Ready;
+                    else if ((int)data[1] == 3)
+                        skillState = SkillStateCultist.Skill3Ready;
+                    else if ((int)data[1] == 4)
+                        skillState = SkillStateCultist.Skill4Ready;
+                }
+            }
         }
     }
 
     void CancelSkill()
     {
         if (skillState == SkillStateCultist.Skill1Ready || skillState == SkillStateCultist.Skill2Ready
-            || skillState == SkillStateCultist.Skill3Ready || skillState == SkillStateCultist.Skill4Ready)
+            || skillState == SkillStateCultist.Skill3Ready || skillState == SkillStateCultist.Skill4Ready
+            || (skillState == SkillStateCultist.Invocation && globalCastingTime <= 0f))
         {
             skillState = SkillStateCultist.None;
         }
@@ -323,14 +416,23 @@ public class Cultist : Character, IPunObservable
             globalCastingTime = 0f;
             CallSetAnimation("isLunge", false);
             skillState = SkillStateCultist.None;
+
+            CallStopLunge();
         }
+    }
+
+    void CallStopLunge()
+    {
+        object[] _tempData = new object[2];
+        _tempData[0] = "StopLunge";
+        ResponseRPCCall(_tempData);
     }
 
     void ClickMouse()
     {
         if (skillState == SkillStateCultist.None)
         {
-            globalCastingTime = 1f;
+            globalCastingTime = invocationCastingTime;
             CallSetAnimation("isInvocation", true);
             skillState = SkillStateCultist.Invocation;
         }
@@ -338,37 +440,39 @@ public class Cultist : Character, IPunObservable
         {
             if(globalCastingTime <= 0f)
             {
-                globalCastingTime = 1.5f;
+                globalCastingTime = lungeHoldingTime;
                 CallSetAnimation("isLunge", true);
                 skillState = SkillStateCultist.Lunge;
+
+                RunLungeEffect();
             }
         }
         else if(skillState == SkillStateCultist.Skill1Ready)
         {
             //스킬1 사용
             skillState = SkillStateCultist.Skill1Casting;
-            globalCastingTime = 1.5f;
+            globalCastingTime = skill1CastingTime;
             CallSetAnimation("isSkill1", true);
         }
         else if(skillState == SkillStateCultist.Skill2Ready)
         {
             //스킬2 사용
             skillState = SkillStateCultist.Skill2Casting;
-            globalCastingTime = 2f;
+            globalCastingTime = skill2CastingTime;
             CallSetAnimation("isSkill2", true);
         }
         else if (skillState == SkillStateCultist.Skill3Ready)
         {
             //스킬3 사용
             skillState = SkillStateCultist.Skill3Casting;
-            globalCastingTime = 1.5f;
+            globalCastingTime = skill3CastingTime;
             CallSetAnimation("isSkill3", true);
         }
         else if (skillState == SkillStateCultist.Skill4Ready)
         {
             //스킬4 사용
             skillState = SkillStateCultist.Skill4Casting;
-            globalCastingTime = 10f;
+            globalCastingTime = skill4Time;
             CallSetAnimation("isSkill4", true);
         }
     }
@@ -379,7 +483,7 @@ public class Cultist : Character, IPunObservable
         {
             if (globalCastingTime <= 0f)
             {
-                globalCastingTime = 1.5f;
+                globalCastingTime = throwTime;
                 CallSetAnimation("isThrow", true);
                 skillState = SkillStateCultist.Throw;
             }
@@ -417,23 +521,69 @@ public class Cultist : Character, IPunObservable
             SetAnimation(data);
         else if ((string)data[0] == "ResetAnimation")
             ResetAnimation();
+        else if ((string)data[0] == "StopLunge")
+            StopLunge();
+    }
+
+    void StopLunge()
+    {
+        /*
+        for (int i = 0; i < 5; i++)
+        {
+            lungeEffect.transform.GetChild(i).GetComponent<ParticleSystem>().Stop(false, ParticleSystemStopBehavior.StopEmittingAndClear);
+        }
+        */
+    }
+
+    void RunLungeEffect()
+    {
+        for(int i = 0; i < 5; i++)
+        {
+            lungeEffect.transform.GetChild(i).GetComponent<ParticleSystem>().Stop(false, ParticleSystemStopBehavior.StopEmittingAndClear);
+            lungeEffect.transform.GetChild(i).GetComponent<ParticleSystem>().startLifetime = lungeHoldingTime + lungeAttackTime;
+            lungeEffect.transform.GetChild(i).GetComponent<ParticleSystem>().Play(false);
+        }
     }
 
     void CheckAnimationSpeed()
     {
-        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Skill1Casting"))
-            SetAnimationSpeed("Skill1CastingSpeed");
+        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Invocation"))
+            SetAnimationSpeed("InvocationSpeed", invocationCastingTime);
+        else if (animator.GetCurrentAnimatorStateInfo(0).IsName("LungeHolding"))
+            SetAnimationSpeed("LungeHoldingSpeed", lungeHoldingTime);
+        else if (animator.GetCurrentAnimatorStateInfo(0).IsName("LungeAttack"))
+            SetAnimationSpeed("LungeAttackSpeed", lungeAttackTime);
+        else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Throw"))
+            SetAnimationSpeed("ThrowSpeed", throwTime);
+        else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Skill1Casting"))
+            SetAnimationSpeed("Skill1CastingSpeed", skill1CastingTime);
+        else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Skill1"))
+            SetAnimationSpeed("Skill1Speed", skill1Time);
         else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Skill2"))
-            SetAnimationSpeed("Skill2CastingSpeed");
+            SetAnimationSpeed("Skill2CastingSpeed", skill2CastingTime);
+        else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Skill3Casting"))
+            SetAnimationSpeed("Skill3CastingSpeed", skill3CastingTime);
         else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Skill3"))
-            SetAnimationSpeed("Skill3CastingSpeed");
+            SetAnimationSpeed("Skill3Speed", skill3ChannelingTime);
+        else if (animator.GetCurrentAnimatorStateInfo(4).IsName("Skill4"))
+            SetAnimationSpeedExtra("Skill4CastingSpeed", skill4Time);
+        
     }
 
-    void SetAnimationSpeed(string state)
+    void SetAnimationSpeed(string state, float animationTime)
     {
         float _animationLength = animator.GetCurrentAnimatorStateInfo(0).length;
-        float _normalizedSpeed = _animationLength / skill1CastingTime;
+        float _normalizedSpeed = _animationLength / animationTime;
         animator.SetFloat(state, _normalizedSpeed);
+        overlayAnimator.SetFloat(state, _normalizedSpeed);
+    }
+
+    void SetAnimationSpeedExtra(string state, float animationTime)
+    {
+        float _animationLength = animator.GetCurrentAnimatorStateInfo(4).length;
+        float _normalizedSpeed = _animationLength / animationTime;
+        animator.SetFloat(state, _normalizedSpeed);
+        overlayAnimator.SetFloat(state, _normalizedSpeed);
     }
 
     void ResetAnimation()
@@ -447,6 +597,14 @@ public class Cultist : Character, IPunObservable
             animator.SetBool("isLunge", false);
             animator.SetBool("isThrow", false);
             animator.SetBool("isInvocation", false);
+
+            overlayAnimator.SetBool("isSkill1", false);
+            overlayAnimator.SetBool("isSkill2", false);
+            overlayAnimator.SetBool("isSkill3", false);
+            overlayAnimator.SetBool("isSkill4", false);
+            overlayAnimator.SetBool("isLunge", false);
+            overlayAnimator.SetBool("isThrow", false);
+            overlayAnimator.SetBool("isInvocation", false);
         }
     }
 
@@ -455,6 +613,7 @@ public class Cultist : Character, IPunObservable
         if(photonView.IsMine)
         {
             animator.SetBool((string)data[1], (bool)data[2]);
+            overlayAnimator.SetBool((string)data[1], (bool)data[2]);
         }
     }
 
@@ -468,18 +627,61 @@ public class Cultist : Character, IPunObservable
 
     void CheckAnimatorExtra()
     {
-        if(skillState == SkillStateCultist.Skill4Casting)
-        {
-            animator.SetLayerWeight(4, 1);
-        }
+        if (skillState == SkillStateCultist.Skill4Casting)
+            skill4Weight = Mathf.Lerp(skill4Weight, 1f, Time.deltaTime * 8);
         else
+            skill4Weight = Mathf.Lerp(skill4Weight, 0f, Time.deltaTime * 8);
+        animator.SetLayerWeight(4, skill4Weight);
+
+        //돌진 특수
+        if (animator.GetCurrentAnimatorStateInfo(0).IsName("LungeAttack"))
         {
-            animator.SetLayerWeight(4, 0);
+            if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.5f)
+                overlayDagger.SetActive(false);
+        }
+        else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Invocation"))
+        {
+            if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.5f)
+                overlayDagger.SetActive(true);
         }
     }
 
     protected override void OnAnimatorIK()
     {
         base.OnAnimatorIK();
+
+        if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Idle"))
+            LerpWeight(0.5f);
+        else if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Invocation"))
+            LerpWeight(0f);
+        else if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("LungeHolding"))
+            LerpWeight(0.2f);
+        else if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("LungeAttack"))
+            LerpWeight(0.25f);
+        else if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Throw"))
+            LerpWeight(0f);
+        else if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Skill1Casting"))
+            LerpWeight(0f);
+        else if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Skill1"))
+            LerpWeight(0.7f);
+        else if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Skill2"))
+            LerpWeight(0.2f);
+        else if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Skill3Casting"))
+            LerpWeight(0.2f);
+        else if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Skill3"))
+            LerpWeight(0.2f);
+        else if(overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Skill4"))
+            LerpWeight(0f);
+
+        overlayAnimator.SetIKPosition(AvatarIKGoal.LeftHand, overlaySightLeft.transform.position);
+        overlayAnimator.SetIKPosition(AvatarIKGoal.RightHand, overlaySightRight.transform.position);
+        overlayAnimator.SetIKPositionWeight(AvatarIKGoal.LeftHand, overlayLeftHandWeight);
+        overlayAnimator.SetIKPositionWeight(AvatarIKGoal.RightHand, overlayRightHandWeight);
+    }
+
+    void LerpWeight(float weight)
+    {
+        overlayLeftHandWeight = Mathf.Lerp(overlayLeftHandWeight, weight, Time.deltaTime * 8f);
+        overlayRightHandWeight = Mathf.Lerp(overlayRightHandWeight, weight, Time.deltaTime * 8f);
     }
 }
