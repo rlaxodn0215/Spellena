@@ -33,10 +33,6 @@ public class PlayerItem : MonoBehaviourPunCallbacks
         {
             localPlayerItemInstance = this.gameObject;
         }
-        if (!PhotonNetwork.IsMasterClient)
-        {
-            popUpButton.SetActive(false);
-        }
         if(PhotonNetwork.CurrentRoom.PlayerCount < 5)
         {
             TeamChanged("TeamAList");
@@ -66,6 +62,10 @@ public class PlayerItem : MonoBehaviourPunCallbacks
         {
             wasSetSibiling = true;
             this.transform.SetAsLastSibling();
+        }
+        if (!PhotonNetwork.IsMasterClient)
+        {
+            popUpButton.SetActive(false);
         }
     }
 

@@ -59,7 +59,7 @@ public class FriendItem : MonoBehaviour
         {
             if (args.DatabaseError != null)
             {
-                Debug.LogWarning(args.DatabaseError.Message);
+                Debug.LogError(args.DatabaseError.Message);
                 return;
             }
             try
@@ -68,7 +68,7 @@ public class FriendItem : MonoBehaviour
             }
             catch (Exception ex)
             {
-                Debug.LogWarning("Exception in ValueChanged event handler: " + ex.Message);
+                Debug.Log("Exception in ValueChanged event handler: " + ex.Message);
             }
         };
     }
