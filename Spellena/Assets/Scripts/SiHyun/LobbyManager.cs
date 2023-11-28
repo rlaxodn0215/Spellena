@@ -105,7 +105,12 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         Debug.Log(PhotonNetwork.AuthValues.UserId);
         lobbyPanel.SetActive(false);
         roomPanel.SetActive(true);
-        roomName.text = "Room Name: " + PhotonNetwork.CurrentRoom.Name;
+        UpdateRoomUI();
+    }
+
+    void UpdateRoomUI()
+    {
+        roomName.text = PhotonNetwork.CurrentRoom.Name;
         CreateLocalPlayerItem(PhotonNetwork.LocalPlayer);
     }
 
