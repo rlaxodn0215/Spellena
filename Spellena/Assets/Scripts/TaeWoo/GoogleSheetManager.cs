@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using System.IO;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -33,6 +34,7 @@ public class GoogleSheetManager : EditorWindow
         EditorGUILayout.LabelField("Sheet Data", EditorStyles.boldLabel);
         googleSheetData = (GoogleSheetData)EditorGUILayout.ObjectField("SheetData", googleSheetData, typeof(GoogleSheetData), true);
         EditorGUILayout.LabelField("");
+
         aeternaData = (AeternaData)EditorGUILayout.ObjectField("AeternaData", aeternaData, typeof(AeternaData), true);
         elementalOrderData = (ElementalOrderData)EditorGUILayout.ObjectField("ElementalOrderData", elementalOrderData, typeof(ElementalOrderData), true);
 
@@ -46,7 +48,6 @@ public class GoogleSheetManager : EditorWindow
 
     void InitData()
     {
-
         for (int i = 0; i < googleSheetData.gooleSheets.Length; i++)
         {
             URL = googleSheetData.gooleSheets[i].address + googleSheetData.exportFormattsv + googleSheetData.andRange
@@ -68,13 +69,78 @@ public class GoogleSheetManager : EditorWindow
             string Data = www.downloadHandler.text;
             Debug.Log("데이터 가져오기 성공");
 
-            DividText(Data);
+            SaveToText(Data, i);
+            DividText(i);
             GiveData(i);
         }
     }
 
-    void DividText(string tsv)
+    void SaveToText(string data, int index)
     {
+        switch (index)
+        {
+            case 0:
+                string fullpth = "Assets/GameDatas/AeternaData.txt";
+                StreamWriter sw;
+
+                if (!File.Exists(fullpth))
+                {
+                    sw = new StreamWriter(fullpth + ".txt");
+                    sw.WriteLine(data);
+
+                    sw.Flush();
+                    sw.Close();
+                }
+
+                else
+                {
+                    File.WriteAllText(fullpth, data);
+                }
+
+                break;
+            case 1:
+                string fullpth1 = "Assets/GameDatas/ElementalOrderData.txt";
+
+                StreamWriter sw1;
+
+                if (!File.Exists(fullpth1))
+                {
+                    sw1 = new StreamWriter(fullpth1 + ".txt");
+                    sw1.WriteLine(data);
+
+                    sw1.Flush();
+                    sw1.Close();
+                }
+
+                else
+                {
+                    File.WriteAllText(fullpth1, data);
+                }
+
+                break;
+            default:
+                break;
+        }
+    }
+
+    void DividText(int index)
+    {
+        string tsv;
+        if (index == 0)
+        {
+            tsv = ReadTxt("Assets/GameDatas/AeternaData.txt");
+        }
+
+        else if(index==1)
+        {
+            tsv = ReadTxt("Assets/GameDatas/ElementalOrderData.txt");
+        }
+
+        else
+        {
+            tsv = " ";
+        }
+
         //가로 기준으로 나눈다.
         string[] row = tsv.Split('\n');
         // 행의 양
@@ -96,6 +162,18 @@ public class GoogleSheetManager : EditorWindow
                 //Debug.Log(column[j]);
             }
         }
+    }
+
+    string ReadTxt(string filePath)
+    {
+        string value = "";
+
+        if (File.Exists(filePath))
+        {
+            value = File.ReadAllText(filePath);
+        }
+
+        return value;
     }
 
     void GiveData(int index)

@@ -17,7 +17,7 @@ public class DimensionSlashAttackCollider : MonoBehaviourPunCallbacks
                 {
                     if (other.transform.root.GetComponent<Character>() && other.gameObject.layer == LayerMask.NameToLayer("Other"))
                     {
-                        other.transform.root.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBuffered, dimensionSlash.playerName,
+                        other.transform.root.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBufferedViaServer, dimensionSlash.playerName,
                             -dimensionSlash.healing, null, Vector3.zero, 0.0f);
                         dimensionSlash.DestorySpawnObject();
                     }

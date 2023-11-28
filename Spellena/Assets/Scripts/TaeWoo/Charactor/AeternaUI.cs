@@ -127,6 +127,7 @@ namespace Player
             if (ultimateCount != aeterna.ultimateCount)
             {
                 ultimateCount = aeterna.ultimateCount;
+                Debug.Log(aeterna.ultimateCount);
 
                 for (int i = 1; i <= ultimateCount; i++)
                 {

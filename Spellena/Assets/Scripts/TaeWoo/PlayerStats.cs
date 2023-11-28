@@ -62,7 +62,6 @@ public class PlayerStats : MonoBehaviourPunCallbacks, IPunObservable
                 redUltimateCounts.Add(UIObjects["player_" + redIndex + "_Red_UltimateCount"].GetComponent<Text>());
                 redKDAs.Add(UIObjects["player_" + redIndex + "_Red_KDA"].GetComponent<Text>());
                 redPings.Add(UIObjects["player_" + redIndex + "_Red_Ping"].GetComponent<Text>());
-
                 redIndex++;
             }
 
@@ -81,7 +80,7 @@ public class PlayerStats : MonoBehaviourPunCallbacks, IPunObservable
 
     void Update()
     {
-        pings[photonView.OwnerActorNr] = PhotonNetwork.GetPing();
+        pings[PhotonNetwork.LocalPlayer.ActorNumber] = PhotonNetwork.GetPing();
 
         if (Input.GetKey(KeyCode.Tab))
         {
@@ -109,16 +108,18 @@ public class PlayerStats : MonoBehaviourPunCallbacks, IPunObservable
                 redUltimateCounts[tempRedIndex].text = (int)player.CustomProperties["UltimateCount"] + " / 10";
                 redKDAs[tempRedIndex].text = (int)player.CustomProperties["KillCount"] + " / "
                     + (int)player.CustomProperties["DeadCount"] + " / " + (int)player.CustomProperties["AsisstCount"];
+                redPings[tempRedIndex].text = pings[player.ActorNumber].ToString();
                 tempRedIndex++;
             }
 
             else
             {
-                bluePlayerNames[tempRedIndex].text = (string)player.CustomProperties["Name"];
-                blueCharacters[tempRedIndex].text = (string)player.CustomProperties["Character"];
-                blueUltimateCounts[tempRedIndex].text = (int)player.CustomProperties["UltimateCount"] + " / 10";
-                blueKDAs[tempRedIndex].text = (int)player.CustomProperties["KillCount"] + " / "
+                bluePlayerNames[tempBlueIndex].text = (string)player.CustomProperties["Name"];
+                blueCharacters[tempBlueIndex].text = (string)player.CustomProperties["Character"];
+                blueUltimateCounts[tempBlueIndex].text = (int)player.CustomProperties["UltimateCount"] + " / 10";
+                blueKDAs[tempBlueIndex].text = (int)player.CustomProperties["KillCount"] + " / "
                     + (int)player.CustomProperties["DeadCount"] + " / " + (int)player.CustomProperties["AsisstCount"];
+                bluePings[tempBlueIndex].text = pings[player.ActorNumber].ToString();
                 tempBlueIndex++;
             }
         }
@@ -128,11 +129,12 @@ public class PlayerStats : MonoBehaviourPunCallbacks, IPunObservable
     {
         if (stream.IsWriting)
         {
-            stream.SendNext(pings[photonView.OwnerActorNr]);
+            stream.SendNext(pings[PhotonNetwork.LocalPlayer.ActorNumber]);
+            //Debug.Log(PhotonNetwork.LocalPlayer.ActorNumber);
         }
         else
         {
-            pings[photonView.OwnerActorNr] = (int)stream.ReceiveNext();
+            pings[PhotonNetwork.LocalPlayer.ActorNumber] = (int)stream.ReceiveNext();    
         }
     }
 }

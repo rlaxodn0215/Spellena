@@ -7,39 +7,71 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 public class DuringRound : CenterState
 {
-    public enum RoundState
-    {
-        None,
-        Occupying,
-        Occupied,
+    //public enum RoundState
+    //{
+    //    None,
+    //    StandBy,
+    //    RoundStart,
+    //    Occupying,
+    //    Occupied,
+    //    RoundEnd
+    //}
 
-    }
+    //public RoundState currentRoundState = RoundState.None;
+    //public RoundState updateRoundState = RoundState.StandBy;
+
+    bool checkRoundEndOnce = true;
+    bool OccupyBarCountOnce = true;
 
     public override void StateExecution()
     {
         GameCenterTest.globalTimer += Time.deltaTime;
 
+        OccupyBarCount();
+        OccupyAreaCounts();
+        CheckPlayerReSpawn();
+        CheckRoundEnd();
+    }
+
+    void OccupyBarCount()
+    {
         //지역이 점령되어있으면 점령한 팀의 점령비율이 높아진다.
         if (gameCenter.currentOccupationTeam == gameCenter.teamA)
         {
             gameCenter.occupyingA.rate += Time.deltaTime * gameCenter.occupyingRate;//약 1.8초당 1씩 오름
 
+            if(OccupyBarCountOnce)
+            {
+                //Debug.Log("A OccupyBarCount");
+                gameCenter.bgmManagerView.RPC("PlayBGM", RpcTarget.AllBufferedViaServer, "Occupying", 0.7f, true);
+                OccupyBarCountOnce = false;
+            }
+
             if (gameCenter.occupyingA.rate >= gameCenter.occupyingComplete)
                 gameCenter.occupyingA.rate = gameCenter.occupyingComplete;
+            //else
+            //{
+            //    if(!OccupyBarCountOnce && )
+            //}
+
+            //OccupyBarCountOnce = true;
         }
 
         else if (gameCenter.currentOccupationTeam == gameCenter.teamB)
         {
             gameCenter.occupyingB.rate += Time.deltaTime * gameCenter.occupyingRate;
 
+            if (OccupyBarCountOnce)
+            {
+                gameCenter.bgmManagerView.RPC("PlayBGM", RpcTarget.AllBufferedViaServer, "Occupying", 0.7f, true);
+                OccupyBarCountOnce = false;
+            }
+
             if (gameCenter.occupyingB.rate >= gameCenter.occupyingComplete)
                 gameCenter.occupyingB.rate = gameCenter.occupyingComplete;
         }
-
-        OccupyAreaCounts();
-        CheckPlayerReSpawn();
-        CheckRoundEnd();
     }
+
 
     public override void OnPlayerPropertiesUpdate(Photon.Realtime.Player targetPlayer, Hashtable changedProps)
     {
@@ -161,6 +193,7 @@ public class DuringRound : CenterState
         {
             ChangeOccupyingRate(gameCenter.teamAOccupying, gameCenter.teamA);
             gameCenter.occupyingReturnTimer = 0f;
+            
             //gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "fighting", false);
         }
         else if (gameCenter.teamBOccupying > 0)//B팀 점령
@@ -364,6 +397,8 @@ public class DuringRound : CenterState
                 gameCenter.occupyingTeam.name = "";
                 gameCenter.occupyingTeam.rate = 0f;
 
+                gameCenter.bgmManagerView.RPC("PlayBGM", RpcTarget.AllBufferedViaServer, "Occupation", 1.0f, false);
+
                 if (gameCenter.currentOccupationTeam == "A")
                 {
                     gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "captured_Red", true);
@@ -373,8 +408,6 @@ public class DuringRound : CenterState
                     gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "blueExtraUI", true);
 
                     gameCenter.angleStatue.GetComponent<PhotonView>().RPC("ChangeTeam", RpcTarget.AllBufferedViaServer, "A");
-
-                    //gameCenter.bgmManagerView.RPC("PlayBGM", RpcTarget.AllBufferedViaServer, "DuringRound", 0.3f, true);
                 }
 
                 else if (gameCenter.currentOccupationTeam == "B")
@@ -387,7 +420,6 @@ public class DuringRound : CenterState
 
                     gameCenter.angleStatue.GetComponent<PhotonView>().RPC("ChangeTeam", RpcTarget.AllBufferedViaServer, "B");
 
-                    //gameCenter.bgmManagerView.RPC("PlayBGM", RpcTarget.AllBufferedViaServer, "DuringRound", 0.3f, true);
                 }
             }
         }
@@ -414,31 +446,37 @@ public class DuringRound : CenterState
         if (gameCenter.occupyingA.rate >= gameCenter.occupyingComplete &&
             gameCenter.currentOccupationTeam == gameCenter.teamA && gameCenter.teamBOccupying <= 0)
         {
-            gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "extraObj", true);
-            gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "redExtraUI", false);
-            gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "redExtraObj", true);
+            if(checkRoundEndOnce)
+            {
+                gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "extraObj", true);
+                gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "redExtraUI", false);
+                gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "redExtraObj", true);
+                gameCenter.bgmManagerView.RPC("PlayBGM", RpcTarget.AllBufferedViaServer, "RoundAlmostEnd", 1.0f, true);
+                checkRoundEndOnce = false;
+            }
 
             gameCenter.roundEndTimer -= Time.deltaTime;
-
-            //gameCenter.bgmManagerView.RPC("PlayBGM", RpcTarget.AllBufferedViaServer, "RoundAlmostEnd", 1.0f, true);
-
         }
 
         else if (gameCenter.occupyingB.rate >= gameCenter.occupyingComplete &&
             gameCenter.currentOccupationTeam == gameCenter.teamB && gameCenter.teamAOccupying <= 0)
         {
-            gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "extraObj", true);
-            gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "blueExtraUI", false);
-            gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "blueExtraObj", true);
+            if (checkRoundEndOnce)
+            {
+                gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "extraObj", true);
+                gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "blueExtraUI", false);
+                gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "blueExtraObj", true);
+                gameCenter.bgmManagerView.RPC("PlayBGM", RpcTarget.AllBufferedViaServer, "RoundAlmostEnd", 1.0f, true);
+                checkRoundEndOnce = false;
+            }
 
             gameCenter.roundEndTimer -= Time.deltaTime;
-
-            //gameCenter.bgmManagerView.RPC("PlayBGM", RpcTarget.AllBufferedViaServer, "RoundAlmostEnd", 1.0f, true);
         }
 
         else
         {
             gameCenter.roundEndTimer = gameCenter.roundEndTime;
+            checkRoundEndOnce = true;
         }
 
         if (gameCenter.roundEndTimer <= 0.0f)

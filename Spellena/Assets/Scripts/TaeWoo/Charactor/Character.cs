@@ -521,7 +521,8 @@ namespace Player
         [PunRPC]
         public void ChangeName(string name)
         {
-            gameObject.name = playerName = name;
+            gameObject.name  = name;
+            playerName = name;
         }
 
         [PunRPC]
@@ -748,9 +749,10 @@ namespace Player
         {
             if (ultimateCount < 10)
             {
-                ultimateCount++;
+                Debug.Log("SetUltimatePoint");
                 int temp = (int)PhotonNetwork.LocalPlayer.CustomProperties["UltimateCount"];
                 GameCenterTest.ChangePlayerCustomProperties(PhotonNetwork.LocalPlayer, "UltimateCount", temp + 1);
+                ultimateCount = temp + 1;
             }
         }
 
@@ -782,8 +784,6 @@ namespace Player
                 animator.SetLookAtWeight(1f, 0.9f);
                 animator.SetLookAtPosition(newVec);
                 currentSight = newVec;
-                //Debug.Log("current : " + currentSight);
-                //Debug.Log("networkSight : " + networkSight);
             }
         }
         public virtual void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
@@ -791,7 +791,6 @@ namespace Player
             if (stream.IsWriting)
             {
                 // 데이터를 보내는 부분
-                stream.SendNext(playerName);
                 stream.SendNext(hp);
                 stream.SendNext(isOccupying);
                 for (int i = 0; i < playerActionDatas.Count; i++)
@@ -805,7 +804,6 @@ namespace Player
             else
             {
                 // 데이터를 받는 부분
-                playerName = (string)stream.ReceiveNext();
                 hp = (int)stream.ReceiveNext();
                 isOccupying = (bool)stream.ReceiveNext();
                 for (int i = 0; i < playerActionDatas.Count; i++)

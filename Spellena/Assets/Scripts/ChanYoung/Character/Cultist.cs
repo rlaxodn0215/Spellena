@@ -6,7 +6,7 @@ using Photon.Pun;
 using ExitGames.Client.Photon;
 using System.Linq;
 using HashTable = ExitGames.Client.Photon.Hashtable;
-using static UnityEditor.Progress;
+//using static UnityEditor.Progress;
 
 public class Cultist : Character, IPunObservable
 {

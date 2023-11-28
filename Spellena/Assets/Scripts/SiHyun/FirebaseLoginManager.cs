@@ -154,14 +154,14 @@ public class FirebaseLoginManager
         {
             if (task.IsCanceled)
             {
-                Debug.LogError("SignInWithEmailAndPasswordAsync was canceled.");
+                //Debug.LogWarning("SignInWithEmailAndPasswordAsync was canceled.");
                 panel.SetActive(true);
                 return;
             }
             else if (task.IsFaulted)
             {
-                Debug.LogError("SignInWithEmailAndPasswordAsync encountered an error: "
-                    + task.Exception);
+                //Debug.LogWarning("SignInWithEmailAndPasswordAsync encountered an error: "
+                   // + task.Exception);
                 panel.SetActive(true);
                 return;
             }

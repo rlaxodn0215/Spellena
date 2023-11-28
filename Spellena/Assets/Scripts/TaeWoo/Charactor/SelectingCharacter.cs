@@ -11,12 +11,15 @@ public class SelectingCharacter : MonoBehaviour
     Text timeCountText;
 
     public List<GameObject> avatar;
+    public List<AudioClip> clips;
+    // 0 : champSelect, 1 : champSelected
 
     public GameObject noChoose;
     public GameObject confirm;
     public GameObject reSelect;
 
     private string selectName;
+    private AudioSource audioSource;
 
     [HideInInspector]
     public float timer = -1.0f;
@@ -24,6 +27,7 @@ public class SelectingCharacter : MonoBehaviour
     private void Start()
     {
         ConnectUI();
+        audioSource = GetComponent<AudioSource>();
     }
     void ConnectUI()
     {
@@ -72,12 +76,16 @@ public class SelectingCharacter : MonoBehaviour
                 avatar[0].SetActive(true);
                 avatar[1].SetActive(false);
                 noChoose.SetActive(false);
+                audioSource.clip = clips[0];
+                audioSource.Play();
                 break;
             case "ElementalOrder":
                 selectName = name;
                 avatar[0].SetActive(false);
                 avatar[1].SetActive(true);
                 noChoose.SetActive(false);
+                audioSource.clip = clips[0];
+                audioSource.Play();
                 break;
             default:
                 break;
@@ -91,6 +99,8 @@ public class SelectingCharacter : MonoBehaviour
         confirm.SetActive(false);
         reSelect.SetActive(true);
         GameCenterTest.ChangePlayerCustomProperties(PhotonNetwork.LocalPlayer, "Character", selectName);
+        audioSource.clip = clips[1];
+        audioSource.Play();
     }
 
     public void ReSelectCharacter()

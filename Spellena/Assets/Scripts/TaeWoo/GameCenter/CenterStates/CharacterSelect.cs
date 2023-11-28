@@ -43,7 +43,6 @@ public class CharacterSelect : CenterState
             MakeCharacter();
 
             gameCenter.photonView.RPC("ActiveObject", RpcTarget.AllBufferedViaServer, "betweenBGMObj", false);
-            gameCenter.bgmManagerView.RPC("PlayBGM", RpcTarget.AllBufferedViaServer, "DuringRound", 0.3f, true);
 
             gameCenter.currentGameState = GameCenterTest.GameState.GameReady;
         }

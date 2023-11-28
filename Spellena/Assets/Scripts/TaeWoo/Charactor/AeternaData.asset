@@ -12,45 +12,45 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c2e5de6c6e89044aaa45db2eaf6e559, type: 3}
   m_Name: AeternaData
   m_EditorClassIdentifier: 
-  hp: 100
+  hp: 600
   sitSpeed: 3
   sitSideSpeed: 1
   sitBackSpeed: 2
   moveSpeed: 5
-  backSpeed: 4
+  backSpeed: 2
   sideSpeed: 3
   runSpeedRatio: 1.5
   jumpHeight: 7
-  headShotRatio: 0
+  headShotRatio: 1.5
   basicAttackTime: 1
   DimenstionSlash_0_lifeTime: 10
-  DimenstionSlash_0_Damage: 50
-  DimenstionSlash_0_Speed: 3
-  DimenstionSlash_0_Healing: 10
+  DimenstionSlash_0_Damage: 200
+  DimenstionSlash_0_Speed: 10
+  DimenstionSlash_0_Healing: 200
   skill1Time: 5
   skill1DoorCoolTime: 20
   skill1DoorSpawnMaxRange: 8
   skill1DoorRange: 3
-  skill1InnerForce: 0
+  skill1InnerForce: 1.5
   skill2DurationTime: 10
   skill2HoldTime: 10
   skill2CoolTime: 15
   skill3DurationTime: 10
   skill3CoolTime: 25
-  skill4Cost: 0
+  skill4Cost: 5
   skill4DurationTime: 12
-  skill4Phase1Time: 1
+  skill4Phase1Time: 0
   DimenstionSlash_1_lifeTime: 10
-  DimenstionSlash_1_Damage: 10
-  DimenstionSlash_1_Speed: 3
-  DimenstionSlash_1_Healing: 10
-  skill4Phase2Time: 2
+  DimenstionSlash_1_Damage: 200
+  DimenstionSlash_1_Speed: 10
+  DimenstionSlash_1_Healing: 200
+  skill4Phase2Time: 1.5
   DimenstionSlash_2_lifeTime: 10
-  DimenstionSlash_2_Damage: 10
-  DimenstionSlash_2_Speed: 3
-  DimenstionSlash_2_Healing: 10
-  skill4Phase3Time: 5
+  DimenstionSlash_2_Damage: 300
+  DimenstionSlash_2_Speed: 15
+  DimenstionSlash_2_Healing: 400
+  skill4Phase3Time: 3
   DimenstionSlash_3_lifeTime: 10
-  DimenstionSlash_3_Damage: 10
-  DimenstionSlash_3_Speed: 3
-  DimenstionSlash_3_Healing: 10
+  DimenstionSlash_3_Damage: 400
+  DimenstionSlash_3_Speed: 20
+  DimenstionSlash_3_Healing: 800

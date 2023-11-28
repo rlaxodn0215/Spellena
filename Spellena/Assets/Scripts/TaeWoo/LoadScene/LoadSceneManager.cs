@@ -104,7 +104,7 @@ public class LoadSceneManager : MonoBehaviourPunCallbacks
             }
 
             playerData.Add("Name", player.NickName);
-            playerData.Add("Character", null);
+            playerData.Add("Character", "Aeterna");
 
             playerData.Add("KillCount", 0);
             playerData.Add("DeadCount", 0);

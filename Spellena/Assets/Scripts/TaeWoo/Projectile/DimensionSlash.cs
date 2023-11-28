@@ -22,8 +22,6 @@ namespace Player
         [HideInInspector]
         public bool isHealingSword = false;
 
-        Collider collider;
-
         public override void OnEnable()
         {
             base.OnEnable();

@@ -383,8 +383,8 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
     }
 
     //인게임 프레임 확인
-    void OnGUI()
-    {
-        GUI.Label(new Rect(10, 10, 100, 20), "FPS: " + (1.0f / Time.smoothDeltaTime));
-    }
+    //void OnGUI()
+    //{
+    //    GUI.Label(new Rect(10, 10, 100, 20), "FPS: " + (1.0f / Time.smoothDeltaTime));
+    //}
 }
