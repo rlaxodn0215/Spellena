@@ -49,12 +49,6 @@ public class DuringRound : CenterState
 
             if (gameCenter.occupyingA.rate >= gameCenter.occupyingComplete)
                 gameCenter.occupyingA.rate = gameCenter.occupyingComplete;
-            //else
-            //{
-            //    if(!OccupyBarCountOnce && )
-            //}
-
-            //OccupyBarCountOnce = true;
         }
 
         else if (gameCenter.currentOccupationTeam == gameCenter.teamB)
@@ -114,7 +108,7 @@ public class DuringRound : CenterState
                          gameCenter.tempVictim, ((string)targetPlayer.CustomProperties["Team"] == "A"), targetPlayer.ActorNumber);
                     CheckPlayerHealAssist(targetPlayer);
                     view.RPC("SetUltimatePoint", targetPlayer);
-                        break;
+                    break;
                  case "DeadCount":
                     GameCenterTest.ChangePlayerCustomProperties (targetPlayer, "IsAlive", false);
                     GameCenterTest.ChangePlayerCustomProperties (targetPlayer, "ReSpawnTime", GameCenterTest.globalTimer + gameCenter.playerRespawnTime);

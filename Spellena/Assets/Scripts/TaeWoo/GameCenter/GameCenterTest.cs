@@ -273,7 +273,7 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
                 characterSelectObj.SetActive(isActive);
                 break;
             case "inGameUIObj":
-                inGameUIObj.SetActive(isActive);
+                inGameUIObj.transform.GetChild(0).gameObject.SetActive(isActive);
                 break;
             case "betweenBGMObj":
                 betweenBGMObj.SetActive(isActive);

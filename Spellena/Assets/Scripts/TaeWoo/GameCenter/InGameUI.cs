@@ -256,6 +256,8 @@ public class InGameUI : MonoBehaviourPunCallbacks,IPunObservable
     [PunRPC]
     public void ShowTeamState(string playerName, string characterName)
     {
+        Debug.Log("ShowTeamState");
+
         UIObjects["player_" + teamCount].SetActive(true);
         playerNames[teamCount - 1].text = playerName;
 

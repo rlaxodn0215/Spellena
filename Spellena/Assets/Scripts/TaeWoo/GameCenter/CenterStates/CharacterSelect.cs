@@ -38,9 +38,9 @@ public class CharacterSelect : CenterState
         if (GameCenterTest.globalTimer >= gameCenter.globalDesiredTimer)
         {
             MakeSpawnPoint();
-            MakeTeamStateUI();
             ConnectInGameUI();
             MakeCharacter();
+            MakeTeamStateUI();
 
             gameCenter.photonView.RPC("ActiveObject", RpcTarget.AllBufferedViaServer, "betweenBGMObj", false);
 
@@ -149,11 +149,11 @@ public class CharacterSelect : CenterState
     {
         if (gameCenter.inGameUIObj != null)
         {
-            gameCenter.inGameUI = gameCenter.inGameUIObj.GetComponent<InGameUI>();
-            gameCenter.inGameUIView = gameCenter.inGameUIObj.GetComponent<PhotonView>();
-
             gameCenter.photonView.RPC("ActiveObject", RpcTarget.AllBufferedViaServer, "inGameUIObj", true);
             gameCenter.photonView.RPC("ActiveObject", RpcTarget.AllBufferedViaServer, "characterSelectObj", false);
+
+            gameCenter.inGameUI = gameCenter.inGameUIObj.GetComponent<InGameUI>();
+            gameCenter.inGameUIView = gameCenter.inGameUIObj.GetComponent<PhotonView>();
         }
     }
 

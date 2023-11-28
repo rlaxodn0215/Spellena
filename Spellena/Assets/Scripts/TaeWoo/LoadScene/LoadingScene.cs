@@ -61,6 +61,6 @@ public class LoadingScene : MonoBehaviourPunCallbacks
 
     void LoadingSignRotate()
     {
-        loadingSignRectTransform.Rotate(0, 0, -loadingSignRotateSpeed * Mathf.Abs(Mathf.Sin(loadingSignRotateFrequency * timer)));
+        loadingSignRectTransform.Rotate(0,loadingSignRotateSpeed * Mathf.Abs(Mathf.Sin(loadingSignRotateFrequency * timer)), 0);
     }
 }

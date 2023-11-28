@@ -107,8 +107,8 @@ public class PlayerStats : MonoBehaviourPunCallbacks, IPunObservable
                 redCharacters[tempRedIndex].text = (string)player.CustomProperties["Character"];
                 redUltimateCounts[tempRedIndex].text = (int)player.CustomProperties["UltimateCount"] + " / 10";
                 redKDAs[tempRedIndex].text = (int)player.CustomProperties["KillCount"] + " / "
-                    + (int)player.CustomProperties["DeadCount"] + " / " + (int)player.CustomProperties["AsisstCount"];
-                redPings[tempRedIndex].text = pings[player.ActorNumber].ToString();
+                    + (int)player.CustomProperties["AsisstCount"] + " / " + (int)player.CustomProperties["DeadCount"]; 
+                 redPings[tempRedIndex].text = pings[player.ActorNumber].ToString();
                 tempRedIndex++;
             }
 
@@ -118,8 +118,8 @@ public class PlayerStats : MonoBehaviourPunCallbacks, IPunObservable
                 blueCharacters[tempBlueIndex].text = (string)player.CustomProperties["Character"];
                 blueUltimateCounts[tempBlueIndex].text = (int)player.CustomProperties["UltimateCount"] + " / 10";
                 blueKDAs[tempBlueIndex].text = (int)player.CustomProperties["KillCount"] + " / "
-                    + (int)player.CustomProperties["DeadCount"] + " / " + (int)player.CustomProperties["AsisstCount"];
-                bluePings[tempBlueIndex].text = pings[player.ActorNumber].ToString();
+                    + (int)player.CustomProperties["AsisstCount"] + " / " + (int)player.CustomProperties["DeadCount"]; 
+                 bluePings[tempBlueIndex].text = pings[player.ActorNumber].ToString();
                 tempBlueIndex++;
             }
         }

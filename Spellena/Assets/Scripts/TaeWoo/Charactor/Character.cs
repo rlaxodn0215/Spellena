@@ -511,7 +511,7 @@ namespace Player
         {
             if (PhotonNetwork.IsMasterClient)
             {
-                if (other.tag == "OccupationArea" && (bool)PhotonNetwork.LocalPlayer.CustomProperties["IsAlive"])
+                if (other.tag == "OccupationArea" && (bool) PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["IsAlive"])
                 {
                     isOccupying = true;
                 }
@@ -749,9 +749,9 @@ namespace Player
         {
             if (ultimateCount < 10)
             {
-                Debug.Log("SetUltimatePoint");
-                int temp = (int)PhotonNetwork.LocalPlayer.CustomProperties["UltimateCount"];
-                GameCenterTest.ChangePlayerCustomProperties(PhotonNetwork.LocalPlayer, "UltimateCount", temp + 1);
+                Debug.Log("SetUltimatePoint : " + (int)PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["UltimateCount"]);
+                int temp = (int)PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["UltimateCount"];
+                GameCenterTest.ChangePlayerCustomProperties(PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr], "UltimateCount", temp + 1);
                 ultimateCount = temp + 1;
             }
         }
@@ -793,6 +793,8 @@ namespace Player
                 // 데이터를 보내는 부분
                 stream.SendNext(hp);
                 stream.SendNext(isOccupying);
+                //stream.SendNext(chargeCount);
+                //stream.SendNext(ultimateCount);
                 for (int i = 0; i < playerActionDatas.Count; i++)
                 {
                     stream.SendNext(playerActionDatas[i].isExecuting);
@@ -806,6 +808,8 @@ namespace Player
                 // 데이터를 받는 부분
                 hp = (int)stream.ReceiveNext();
                 isOccupying = (bool)stream.ReceiveNext();
+                //chargeCount = (int)stream.ReceiveNext();
+                //ultimateCount = (int)stream.ReceiveNext();
                 for (int i = 0; i < playerActionDatas.Count; i++)
                 {
                     playerActionDatas[i].isExecuting = (bool)stream.ReceiveNext();
