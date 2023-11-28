@@ -3030,8 +3030,8 @@ GameObject:
   - component: {fileID: 6169395703908234776}
   - component: {fileID: 8784926784589236502}
   - component: {fileID: 8879132484317611705}
-  - component: {fileID: 7740467404657155948}
   - component: {fileID: -2602113066211621233}
+  - component: {fileID: 7740467404657155948}
   m_Layer: 0
   m_Name: Dracoson
   m_TagString: TeamA
@@ -3224,6 +3224,21 @@ MonoBehaviour:
   - Type: 1
     SynchronizeType: 0
     Name: Spell4Speed
+  - Type: 4
+    SynchronizeType: 0
+    Name: isHolding
+  - Type: 4
+    SynchronizeType: 0
+    Name: Breathe
+  - Type: 4
+    SynchronizeType: 0
+    Name: Flying
+  - Type: 4
+    SynchronizeType: 0
+    Name: HoldingCancel
+  - Type: 9
+    SynchronizeType: 0
+    Name: Skill1
   m_SynchronizeLayers:
   - SynchronizeType: 2
     LayerIndex: 0
@@ -3233,20 +3248,6 @@ MonoBehaviour:
     LayerIndex: 2
   - SynchronizeType: 2
     LayerIndex: 3
---- !u!136 &7740467404657155948
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1037026452117830316}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.1589776
-  m_Height: 1.3494909
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.62497985, z: 0}
 --- !u!114 &-2602113066211621233
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3293,9 +3294,24 @@ MonoBehaviour:
   animator: {fileID: 0}
   rigidbody: {fileID: 0}
   moveVec: {x: 0, y: 0, z: 0}
+  dracosonData: {fileID: 11400000, guid: 19dd9cf2a92f33941922f97a9027b6bc, type: 2}
   overlaycamera: {fileID: 8682694506761360486}
   Aim: {fileID: 172717306690440475}
-  overlayAnimator: {fileID: 0}
+  overlayAnimator: {fileID: 1645116359377027629}
+--- !u!136 &7740467404657155948
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1037026452117830316}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.1589776
+  m_Height: 1.3494909
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.62497985, z: 0}
 --- !u!1 &1038324556277827510
 GameObject:
   m_ObjectHideFlags: 0
@@ -4676,7 +4692,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1645116359377027628}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.28, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -13519,7 +13535,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5770302049737810027}
-  m_LocalRotation: {x: 0.00000006657903, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0.00000006977403, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0

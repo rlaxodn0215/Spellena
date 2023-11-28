@@ -68,7 +68,7 @@ public class FriendItem : MonoBehaviour
             }
             catch (Exception ex)
             {
-                Debug.LogError("Exception in ValueChanged event handler: " + ex.Message);
+                Debug.Log("Exception in ValueChanged event handler: " + ex.Message);
             }
         };
     }

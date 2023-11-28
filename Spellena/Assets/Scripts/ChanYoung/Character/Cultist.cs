@@ -6,6 +6,7 @@ using Photon.Pun;
 using ExitGames.Client.Photon;
 using System.Linq;
 using HashTable = ExitGames.Client.Photon.Hashtable;
+/*using static UnityEditor.Progress;*/
 
 public class Cultist : Character, IPunObservable
 {
@@ -24,22 +25,20 @@ public class Cultist : Character, IPunObservable
     public GameObject lungeEffect;
     public GameObject throwPosition;
 
-    int ownerNum;
-
     Vector3 defaultCameraLocalVec;
 
     //데이터 테이블 테스트 값
     float invocationCastingTime;
     float lungeHoldingTime;
     float lungeAttackTime;
-    float throwCastingTime;
+    float throwTime;
     float skill1CastingTime;
-    float skill1ChannelingTime;
+    float skill1Time;
     float skill2CastingTime;
     float skill2ChannelingTime;
     float skill3CastingTime;
     float skill3ChannelingTime;
-    float skill4CastingTime;
+    float skill4Time;
 
     float skill4Weight = 0f;
 
@@ -48,10 +47,7 @@ public class Cultist : Character, IPunObservable
 
     public enum SkillStateCultist
     {
-        None, Invocation, 
-        LungeHolding, LungeAttack,
-        Throw,
-        Skill1Ready, Skill1Casting, Skill1Channeling,
+        None, Invocation, Lunge, Throw, Skill1Ready, Skill1Casting, Skill1Using,
         Skill2Ready, Skill2Casting, Skill2Channeling,
         Skill3Ready, Skill3Casting, Skill3Channeling,
         Skill4Ready, Skill4Casting
@@ -59,24 +55,12 @@ public class Cultist : Character, IPunObservable
 
     SkillStateCultist skillState = SkillStateCultist.None;
 
-    //0 : 스킬1, 1 : 스킬2, 2 : 스킬3, 3 : 스킬4
-    float[] skillCoolDownTime = new float[4];
-    float[] skillCastingTime = new float[4];
-    float[] skillChannelingTime = new float[4];
+    bool isClicked = false;
+    bool isClicked2 = false;
 
-    //0 : 의식, 1 : 급습 홀딩, 2 : 급습 공격, 3 : 투척
-    float[] normalCastingTime = new float[4];
-
-    //0 : 왼쪽 마우스, 1 : 오른쪽 마우스
-    bool[] isClicked = new bool[2];
-
-    bool isDaggerOn = false;
-
+    float[] coolDownTime = new float[4];
     float globalCastingTime = 0f;
     float globalChannelingTime = 0f;
-
-    Vector3 aimPos;
-    Vector3 aimDirection;
 
     protected override void Awake()
     {
@@ -88,12 +72,6 @@ public class Cultist : Character, IPunObservable
             _tempTable.Add("CharacterViewID", photonView.ViewID);
             _tempTable.Add("IsAlive", true);
             PhotonNetwork.LocalPlayer.SetCustomProperties(_tempTable);
-
-
-            object[] _tempData = new object[2];
-            _tempData[0] = "SetOwnerNum";
-            _tempData[1] = photonView.OwnerActorNr;
-            RequestRPCCall(_tempData);
         }
     }
 
@@ -121,38 +99,26 @@ public class Cultist : Character, IPunObservable
         invocationCastingTime = CultistData.invocationCastingTime;
         lungeHoldingTime = CultistData.lungeHoldingTime;
         lungeAttackTime = CultistData.lungeAttackTime;
-        throwCastingTime = CultistData.throwTime;
+        throwTime = CultistData.throwTime;
         skill1CastingTime = CultistData.skill1CastingTime;
-        skill1ChannelingTime = CultistData.skill1Time;
+        skill1Time = CultistData.skill1Time;
         skill2CastingTime = CultistData.skill2CastingTime;
         skill2ChannelingTime = CultistData.skill2ChannelingTime;
         skill3CastingTime = CultistData.skill3CastingTime;
         skill3ChannelingTime = CultistData.skill3ChannelingTime;
-        skill4CastingTime = CultistData.skill4Time;
-    }
+        skill4Time = CultistData.skill4Time;
 
-    [PunRPC]
-    public override void IsLocalPlayer()
-    {
-        base.IsLocalPlayer();
-        overlayCamera.SetActive(true);
-        minimapCamera.SetActive(true);
-        dagger.SetActive(false);
-
-        dagger.layer = 6;
-        for (int i = 0; i < 5; i++)
-        {
-            lungeEffect.transform.GetChild(i).gameObject.layer = 6;
-        }
+        overlayDagger.SetActive(false);
     }
 
     protected override void Update()
     {
         base.Update();
-        CheckCoolDownTimeForAll();
-
         if (PhotonNetwork.IsMasterClient)
-            CheckOnMasterClient();
+        {
+            CheckCoolDownTime();
+            UpdateData();
+        }
 
         if(photonView.IsMine)
         {
@@ -164,17 +130,28 @@ public class Cultist : Character, IPunObservable
     protected override void FixedUpdate()
     {
         if (photonView.IsMine)
+        {
             CheckChanneling();
+        }
         base.FixedUpdate();
+    }
+
+    [PunRPC]
+    public override void IsLocalPlayer()
+    {
+        base.IsLocalPlayer();
+        overlayCamera.SetActive(true);
+        minimapCamera.SetActive(true);
+        dagger.SetActive(false);
     }
 
     void CheckChanneling()
     {
-        if (skillState == SkillStateCultist.Skill2Channeling
+        if(skillState == SkillStateCultist.Skill2Channeling
             || skillState == SkillStateCultist.Skill4Casting)
             moveVec = Vector3.zero;
 
-        if (skillState == SkillStateCultist.LungeHolding)
+        if (skillState == SkillStateCultist.Lunge)
         {
             moveVec = Vector3.zero;
             rigidbody.MovePosition(rigidbody.transform.position + transform.forward * moveSpeed * runSpeedRatio * Time.deltaTime);
@@ -183,211 +160,146 @@ public class Cultist : Character, IPunObservable
         }
     }
 
-
-
-    //모든 클라이언트에서 작동
-    void CheckCoolDownTimeForAll()
+    void CheckCoolDownTime()
     {
-        CheckCoolDownTimeLoop(ref skillCoolDownTime);
-        CheckCoolDownTimeLoop(ref skillCastingTime);
-        CheckCoolDownTimeLoop(ref skillChannelingTime);
-        CheckCoolDownTimeLoop(ref normalCastingTime);
-    }
-
-    void CheckCoolDownTimeLoop(ref float[] times)
-    {
-        for(int i = 0; i < times.Length; i++)
+        for (int i = 0; i < 4; i++)
         {
-            if (times[i] > 0f)
-                times[i] -= Time.deltaTime;
+            if (coolDownTime[i] > 0f)
+                coolDownTime[i] -= Time.deltaTime;
         }
-    }
 
-    //로컬 클라이언트에서 작동
+        if(globalCastingTime > 0f)
+            globalCastingTime -= Time.deltaTime;
+        if (globalChannelingTime > 0f)
+            globalChannelingTime -= Time.deltaTime;
 
-    //마스터 클라이언트에서만 작동
-    void CheckOnMasterClient()
-    {
-        if (skillState == SkillStateCultist.Invocation)
+        if(skillState == SkillStateCultist.Invocation)
         {
-            if (animator.GetCurrentAnimatorStateInfo(0).IsName("Invocation"))
-            {
-                if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.5f)
-                    CallSetDagger(true);
-            }
-
-            if (normalCastingTime[0] <= 0f)
-            {
+            if(globalCastingTime <= 0f)
                 CallResetAnimation();
-                CallSetData("OnlySkillState", 0, 0f);
-            }
         }
-        else if (skillState == SkillStateCultist.LungeHolding)
-        {
-            if (normalCastingTime[1] <= 0f)
-            {
-                CallResetAnimation();
-                skillState = SkillStateCultist.LungeAttack;
-                CallSetData("normalCastingTime", 2, lungeAttackTime);
-            }
-        }
-        else if (skillState == SkillStateCultist.LungeAttack)
-        {
-            if (normalCastingTime[2] <= 0f)
-            {
-                CallResetAnimation();
-                skillState = SkillStateCultist.None;
-                CallSetDagger(false);
-                CallSetData("OnlySkillState", 0, 0f);
-            }
-        }
-        else if (skillState == SkillStateCultist.Throw)
+        else if (skillState == SkillStateCultist.Lunge || skillState == SkillStateCultist.Throw)
         {
             if (animator.GetCurrentAnimatorStateInfo(0).IsName("Throw"))
             {
                 if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.35f)
                 {
-                    if (dagger.active == true)
+                    if (overlayDagger.active == true)
                     {
-                        dagger.SetActive(false);
-                        CallInstantiateObject("Dagger");
-                        CallSetDagger(false);
+                        Ray _tempRay = camera.GetComponent<Camera>().ScreenPointToRay(aim.transform.position);
+                        Quaternion _tempQ = Quaternion.LookRotation(_tempRay.direction);
+                        PhotonNetwork.Instantiate("ChanYoung/Prefabs/Cultist/Dagger", _tempRay.origin + _tempRay.direction * 0.5f, _tempQ);
+                        overlayDagger.SetActive(false);
                     }
                 }
+            }
 
-                if (normalCastingTime[3] <= 0f)
-                {
-                    skillState = SkillStateCultist.None;
-                    CallResetAnimation();
-                    CallSetData("OnlySkillState", 0, 0f);
-                }
-            }
-        }
-        else if (skillState == SkillStateCultist.Skill1Casting)
-        {
-            if (skillCastingTime[0] <= 0f)
+            if (globalCastingTime <= 0f)
             {
-                skillState = SkillStateCultist.Skill1Channeling;
                 CallResetAnimation();
-                CallSetData("skillChannelingTime", 0, skill1ChannelingTime);
-            }
-        }
-        else if (skillState == SkillStateCultist.Skill1Channeling)
-        {
-            if (skillChannelingTime[0] <= 0f)
-            {
                 skillState = SkillStateCultist.None;
-                CallSetData("OnlySkillState", 0, 0f);
-                //쿨타임 적용
             }
         }
-        else if (skillState == SkillStateCultist.Skill2Casting)
+        else if(skillState == SkillStateCultist.Skill1Casting)
         {
-            if (skillCastingTime[1] <= 0f)
+            if(globalCastingTime <= 0f)
             {
+                CallResetAnimation();
+                skillState = SkillStateCultist.Skill1Using;
+                coolDownTime[0] = 5f;
+            }
+        }
+        else if(skillState == SkillStateCultist.Skill1Using)
+        {
+            if (animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"))
+                skillState = SkillStateCultist.None;
+        }
+        else if(skillState == SkillStateCultist.Skill2Casting)
+        {
+            if(globalCastingTime <= 0f)
+            {
+                globalChannelingTime = skill2ChannelingTime;
                 skillState = SkillStateCultist.Skill2Channeling;
-                CallSetData("skillChannelingTime", 1, skill2ChannelingTime);
             }
         }
-        else if (skillState == SkillStateCultist.Skill2Channeling)
+        else if(skillState == SkillStateCultist.Skill2Channeling)
         {
-            if (skillChannelingTime[1] <= 0f)
+            if (globalChannelingTime <= 0f)
             {
-                skillState = SkillStateCultist.None;
                 CallResetAnimation();
-                CallSetData("OnlySkillState", 0, 0f);
-                //쿨타임 적용
+                skillState = SkillStateCultist.None;
+                coolDownTime[1] = 5f;
             }
         }
-        else if (skillState == SkillStateCultist.Skill3Casting)
+        else if(skillState == SkillStateCultist.Skill3Casting)
         {
-            if (skillCastingTime[2] <= 0f)
+            if(globalCastingTime <= 0f)
             {
+                globalChannelingTime = skill3ChannelingTime;
                 skillState = SkillStateCultist.Skill3Channeling;
-                CallSetData("skillChannelingTime", 2, skill3ChannelingTime);
             }
         }
-        else if (skillState == SkillStateCultist.Skill3Channeling)
+        else if(skillState == SkillStateCultist.Skill3Channeling)
         {
-            if (skillChannelingTime[2] <= 0f)
+            if(globalChannelingTime <= 0f)
             {
-                skillState = SkillStateCultist.None;
                 CallResetAnimation();
-                CallSetData("OnlySkillState", 0, 0f);
-                //쿨타임 적용
+                skillState = SkillStateCultist.None;
+                coolDownTime[2] = 5f;
             }
         }
-        else if (skillState == SkillStateCultist.Skill4Casting)
+        else if(skillState == SkillStateCultist.Skill4Casting)
         {
-            if (skillCastingTime[3] <= 0f)
+            if(globalCastingTime <= 0f)
             {
-                skillState = SkillStateCultist.None;
                 CallResetAnimation();
-                CallSetData("OnlySkillState", 0, 0f);
-                //쿨타임 적용
+                skillState = SkillStateCultist.None;
+                coolDownTime[3] = 10f;
             }
         }
     }
 
-    //입력 이벤트
+    void UpdateData()
+    {
+        object[] _tempData = new object[5];
+        _tempData[0] = "UpdateData";
+        _tempData[1] = coolDownTime;
+        _tempData[2] = skillState;
+        _tempData[3] = globalCastingTime;
+        _tempData[4] = globalChannelingTime;
+        photonView.RPC("CallRPCCulTistToAll", RpcTarget.AllBuffered, _tempData);
+    }
+
     void OnSkill1()
     {
         if (photonView.IsMine)
-            CallSetSkill(1);
+            CallSkill(1);
     }
 
     void OnSkill2()
     {
         if (photonView.IsMine)
-            CallSetSkill(2);
+            CallSkill(2);
     }
 
     void OnSkill3()
     {
         if (photonView.IsMine)
-            CallSetSkill(3);
+            CallSkill(3);
     }
 
     void OnSkill4()
     {
         if (photonView.IsMine)
-            CallSetSkill(4);
+            CallSkill(4);
     }
 
-    void OnMouseButton()
+    void CallSkill(int num)
     {
-        if (photonView.IsMine)
-        {
-            if (!isClicked[0])
-            {
-                object[] _tempData = new object[2];
-                _tempData[0] = "ClickMouse";
-                _tempData[1] = 0;
-                RequestRPCCall(_tempData);
-            }
-            else
-            {
-                object[] _tempData = new object[2];
-                _tempData[0] = "CancelHolding";
-                RequestRPCCall(_tempData);
-            }
-            isClicked[0] = !isClicked[0];
-        }
-    }
-
-    void OnMouseButton2()
-    {
-        if (photonView.IsMine)
-        {
-            if (!isClicked[1])
-            {
-                object[] _tempData = new object[2];
-                _tempData[0] = "ClickMouse";
-                _tempData[1] = 1;
-                RequestRPCCall(_tempData);
-            }
-            isClicked[1] = !isClicked[1];
-        }
+        object[] _tempObject = new object[2];
+        _tempObject[0] = "SetSkill";
+        _tempObject[1] = num;
+        RequestRPCCall(_tempObject);
     }
 
     void OnButtonCancel()
@@ -400,157 +312,89 @@ public class Cultist : Character, IPunObservable
         }
     }
 
+    void OnMouseButton()
+    {
+        if (photonView.IsMine)
+        {
+            isClicked = !isClicked;
+            if (isClicked)
+            {
+                object[] _tempData = new object[2];
+                _tempData[0] = "ClickMouse";
+                RequestRPCCall(_tempData);
+            }
+            else
+            {
+                if(skillState == SkillStateCultist.Lunge)
+                {
+                    object[] _tempData = new object[2];
+                    _tempData[0] = "CancelHolding";
+                    RequestRPCCall(_tempData);
+                }
+            }
+        }
+    }
 
-    //요청 및 응답
+    void OnMouseButton2()
+    {
+        if(photonView.IsMine)
+        {
+            isClicked2 = !isClicked2;
+            if (isClicked2)
+            {
+                if (skillState == SkillStateCultist.Invocation)
+                {
+                    object[] _tempData = new object[2];
+                    _tempData[0] = "ClickMouse2";
+                    RequestRPCCall(_tempData);
+                }
+            }
+        }
+    }
+
+    //마스터 클라이언트로 요청
     void RequestRPCCall(object[] data)
     {
-        photonView.RPC("CallRPCCultistToMasterClient", RpcTarget.MasterClient, data);
+        photonView.RPC("CallRPCCultistMasterClient", RpcTarget.MasterClient, data);
     }
 
     [PunRPC]
-    public void CallRPCCultistToMasterClient(object[] data)
+    public void CallRPCCultistMasterClient(object[] data)
     {
         if ((string)data[0] == "SetSkill")
             SetSkill(data);
-        else if ((string)data[0] == "ClickMouse")
-            ClickMouse(data);
-        else if ((string)data[0] == "CancelHolding")
-            CancelHolding();
         else if ((string)data[0] == "CancelSkill")
             CancelSkill();
-        else if ((string)data[0] == "SetOwnerNum")
-            ResponseRPCCall(data);
-    }
+        else if ((string)data[0] == "ClickMouse")
+            ClickMouse();
+        else if ((string)data[0] == "ClickMouse2")
+            ClickMouse2();
+        else if ((string)data[0] == "CancelHolding")
+            CancelHolding();
 
-    void ResponseRPCCall(object[] data)
-    {
-        photonView.RPC("CallRPCCulTistToAll", RpcTarget.AllBuffered, data);
-    }
-
-    [PunRPC]
-    public void CallRPCCulTistToAll(object[] data)
-    {
-        if ((string)data[0] == "UpdateData")
-            UpdateData(data);
-        if ((string)data[0] == "SetAnimation")
-            SetAnimation(data);
-        else if ((string)data[0] == "SetOwnerNum")
-            SetOwnerNum(data);
-        else if ((string)data[0] == "SetDagger")
-            SetDagger(data);
-        else if ((string)data[0] == "ResetAnimation")
-            ResetAnimation();
-        else if ((string)data[0] == "InstantiateObject")
-            InstantiateObject(data);
 
     }
-
-    //요청
-    void CallSetSkill(int num)
-    {
-        object[] _tempObject = new object[2];
-        _tempObject[0] = "SetSkill";
-        _tempObject[1] = num;
-        RequestRPCCall(_tempObject);
-    }
-
-
-    //요청 처리
     void SetSkill(object[] data)
     {
-        int _skillNum = (int)data[1];
-        if (skillCoolDownTime[_skillNum - 1] <= 0f)
+        if (coolDownTime[(int)data[1] - 1] <= 0f)
         {
             {
                 if (skillState == SkillStateCultist.Skill1Ready ||
                     skillState == SkillStateCultist.Skill2Ready ||
                     skillState == SkillStateCultist.Skill3Ready ||
                     skillState == SkillStateCultist.Skill4Ready ||
-                    skillState == SkillStateCultist.None ||
-                    skillState == SkillStateCultist.Invocation)
+                    skillState == SkillStateCultist.None)
                 {
-                    if (_skillNum == 1)
+                    if ((int)data[1] == 1)
                         skillState = SkillStateCultist.Skill1Ready;
-                    else if (_skillNum == 2)
+                    else if ((int)data[1] == 2)
                         skillState = SkillStateCultist.Skill2Ready;
-                    else if (_skillNum == 3)
+                    else if ((int)data[1] == 3)
                         skillState = SkillStateCultist.Skill3Ready;
-                    else if (_skillNum == 4)
+                    else if ((int)data[1] == 4)
                         skillState = SkillStateCultist.Skill4Ready;
                 }
             }
-        }
-    }
-    void ClickMouse(object[] data)
-    {
-        // 0은 왼쪽 1은 오른쪽
-        int mouseCode = (int)data[1];
-        if(mouseCode == 0)
-        {
-            if (skillState == SkillStateCultist.None)
-            {
-                //의식
-                skillState = SkillStateCultist.Invocation;
-                CallSetAnimation("isInvocation", true);
-                CallSetData("normalCastingTime", 0, invocationCastingTime);
-            }
-            else if(skillState == SkillStateCultist.Invocation)
-            {
-                //급습
-                skillState = SkillStateCultist.LungeHolding;
-                CallSetAnimation("isLunge", true);
-                CallSetData("normalCastingTime", 1, lungeHoldingTime);
-            }
-            else if (skillState == SkillStateCultist.Skill1Ready)
-            {
-                //스킬1 사용
-                skillState = SkillStateCultist.Skill1Casting;
-                CallSetAnimation("isSkill1", true);
-                CallSetData("skillCastingTime", 0, skill1CastingTime);
-            }
-            else if (skillState == SkillStateCultist.Skill2Ready)
-            {
-                //스킬2 사용
-                skillState = SkillStateCultist.Skill2Casting;
-                CallSetAnimation("isSkill2", true);
-                CallSetData("skillCastingTime", 1, skill2CastingTime);
-            }
-            else if (skillState == SkillStateCultist.Skill3Ready)
-            {
-                //스킬3 사용
-                skillState = SkillStateCultist.Skill3Casting;
-                CallSetAnimation("isSkill3", true);
-                CallSetData("skillCastingTime", 2, skill3CastingTime);
-            }
-            else if (skillState == SkillStateCultist.Skill4Ready)
-            {
-                //스킬4 사용
-                skillState = SkillStateCultist.Skill4Casting;
-                CallSetAnimation("isSkill4", true);
-                CallSetData("skillCastingTime", 3, skill4CastingTime);
-            }
-        }
-        else
-        {
-            if(skillState == SkillStateCultist.Invocation)
-            {
-                //투척
-                skillState = SkillStateCultist.Throw;
-                CallSetAnimation("isThrow", true);
-                CallSetData("normalCastingTime", 3, throwCastingTime);
-            }
-        }
-    }
-
-    void CancelHolding()
-    {
-        //홀딩 캔슬
-        if (skillState == SkillStateCultist.LungeHolding)
-        {
-            skillState = SkillStateCultist.LungeAttack;
-            CallSetAnimation("isLunge", false);
-            CallSetData("normalCastingTime", 1, 0f);
-            CallSetData("normalCastingTime", 2, lungeAttackTime);
         }
     }
 
@@ -558,38 +402,100 @@ public class Cultist : Character, IPunObservable
     {
         if (skillState == SkillStateCultist.Skill1Ready || skillState == SkillStateCultist.Skill2Ready
             || skillState == SkillStateCultist.Skill3Ready || skillState == SkillStateCultist.Skill4Ready
-            || (skillState == SkillStateCultist.Invocation && normalCastingTime[0] <= 0f))
+            || (skillState == SkillStateCultist.Invocation && globalCastingTime <= 0f))
         {
             skillState = SkillStateCultist.None;
-            CallSetData("OnlySkillState", 0, 0f);
         }
     }
 
-    //응답
-    void CallSetData(string timeType, int index, float newTime)
+    void CancelHolding()
     {
-        object[] _tempData = new object[5];
-        _tempData[0] = "UpdateData";
-        _tempData[1] = skillState;
-        _tempData[2] = timeType;
-        _tempData[3] = index;
-        _tempData[4] = newTime;
+        //홀딩 캔슬
+        if (skillState == SkillStateCultist.Lunge)
+        {
+            globalCastingTime = 0f;
+            CallSetAnimation("isLunge", false);
+            skillState = SkillStateCultist.None;
+
+            CallStopLunge();
+        }
+    }
+
+    void CallStopLunge()
+    {
+        object[] _tempData = new object[2];
+        _tempData[0] = "StopLunge";
         ResponseRPCCall(_tempData);
     }
+
+    void ClickMouse()
+    {
+        if (skillState == SkillStateCultist.None)
+        {
+            globalCastingTime = invocationCastingTime;
+            CallSetAnimation("isInvocation", true);
+            skillState = SkillStateCultist.Invocation;
+        }
+        else if(skillState == SkillStateCultist.Invocation)
+        {
+            if(globalCastingTime <= 0f)
+            {
+                globalCastingTime = lungeHoldingTime;
+                CallSetAnimation("isLunge", true);
+                skillState = SkillStateCultist.Lunge;
+
+                RunLungeEffect();
+            }
+        }
+        else if(skillState == SkillStateCultist.Skill1Ready)
+        {
+            //스킬1 사용
+            skillState = SkillStateCultist.Skill1Casting;
+            globalCastingTime = skill1CastingTime;
+            CallSetAnimation("isSkill1", true);
+        }
+        else if(skillState == SkillStateCultist.Skill2Ready)
+        {
+            //스킬2 사용
+            skillState = SkillStateCultist.Skill2Casting;
+            globalCastingTime = skill2CastingTime;
+            CallSetAnimation("isSkill2", true);
+        }
+        else if (skillState == SkillStateCultist.Skill3Ready)
+        {
+            //스킬3 사용
+            skillState = SkillStateCultist.Skill3Casting;
+            globalCastingTime = skill3CastingTime;
+            CallSetAnimation("isSkill3", true);
+        }
+        else if (skillState == SkillStateCultist.Skill4Ready)
+        {
+            //스킬4 사용
+            skillState = SkillStateCultist.Skill4Casting;
+            globalCastingTime = skill4Time;
+            CallSetAnimation("isSkill4", true);
+        }
+    }
+
+    void ClickMouse2()
+    {
+        if (skillState == SkillStateCultist.Invocation)
+        {
+            if (globalCastingTime <= 0f)
+            {
+                globalCastingTime = throwTime;
+                CallSetAnimation("isThrow", true);
+                skillState = SkillStateCultist.Throw;
+            }
+        }
+    }
+
     void CallSetAnimation(string parameter, bool isParameter)
     {
         object[] _tempData = new object[3];
         _tempData[0] = "SetAnimation";
         _tempData[1] = parameter;
         _tempData[2] = isParameter;
-        ResponseRPCCall(_tempData);
-    }
-
-    void CallSetDagger(bool isActive)
-    {
-        object[] _tempData = new object[2];
-        _tempData[0] = "SetDagger";
-        _tempData[1] = isActive;
         ResponseRPCCall(_tempData);
     }
 
@@ -600,94 +506,34 @@ public class Cultist : Character, IPunObservable
         ResponseRPCCall(_tempData);
     }
 
-    void CallInstantiateObject(string objectName)
+    //마스터 클라이언트가 모든 클라이언트에게
+    void ResponseRPCCall(object[] data)
     {
-        object[] _tempData = new object[3];
-        _tempData[0] = "InstantiateObject";
-        _tempData[1] = objectName;
-        ResponseRPCCall(_tempData);
+        photonView.RPC("CallRPCCulTistToAll", RpcTarget.AllBuffered, data);
     }
 
-    //응답 처리
-    void UpdateData(object[] data)
+    [PunRPC]
+    public void CallRPCCulTistToAll(object[] data)
     {
-        skillState = (SkillStateCultist)data[1];
-
-        string _timeType = (string)data[2];
-        int _index = (int)data[3];
-        float _newTime = (float)data[4];
-
-        if(_timeType == "normalCastingTime")
-            normalCastingTime[_index] = _newTime;
-        else if(_timeType == "skillCastingTime")
-            skillCastingTime[_index] = _newTime;
-        else if(_timeType == "skillChannelingTime")
-            skillChannelingTime[_index] = _newTime;
+        if ((string)data[0] == "UpdateData")
+            UpdateDataByMasterClient(data);
+        else if ((string)data[0] == "SetAnimation")
+            SetAnimation(data);
+        else if ((string)data[0] == "ResetAnimation")
+            ResetAnimation();
+        else if ((string)data[0] == "StopLunge")
+            StopLunge();
     }
 
-    void SetAnimation(object[] data)
+    void StopLunge()
     {
-        if (photonView.IsMine)
+        /*
+        for (int i = 0; i < 5; i++)
         {
-            animator.SetBool((string)data[1], (bool)data[2]);
-            overlayAnimator.SetBool((string)data[1], (bool)data[2]);
+            lungeEffect.transform.GetChild(i).GetComponent<ParticleSystem>().Stop(false, ParticleSystemStopBehavior.StopEmittingAndClear);
         }
+        */
     }
-
-    void SetOwnerNum(object[] data)
-    {
-        ownerNum = (int)data[1];
-    }
-
-    void SetDagger(object[] data)
-    {
-        bool _isActive = (bool)data[1];
-        if (photonView.IsMine)
-            overlayDagger.SetActive(_isActive);
-        dagger.SetActive(_isActive);
-    }
-
-    void ResetAnimation()
-    {
-        if (photonView.IsMine)
-        {
-            animator.SetBool("isSkill1", false);
-            animator.SetBool("isSkill2", false);
-            animator.SetBool("isSkill3", false);
-            animator.SetBool("isSkill4", false);
-            animator.SetBool("isLunge", false);
-            animator.SetBool("isThrow", false);
-            animator.SetBool("isInvocation", false);
-
-            overlayAnimator.SetBool("isSkill1", false);
-            overlayAnimator.SetBool("isSkill2", false);
-            overlayAnimator.SetBool("isSkill3", false);
-            overlayAnimator.SetBool("isSkill4", false);
-            overlayAnimator.SetBool("isLunge", false);
-            overlayAnimator.SetBool("isThrow", false);
-            overlayAnimator.SetBool("isInvocation", false);
-        }
-    }
-
-    void InstantiateObject(object[] data)
-    {
-        if (photonView.IsMine)
-        {
-            if ((string)data[1] == "Dagger")
-            {
-                Ray _tempRay = camera.GetComponent<Camera>().ScreenPointToRay(aim.transform.position);
-                Quaternion _tempQ = Quaternion.LookRotation(_tempRay.direction);
-
-                object[] _data = new object[3];
-                _data[0] = name;
-                _data[1] = tag;
-                _data[2] = "Dagger";
-
-                PhotonNetwork.Instantiate("ChanYoung/Prefabs/Cultist/Dagger", _tempRay.origin + _tempRay.direction * 0.5f, _tempQ);
-            }
-        }
-    }
-
 
     void RunLungeEffect()
     {
@@ -698,6 +544,7 @@ public class Cultist : Character, IPunObservable
             lungeEffect.transform.GetChild(i).GetComponent<ParticleSystem>().Play(false);
         }
     }
+
     void CheckAnimationSpeed()
     {
         if (animator.GetCurrentAnimatorStateInfo(0).IsName("Invocation"))
@@ -707,11 +554,11 @@ public class Cultist : Character, IPunObservable
         else if (animator.GetCurrentAnimatorStateInfo(0).IsName("LungeAttack"))
             SetAnimationSpeed("LungeAttackSpeed", lungeAttackTime);
         else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Throw"))
-            SetAnimationSpeed("ThrowSpeed", throwCastingTime);
+            SetAnimationSpeed("ThrowSpeed", throwTime);
         else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Skill1Casting"))
             SetAnimationSpeed("Skill1CastingSpeed", skill1CastingTime);
         else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Skill1"))
-            SetAnimationSpeed("Skill1Speed", skill1ChannelingTime);
+            SetAnimationSpeed("Skill1Speed", skill1Time);
         else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Skill2"))
             SetAnimationSpeed("Skill2CastingSpeed", skill2CastingTime);
         else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Skill3Casting"))
@@ -719,7 +566,7 @@ public class Cultist : Character, IPunObservable
         else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Skill3"))
             SetAnimationSpeed("Skill3Speed", skill3ChannelingTime);
         else if (animator.GetCurrentAnimatorStateInfo(4).IsName("Skill4"))
-            SetAnimationSpeedExtra("Skill4CastingSpeed", skill4CastingTime);
+            SetAnimationSpeedExtra("Skill4CastingSpeed", skill4Time);
         
     }
 
@@ -739,6 +586,45 @@ public class Cultist : Character, IPunObservable
         overlayAnimator.SetFloat(state, _normalizedSpeed);
     }
 
+    void ResetAnimation()
+    {
+        if(photonView.IsMine)
+        {
+            animator.SetBool("isSkill1", false);
+            animator.SetBool("isSkill2", false);
+            animator.SetBool("isSkill3", false);
+            animator.SetBool("isSkill4", false);
+            animator.SetBool("isLunge", false);
+            animator.SetBool("isThrow", false);
+            animator.SetBool("isInvocation", false);
+
+            overlayAnimator.SetBool("isSkill1", false);
+            overlayAnimator.SetBool("isSkill2", false);
+            overlayAnimator.SetBool("isSkill3", false);
+            overlayAnimator.SetBool("isSkill4", false);
+            overlayAnimator.SetBool("isLunge", false);
+            overlayAnimator.SetBool("isThrow", false);
+            overlayAnimator.SetBool("isInvocation", false);
+        }
+    }
+
+    void SetAnimation(object[] data)
+    {
+        if(photonView.IsMine)
+        {
+            animator.SetBool((string)data[1], (bool)data[2]);
+            overlayAnimator.SetBool((string)data[1], (bool)data[2]);
+        }
+    }
+
+    void UpdateDataByMasterClient(object[] data)
+    {
+        coolDownTime = (float[])data[1];
+        skillState = (SkillStateCultist)data[2];
+        globalCastingTime = (float)data[3];
+        globalChannelingTime = (float)data[4];
+    }
+
     void CheckAnimatorExtra()
     {
         if (skillState == SkillStateCultist.Skill4Casting)
@@ -753,9 +639,13 @@ public class Cultist : Character, IPunObservable
             if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.5f)
                 overlayDagger.SetActive(false);
         }
+        else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Invocation"))
+        {
+            if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.5f)
+                overlayDagger.SetActive(true);
+        }
     }
 
-    //손동작 애니메이션에 따른 IK적용
     protected override void OnAnimatorIK()
     {
         base.OnAnimatorIK();

@@ -27,10 +27,7 @@ public class RoomItem : MonoBehaviour
         string _gameState)
     {
         roomName = _roomName;
-        if(_roomName.Length > maxChar)
-        {
-            roomNameText.text = _roomName.Substring(0, maxChar) + "...";
-        }
+        roomNameText.text = _roomName.Length > maxChar ? _roomName.Substring(0, maxChar) + "..." : _roomName;
         playerCountText.text = $"{_playerCount} / {_maxPlayer}";
         masterPlayerName.text = _masterClientName;
 
