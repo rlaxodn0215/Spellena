@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
 
-public class PlayerStats : MonoBehaviourPunCallbacks, IPunObservable
+public class PlayerStats : MonoBehaviourPunCallbacks
 {
     public GameObject statAssemble;
     public GameObject blueTeam;
@@ -81,6 +81,8 @@ public class PlayerStats : MonoBehaviourPunCallbacks, IPunObservable
     void Update()
     {
         pings[PhotonNetwork.LocalPlayer.ActorNumber] = PhotonNetwork.GetPing();
+        photonView.RPC("SerializePings", RpcTarget.AllBufferedViaServer,
+            PhotonNetwork.LocalPlayer.ActorNumber, pings[PhotonNetwork.LocalPlayer.ActorNumber]);
 
         if (Input.GetKey(KeyCode.Tab))
         {
@@ -125,16 +127,12 @@ public class PlayerStats : MonoBehaviourPunCallbacks, IPunObservable
         }
     }
 
-    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    [PunRPC]
+    public void SerializePings(int actorNumber, int ping)
     {
-        if (stream.IsWriting)
+        if(pings.ContainsKey(actorNumber))
         {
-            stream.SendNext(pings[PhotonNetwork.LocalPlayer.ActorNumber]);
-            //Debug.Log(PhotonNetwork.LocalPlayer.ActorNumber);
-        }
-        else
-        {
-            pings[PhotonNetwork.LocalPlayer.ActorNumber] = (int)stream.ReceiveNext();    
+            pings[actorNumber] = ping;
         }
     }
 }

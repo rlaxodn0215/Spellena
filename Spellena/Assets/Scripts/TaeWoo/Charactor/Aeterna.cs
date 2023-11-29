@@ -547,19 +547,5 @@ namespace Player
             }
         }
 
-        //private void OnGUI()
-        //{
-        //    if (photonView.IsMine)
-        //    {
-        //        GUI.TextField(new Rect(10, 10, 150, 30), "스킬 1 타이머 : " + skillTimer[1].ToString());
-        //        GUI.TextField(new Rect(10, 40, 150, 30), "스킬 2 타이머 : " + skillTimer[2].ToString());
-        //        GUI.TextField(new Rect(10, 70, 150, 30), "스킬 3 타이머: " + skillTimer[3].ToString());
-        //        GUI.TextField(new Rect(10, 100, 150, 30), "궁 게이지 : " + chargeCount);
-        //        GUI.TextField(new Rect(10, 130, 150, 30), "궁 타이머 : " + skillTimer[4].ToString());
-        //        GUI.TextField(new Rect(10, 160, 150, 30), "활성화 된 스킬 : " + skillButton);
-        //        GUI.TextField(new Rect(10, 190, 150, 30), "체력 : " + hp);
-        //    }
-        //}
-
     }
 }

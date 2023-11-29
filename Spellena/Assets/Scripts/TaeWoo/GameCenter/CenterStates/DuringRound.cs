@@ -102,14 +102,15 @@ public class DuringRound : CenterState
                     GameCenterTest.ChangePlayerCustomProperties(targetPlayer, "HealAssist", temp1);
                     break;
                  case "KillCount":
+                    Debug.Log("KillCount");
                      if (gameCenter.inGameUIView == null) break;
                     gameCenter.inGameUIView.RPC("ShowKillUI", targetPlayer, gameCenter.tempVictim);
                     gameCenter.inGameUIView.RPC("ShowKillLog", RpcTarget.AllBufferedViaServer, targetPlayer.CustomProperties["Name"],
                          gameCenter.tempVictim, ((string)targetPlayer.CustomProperties["Team"] == "A"), targetPlayer.ActorNumber);
                     CheckPlayerHealAssist(targetPlayer);
-                    view.RPC("SetUltimatePoint", targetPlayer);
                     break;
                  case "DeadCount":
+                    Debug.Log("DeadCount");
                     GameCenterTest.ChangePlayerCustomProperties (targetPlayer, "IsAlive", false);
                     GameCenterTest.ChangePlayerCustomProperties (targetPlayer, "ReSpawnTime", GameCenterTest.globalTimer + gameCenter.playerRespawnTime);
 
@@ -282,7 +283,7 @@ public class DuringRound : CenterState
                         //Debug.LogError("Deal Assist!!");
                         PhotonView view = PhotonView.Find((int)teamPlayer.CustomProperties["CharacterViewID"]);
                         if (view == null) continue;
-                        view.RPC("SetChargePoint", teamPlayer);
+                        view.RPC("SetChargePoint", teamPlayer,teamPlayer.ActorNumber);
                         int temp = (int)teamPlayer.CustomProperties["AsisstCount"];
                         GameCenterTest.ChangePlayerCustomProperties(teamPlayer, "Asisst", temp + 1);
                     }
@@ -308,7 +309,7 @@ public class DuringRound : CenterState
                         //Debug.LogError("Deal Assist!!");
                         PhotonView view = PhotonView.Find((int)teamPlayer.CustomProperties["CharacterViewID"]);
                         if (view == null) continue;
-                        view.RPC("SetChargePoint", teamPlayer);
+                        view.RPC("SetChargePoint", teamPlayer,teamPlayer.ActorNumber);
                         int temp = (int)teamPlayer.CustomProperties["AsisstCount"];
                         GameCenterTest.ChangePlayerCustomProperties(teamPlayer, "Asisst", temp + 1);
                     }
@@ -331,7 +332,7 @@ public class DuringRound : CenterState
                         //Debug.LogError("Heal Assist!!");
                         PhotonView view = PhotonView.Find((int)teamPlayer.CustomProperties["CharacterViewID"]);
                         if (view == null) continue;
-                        view.RPC("SetChargePoint", teamPlayer);
+                        view.RPC("SetChargePoint", teamPlayer,teamPlayer.ActorNumber);
                         int temp = (int)teamPlayer.CustomProperties["AsisstCount"];
                         GameCenterTest.ChangePlayerCustomProperties(teamPlayer, "Asisst", temp + 1);
                     }
@@ -350,7 +351,7 @@ public class DuringRound : CenterState
                         //Debug.LogError("Heal Assist!!");
                         PhotonView view = PhotonView.Find((int)teamPlayer.CustomProperties["CharacterViewID"]);
                         if (view == null) continue;
-                        view.RPC("SetChargePoint", teamPlayer);
+                        view.RPC("SetChargePoint", teamPlayer,teamPlayer.ActorNumber);
                         int temp = (int)teamPlayer.CustomProperties["AsisstCount"];
                         GameCenterTest.ChangePlayerCustomProperties(teamPlayer, "Asisst", temp + 1);
                     }

@@ -625,6 +625,10 @@ namespace Player
                     // 사망시
                     if (hp <= 0)
                     {
+                        PhotonView view = PhotonView.Find((int)killer.CustomProperties["CharacterViewID"]);
+                        if (view != null) view.RPC("SetUltimatePoint", killer, killer.ActorNumber, false);
+                        Debug.Log("SetUltimatePoint in PlayerDamaged");
+
                         int temp1 = (int)PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["DeadCount"];
                         PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["ParameterName"] = "DeadCount";
 
@@ -681,22 +685,17 @@ namespace Player
             {
                 if(rb.gameObject.name == damgePart)
                 {
-                    //Debug.Log(damgePart + " / " + direction + " / " + force);
                     rb.AddForce(direction.normalized * force, ForceMode.Impulse);
                     return;
                 }
             }
 
-            //Debug.Log("No DamagePart");
         }
 
         [PunRPC]
         public void PlayerDeadPersonal()
         {
             camera.transform.SetParent(Dead.transform);
-
-            //camera.transform.Translate(new Vector3(0f, 1.5f, -1f));
-            //camera.transform.Rotate(new Vector3(32, 0, 0));
 
             camera.GetComponent<MouseControl>().enabled = false;
             camera.GetComponent<DeadCamera>().enabled = true;
@@ -734,32 +733,38 @@ namespace Player
         }
 
         [PunRPC]
-        public void SetChargePoint()
+        public void SetChargePoint(int actorNumber)
         {
             chargeCount++;
             if(chargeCount>=4)
             {
                 chargeCount = 0;
-                SetUltimatePoint();
+                SetUltimatePoint(actorNumber,true);
             }
         }
 
         [PunRPC]
-        public void SetUltimatePoint()
+        public void SetUltimatePoint(int actorNumber, bool isFromChargePoint)
         {
             if (ultimateCount < 10)
             {
-                Debug.Log("SetUltimatePoint : " + (int)PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["UltimateCount"]);
-                int temp = (int)PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["UltimateCount"];
-                GameCenterTest.ChangePlayerCustomProperties(PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr], "UltimateCount", temp + 1);
+                Debug.Log("SetUltimatePoint in RPC to " + PhotonNetwork.CurrentRoom.Players[actorNumber].CustomProperties["Name"]);
+                int temp = (int)PhotonNetwork.CurrentRoom.Players[actorNumber].CustomProperties["UltimateCount"];
                 ultimateCount = temp + 1;
+                Debug.Log("UltimateCount : " + ultimateCount);
+
+                if (!isFromChargePoint)
+                {
+                    Debug.Log("SetUltimatePoint in ChangePlayerCustomProperties");
+                    GameCenterTest.ChangePlayerCustomProperties(PhotonNetwork.CurrentRoom.Players[actorNumber], "UltimateCount", ultimateCount);
+                }
             }
         }
 
         [PunRPC]
         public void AngelStatueHP(int addHp)
         {
-            if(hp<dataHp)
+            if(hp < dataHp)
             {
                 hp += addHp;
             }
