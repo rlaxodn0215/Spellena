@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Data
   m_EditorClassIdentifier: 
   hp: 800
-  moveSpeed: 10
+  moveSpeed: 4
   backSpeed: 8
   sideSpeed: 9
   runSpeedRatio: 1.2
