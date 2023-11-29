@@ -19,12 +19,23 @@ public class CultistData : ScriptableObject
     public float invocationCastingTime;
     public float lungeHoldingTime;
     public float lungeAttackTime;
+
+    public float lungeAttackDamage;
+
     public float throwTime;
     public float skill1CastingTime;
     public float skill1Time;
+    public float skill1Damage;
+    public float skill1CoolDownTime;
+
     public float skill2CastingTime;
     public float skill2ChannelingTime;
+    public float skill2CoolDownTime;
+
     public float skill3CastingTime;
     public float skill3ChannelingTime;
-    public float skill4Time;
+    public float skill3CoolDownTime;
+
+    public float skill4CastingTime;
+    public float skill4CoolDownTime;
 }

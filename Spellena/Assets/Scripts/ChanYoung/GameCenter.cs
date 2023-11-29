@@ -366,6 +366,7 @@ public class GameCenter : MonoBehaviourPunCallbacks, IPunObservable
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
+        
         if (stream.IsWriting)
         {
             stream.SendNext(gameState);
@@ -388,5 +389,6 @@ public class GameCenter : MonoBehaviourPunCallbacks, IPunObservable
             roundATextUI.text = (string)stream.ReceiveNext();
             roundBTextUI.text = (string)stream.ReceiveNext();
         }
+        
     }
 }

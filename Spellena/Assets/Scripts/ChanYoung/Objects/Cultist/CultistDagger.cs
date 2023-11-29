@@ -6,36 +6,49 @@ using UnityEngine;
 
 public class CultistDagger : SpawnObject
 {
-    float daggerSpeed = 100f;
+    public TriggerEventer triggerEventer;
+    public CultistData cultistData;
+
+    float daggerSpeed = 50f;
+
+    float lifeTime = 10f;
+    float currentLifeTime = 0f;
 
     private Rigidbody daggerRigidbody;
     private void Start()
     {
         daggerRigidbody = GetComponent<Rigidbody>();
+        Init();
     }
     private void Update()
     {
-        if (PhotonNetwork.IsMasterClient)
-        {
-            daggerRigidbody.MovePosition(transform.position + Time.deltaTime * transform.forward * daggerSpeed);
-        }
+        CheckLifeTime();
+    }
+
+    private void FixedUpdate()
+    {
+        daggerRigidbody.MovePosition(transform.position + Time.deltaTime * transform.forward * daggerSpeed);
+    }
+
+    void CheckLifeTime()
+    {
+        currentLifeTime -= Time.deltaTime;
+        if(currentLifeTime <= 0f)
+            CallRPCTunnel("RequestDestroy");
+    }
+
+    void Init()
+    {
+        triggerEventer.hitTriggerEvent += TriggerEvent;
+        currentLifeTime = lifeTime;
     }
 
     void CallRPCTunnel(string tunnelCommand)
     {
         object[] _tempData;
-        if (tunnelCommand == "UpdateData")
-        {
-            _tempData = new object[2];
-            _tempData[0] = tunnelCommand;
-            _tempData[1] = transform.position;
-        }
-        else
-        {
-            _tempData = new object[2];
-            _tempData[0] = tunnelCommand;
-        }
-
+        _tempData = new object[2];
+        _tempData[0] = tunnelCommand;
+        
         photonView.RPC("CallRPCTunnelCultistDagger", RpcTarget.AllBuffered, _tempData);
     }
 
@@ -52,22 +65,25 @@ public class CultistDagger : SpawnObject
             PhotonNetwork.Destroy(gameObject);
     }
 
-    private void OnTriggerEnter(Collider other)
+    void TriggerEvent(GameObject hitObject)
     {
         if (PhotonNetwork.IsMasterClient)
         {
-            if (other.gameObject.layer == 11)
+            if (hitObject.gameObject.layer == 11)
             {
-                Debug.Log("ÆÄ±«");
                 CallRPCTunnel("RequestDestroy");
             }
-            else if(other.gameObject.GetComponent<Character>() != null)
+            if (hitObject.transform.root.gameObject.name != hitObject.name)
             {
-                GameObject _tempObject = other.gameObject;
-                if(_tempObject.tag != tag)
+                GameObject _rootObject = hitObject.transform.root.gameObject;
+                if (_rootObject.GetComponent<Character>() != null)
                 {
-                    Debug.Log("µ¥¹ÌÁö");
-                    //_tempObject.GetComponent<PhotonView>().RPC("PlayerDamaged");
+                    if (_rootObject.tag != tag)
+                    {
+                        _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.MasterClient,
+                         playerName, (int)(cultistData.skill1Damage), hitObject.name, transform.forward, 20f);
+                        CallRPCTunnel("RequestDestroy");
+                    }
                 }
             }
         }

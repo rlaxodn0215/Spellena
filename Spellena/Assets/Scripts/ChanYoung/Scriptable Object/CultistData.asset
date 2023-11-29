@@ -25,11 +25,17 @@ MonoBehaviour:
   invocationCastingTime: 1
   lungeHoldingTime: 1.5
   lungeAttackTime: 1
+  lungeAttackDamage: 100
   throwTime: 1
   skill1CastingTime: 1.5
   skill1Time: 1
+  skill1Damage: 100
+  skill1CoolDownTime: 5
   skill2CastingTime: 2
   skill2ChannelingTime: 5
+  skill2CoolDownTime: 5
   skill3CastingTime: 1.5
   skill3ChannelingTime: 5
-  skill4Time: 4
+  skill3CoolDownTime: 5
+  skill4CastingTime: 2
+  skill4CoolDownTime: 5
