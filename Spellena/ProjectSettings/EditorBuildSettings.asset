@@ -14,8 +14,8 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Resources/TaeWoo/Scenes/SiHyunScene/SiHyun RoomLobby Test.unity
     guid: 5ac601c64d5cbcd419b6dddc645a9456
-  - enabled: 0
-    path: Assets/Resources/TaeWoo/Scenes/ChanYoungScene/OccupyingSystem Test.unity
+  - enabled: 1
+    path: Assets/Resources/ChanYoung/ChanYoungScene/OccupyingSystem Test.unity
     guid: 89a4b448b88e0dc42a4dcea97e9f72ac
   - enabled: 0
     path: Assets/Resources/TaeWoo/Scenes/TaeWooScene/TaeWoo_LoadingScene.unity
@@ -26,7 +26,7 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Resources/TaeWoo/Scenes/TaeWooScene/TaeWoo_BackToMainLoadingScene.unity
     guid: b3e07c6fc352c7a47b586facdf2f26eb
-  - enabled: 1
+  - enabled: 0
     path: Assets/Resources/TaeWoo/Scenes/SiHyunScene/SiHyun Dracoson Test.unity
     guid: c5e911b13cc818c469dd9bef3d9ccc91
   m_configObjects: {}
