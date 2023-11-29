@@ -10,6 +10,9 @@ public class PlayerStats : MonoBehaviourPunCallbacks
     public GameObject blueTeam;
     public GameObject redTeam;
 
+    [HideInInspector]
+    public bool isGameReady = false;
+
     Dictionary<string, GameObject> UIObjects = new Dictionary<string, GameObject>();
 
     List<Text> bluePlayerNames = new List<Text>();
@@ -78,21 +81,30 @@ public class PlayerStats : MonoBehaviourPunCallbacks
 
     }
 
+    [PunRPC]
+    public void IsGameReady(bool isReady)
+    {
+        isGameReady = isReady;
+    }
+
     void Update()
     {
-        pings[PhotonNetwork.LocalPlayer.ActorNumber] = PhotonNetwork.GetPing();
-        photonView.RPC("SerializePings", RpcTarget.AllBufferedViaServer,
-            PhotonNetwork.LocalPlayer.ActorNumber, pings[PhotonNetwork.LocalPlayer.ActorNumber]);
-
-        if (Input.GetKey(KeyCode.Tab))
+        if (isGameReady)
         {
-            statAssemble.SetActive(true);
-            ShowStats();
-        }
+            pings[PhotonNetwork.LocalPlayer.ActorNumber] = PhotonNetwork.GetPing();
+            photonView.RPC("SerializePings", RpcTarget.AllBufferedViaServer,
+                PhotonNetwork.LocalPlayer.ActorNumber, pings[PhotonNetwork.LocalPlayer.ActorNumber]);
 
-        if (Input.GetKeyUp(KeyCode.Tab))
-        {
-            statAssemble.SetActive(false);
+            if (Input.GetKey(KeyCode.Tab))
+            {
+                statAssemble.SetActive(true);
+                ShowStats();
+            }
+
+            if (Input.GetKeyUp(KeyCode.Tab))
+            {
+                statAssemble.SetActive(false);
+            }
         }
     }
 

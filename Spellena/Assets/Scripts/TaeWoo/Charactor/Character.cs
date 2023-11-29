@@ -511,7 +511,8 @@ namespace Player
         {
             if (PhotonNetwork.IsMasterClient)
             {
-                if (other.tag == "OccupationArea" && (bool) PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["IsAlive"])
+                if (other.tag == "OccupationArea" && 
+                    (bool) PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["IsAlive"])
                 {
                     isOccupying = true;
                 }
@@ -599,7 +600,7 @@ namespace Player
         [PunRPC]
         public void PlayerDamaged(string enemy ,int damage, string damgePart, Vector3 direction, float force)
         {
-            if (!(bool)PhotonNetwork.LocalPlayer.CustomProperties["IsAlive"]) return;
+            if (!(bool)PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["IsAlive"]) return;
 
             if (damage > 0)
             {
@@ -625,9 +626,7 @@ namespace Player
                     // 사망시
                     if (hp <= 0)
                     {
-                        PhotonView view = PhotonView.Find((int)killer.CustomProperties["CharacterViewID"]);
-                        if (view != null) view.RPC("SetUltimatePoint", killer, killer.ActorNumber, false);
-                        Debug.Log("SetUltimatePoint in PlayerDamaged");
+                        SetUltimatePoint(killer.ActorNumber);
 
                         int temp1 = (int)PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["DeadCount"];
                         PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["ParameterName"] = "DeadCount";
@@ -642,7 +641,9 @@ namespace Player
 
                         int temp2 = (int)killer.CustomProperties["KillCount"];
                         killer.CustomProperties["ParameterName"] = "KillCount";
+
                         GameCenterTest.ChangePlayerCustomProperties(killer, "KillCount", temp2 + 1);
+
                     }
 
                     int temp = (int)killer.CustomProperties["TotalDamage"];
@@ -739,26 +740,27 @@ namespace Player
             if(chargeCount>=4)
             {
                 chargeCount = 0;
-                SetUltimatePoint(actorNumber,true);
+                SetUltimatePoint(actorNumber);
+            }
+        }
+
+        public void SetUltimatePoint(int actorNumber)
+        {
+            int temp = (int)PhotonNetwork.CurrentRoom.Players[actorNumber].CustomProperties["UltimateCount"];
+
+            if (temp < 10)
+            {             
+                GameCenterTest.ChangePlayerCustomProperties(PhotonNetwork.CurrentRoom.Players[actorNumber], "UltimateCount", temp + 1);
+                PhotonView view = PhotonView.Find((int)PhotonNetwork.CurrentRoom.Players[actorNumber].CustomProperties["CharacterViewID"]);
+                if (view == null) return;
+                view.RPC("AddUltimatePoint", PhotonNetwork.CurrentRoom.Players[actorNumber], temp + 1);
             }
         }
 
         [PunRPC]
-        public void SetUltimatePoint(int actorNumber, bool isFromChargePoint)
+        public void AddUltimatePoint(int num)
         {
-            if (ultimateCount < 10)
-            {
-                Debug.Log("SetUltimatePoint in RPC to " + PhotonNetwork.CurrentRoom.Players[actorNumber].CustomProperties["Name"]);
-                int temp = (int)PhotonNetwork.CurrentRoom.Players[actorNumber].CustomProperties["UltimateCount"];
-                ultimateCount = temp + 1;
-                Debug.Log("UltimateCount : " + ultimateCount);
-
-                if (!isFromChargePoint)
-                {
-                    Debug.Log("SetUltimatePoint in ChangePlayerCustomProperties");
-                    GameCenterTest.ChangePlayerCustomProperties(PhotonNetwork.CurrentRoom.Players[actorNumber], "UltimateCount", ultimateCount);
-                }
-            }
+            ultimateCount = num;
         }
 
         [PunRPC]

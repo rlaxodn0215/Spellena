@@ -24,7 +24,7 @@ public class LoadingScene : MonoBehaviourPunCallbacks
     private float timer = 0.0f;
     private float helpBackImageOpenSpeed = 1.0f;
     private float loadingSignRotateSpeed = 3.5f;
-    private float loadingSignRotateFrequency = 0.5f;
+    private float loadingSignRotateFrequency = 0.2f;
 
     void Start()
     {
@@ -52,7 +52,7 @@ public class LoadingScene : MonoBehaviourPunCallbacks
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         timer += Time.deltaTime;
         LoadingSignRotate();

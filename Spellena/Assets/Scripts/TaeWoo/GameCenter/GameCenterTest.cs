@@ -13,6 +13,7 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
     public GameObject inGameUIObj;
     public GameObject deathUIObj;
     public GameObject gameResultObj;
+    public PlayerStats playerStat;
 
     [HideInInspector]
     public PhotonView characterSelectView;

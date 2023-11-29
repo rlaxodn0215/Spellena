@@ -67,6 +67,9 @@ namespace Player
 
             enemyObjectData = sword.GetComponent<AeternaSword>().contactObjectData;
 
+            Player.aeternaUI.GetComponent<AeternaUI>().UIObjects["skill_2_Image_Hashold"].SetActive(true);
+            Player.aeternaUI.GetComponent<AeternaUI>().UIObjects["skill_2_Image_Nohold"].SetActive(false);
+
             Player.skill2Phase = 2;
             Player.playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = false;
 
@@ -76,7 +79,10 @@ namespace Player
 
         private void OnHoldShoot()
         {
-            if(PhotonNetwork.IsMasterClient)
+            Player.aeternaUI.GetComponent<AeternaUI>().UIObjects["skill_2_Image_Hashold"].SetActive(false);
+            Player.aeternaUI.GetComponent<AeternaUI>().UIObjects["skill_2_Image_Nohold"].SetActive(true);
+
+            if (PhotonNetwork.IsMasterClient)
             {
                 ShootProjectile(enemyObjectData, Player.camera.transform.localRotation);
             }
@@ -98,6 +104,8 @@ namespace Player
             data[0] = Player.playerName;
             data[1] = gameObject.tag;
             data[3] = rot;
+
+            Debug.Log((string)data[2]);
 
             PhotonNetwork.Instantiate("TaeWoo/Prefabs/Effect/" + (string)data[2],
                 Player.camera.transform.position, Player.transform.localRotation, 0, data);

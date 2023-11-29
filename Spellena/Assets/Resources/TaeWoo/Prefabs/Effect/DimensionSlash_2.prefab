@@ -5086,6 +5086,7 @@ MonoBehaviour:
   playerName: 
   type: 1
   objectName: 
+  hitParticle: {fileID: 0}
   aeternaData: {fileID: 11400000, guid: 3ab088a29565a8742af0c359ef4214cd, type: 2}
   chargeNum: 2
   damage: 0

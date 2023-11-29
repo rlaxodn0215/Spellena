@@ -7,7 +7,8 @@ namespace Player
 {
     public class DimensionCut : Ability
     {
-        private bool isHealingSword = true;
+        [HideInInspector]
+        public bool isHealingSword = true;
         private Aeterna Player;
         private AeternaSword Sword;
 

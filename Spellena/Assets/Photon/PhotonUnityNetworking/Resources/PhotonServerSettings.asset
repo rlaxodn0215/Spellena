@@ -152,6 +152,11 @@ MonoBehaviour:
   - CallRPCTunnelCultistDagger
   - CallRPCCultistToMasterClient
   - SerializePings
+  - IsGameReady
+  - AddUltimatePoint
+  - UseTeleportManager
+  - ActivateSkill4ChargeParticle
+  - Skill4ChargeParticle
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

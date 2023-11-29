@@ -10,11 +10,13 @@ namespace Player
     {
         public AeternaData aeternaData;
 
+        public GameObject aeternaUI;
         public GameObject DimensionSword;
         public GameObject DimensionSlash;
         public GameObject DimensionDoor;
         public GameObject DimensionDoorGUI;
         public GameObject teleportPoints;
+        public GameObject teleportManager;
 
         [HideInInspector]
         public DimensionSword dimensionSword;
@@ -35,7 +37,7 @@ namespace Player
         public float[] skillTimer;
 
         [HideInInspector]
-        public int doUltimateNum = 0;
+        public int doUltimateNum;
         [HideInInspector]
         public float[] chargeCountTime; // index - 0: 3단계 까지 가기위한 총 시간, 1: 1단계, 2: 2단계 (3단계는 0초)
 
@@ -122,7 +124,7 @@ namespace Player
             chargeCountTime[1] = aeternaData.skill4Phase2Time;
             chargeCountTime[2] = aeternaData.skill4Phase1Time;
 
-            ultimateCount = aeternaData.skill4Cost;
+            doUltimateNum = aeternaData.skill4Cost;
         }
 
         [PunRPC]
@@ -429,6 +431,8 @@ namespace Player
                 StartCoroutine(attackPauseCoroutine);
                 StartCoroutine(skill4SlashCoroutine);
                 StartCoroutine(SkillTimer(0));
+
+                DimensionSword.GetComponent<PhotonView>().RPC("ActivateSkill4ChargeParticle",RpcTarget.AllBuffered,true);
             }
 
             if(!isMouseButton)
@@ -443,6 +447,8 @@ namespace Player
 
                 animator.SetBool("isHolding", false);
                 chargeCount = 0;
+
+                DimensionSword.GetComponent<PhotonView>().RPC("ActivateSkill4ChargeParticle",RpcTarget.AllBuffered,false);
             }
             
         }
@@ -529,23 +535,43 @@ namespace Player
             if (time <= 0.0f)
             {
                 chargeCount = 3;
+                photonView.RPC("Skill4ChargeParticle", RpcTarget.AllBuffered, 0.2f);
             }
 
             else if (time <= chargeCountTime[0] - chargeCountTime[1])
             {
                 chargeCount = 2;
+                photonView.RPC("Skill4ChargeParticle", RpcTarget.AllBuffered, 0.5f);
             }
 
             else if (time <= chargeCountTime[0] - chargeCountTime[2])
             {
                 chargeCount = 1;
+                photonView.RPC("Skill4ChargeParticle", RpcTarget.AllBuffered, 0.8f);
             }
 
             else
             {
                 chargeCount = 0;
+                photonView.RPC("Skill4ChargeParticle", RpcTarget.AllBuffered, 1.0f);
             }
         }
 
+       [PunRPC]
+       public void Skill4ChargeParticle(float duration)
+       {
+            var particleSystem = DimensionSword.GetComponent<AeternaSword>().
+                    skill4OverChargeParticle.GetComponent<ParticleSystem>();
+            particleSystem.Stop();
+            StartCoroutine(WaitForParticleStop(particleSystem, duration));
+       }
+
+        IEnumerator WaitForParticleStop(ParticleSystem system, float duration)
+        {
+            yield return new WaitForSeconds(system.main.duration);
+            var particleSystemMainModule = system.main;
+            particleSystemMainModule.duration = duration;
+            system.Play();
+        }
     }
 }

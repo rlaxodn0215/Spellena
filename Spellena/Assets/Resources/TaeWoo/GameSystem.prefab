@@ -9734,6 +9734,7 @@ MonoBehaviour:
   statAssemble: {fileID: 1032233008}
   blueTeam: {fileID: 852045011}
   redTeam: {fileID: 542510823}
+  isGameReady: 0
 --- !u!114 &1291718858
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16471,11 +16472,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6b7cd71dbeeb9a747a12a20c43e338de, type: 3}
---- !u!1 &3857787240464690235 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3857787240039352162, guid: 6b7cd71dbeeb9a747a12a20c43e338de, type: 3}
-  m_PrefabInstance: {fileID: 1803168601}
-  m_PrefabAsset: {fileID: 0}
 --- !u!224 &8135333900978816290 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8135333902747381371, guid: 6b7cd71dbeeb9a747a12a20c43e338de, type: 3}
@@ -16505,21 +16501,10 @@ MonoBehaviour:
   OwnershipTransfer: 0
   observableSearch: 2
   ObservedComponents:
-  - {fileID: 8869935724850789701}
+  - {fileID: 0}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
---- !u!114 &8869935724850789701 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8869935723155625500, guid: 6b7cd71dbeeb9a747a12a20c43e338de, type: 3}
-  m_PrefabInstance: {fileID: 1803168601}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3857787240464690235}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7c98275f8495bf24983f765ffd60a8ad, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &2837283345720893230
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -16758,6 +16743,10 @@ PrefabInstance:
       propertyPath: sceneViewId
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6423109405892716136, guid: 3d340549d0b5610408b82cd7283efd0f, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -24.18
+      objectReference: {fileID: 0}
     - target: {fileID: 8880130348373976556, guid: 3d340549d0b5610408b82cd7283efd0f, type: 3}
       propertyPath: m_Name
       value: CharacterSelect
@@ -16920,13 +16909,17 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2083781901}
     - target: {fileID: -3659780393974971309, guid: e5f594c2b8c71c749ba015b8a40cb1a0, type: 3}
+      propertyPath: playerStat
+      value: 
+      objectReference: {fileID: 1291718857}
+    - target: {fileID: -3659780393974971309, guid: e5f594c2b8c71c749ba015b8a40cb1a0, type: 3}
       propertyPath: angleStatue
       value: 
       objectReference: {fileID: 8103850702291242313}
     - target: {fileID: -3659780393974971309, guid: e5f594c2b8c71c749ba015b8a40cb1a0, type: 3}
       propertyPath: inGameUIObj
       value: 
-      objectReference: {fileID: 3857787240464690235}
+      objectReference: {fileID: 8135333900978816294}
     - target: {fileID: -3659780393974971309, guid: e5f594c2b8c71c749ba015b8a40cb1a0, type: 3}
       propertyPath: bgmManagerObj
       value: 
@@ -16937,7 +16930,7 @@ PrefabInstance:
       objectReference: {fileID: 1359174769}
     - target: {fileID: -3659780393974971309, guid: e5f594c2b8c71c749ba015b8a40cb1a0, type: 3}
       propertyPath: occupyingRate
-      value: 10
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: -3659780393974971309, guid: e5f594c2b8c71c749ba015b8a40cb1a0, type: 3}
       propertyPath: characterSelect

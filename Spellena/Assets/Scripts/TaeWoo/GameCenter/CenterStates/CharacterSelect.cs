@@ -6,6 +6,7 @@ using Player;
 
 public class CharacterSelect : CenterState
 {
+    bool isOnce = true;
     bool isCheckTimer = false;
     float tempTimer = 0.0f;
 
@@ -35,8 +36,10 @@ public class CharacterSelect : CenterState
             }
         }
 
-        if (GameCenterTest.globalTimer >= gameCenter.globalDesiredTimer)
+        if (GameCenterTest.globalTimer >= gameCenter.globalDesiredTimer && isOnce)
         {
+            Debug.Log("CharacterSelectState");
+            isOnce = !isOnce;
             MakeSpawnPoint();
             ConnectInGameUI();
             MakeCharacter();

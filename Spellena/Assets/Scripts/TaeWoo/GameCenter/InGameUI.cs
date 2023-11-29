@@ -256,8 +256,6 @@ public class InGameUI : MonoBehaviourPunCallbacks,IPunObservable
     [PunRPC]
     public void ShowTeamState(string playerName, string characterName)
     {
-        Debug.Log("ShowTeamState");
-
         UIObjects["player_" + teamCount].SetActive(true);
         playerNames[teamCount - 1].text = playerName;
 
@@ -282,6 +280,8 @@ public class InGameUI : MonoBehaviourPunCallbacks,IPunObservable
     [PunRPC]
     public void ShowKillLog(string _killer, string _victim, bool _isRed, int _isMeActorNum)
     {
+        Debug.Log("ShowKillLog");
+
         MoveKillLog();
 
         murderNames[0].text = _killer;
@@ -391,6 +391,7 @@ public class InGameUI : MonoBehaviourPunCallbacks,IPunObservable
             occupyingBUI.rate = (float)stream.ReceiveNext();
             occupyingTeamUI.name = (string)stream.ReceiveNext();
             occupyingTeamUI.rate = (float)stream.ReceiveNext();
+
             endKillLogIndex = (int)stream.ReceiveNext();
             maxKillLogIndex = (int)stream.ReceiveNext();
         }

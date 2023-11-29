@@ -12,7 +12,7 @@ public class DimensionSlashWallHitCollider : MonoBehaviourPunCallbacks
         {
             if (other.CompareTag("Wall"))
             {
-                dimensionSlash.DestorySpawnObject();
+                dimensionSlash.DestorySpawnObject(other.ClosestPointOnBounds(transform.position));
             }
         }
     }

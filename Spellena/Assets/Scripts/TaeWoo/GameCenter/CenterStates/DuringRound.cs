@@ -7,24 +7,18 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 public class DuringRound : CenterState
 {
-    //public enum RoundState
-    //{
-    //    None,
-    //    StandBy,
-    //    RoundStart,
-    //    Occupying,
-    //    Occupied,
-    //    RoundEnd
-    //}
-
-    //public RoundState currentRoundState = RoundState.None;
-    //public RoundState updateRoundState = RoundState.StandBy;
-
+    bool isOnce = true;
     bool checkRoundEndOnce = true;
     bool OccupyBarCountOnce = true;
 
     public override void StateExecution()
     {
+        if(isOnce)
+        {
+            isOnce = !isOnce;
+            gameCenter.playerStat.GetComponent<PhotonView>().RPC("IsGameReady",RpcTarget.AllBufferedViaServer,true);        
+        }
+
         GameCenterTest.globalTimer += Time.deltaTime;
 
         OccupyBarCount();
@@ -102,15 +96,16 @@ public class DuringRound : CenterState
                     GameCenterTest.ChangePlayerCustomProperties(targetPlayer, "HealAssist", temp1);
                     break;
                  case "KillCount":
-                    Debug.Log("KillCount");
                      if (gameCenter.inGameUIView == null) break;
+                    //view.RPC("SetUltimatePoint", targetPlayer, targetPlayer.ActorNumber, false);
                     gameCenter.inGameUIView.RPC("ShowKillUI", targetPlayer, gameCenter.tempVictim);
                     gameCenter.inGameUIView.RPC("ShowKillLog", RpcTarget.AllBufferedViaServer, targetPlayer.CustomProperties["Name"],
                          gameCenter.tempVictim, ((string)targetPlayer.CustomProperties["Team"] == "A"), targetPlayer.ActorNumber);
                     CheckPlayerHealAssist(targetPlayer);
+                    //int n = (int)targetPlayer.CustomProperties["UltimateCount"];
+                    //GameCenterTest.ChangePlayerCustomProperties(targetPlayer, "UltimateCount", n + 1);
                     break;
                  case "DeadCount":
-                    Debug.Log("DeadCount");
                     GameCenterTest.ChangePlayerCustomProperties (targetPlayer, "IsAlive", false);
                     GameCenterTest.ChangePlayerCustomProperties (targetPlayer, "ReSpawnTime", GameCenterTest.globalTimer + gameCenter.playerRespawnTime);
 

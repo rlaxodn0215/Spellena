@@ -50,9 +50,8 @@ namespace Player
         {
             int randomIndex = Random.Range(0, trasportPoints.Count);
 
+            Player.teleportManager.GetComponent<PhotonView>().RPC("UseTeleportManager",RpcTarget.AllBuffered, enemy.transform.position ,trasportPoints[randomIndex].position);
             enemy.GetComponent<PhotonView>().RPC("PlayerTeleport", RpcTarget.AllBuffered, trasportPoints[randomIndex].position);
-
-            //enemy.transform.position = trasportPoints[randomIndex].position;
 
             Sword.GetComponent<BoxCollider>().enabled = false;
 

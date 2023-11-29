@@ -10,6 +10,8 @@ public class DimensionSlashAttackCollider : MonoBehaviourPunCallbacks
     {
        if(PhotonNetwork.IsMasterClient)
        {
+            if (other.GetComponent<AeternaSword>()) return;
+
             if (dimensionSlash.CompareTag("TeamA") && other.transform.root.CompareTag("TeamA") ||
                 dimensionSlash.CompareTag("TeamB") && other.transform.root.CompareTag("TeamB"))
             {
@@ -19,7 +21,7 @@ public class DimensionSlashAttackCollider : MonoBehaviourPunCallbacks
                     {
                         other.transform.root.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBufferedViaServer, dimensionSlash.playerName,
                             -dimensionSlash.healing, null, Vector3.zero, 0.0f);
-                        dimensionSlash.DestorySpawnObject();
+                        dimensionSlash.DestorySpawnObject(other.ClosestPointOnBounds(transform.position));
                     }
                 }
             }
@@ -33,7 +35,7 @@ public class DimensionSlashAttackCollider : MonoBehaviourPunCallbacks
                     {
                         other.transform.root.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBufferedViaServer, dimensionSlash.playerName,
                             dimensionSlash.damage, other.name, transform.TransformDirection(Vector3.forward), 20.0f);
-                        dimensionSlash.DestorySpawnObject();
+                        dimensionSlash.DestorySpawnObject(other.ClosestPointOnBounds(transform.position));
                     }
                 }
             }

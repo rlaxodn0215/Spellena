@@ -11,13 +11,13 @@ namespace Player
         private Aeterna Player;
         private Animator animator;
         private GameObject Sword;
-        private GameObject dimensionSlash;
+        //private GameObject dimensionSlash;
         public override void AddPlayer(Character player)
         {
             Player = (Aeterna)player;
             animator = player.GetComponent<Animator>();
             Sword = Player.DimensionSword;
-            dimensionSlash = Player.DimensionSlash;
+            //dimensionSlash = Player.DimensionSlash;
         }
 
         public override void Execution()

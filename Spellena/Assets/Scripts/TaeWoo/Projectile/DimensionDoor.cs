@@ -75,6 +75,7 @@ namespace Player
                 direction.Normalize();
                 direction *= InnerForce;
                 player.MovePosition(player.transform.position + direction*Time.deltaTime);
+                Debug.Log("GiveGravity");
             }
         }
 
@@ -132,7 +133,7 @@ namespace Player
         [PunRPC]
         void DeBuff(string playerName)
         {
-            GameObject temp = GameObject.Find("Player_" + playerName);
+            GameObject temp = GameObject.Find(playerName);
             if (temp == null) return;
 
             foreach(string player in playerInArea)
@@ -147,7 +148,7 @@ namespace Player
         [PunRPC]
         void EnBuff(string playerName)
         {
-            GameObject temp = GameObject.Find("Player_" + playerName);
+            GameObject temp = GameObject.Find(playerName);
             if (temp == null) return;
 
             foreach (string player in playerInArea)
