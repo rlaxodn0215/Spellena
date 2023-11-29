@@ -10,9 +10,16 @@ using HashTable = ExitGames.Client.Photon.Hashtable;
 public class Dracoson : Character, IPunObservable
 {
     public DracosonData dracosonData;
+
     public GameObject overlaycamera;
     public GameObject Aim;
     public Animator overlayAnimator;
+    public Transform rightHand;
+    public Transform staffTop;
+    public Transform sightRight;
+    float rightHandWeight = 0.04f;
+    [SerializeField]
+    public float ww = 0f;
 
     Vector3 defaultCameraLocalVec;
 
@@ -30,7 +37,11 @@ public class Dracoson : Character, IPunObservable
 
     public enum SkillStateDracoson
     {
-        None, Holding, Breathe, Flying, Skill1, Skill2, Skill3, Skill4
+        None, Holding, Breathe, Flying,
+        Skill1, Skill1Ready,
+        Skill2, Skill2Ready, Skill2Casting,
+        Skill3, 
+        Skill4
     }
 
     SkillStateDracoson skillState = SkillStateDracoson.None;
@@ -89,13 +100,12 @@ public class Dracoson : Character, IPunObservable
         base.Start();
         Init();
     }
-
     protected override void Update()
     {
         base.Update();
         if (PhotonNetwork.IsMasterClient)
         {
-            //CheckCoolDownTime();
+            CheckCoolDownTime();
             UpdateData();
             Debug.Log(skillState);
             CheckChargePhase();
@@ -115,14 +125,22 @@ public class Dracoson : Character, IPunObservable
                 coolDownTime[i] -= Time.deltaTime;
         }
         globalCastingTime -= Time.deltaTime;
-        if (skillState == SkillStateDracoson.Holding)
+        if (skillState == SkillStateDracoson.Skill1)
         {
             if (globalCastingTime <= 0f)
             {
-                CallSetAnimation("isHolding", false);
+                CallSetAnimation("Skill1", false);
                 skillState = SkillStateDracoson.None;
             }
         }
+    }
+
+    void SetChargePhase(bool phase1, bool phase2, bool phase3, bool phaseOver)
+    {
+        overlayAnimator.SetBool("ChargePhase1", phase1);
+        overlayAnimator.SetBool("ChargePhase2", phase2);
+        overlayAnimator.SetBool("ChargePhase3", phase3);
+        overlayAnimator.SetBool("ChargePhaseOver", phaseOver);
     }
 
     void CheckChargePhase()
@@ -130,6 +148,7 @@ public class Dracoson : Character, IPunObservable
         if (isClicked)
         {
             CallSetAnimation("HoldingCancel", false);
+            overlayAnimator.SetBool("HoldingCancel", false);
             holdingTime = Time.time - holdingStartTime;
 
             float _chargePhase1 = 1.3f;
@@ -140,26 +159,33 @@ public class Dracoson : Character, IPunObservable
             if (holdingTime >= _chargePhase1 && holdingTime < _chargePhase2)
             {
                 Debug.Log("1단계 차지");
+                SetChargePhase(true, false, false, false);
                 chargeCount = 1;
             }
             else if (holdingTime >= _chargePhase2 && holdingTime < _chargePhase3)
             {
                 Debug.Log("2단계 차지");
+                SetChargePhase(false, true, false, false);
+
                 chargeCount = 2;
             }
             else if (holdingTime >= _chargePhase3 && holdingTime < _chargePhaseOver)
             {
                 Debug.Log("3단계 차지");
+                SetChargePhase(false, false, true, false);
+
                 chargeCount = 3;
             }
             else if (holdingTime >= _chargePhaseOver)
             {
                 Debug.Log("오버 차지");
+                SetChargePhase(false, false, false, true);
                 chargeCount = 4;
             }
             else
             {
                 chargeCount = 0;
+                SetChargePhase(false, false, false, false);
                 Debug.Log("차지 실패");
             }
         }
@@ -262,6 +288,14 @@ public class Dracoson : Character, IPunObservable
 
 
     }
+
+    [PunRPC]
+    public override void IsLocalPlayer()
+    {
+        base.IsLocalPlayer();
+        overlaycamera.SetActive(true);
+    }
+
     void SetSkill(object[] data)
     {
         if (coolDownTime[(int)data[1] - 1] <= 0f)
@@ -290,12 +324,15 @@ public class Dracoson : Character, IPunObservable
             if (chargeCount == 0)
             {
                 CallSetAnimation("HoldingCancel", true);
+                overlayAnimator.SetBool("HoldingCancel", true);
             }
             globalCastingTime = 0f;
             CallSetAnimation("isHolding", false);
+            overlayAnimator.SetBool("isHolding", false);
             skillState = SkillStateDracoson.None;
             holdingStartTime = 0f;
             holdingTime = 0f;
+            SetChargePhase(false, false, false, false);
             Debug.Log("홀딩 취소");
         }
     }
@@ -307,6 +344,7 @@ public class Dracoson : Character, IPunObservable
             // 용의 시선
             globalCastingTime = 1f;
             CallSetAnimation("isHolding", true);
+            overlayAnimator.SetBool("isHolding", true);
             skillState = SkillStateDracoson.Holding;
         }
         else if (skillState == SkillStateDracoson.Skill1)
@@ -314,6 +352,8 @@ public class Dracoson : Character, IPunObservable
             //스킬1 사용
             coolDownTime[0] = 5f;
             CallSetAnimation("Skill1", true);
+            overlayAnimator.SetBool("Skill1", true);
+
         }
         else if (skillState == SkillStateDracoson.Skill2)
         {
@@ -380,5 +420,23 @@ public class Dracoson : Character, IPunObservable
         {
             animator.SetBool("isThrow", false);
         }
+    }
+
+    protected override void OnAnimatorIK()
+    {
+        base.OnAnimatorIK();
+
+        if (overlayAnimator.GetCurrentAnimatorStateInfo(0).IsName("Idle"))
+            LerpWeight(0.0045f);
+        else if (overlayAnimator.GetCurrentAnimatorStateInfo(0).IsName("isHolding"))
+            LerpWeight(0.0021f);
+
+        overlayAnimator.SetIKPosition(AvatarIKGoal.RightHand, sightRight.position);
+        overlayAnimator.SetIKPositionWeight(AvatarIKGoal.RightHand, rightHandWeight);
+    }
+
+    void LerpWeight(float weight)
+    {
+        rightHandWeight = Mathf.Lerp(rightHandWeight, weight, Time.deltaTime * 8f);
     }
 }
