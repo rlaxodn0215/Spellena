@@ -21,6 +21,7 @@ namespace Player
         public override void IsActive()
         {
             Sword.GetComponent<PhotonView>().RPC("ActivateSkill4Sword", RpcTarget.AllBuffered, isHealingSword);
+            Sword.GetComponent<PhotonView>().RPC("ActivateSkill4Sword", RpcTarget.AllBuffered, isHealingSword);
             isHealingSword = !isHealingSword;
         }
 
@@ -31,6 +32,7 @@ namespace Player
 
         public override void Execution(ref int chargeCount)
         {
+
             if (PhotonNetwork.IsMasterClient)
             {
                 SpawnDimensionCut(chargeCount, Player.camera.transform.localRotation, !isHealingSword);

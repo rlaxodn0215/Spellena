@@ -18,7 +18,7 @@ namespace Player
         public SpawnObjectType type;
         public string objectName;
         public object[] data;
-        public GameObject hitParticle;
+        public string[] hitParticles;
         
         public virtual void OnEnable()
         {
@@ -47,12 +47,12 @@ namespace Player
             }
         }
 
-        public void DestorySpawnObject(Vector3 hitPos)
+        public void DestorySpawnObject(Vector3 hitPos, int index)
         {
             if (this !=null && PhotonNetwork.IsMasterClient)
             {
                 PhotonNetwork.Destroy(gameObject.transform.root.gameObject);
-                PhotonNetwork.Instantiate("TaeWoo/Prefabs/Effect/DimensionSlash_0_Hit", hitPos, Quaternion.identity);
+                PhotonNetwork.Instantiate(hitParticles[index], hitPos, Quaternion.identity);
             }
         }
 

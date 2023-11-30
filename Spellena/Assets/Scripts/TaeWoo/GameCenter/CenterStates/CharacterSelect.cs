@@ -38,7 +38,6 @@ public class CharacterSelect : CenterState
 
         if (GameCenterTest.globalTimer >= gameCenter.globalDesiredTimer && isOnce)
         {
-            Debug.Log("CharacterSelectState");
             isOnce = !isOnce;
             MakeSpawnPoint();
             ConnectInGameUI();

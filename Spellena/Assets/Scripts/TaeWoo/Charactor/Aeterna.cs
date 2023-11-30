@@ -432,7 +432,6 @@ namespace Player
                 StartCoroutine(skill4SlashCoroutine);
                 StartCoroutine(SkillTimer(0));
 
-                DimensionSword.GetComponent<PhotonView>().RPC("ActivateSkill4ChargeParticle",RpcTarget.AllBuffered,true);
             }
 
             if(!isMouseButton)
@@ -446,9 +445,10 @@ namespace Player
                 }
 
                 animator.SetBool("isHolding", false);
-                chargeCount = 0;
+                chargeCount = 1;
 
-                DimensionSword.GetComponent<PhotonView>().RPC("ActivateSkill4ChargeParticle",RpcTarget.AllBuffered,false);
+                DimensionSword.GetComponent<PhotonView>().RPC("ActivateParticle", RpcTarget.AllBuffered, 4, false);
+
             }
             
         }
@@ -535,43 +535,38 @@ namespace Player
             if (time <= 0.0f)
             {
                 chargeCount = 3;
-                photonView.RPC("Skill4ChargeParticle", RpcTarget.AllBuffered, 0.2f);
+                photonView.RPC("Skill4ChargeStage", RpcTarget.AllBuffered, 3);
             }
 
             else if (time <= chargeCountTime[0] - chargeCountTime[1])
             {
                 chargeCount = 2;
-                photonView.RPC("Skill4ChargeParticle", RpcTarget.AllBuffered, 0.5f);
+                photonView.RPC("Skill4ChargeStage", RpcTarget.AllBuffered, 2);
             }
 
             else if (time <= chargeCountTime[0] - chargeCountTime[2])
             {
                 chargeCount = 1;
-                photonView.RPC("Skill4ChargeParticle", RpcTarget.AllBuffered, 0.8f);
+                photonView.RPC("Skill4ChargeStage", RpcTarget.AllBuffered, 1);
             }
 
             else
             {
-                chargeCount = 0;
-                photonView.RPC("Skill4ChargeParticle", RpcTarget.AllBuffered, 1.0f);
+                chargeCount = 1;
+                photonView.RPC("Skill4ChargeStage", RpcTarget.AllBuffered, 1);
             }
         }
 
        [PunRPC]
-       public void Skill4ChargeParticle(float duration)
+       public void Skill4ChargeStage(int index)
        {
-            var particleSystem = DimensionSword.GetComponent<AeternaSword>().
-                    skill4OverChargeParticle.GetComponent<ParticleSystem>();
-            particleSystem.Stop();
-            StartCoroutine(WaitForParticleStop(particleSystem, duration));
+            for (int i = 1; i <= 3; i++)
+            {
+                if(i == index)
+                    DimensionSword.GetComponent<AeternaSword>().skill4OverChargeParticles[i-1].SetActive(true);
+                else
+                    DimensionSword.GetComponent<AeternaSword>().skill4OverChargeParticles[i-1].SetActive(false);
+            }
        }
-
-        IEnumerator WaitForParticleStop(ParticleSystem system, float duration)
-        {
-            yield return new WaitForSeconds(system.main.duration);
-            var particleSystemMainModule = system.main;
-            particleSystemMainModule.duration = duration;
-            system.Play();
-        }
     }
 }

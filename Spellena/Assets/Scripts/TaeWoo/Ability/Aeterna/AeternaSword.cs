@@ -20,11 +20,10 @@ namespace Player
         public GameObject skill3BuffParticle;
         public GameObject skill4AttackSword;
         public GameObject skill4HealingSword;
-        public GameObject skill4OverChargeParticle;
+        public GameObject[] skill4OverChargeParticles;
 
         public int damage;
         private string enemyTag;
-        private bool isHealSword;
 
         private void Start()
         {
@@ -59,6 +58,14 @@ namespace Player
                 skill3BuffParticle.SetActive(isActive);
             }
 
+            else if(skillNum == 4)
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    skill4OverChargeParticles[i].SetActive(isActive);
+                }
+            }
+
             else
             {
                 Debug.LogError("No SkillNum");
@@ -69,37 +76,28 @@ namespace Player
         [PunRPC]
         public void ActivateSkill4Sword(bool isHealingSword)
         {
-           normalSword.SetActive(false);
-           skill4HealingSword.SetActive(isHealingSword);
-           skill4AttackSword.SetActive(!isHealingSword);
-           isHealSword = isHealingSword;
-        }
+            normalSword.SetActive(false);
+            skill4HealingSword.SetActive(isHealingSword);
+            skill4AttackSword.SetActive(!isHealingSword);
 
-        [PunRPC]
-        public void ActivateSkill4ChargeParticle(bool isActive)
-        {
-            skill4OverChargeParticle.SetActive(isActive);
-            ChangeEffectColor(isHealSword);
-        }
-
-        void ChangeEffectColor(bool isHealingSword)
-        {
-            ParticleSystem[] systems = skill4OverChargeParticle.GetComponentsInChildren<ParticleSystem>(true);
-
-            foreach (ParticleSystem particle in systems)
+            for (int i = 0; i < 3; i++)
             {
-                Color color;
+                ParticleSystem[] systems = skill4OverChargeParticles[i].GetComponentsInChildren<ParticleSystem>(true);
 
-                if (isHealingSword)
-                    ColorUtility.TryParseHtmlString("#FFFFFF", out color);
-                else
-                    ColorUtility.TryParseHtmlString("#912AFF", out color);
+                foreach (ParticleSystem particle in systems)
+                {
+                    Color color;
 
-                ParticleSystem.MainModule module = particle.main;
-                module.startColor = color;
+                    if (isHealingSword)
+                        ColorUtility.TryParseHtmlString("#FFFFFF", out color);
+                    else
+                        ColorUtility.TryParseHtmlString("#912AFF", out color);
+
+                    ParticleSystem.MainModule module = particle.main;
+                    module.startColor = color;
+                }
             }
         }
-
 
         [PunRPC]
         public void DisActivateSkill4Sword()
@@ -111,11 +109,11 @@ namespace Player
 
         public void OnTriggerEnter(Collider other)
         {
-            Debug.Log("Hit Collider");
+            //Debug.Log("Hit Collider");
 
             if (other.transform.root.CompareTag(enemyTag))
             {
-                Debug.Log("Hit Enemy");
+                //Debug.Log("Hit Enemy");
 
                 if (player.playerActionDatas[(int)PlayerActionState.Skill2].isExecuting && player.skill2Phase == 1)
                 {
@@ -143,11 +141,11 @@ namespace Player
 
                 else if (player.playerActionDatas[(int)PlayerActionState.Skill3].isExecuting && player.skill3Phase == 1)
                 {
-                    Debug.Log("When skill3");
+                    //Debug.Log("When skill3");
 
                     if (other.transform.root.GetComponent<Character>())
                     {
-                        Debug.Log("Do Skill3");
+                        //Debug.Log("Do Skill3");
                         player.dimensionTransport.Transport(other.transform.root.gameObject);
                     }
                 }

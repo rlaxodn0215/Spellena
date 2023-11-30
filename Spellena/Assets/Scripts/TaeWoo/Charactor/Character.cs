@@ -44,6 +44,7 @@ namespace Player
 
         public GameObject Alive;
         public GameObject Dead;
+        public GameObject characterSoundManager;
 
         //실시간 갱신 데이터
         public string playerName;
@@ -99,6 +100,8 @@ namespace Player
         public Ray lookRay;
         [HideInInspector]
         public RaycastHit lookHit;
+        [HideInInspector]
+        public PhotonView soundManagerView;
 
         // 임시 사용 데이터
         public Vector3 moveVec;
@@ -133,6 +136,7 @@ namespace Player
             SetPlayerKeys(PlayerActionState.Skill3, "Skill3");
             SetPlayerKeys(PlayerActionState.Skill4, "Skill4");
             currentSight = sight.transform.position;
+            soundManagerView = characterSoundManager.GetComponent<PhotonView>();
         }
 
         void SetPlayerKeys(PlayerActionState playerActionState, string action)
@@ -257,6 +261,8 @@ namespace Player
                     {
                         animator.SetLayerWeight(3, 1);
                     }
+
+                   // MakeSound();
                 }
             }
         }
@@ -266,6 +272,38 @@ namespace Player
             if(photonView.IsMine)
             {
                 PlayerMove();
+                MakeMoveSound();
+            }
+        }
+
+        protected void MakeMoveSound()
+        {
+            if (playerActionDatas[(int)PlayerActionState.Jump].isExecuting)
+            {
+                soundManagerView.RPC("PlayAudio", RpcTarget.All, "JumpSound", 1.0f, false, "ActSounds");
+            }
+
+            else
+            {
+                // 하나만 소라가 나야 한다면 한 조건문 안에 한 사운드를 넣어라
+
+                if (playerActionDatas[(int)PlayerActionState.Move].isExecuting)
+                {
+                    if(playerActionDatas[(int)PlayerActionState.Run].isExecuting)
+                    {
+                        soundManagerView.RPC("PlayAudio", RpcTarget.All, "RunSound", 1.0f, true, "ActSounds");
+                    }
+
+                    else
+                    {
+                        soundManagerView.RPC("PlayAudio", RpcTarget.All, "WalkSound", 1.0f, true, "ActSounds");
+                    }
+                }
+                
+                else
+                {
+                     soundManagerView.RPC("PlayAudio", RpcTarget.All, "NoSound", 1.0f, true, "ActSounds");
+                }
             }
         }
 
@@ -308,7 +346,6 @@ namespace Player
 
                 _temp.Normalize();
                 SelectMoveSpeed(_temp);
-
                 _temp = transform.InverseTransformVector(_temp);
             }
 
@@ -397,9 +434,13 @@ namespace Player
                 moveVec = new Vector3(value.Get<Vector2>().x, 0, value.Get<Vector2>().y);
 
                 if (moveVec.magnitude <= 0)
+                {
                     playerActionDatas[(int)PlayerActionState.Move].isExecuting = false;
+                }
                 else
+                {
                     playerActionDatas[(int)PlayerActionState.Move].isExecuting = true;
+                }
             }
         }
         void OnJump()
@@ -419,6 +460,7 @@ namespace Player
         {
             if (photonView.IsMine && (bool)PhotonNetwork.LocalPlayer.CustomProperties["IsAlive"])
             {
+
                 if (!playerActionDatas[(int)PlayerActionState.Run].isExecuting)
                 {
                     animator.SetBool("Run", true);
@@ -480,6 +522,18 @@ namespace Player
                     GameCenterTest.ChangePlayerCustomProperties
                             (PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr], "AngelStatueCoolTime", temp);
                     Debug.Log("Interaction!!");
+                }
+            }
+        }
+
+        private void OnCollisionEnter(Collision collision)
+        {
+            if (photonView.IsMine)
+            {
+                if (collision.gameObject.layer == LayerMask.NameToLayer("Map"))
+                {
+                    Debug.Log("LandSound");
+                    soundManagerView.RPC("PlayAudio", RpcTarget.All, "LandSound", 1.0f, false);
                 }
             }
         }

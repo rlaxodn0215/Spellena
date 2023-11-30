@@ -37,7 +37,7 @@ public class DuringRound : CenterState
             if(OccupyBarCountOnce)
             {
                 //Debug.Log("A OccupyBarCount");
-                gameCenter.bgmManagerView.RPC("PlayBGM", RpcTarget.AllBufferedViaServer, "Occupying", 0.7f, true);
+                gameCenter.bgmManagerView.RPC("PlayAudio", RpcTarget.AllBufferedViaServer, "Occupying", 0.7f, false,true);
                 OccupyBarCountOnce = false;
             }
 
@@ -51,7 +51,7 @@ public class DuringRound : CenterState
 
             if (OccupyBarCountOnce)
             {
-                gameCenter.bgmManagerView.RPC("PlayBGM", RpcTarget.AllBufferedViaServer, "Occupying", 0.7f, true);
+                gameCenter.bgmManagerView.RPC("PlayAudio", RpcTarget.AllBufferedViaServer, "Occupying", 0.7f, false, true);
                 OccupyBarCountOnce = false;
             }
 
@@ -387,28 +387,28 @@ public class DuringRound : CenterState
                 gameCenter.occupyingTeam.name = "";
                 gameCenter.occupyingTeam.rate = 0f;
 
-                gameCenter.bgmManagerView.RPC("PlayBGM", RpcTarget.AllBufferedViaServer, "Occupation", 1.0f, false);
+                gameCenter.bgmManagerView.RPC("PlayAudio", RpcTarget.All, "Occupation", 1.0f, false,true);
 
                 if (gameCenter.currentOccupationTeam == "A")
                 {
-                    gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "captured_Red", true);
-                    gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "captured_Blue", false);
-                    gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "extraObj", false);
-                    gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "blueExtraObj", false);
-                    gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "blueExtraUI", true);
+                    gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "captured_Red", true);
+                    gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "captured_Blue", false);
+                    gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "extraObj", false);
+                    gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "blueExtraObj", false);
+                    gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "blueExtraUI", true);
 
                     gameCenter.angleStatue.GetComponent<PhotonView>().RPC("ChangeTeam", RpcTarget.AllBufferedViaServer, "A");
                 }
 
                 else if (gameCenter.currentOccupationTeam == "B")
                 {
-                    gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "captured_Red", false);
-                    gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "captured_Blue", true);
-                    gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "extraObj", false);
-                    gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "redExtraObj", false);
-                    gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "redExtraUI", true);
+                    gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "captured_Red", false);
+                    gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "captured_Blue", true);
+                    gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "extraObj", false);
+                    gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "redExtraObj", false);
+                    gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "redExtraUI", true);
 
-                    gameCenter.angleStatue.GetComponent<PhotonView>().RPC("ChangeTeam", RpcTarget.AllBufferedViaServer, "B");
+                    gameCenter.angleStatue.GetComponent<PhotonView>().RPC("ChangeTeam", RpcTarget.All, "B");
 
                 }
             }
@@ -438,10 +438,10 @@ public class DuringRound : CenterState
         {
             if(checkRoundEndOnce)
             {
-                gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "extraObj", true);
-                gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "redExtraUI", false);
-                gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "redExtraObj", true);
-                gameCenter.bgmManagerView.RPC("PlayBGM", RpcTarget.AllBufferedViaServer, "RoundAlmostEnd", 1.0f, true);
+                gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "extraObj", true);
+                gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "redExtraUI", false);
+                gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "redExtraObj", true);
+                gameCenter.bgmManagerView.RPC("PlayAudio", RpcTarget.All, "RoundAlmostEnd", 1.0f, true,true);
                 checkRoundEndOnce = false;
             }
 
@@ -453,10 +453,10 @@ public class DuringRound : CenterState
         {
             if (checkRoundEndOnce)
             {
-                gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "extraObj", true);
-                gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "blueExtraUI", false);
-                gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "blueExtraObj", true);
-                gameCenter.bgmManagerView.RPC("PlayBGM", RpcTarget.AllBufferedViaServer, "RoundAlmostEnd", 1.0f, true);
+                gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "extraObj", true);
+                gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "blueExtraUI", false);
+                gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "blueExtraObj", true);
+                gameCenter.bgmManagerView.RPC("PlayAudio", RpcTarget.All, "RoundAlmostEnd", 1.0f, true,true);
                 checkRoundEndOnce = false;
             }
 
@@ -484,13 +484,13 @@ public class DuringRound : CenterState
                     foreach (var player in gameCenter.playersA)
                     {
                         gameCenter.inGameUIView.RPC("ShowRoundWin", player, GameCenterTest.roundA + GameCenterTest.roundB);
-                        gameCenter.bgmManagerView.RPC("PlayBGM", player, "RoundWin", 1.0f, false);
+                        gameCenter.bgmManagerView.RPC("PlayAudio", player, "RoundWin", 1.0f, false,true);
                     }
 
                     foreach (var player in gameCenter.playersB)
                     {
                         gameCenter.inGameUIView.RPC("ShowRoundLoose", player, GameCenterTest.roundA + GameCenterTest.roundB);
-                        gameCenter.bgmManagerView.RPC("PlayBGM", player, "RoundLoose", 1.0f, false);
+                        gameCenter.bgmManagerView.RPC("PlayAudio", player, "RoundLoose", 1.0f, false,true);
                     }
                 }
 
@@ -501,13 +501,13 @@ public class DuringRound : CenterState
                     foreach (var player in gameCenter.playersA)
                     {
                         gameCenter.inGameUIView.RPC("ActiveInGameUIObj", player, "victory", true);
-                        gameCenter.bgmManagerView.RPC("PlayBGM", player, "RoundWin", 1.0f, false);
+                        gameCenter.bgmManagerView.RPC("PlayAudio", player, "RoundWin", 1.0f, false,true);
                     }
 
                     foreach (var player in gameCenter.playersB)
                     {
                         gameCenter.inGameUIView.RPC("ActiveInGameUIObj", player, "defeat", true);
-                        gameCenter.bgmManagerView.RPC("PlayBGM", player, "RoundLoose", 1.0f, false);
+                        gameCenter.bgmManagerView.RPC("PlayAudio", player, "RoundLoose", 1.0f, false,true);
                     }
                 }
 
@@ -525,13 +525,13 @@ public class DuringRound : CenterState
                     foreach (var player in gameCenter.playersB)
                     {
                         gameCenter.inGameUIView.RPC("ShowRoundWin", player, GameCenterTest.roundA + GameCenterTest.roundB);
-                        gameCenter.bgmManagerView.RPC("PlayBGM", player, "RoundWin", 1.0f, false);
+                        gameCenter.bgmManagerView.RPC("PlayAudio", player, "RoundWin", 1.0f, false, true);
                     }
 
                     foreach (var player in gameCenter.playersA)
                     {
                         gameCenter.inGameUIView.RPC("ShowRoundLoose", player, GameCenterTest.roundA + GameCenterTest.roundB);
-                        gameCenter.bgmManagerView.RPC("PlayBGM", player, "RoundLoose", 1.0f, false);
+                        gameCenter.bgmManagerView.RPC("PlayAudio", player, "RoundLoose", 1.0f, false, true);
                     }
                 }
 
@@ -542,13 +542,13 @@ public class DuringRound : CenterState
                     foreach (var player in gameCenter.playersB)
                     {
                         gameCenter.inGameUIView.RPC("ActiveInGameUIObj", player, "victory", true);
-                        gameCenter.bgmManagerView.RPC("PlayBGM", player, "RoundWin", 1.0f, false);
+                        gameCenter.bgmManagerView.RPC("PlayAudio", player, "RoundWin", 1.0f, false,true);
                     }
 
                     foreach (var player in gameCenter.playersA)
                     {
                         gameCenter.inGameUIView.RPC("ActiveInGameUIObj", player, "defeat", true);
-                        gameCenter.bgmManagerView.RPC("PlayBGM", player, "RoundLoose", 1.0f, false);
+                        gameCenter.bgmManagerView.RPC("PlayAudio", player, "RoundLoose", 1.0f, false,true);
                     }
                 }
             }

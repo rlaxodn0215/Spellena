@@ -5,6 +5,7 @@ using Player;
 public class DimensionSlashWallHitCollider : MonoBehaviourPunCallbacks
 {
     public DimensionSlash dimensionSlash;
+    private int index = 1;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -12,7 +13,15 @@ public class DimensionSlashWallHitCollider : MonoBehaviourPunCallbacks
         {
             if (other.CompareTag("Wall"))
             {
-                dimensionSlash.DestorySpawnObject(other.ClosestPointOnBounds(transform.position));
+                if(dimensionSlash.isHealingSword)
+                {
+                    dimensionSlash.DestorySpawnObject(other.ClosestPointOnBounds(transform.position), index);
+                }
+
+                else
+                {
+                    dimensionSlash.DestorySpawnObject(other.ClosestPointOnBounds(transform.position),index-1);
+                }
             }
         }
     }

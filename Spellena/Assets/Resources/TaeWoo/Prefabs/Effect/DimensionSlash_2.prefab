@@ -5086,7 +5086,10 @@ MonoBehaviour:
   playerName: 
   type: 1
   objectName: 
-  hitParticle: {fileID: 0}
+  hitParticles:
+  - TaeWoo/Prefabs/Effect/DimensionCut_HitEffect_Deal
+  - TaeWoo/Prefabs/Effect/DimensionCut_HitEffect_Heal
+  - TaeWoo/Prefabs/Effect/DimensionCut_HitEffect_Healing
   aeternaData: {fileID: 11400000, guid: 3ab088a29565a8742af0c359ef4214cd, type: 2}
   chargeNum: 2
   damage: 0
@@ -14855,7 +14858,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4655230868171271146
 Transform:
   m_ObjectHideFlags: 0

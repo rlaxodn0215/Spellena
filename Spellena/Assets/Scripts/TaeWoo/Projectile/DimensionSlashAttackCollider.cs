@@ -5,6 +5,7 @@ using Player;
 public class DimensionSlashAttackCollider : MonoBehaviourPunCallbacks
 {
     public DimensionSlash dimensionSlash;
+    private int index = 1;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -21,7 +22,8 @@ public class DimensionSlashAttackCollider : MonoBehaviourPunCallbacks
                     {
                         other.transform.root.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBufferedViaServer, dimensionSlash.playerName,
                             -dimensionSlash.healing, null, Vector3.zero, 0.0f);
-                        dimensionSlash.DestorySpawnObject(other.ClosestPointOnBounds(transform.position));
+                        dimensionSlash.DestorySpawnObject(other.ClosestPointOnBounds(transform.position), index);
+                        dimensionSlash.DestorySpawnObject(other.ClosestPointOnBounds(transform.position), index+1);
                     }
                 }
             }
@@ -35,10 +37,12 @@ public class DimensionSlashAttackCollider : MonoBehaviourPunCallbacks
                     {
                         other.transform.root.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBufferedViaServer, dimensionSlash.playerName,
                             dimensionSlash.damage, other.name, transform.TransformDirection(Vector3.forward), 20.0f);
-                        dimensionSlash.DestorySpawnObject(other.ClosestPointOnBounds(transform.position));
+                        dimensionSlash.DestorySpawnObject(other.ClosestPointOnBounds(transform.position), index-1);
                     }
                 }
             }
         }
     }
+
+    
 }

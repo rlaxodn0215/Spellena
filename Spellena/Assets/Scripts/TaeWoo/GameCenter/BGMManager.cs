@@ -5,8 +5,6 @@ using Photon.Pun;
 
 public class BGMManager : MonoBehaviourPunCallbacks
 {
-    public static BGMManager instance;
-
     [HideInInspector]
     public AudioSource audioSource;
 
@@ -65,7 +63,6 @@ public class BGMManager : MonoBehaviourPunCallbacks
         audioSource.loop = isLoop;
         audioSource.Play();
 
-        Debug.Log("BGM »£√‚");
     }
 
 }
