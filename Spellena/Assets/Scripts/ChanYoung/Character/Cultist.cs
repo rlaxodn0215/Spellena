@@ -30,7 +30,7 @@ public class Cultist : Character
 
     public Animator overlayAnimator;
 
-    
+    BuffDebuffChecker buffDebuffChecker;
 
     int ownerNum;
     Vector3 defaultCameraLocalVec;
@@ -145,6 +145,8 @@ public class Cultist : Character
         skill2CoolDownTime = cultistData.skill2CoolDownTime;
         skill3CoolDownTime = cultistData.skill3CoolDownTime;
         skill4CoolDownTime = cultistData.skill4CoolDownTime;
+
+        buffDebuffChecker = GetComponent<BuffDebuffChecker>();
     }
 
     [PunRPC]
@@ -531,7 +533,9 @@ public class Cultist : Character
                     {
                         _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.MasterClient,
                             playerName, -(int)(cultistData.skill1Damage), _tempObject.name, Vector3.zero, 0f);
-                        Debug.Log(_rootObject.name);
+
+                        _rootObject.GetComponent<BuffDebuffChecker>().SetNewBuffDebuff("TerribleTentacles", 1);
+
                         _check = 1;
                         break;
                     }
@@ -542,6 +546,8 @@ public class Cultist : Character
             {
                 GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.MasterClient,
                             playerName, -(int)(cultistData.skill1Damage), "null", Vector3.zero, 0f);
+                //체크부분
+                buffDebuffChecker.SetNewBuffDebuff("TerribleTentacles", 2);
             }
 
 
@@ -552,6 +558,17 @@ public class Cultist : Character
     void SetSkill(object[] data)
     {
         int _skillNum = (int)data[1];
+
+        if (GetComponent<Cultist>() != null)
+        {
+            if (buffDebuffChecker.CheckBuffDebuff("TerribleTentacles", _skillNum - 1))//true면 스킬 사용 불가
+            {
+                buffDebuffChecker.UseTerribleTentacles(_skillNum - 1);
+                return;
+            }
+        }
+        
+
         if (skillCoolDownTime[_skillNum - 1] <= 0f)
         {
             {
@@ -560,7 +577,7 @@ public class Cultist : Character
                     skillState == SkillStateCultist.Skill3Ready ||
                     skillState == SkillStateCultist.Skill4Ready ||
                     skillState == SkillStateCultist.None ||
-                    skillState == SkillStateCultist.Invocation)
+                    (skillState == SkillStateCultist.Invocation && normalCastingTime[0] <= 0f))
                 {
                     if (_skillNum == 1)
                         skillState = SkillStateCultist.Skill1Ready;
