@@ -3122,7 +3122,7 @@ Animator:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1037026452117830316}
   m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: 8119e792d5fd2a44486be8a3475be91e, type: 3}
+  m_Avatar: {fileID: 9000000, guid: 86896462b5c616f449056f12a11a3214, type: 3}
   m_Controller: {fileID: 9100000, guid: 24bd8410ed958364b8eb49a9948a6a3f, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
@@ -3276,6 +3276,7 @@ MonoBehaviour:
   UI: {fileID: 3602122834190627366}
   Alive: {fileID: 2632883152937596190}
   Dead: {fileID: 7407658348955654873}
+  characterSoundManager: {fileID: 0}
   playerName: DracosonTester
   isOccupying: 0
   chargeCount: 0
@@ -3302,6 +3303,7 @@ MonoBehaviour:
   dataHeadShotRatio: 0
   animator: {fileID: 0}
   rigidbody: {fileID: 0}
+  soundManagerView: {fileID: 0}
   moveVec: {x: 0, y: 0, z: 0}
   dracosonData: {fileID: 11400000, guid: 19dd9cf2a92f33941922f97a9027b6bc, type: 2}
   overlaycamera: {fileID: 8682694506761360486}
@@ -4755,7 +4757,7 @@ Animator:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1645116359377027628}
   m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: 8119e792d5fd2a44486be8a3475be91e, type: 3}
+  m_Avatar: {fileID: 9000000, guid: 86896462b5c616f449056f12a11a3214, type: 3}
   m_Controller: {fileID: 9100000, guid: e681cb2f5ecaf46428cd9cb3b79f5363, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
