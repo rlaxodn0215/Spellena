@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: PhotonServerSettings
   m_EditorClassIdentifier: 
   AppSettings:
-    AppIdRealtime: b98ffc61-e6f6-4314-ae29-3f7c8d00fdbb
+    AppIdRealtime: dd425b6b-f564-42a7-b893-c75a78ce08e3
     AppIdFusion: 
     AppIdChat: 
     AppIdVoice: 
@@ -158,14 +158,6 @@ MonoBehaviour:
   - SerializePings
   - Skill4ChargeParticle
   - UseTeleportManager
-  - ChangeEffectColor
-  - Skill4ChargeStage
-  - ControlActAudio
-  - ControlSkillAudio
-  - ControlSpeakAudio
-  - PlayAudio
-  - StopAudio
-  - VolumControl
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1
