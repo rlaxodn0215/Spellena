@@ -730,8 +730,8 @@ namespace Player
             hp = dataHp;
             Dead.SetActive(true);
             animator.enabled = false;
-            Alive.SetActive(false);
             GetComponent<CapsuleCollider>().enabled = false;
+            Alive.SetActive(false);
 
             Rigidbody[] bodyParts = Dead.GetComponentsInChildren<Rigidbody>();
             
