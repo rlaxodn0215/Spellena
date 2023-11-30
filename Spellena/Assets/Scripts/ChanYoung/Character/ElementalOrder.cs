@@ -13,8 +13,6 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
 
-using HashTable = ExitGames.Client.Photon.Hashtable;
-
 namespace Player
 {
     public class ElementalOrder : Character, IPunObservable
@@ -106,14 +104,14 @@ namespace Player
             CheckPoint();
             currentHandPoint = handPoint;
 
-            if (photonView.IsMine)
-            {
-                //테스트 정보
-                HashTable _tempTable = new HashTable();
-                _tempTable.Add("CharacterViewID", photonView.ViewID);
-                _tempTable.Add("IsAlive", true);
-                PhotonNetwork.LocalPlayer.SetCustomProperties(_tempTable);
-            }
+            //if (photonView.IsMine)
+            //{
+            //    //테스트 정보
+            //    HashTable _tempTable = new HashTable();
+            //    _tempTable.Add("CharacterViewID", photonView.ViewID);
+            //    _tempTable.Add("IsAlive", true);
+            //    PhotonNetwork.LocalPlayer.SetCustomProperties(_tempTable);
+            //}
 
         }
 

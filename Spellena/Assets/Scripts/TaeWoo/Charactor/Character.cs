@@ -531,7 +531,6 @@ namespace Player
             {
                 if (collision.gameObject.layer == LayerMask.NameToLayer("Map"))
                 {
-                    Debug.Log("LandSound");
                     soundManagerView.RPC("PlayAudio", RpcTarget.All, "LandSound", 1.0f, false);
                 }
             }
@@ -593,7 +592,7 @@ namespace Player
                     avatarForOther.GetChild(i).gameObject.layer = LayerMask.NameToLayer("Me");
                     avatarForOther.GetChild(i).gameObject.GetComponent<SkinnedMeshRenderer>().enabled = false;
                 }
-                avatarForMe.gameObject.SetActive(false);
+                //avatarForMe.gameObject.SetActive(false);
 
                 for (int i = 0; i < avatarForMe.childCount; i++)
                 {
@@ -611,6 +610,7 @@ namespace Player
 
             foreach (Character character in characters)
             {
+                Debug.Log(character.playerName);
                 if (!character.gameObject.CompareTag(tag))
                 {
                     OutlineDrawer[] outlineDrawers = character.gameObject.GetComponentsInChildren<OutlineDrawer>();
@@ -728,10 +728,8 @@ namespace Player
         {
             // Ragdoll로 처리
             hp = dataHp;
-
-            Debug.Log(Dead.name);
-
             Dead.SetActive(true);
+            animator.enabled = false;
             Alive.SetActive(false);
             GetComponent<CapsuleCollider>().enabled = false;
 
@@ -772,6 +770,7 @@ namespace Player
             }
             
             Alive.SetActive(true);
+            animator.enabled = true;
             GetComponent<CapsuleCollider>().enabled = true;
             Dead.SetActive(false);
         }

@@ -11,8 +11,6 @@ public class DuringRound : CenterState
     bool checkRoundEndOnce = true;
     bool OccupyBarCountOnce = true;
 
-    
-
     public override void StateExecution()
     {
         if(isOnce)
@@ -29,6 +27,9 @@ public class DuringRound : CenterState
         CheckPlayerReSpawn();
 
         CheckRoundEnd();
+
+        foreach(var player in PhotonNetwork.CurrentRoom.Players.Values)
+            Debug.Log((int)player.CustomProperties["CharacterViewID"]);
     }
 
     void OccupyBarCount()
@@ -101,23 +102,20 @@ public class DuringRound : CenterState
                     break;
                  case "KillCount":
                      if (gameCenter.inGameUIView == null) break;
-                    //view.RPC("SetUltimatePoint", targetPlayer, targetPlayer.ActorNumber, false);
                     gameCenter.inGameUIView.RPC("ShowKillUI", targetPlayer, gameCenter.tempVictim);
                     gameCenter.inGameUIView.RPC("ShowKillLog", RpcTarget.AllBuffered, targetPlayer.CustomProperties["Name"],
                          gameCenter.tempVictim, ((string)targetPlayer.CustomProperties["Team"] == "A"), targetPlayer.ActorNumber);
                     CheckPlayerHealAssist(targetPlayer);
-                    //int n = (int)targetPlayer.CustomProperties["UltimateCount"];
-                    //GameCenterTest.ChangePlayerCustomProperties(targetPlayer, "UltimateCount", n + 1);
                     break;
                  case "DeadCount":
                     GameCenterTest.ChangePlayerCustomProperties (targetPlayer, "ReSpawnTime", GameCenterTest.globalTimer + gameCenter.playerRespawnTime);
                     GameCenterTest.ChangePlayerCustomProperties (targetPlayer, "IsAlive", false);
-                    //Debug.LogWarning("Global Timer : " + GameCenterTest.globalTimer + " / ReSpawnTime : " + (GameCenterTest.globalTimer + gameCenter.playerRespawnTime));
 
                     gameCenter.tempVictim = (string)targetPlayer.CustomProperties["Name"];
                     ShowTeamMateDead((string)targetPlayer.CustomProperties["Team"], (string)targetPlayer.CustomProperties["Name"]);
 
-                     view.RPC("PlayerDeadForAll", RpcTarget.AllBuffered, (string)targetPlayer.CustomProperties["DamagePart"],
+                    Debug.LogWarning("view in DeadCount : " + view.name);
+                    view.RPC("PlayerDeadForAll", RpcTarget.AllBuffered, (string)targetPlayer.CustomProperties["DamagePart"],
                          (Vector3)targetPlayer.CustomProperties["DamageDirection"], (float)targetPlayer.CustomProperties["DamageForce"]);
 
                      view.RPC("PlayerDeadPersonal", targetPlayer);

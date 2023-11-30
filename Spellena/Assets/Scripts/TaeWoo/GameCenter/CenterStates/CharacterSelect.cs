@@ -47,6 +47,9 @@ public class CharacterSelect : CenterState
             gameCenter.photonView.RPC("ActiveObject", RpcTarget.All, "betweenBGMObj", false);
 
             gameCenter.currentGameState = GameCenterTest.GameState.GameReady;
+
+            foreach (var player in PhotonNetwork.CurrentRoom.Players.Values)
+                Debug.Log((int)player.CustomProperties["CharacterViewID"]);
         }
     }
 
@@ -71,7 +74,7 @@ public class CharacterSelect : CenterState
             string choseCharacter = (string)player.CustomProperties["Character"];
             if (choseCharacter == null) GameCenterTest.ChangePlayerCustomProperties(player, "Character", "Aeterna");
 
-            if ((string)player.CustomProperties["Team"]=="A")     // A ÆÀ (Red)
+            if ((string)player.CustomProperties["Team"] == "A")     // A ÆÀ (Red)
             {
                 GameObject playerCharacter = PhotonNetwork.Instantiate("Characters/" + choseCharacter, 
                     gameCenter.playerSpawnA[aTeamIndex].position, Quaternion.identity);
