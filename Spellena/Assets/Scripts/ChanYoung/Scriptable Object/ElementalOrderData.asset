@@ -34,14 +34,8 @@ MonoBehaviour:
   burstFlareCoolDownTime: 6
   burstFlareCastingTime: 0.5
   burstFlareLifeTime: 4
-  gaiaTiedDamage:
-  - 200
-  - 200
-  - 200
-  - 200
-  - 200
-  - 200
-  gaiaTiedCoolDownTime: 200
+  gaiaTiedDamage: 200
+  gaiaTiedCoolDownTime: 13
   gaiaTiedCastingTime: 2
   gaiaTiedMaxDistace: 15
   gaiaTiedLifeTime:
@@ -51,9 +45,19 @@ MonoBehaviour:
   - 0.5
   - 0.5
   - 0.5
+  meteorStrikeDamage: 550
+  meteorStrikeCoolDownTime: 20
   meteorStrikeCastingTime: 3.5
-  meteorStrikeLifeTime: 10
+  meteorStrikeMaxDistance: 7
+  meteorStrikeLifeTime: 1
+  terraBreakDamageFirst: 200
+  terraBreakDamage: 400
+  terraBreakCoolDownTime: 19
   terraBreakCastingTime: 4.5
-  terraBreakLifeTime: 3
+  terraBreakMaxDistance: 10
+  terraBreakLifeTimeFirst: 0.5
+  terraBreakLifeTime: 2.5
+  eterialStormDamage: 400
+  eterialStormCoolDownTime: 13
   eterialStormCastingTime: 2.5
   eterialStormLifeTime: 3.2

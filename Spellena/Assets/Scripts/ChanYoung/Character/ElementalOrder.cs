@@ -156,6 +156,7 @@ namespace Player
             sideSpeed = elementalOrderData.sideSpeed;
             backSpeed = elementalOrderData.backSpeed;
             jumpHeight = elementalOrderData.jumpHeight;
+            runSpeedRatio = elementalOrderData.runSpeedRatio;
             minimapRenderTexture = minimapCamera.GetComponent<Camera>().targetTexture;
         }
 

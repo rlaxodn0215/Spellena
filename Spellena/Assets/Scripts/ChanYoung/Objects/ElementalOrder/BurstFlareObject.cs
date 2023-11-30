@@ -101,7 +101,7 @@ public class BurstFlareObject : SpawnObject
                 {
                     if(_rootObject.tag != tag)
                     {
-                        _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.MasterClient,
+                        _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBuffered,
                          playerName, (int)(elementalOrderData.burstFlareDamage), hitObject.name, transform.forward, 20f);
                     }
                 }

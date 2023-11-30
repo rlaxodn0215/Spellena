@@ -39,7 +39,6 @@ namespace Player
         // 플레이어 하위 오브젝트
         public GameObject sight;
         public GameObject camera;
-        public GameObject enemyCam;
         public GameObject UI;
 
         public GameObject Alive;
@@ -594,7 +593,7 @@ namespace Player
                     avatarForOther.GetChild(i).gameObject.layer = LayerMask.NameToLayer("Me");
                     avatarForOther.GetChild(i).gameObject.GetComponent<SkinnedMeshRenderer>().enabled = false;
                 }
-                //avatarForMe.gameObject.SetActive(false);
+                avatarForMe.gameObject.SetActive(false);
 
                 for (int i = 0; i < avatarForMe.childCount; i++)
                 {
@@ -627,7 +626,7 @@ namespace Player
 
         public void SetTagServer(string team)
         {
-            photonView.RPC("SetTag", RpcTarget.AllBufferedViaServer, team);
+            photonView.RPC("SetTag", RpcTarget.All, team);
         }
 
         [PunRPC]
@@ -658,11 +657,10 @@ namespace Player
 
             if (damage > 0)
             {
-                Debug.Log("맞음");
                 if (hp <= dataHp)
                 {
                     hp -= damage;
-                    Debug.Log("Player Damaged !!  EnemyName: " + enemy);
+                    Debug.Log("Player Damaged !! : " + damage + " EnemyName: " + enemy);
                 }
 
                 // 마스터 클라이언트이기 때문에 동기화 안되도 게임센터의 값과 같다. 
@@ -730,6 +728,9 @@ namespace Player
         {
             // Ragdoll로 처리
             hp = dataHp;
+
+            Debug.Log(Dead.name);
+
             Dead.SetActive(true);
             Alive.SetActive(false);
             GetComponent<CapsuleCollider>().enabled = false;

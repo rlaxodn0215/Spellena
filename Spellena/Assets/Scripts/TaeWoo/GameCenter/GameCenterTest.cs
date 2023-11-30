@@ -383,9 +383,17 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
         inGameUI.occupyingTeamUI.rate = occupyingTeam.rate;
     }
 
-    //인게임 프레임 확인
+    ////인게임 프레임 확인
     //void OnGUI()
     //{
     //    GUI.Label(new Rect(10, 10, 100, 20), "FPS: " + (1.0f / Time.smoothDeltaTime));
+    //}
+
+    //인게임 프레임 확인
+
+    //long temp = 0;
+    //void OnGUI()
+    //{
+    //    GUI.Label(new Rect(10, 10, 100, 20), "Traffic : " + (PhotonNetwork.NetworkingClient.LoadBalancingPeer.BytesOut));
     //}
 }

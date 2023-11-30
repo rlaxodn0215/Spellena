@@ -11,19 +11,23 @@ public class DuringRound : CenterState
     bool checkRoundEndOnce = true;
     bool OccupyBarCountOnce = true;
 
+    
+
     public override void StateExecution()
     {
         if(isOnce)
         {
             isOnce = !isOnce;
-            gameCenter.playerStat.GetComponent<PhotonView>().RPC("IsGameReady",RpcTarget.AllBufferedViaServer,true);        
+            gameCenter.playerStat.GetComponent<PhotonView>().RPC("IsGameReady",RpcTarget.All,true);        
         }
 
         GameCenterTest.globalTimer += Time.deltaTime;
 
         OccupyBarCount();
         OccupyAreaCounts();
+
         CheckPlayerReSpawn();
+
         CheckRoundEnd();
     }
 
@@ -37,7 +41,7 @@ public class DuringRound : CenterState
             if(OccupyBarCountOnce)
             {
                 //Debug.Log("A OccupyBarCount");
-                gameCenter.bgmManagerView.RPC("PlayAudio", RpcTarget.AllBufferedViaServer, "Occupying", 0.7f, false,true);
+                gameCenter.bgmManagerView.RPC("PlayAudio", RpcTarget.All, "Occupying", 0.7f, false,true);
                 OccupyBarCountOnce = false;
             }
 
@@ -51,7 +55,7 @@ public class DuringRound : CenterState
 
             if (OccupyBarCountOnce)
             {
-                gameCenter.bgmManagerView.RPC("PlayAudio", RpcTarget.AllBufferedViaServer, "Occupying", 0.7f, false, true);
+                gameCenter.bgmManagerView.RPC("PlayAudio", RpcTarget.All, "Occupying", 0.7f, false, true);
                 OccupyBarCountOnce = false;
             }
 
@@ -99,21 +103,23 @@ public class DuringRound : CenterState
                      if (gameCenter.inGameUIView == null) break;
                     //view.RPC("SetUltimatePoint", targetPlayer, targetPlayer.ActorNumber, false);
                     gameCenter.inGameUIView.RPC("ShowKillUI", targetPlayer, gameCenter.tempVictim);
-                    gameCenter.inGameUIView.RPC("ShowKillLog", RpcTarget.AllBufferedViaServer, targetPlayer.CustomProperties["Name"],
+                    gameCenter.inGameUIView.RPC("ShowKillLog", RpcTarget.AllBuffered, targetPlayer.CustomProperties["Name"],
                          gameCenter.tempVictim, ((string)targetPlayer.CustomProperties["Team"] == "A"), targetPlayer.ActorNumber);
                     CheckPlayerHealAssist(targetPlayer);
                     //int n = (int)targetPlayer.CustomProperties["UltimateCount"];
                     //GameCenterTest.ChangePlayerCustomProperties(targetPlayer, "UltimateCount", n + 1);
                     break;
                  case "DeadCount":
-                    GameCenterTest.ChangePlayerCustomProperties (targetPlayer, "IsAlive", false);
                     GameCenterTest.ChangePlayerCustomProperties (targetPlayer, "ReSpawnTime", GameCenterTest.globalTimer + gameCenter.playerRespawnTime);
+                    GameCenterTest.ChangePlayerCustomProperties (targetPlayer, "IsAlive", false);
+                    //Debug.LogWarning("Global Timer : " + GameCenterTest.globalTimer + " / ReSpawnTime : " + (GameCenterTest.globalTimer + gameCenter.playerRespawnTime));
 
                     gameCenter.tempVictim = (string)targetPlayer.CustomProperties["Name"];
                     ShowTeamMateDead((string)targetPlayer.CustomProperties["Team"], (string)targetPlayer.CustomProperties["Name"]);
 
-                     view.RPC("PlayerDeadForAll", RpcTarget.AllBufferedViaServer, (string)targetPlayer.CustomProperties["DamagePart"],
+                     view.RPC("PlayerDeadForAll", RpcTarget.AllBuffered, (string)targetPlayer.CustomProperties["DamagePart"],
                          (Vector3)targetPlayer.CustomProperties["DamageDirection"], (float)targetPlayer.CustomProperties["DamageForce"]);
+
                      view.RPC("PlayerDeadPersonal", targetPlayer);
                     gameCenter.deathUIView.RPC("ShowKillerData", targetPlayer, (string)targetPlayer.CustomProperties["KillerName"]);
 
@@ -141,7 +147,7 @@ public class DuringRound : CenterState
             PhotonView view = PhotonView.Find((int)player.CustomProperties["CharacterViewID"]);
             if (view == null) break;
 
-            view.RPC("AngelStatueHP", RpcTarget.AllBufferedViaServer, gameCenter.angelStatueHpPerTime);
+            view.RPC("AngelStatueHP", RpcTarget.All, gameCenter.angelStatueHpPerTime);
             yield return new WaitForSeconds(1);
         }
     }
@@ -177,25 +183,25 @@ public class DuringRound : CenterState
         {
             //서로 교전 중이라는 것을 알림
             gameCenter.occupyingReturnTimer = 0f;
-            //gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "fighting", true);
+            //gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "fighting", true);
         }
         else if (gameCenter.teamAOccupying > 0)//A팀 점령
         {
             ChangeOccupyingRate(gameCenter.teamAOccupying, gameCenter.teamA);
             gameCenter.occupyingReturnTimer = 0f;
             
-            //gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "fighting", false);
+            //gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "fighting", false);
         }
         else if (gameCenter.teamBOccupying > 0)//B팀 점령
         {
             ChangeOccupyingRate(gameCenter.teamBOccupying, gameCenter.teamB);
             gameCenter.occupyingReturnTimer = 0f;
-            //gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "fighting", false);
+            //gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "fighting", false);
         }
         else
         {
             gameCenter.occupyingReturnTimer += Time.deltaTime;
-            //gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "fighting", false);
+            //gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "fighting", false);
         }
 
         if (gameCenter.occupyingReturnTimer >= gameCenter.occupyingReturnTime)
@@ -220,17 +226,21 @@ public class DuringRound : CenterState
             if ((bool)player.CustomProperties["IsAlive"] && (bool)player.CustomProperties["IsAlive"] == true) continue;
             if ((float)player.CustomProperties["ReSpawnTime"] <= GameCenterTest.globalTimer)
             {
+                Debug.LogWarning("PlayerReSpawn !! / Name : " + player.CustomProperties["Name"]);
+                Debug.LogWarning("PlayerReSpawn !! / ReSpawnTime : " + (float)player.CustomProperties["ReSpawnTime"]);
+
                 PhotonView view = PhotonView.Find((int)player.CustomProperties["CharacterViewID"]);
                 GameCenterTest.ChangePlayerCustomProperties(player, "IsAlive", true);
+                GameCenterTest.ChangePlayerCustomProperties(player, "ReSpawnTime", 100000000.0f);
 
                 if ((string)player.CustomProperties["Team"] == "A")
                 {
-                    view.RPC("PlayerReBornForAll", RpcTarget.AllBufferedViaServer, (Vector3)player.CustomProperties["SpawnPoint"]);
+                    view.RPC("PlayerReBornForAll", RpcTarget.All, (Vector3)player.CustomProperties["SpawnPoint"]);
                 }
 
                 else if ((string)player.CustomProperties["Team"] == "B")
                 {
-                    view.RPC("PlayerReBornForAll", RpcTarget.AllBufferedViaServer, (Vector3)player.CustomProperties["SpawnPoint"]);
+                    view.RPC("PlayerReBornForAll", RpcTarget.All, (Vector3)player.CustomProperties["SpawnPoint"]);
                 }
 
                 view.RPC("PlayerReBornPersonal", player);
@@ -397,7 +407,7 @@ public class DuringRound : CenterState
                     gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "blueExtraObj", false);
                     gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "blueExtraUI", true);
 
-                    gameCenter.angleStatue.GetComponent<PhotonView>().RPC("ChangeTeam", RpcTarget.AllBufferedViaServer, "A");
+                    gameCenter.angleStatue.GetComponent<PhotonView>().RPC("ChangeTeam", RpcTarget.All, "A");
                 }
 
                 else if (gameCenter.currentOccupationTeam == "B")
@@ -479,7 +489,7 @@ public class DuringRound : CenterState
 
                 if (GameCenterTest.roundA == 1)
                 {
-                    gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "redFirstPoint", true);
+                    gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "redFirstPoint", true);
 
                     foreach (var player in gameCenter.playersA)
                     {
@@ -496,7 +506,7 @@ public class DuringRound : CenterState
 
                 else if (GameCenterTest.roundA == 2)
                 {
-                    gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "redSecondPoint", true);
+                    gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "redSecondPoint", true);
 
                     foreach (var player in gameCenter.playersA)
                     {
@@ -520,7 +530,7 @@ public class DuringRound : CenterState
 
                 if (GameCenterTest.roundB == 1)
                 {
-                    gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "blueFirstPoint", true);
+                    gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "blueFirstPoint", true);
 
                     foreach (var player in gameCenter.playersB)
                     {
@@ -537,7 +547,7 @@ public class DuringRound : CenterState
 
                 else if (GameCenterTest.roundB == 2)
                 {
-                    gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.AllBufferedViaServer, "blueSecondPoint", true);
+                    gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "blueSecondPoint", true);
 
                     foreach (var player in gameCenter.playersB)
                     {

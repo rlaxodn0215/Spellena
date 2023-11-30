@@ -280,8 +280,6 @@ public class InGameUI : MonoBehaviourPunCallbacks,IPunObservable
     [PunRPC]
     public void ShowKillLog(string _killer, string _victim, bool _isRed, int _isMeActorNum)
     {
-        Debug.Log("ShowKillLog");
-
         MoveKillLog();
 
         murderNames[0].text = _killer;

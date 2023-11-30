@@ -25,14 +25,14 @@ public class CharacterSelect : CenterState
 
         GameCenterTest.globalTimer += Time.deltaTime;
 
-        gameCenter.characterSelectView.RPC("ReceiveTimerCount", RpcTarget.AllBufferedViaServer, gameCenter.globalDesiredTimer - GameCenterTest.globalTimer);
+        gameCenter.characterSelectView.RPC("ReceiveTimerCount", RpcTarget.All, gameCenter.globalDesiredTimer - GameCenterTest.globalTimer);
         
         // 일정 시간이 지나면 소리가 점차 감소됨
         if (gameCenter.globalDesiredTimer - GameCenterTest.globalTimer <= soundDecreaseTime)
         {
             if (gameCenter.bgmManagerView != null)
             {
-                gameCenter.photonView.RPC("BetweenBGMVolumControl", RpcTarget.AllBufferedViaServer, soundDecreaseSpeed * Time.deltaTime / 10, false);
+                gameCenter.photonView.RPC("BetweenBGMVolumControl", RpcTarget.All, soundDecreaseSpeed * Time.deltaTime / 10, false);
             }
         }
 
@@ -44,7 +44,7 @@ public class CharacterSelect : CenterState
             MakeCharacter();
             MakeTeamStateUI();
 
-            gameCenter.photonView.RPC("ActiveObject", RpcTarget.AllBufferedViaServer, "betweenBGMObj", false);
+            gameCenter.photonView.RPC("ActiveObject", RpcTarget.All, "betweenBGMObj", false);
 
             gameCenter.currentGameState = GameCenterTest.GameState.GameReady;
         }
@@ -73,21 +73,12 @@ public class CharacterSelect : CenterState
 
             if ((string)player.CustomProperties["Team"]=="A")     // A 팀 (Red)
             {
-                GameObject playerCharacter;
-
-                if (choseCharacter=="Aeterna")
-                {
-                    playerCharacter = PhotonNetwork.Instantiate("TaeWoo/Prefabs/" + choseCharacter, gameCenter.playerSpawnA[aTeamIndex].position, Quaternion.identity);
-                }
-
-                else
-                {
-                    playerCharacter = PhotonNetwork.Instantiate("ChanYoung/Prefabs/" + choseCharacter, gameCenter.playerSpawnA[aTeamIndex].position, Quaternion.identity);
-                }
+                GameObject playerCharacter = PhotonNetwork.Instantiate("Characters/" + choseCharacter, 
+                    gameCenter.playerSpawnA[aTeamIndex].position, Quaternion.identity);
 
                 playerCharacter.GetComponent<PhotonView>().TransferOwnership(player.ActorNumber);
                 playerCharacter.GetComponent<PhotonView>().RPC("IsLocalPlayer", player);
-                playerCharacter.GetComponent<PhotonView>().RPC("ChangeName", RpcTarget.AllBufferedViaServer, (string)player.CustomProperties["Name"]);
+                playerCharacter.GetComponent<PhotonView>().RPC("ChangeName", RpcTarget.All, (string)player.CustomProperties["Name"]);
 
                 playerCharacter.GetComponent<Character>().SetTagServer("TeamA");
 
@@ -99,21 +90,12 @@ public class CharacterSelect : CenterState
 
             else if((string)player.CustomProperties["Team"] == "B")    // B 팀 (Blue)
             {
-                GameObject playerCharacter;
-
-                if (choseCharacter == "Aeterna")
-                {
-                    playerCharacter = PhotonNetwork.Instantiate("TaeWoo/Prefabs/" + choseCharacter, gameCenter.playerSpawnB[bTeamIndex].position, Quaternion.identity);
-                }
-
-                else
-                {
-                    playerCharacter = PhotonNetwork.Instantiate("ChanYoung/Prefabs/" + choseCharacter, gameCenter.playerSpawnB[bTeamIndex].position, Quaternion.identity);
-                }
+                GameObject playerCharacter = PhotonNetwork.Instantiate("Characters/" + choseCharacter,
+                    gameCenter.playerSpawnB[bTeamIndex].position, Quaternion.identity);
 
                 playerCharacter.GetComponent<PhotonView>().TransferOwnership(player.ActorNumber);
                 playerCharacter.GetComponent<PhotonView>().RPC("IsLocalPlayer", player);
-                playerCharacter.GetComponent<PhotonView>().RPC("ChangeName", RpcTarget.AllBufferedViaServer, (string)player.CustomProperties["Name"]);
+                playerCharacter.GetComponent<PhotonView>().RPC("ChangeName", RpcTarget.All, (string)player.CustomProperties["Name"]);
 
                 playerCharacter.GetComponent<Character>().SetTagServer("TeamB");
 
@@ -151,8 +133,8 @@ public class CharacterSelect : CenterState
     {
         if (gameCenter.inGameUIObj != null)
         {
-            gameCenter.photonView.RPC("ActiveObject", RpcTarget.AllBufferedViaServer, "inGameUIObj", true);
-            gameCenter.photonView.RPC("ActiveObject", RpcTarget.AllBufferedViaServer, "characterSelectObj", false);
+            gameCenter.photonView.RPC("ActiveObject", RpcTarget.All, "inGameUIObj", true);
+            gameCenter.photonView.RPC("ActiveObject", RpcTarget.All, "characterSelectObj", false);
 
             gameCenter.inGameUI = gameCenter.inGameUIObj.GetComponent<InGameUI>();
             gameCenter.inGameUIView = gameCenter.inGameUIObj.GetComponent<PhotonView>();

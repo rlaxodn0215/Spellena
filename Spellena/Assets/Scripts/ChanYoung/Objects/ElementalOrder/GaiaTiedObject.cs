@@ -261,7 +261,7 @@ public class GaiaTiedObject : SpawnObject
                         }
 
                         hitObjects.Add(_rootObject.name);
-                        _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.MasterClient,
+                        _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBuffered,
                                 playerName, (int)elementalOrderData.gaiaTiedDamage, hitObject.name, transform.forward, 20f);
                     }
                 }

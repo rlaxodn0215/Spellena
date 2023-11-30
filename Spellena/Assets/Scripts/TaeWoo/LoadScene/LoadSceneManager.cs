@@ -120,7 +120,7 @@ public class LoadSceneManager : MonoBehaviourPunCallbacks
 
             // 보여주지 않는 데이터
             playerData.Add("CharacterViewID", 0);
-            playerData.Add("ReSpawnTime", 0.0f);
+            playerData.Add("ReSpawnTime", 100000000.0f);
             playerData.Add("SpawnPoint", new Vector3(0, 0, 0));
 
             // 동기화 되지 않고 마스터 클라이언트만 가지는 Parameter / 플레이어 사망시 사용

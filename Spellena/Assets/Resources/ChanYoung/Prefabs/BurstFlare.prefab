@@ -53935,6 +53935,7 @@ MonoBehaviour:
   playerName: 
   type: 0
   objectName: 
+  hitParticles: []
   elementalOrderData: {fileID: 11400000, guid: f59593c682ebc2b41896b199699b9e9c, type: 2}
   instantiateCode: -1
   shootParticle: {fileID: 546465675545352016}
