@@ -58,7 +58,7 @@ public class RoomManagerSiHyun : MonoBehaviourPunCallbacks
             _gameCenter = PhotonNetwork.Instantiate("ChanYoung/Prefabs/GameCenter", spawnPoint.position, Quaternion.identity);
         }
 
-        player = PhotonNetwork.Instantiate("SiHyun/Prefabs/Dracoson", spawnPoint.position, Quaternion.identity);
+        player = PhotonNetwork.Instantiate("SiHyun/Prefabs/Dracoson/Dracoson", spawnPoint.position, Quaternion.identity);
         player.GetComponent<Player.Character>().IsLocalPlayer();
     }
 }

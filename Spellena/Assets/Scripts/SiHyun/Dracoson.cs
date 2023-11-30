@@ -10,16 +10,19 @@ using HashTable = ExitGames.Client.Photon.Hashtable;
 public class Dracoson : Character, IPunObservable
 {
     public DracosonData dracosonData;
-
     public GameObject overlaycamera;
-    public GameObject Aim;
+    public GameObject aim;
     public Animator overlayAnimator;
-    public Transform rightHand;
+    public Transform overlaySight;
+    public GameObject overlayRightHand;
     public Transform staffTop;
-    public Transform sightRight;
     float rightHandWeight = 0.04f;
-    [SerializeField]
-    public float ww = 0f;
+
+    [Range(1, 3)]
+    public int projectile = 1;
+
+    [Range(0, 1)]
+    public float weight = 0.5f;
 
     Vector3 defaultCameraLocalVec;
 
@@ -37,7 +40,7 @@ public class Dracoson : Character, IPunObservable
 
     public enum SkillStateDracoson
     {
-        None, Holding, Breathe, Flying,
+        None, Holding, Breathe, Flying, Firing,
         Skill1, Skill1Ready,
         Skill2, Skill2Ready, Skill2Casting,
         Skill3, 
@@ -100,6 +103,29 @@ public class Dracoson : Character, IPunObservable
         base.Start();
         Init();
     }
+
+    [PunRPC]
+    public override void IsLocalPlayer()
+    {
+        base.IsLocalPlayer();
+        overlaycamera.SetActive(true);
+        ChangeLayerRecursively(overlayRightHand.transform);
+        Transform avatarForOtherRoot = transform.GetChild(0).GetChild(0).GetChild(1);//다른 사람들이 보는 자신의 아바타
+        avatarForOtherRoot.GetComponentInChildren<MeshRenderer>().transform.gameObject.layer = 6;
+        avatarForOtherRoot.GetComponentInChildren<MeshRenderer>().enabled = false;
+    }
+
+    void ChangeLayerRecursively(Transform targetTransform)
+    {
+        targetTransform.gameObject.layer = 8;
+
+        foreach(Transform child in targetTransform)
+        {
+            ChangeLayerRecursively(child);
+        }
+    }
+
+
     protected override void Update()
     {
         base.Update();
@@ -130,7 +156,18 @@ public class Dracoson : Character, IPunObservable
             if (globalCastingTime <= 0f)
             {
                 CallSetAnimation("Skill1", false);
+                overlayAnimator.SetBool("Skill1", false);
                 skillState = SkillStateDracoson.None;
+            }
+        }
+        else if(skillState == SkillStateDracoson.Skill2)
+        {
+            if(globalCastingTime <= 0f)
+            {
+                CallSetAnimation("Skill2", false);
+                overlayAnimator.SetBool("Skill2", false);
+                skillState = SkillStateDracoson.None;
+                animator.SetLayerWeight(1, animator.GetLayerWeight(1) + Time.deltaTime * 8);
             }
         }
     }
@@ -169,19 +206,19 @@ public class Dracoson : Character, IPunObservable
 
                 chargeCount = 2;
             }
-            else if (holdingTime >= _chargePhase3 && holdingTime < _chargePhaseOver)
+            else if (holdingTime >= _chargePhase3 /*&& holdingTime < _chargePhaseOver*/)
             {
                 Debug.Log("3단계 차지");
                 SetChargePhase(false, false, true, false);
 
                 chargeCount = 3;
             }
-            else if (holdingTime >= _chargePhaseOver)
+            /*else if (holdingTime >= _chargePhaseOver)
             {
                 Debug.Log("오버 차지");
                 SetChargePhase(false, false, false, true);
                 chargeCount = 4;
-            }
+            }*/
             else
             {
                 chargeCount = 0;
@@ -285,15 +322,6 @@ public class Dracoson : Character, IPunObservable
             ClickMouse();
         else if ((string)data[0] == "CancelHolding")
             CancelHolding();
-
-
-    }
-
-    [PunRPC]
-    public override void IsLocalPlayer()
-    {
-        base.IsLocalPlayer();
-        overlaycamera.SetActive(true);
     }
 
     void SetSkill(object[] data)
@@ -301,9 +329,17 @@ public class Dracoson : Character, IPunObservable
         if (coolDownTime[(int)data[1] - 1] <= 0f)
         {
             if ((int)data[1] == 1)
-                skillState = SkillStateDracoson.Skill1;
+            {
+                skillState = SkillStateDracoson.Skill1Ready;
+                CallSetAnimation("Skill1Ready", true);
+                overlayAnimator.SetBool("Skill1Ready", true);
+            }
             else if ((int)data[1] == 2)
-                skillState = SkillStateDracoson.Skill2;
+            {
+                skillState = SkillStateDracoson.Skill2Ready;
+                CallSetAnimation("Skill2Ready", true);
+                overlayAnimator.SetBool("Skill2Ready", true);
+            }
             else if ((int)data[1] == 3)
                 skillState = SkillStateDracoson.Skill3;
             else if ((int)data[1] == 4)
@@ -314,6 +350,27 @@ public class Dracoson : Character, IPunObservable
     void CancelSkill()
     {
         skillState = SkillStateDracoson.None;
+    }
+
+    void InstantiateObject(int chargePhase)
+    {
+        if(photonView.IsMine)
+        {
+            Ray _tempRay = camera.GetComponent<Camera>().ScreenPointToRay(aim.transform.position);
+            Quaternion _tempQ = Quaternion.LookRotation(_tempRay.direction);
+
+            if (chargePhase != 0)
+            {
+                Debug.Log("투사체 발사");
+                PhotonNetwork.Instantiate("SiHyun/Prefabs/Dracoson/Dragonic Flame Projectile " + chargePhase,
+                _tempRay.origin + _tempRay.direction * 0.5f, _tempQ, data: null);
+            }
+            else
+            {
+                PhotonNetwork.Instantiate("SiHyun/Prefabs/Dracoson/Dragonic Flame Projectile " + projectile,
+                _tempRay.origin + _tempRay.direction * 0.5f, _tempQ, data: null);
+            }
+        }
     }
 
     void CancelHolding()
@@ -329,6 +386,7 @@ public class Dracoson : Character, IPunObservable
             globalCastingTime = 0f;
             CallSetAnimation("isHolding", false);
             overlayAnimator.SetBool("isHolding", false);
+            InstantiateObject(chargeCount);
             skillState = SkillStateDracoson.None;
             holdingStartTime = 0f;
             holdingTime = 0f;
@@ -342,23 +400,33 @@ public class Dracoson : Character, IPunObservable
         if (skillState == SkillStateDracoson.None)
         {
             // 용의 시선
-            globalCastingTime = 1f;
             CallSetAnimation("isHolding", true);
             overlayAnimator.SetBool("isHolding", true);
             skillState = SkillStateDracoson.Holding;
         }
-        else if (skillState == SkillStateDracoson.Skill1)
+        else if (skillState == SkillStateDracoson.Skill1Ready)
         {
             //스킬1 사용
             coolDownTime[0] = 5f;
+            globalCastingTime = 1f;
+            skillState = SkillStateDracoson.Skill1;
+            CallSetAnimation("Skill1Ready", false);
+            overlayAnimator.SetBool("Skill1Ready", false);
             CallSetAnimation("Skill1", true);
             overlayAnimator.SetBool("Skill1", true);
-
         }
-        else if (skillState == SkillStateDracoson.Skill2)
+        else if (skillState == SkillStateDracoson.Skill2Ready)
         {
             //스킬2 사용
             coolDownTime[1] = 5f;
+            globalCastingTime = 1f;
+            skillState = SkillStateDracoson.Skill2;
+            CallSetAnimation("Skill2Ready", false);
+            overlayAnimator.SetBool("Skill2Ready", false);
+            CallSetAnimation("Skill2", true);
+            overlayAnimator.SetBool("Skill2", true);
+            animator.SetLayerWeight(1, 0);
+            animator.SetLayerWeight(1, animator.GetLayerWeight(1) - Time.deltaTime * 8);
         }
         else if (skillState == SkillStateDracoson.Skill3)
         {
@@ -429,9 +497,9 @@ public class Dracoson : Character, IPunObservable
         if (overlayAnimator.GetCurrentAnimatorStateInfo(0).IsName("Idle"))
             LerpWeight(0.0045f);
         else if (overlayAnimator.GetCurrentAnimatorStateInfo(0).IsName("isHolding"))
-            LerpWeight(0.0021f);
+            LerpWeight(weight);
 
-        overlayAnimator.SetIKPosition(AvatarIKGoal.RightHand, sightRight.position);
+        overlayAnimator.SetIKPosition(AvatarIKGoal.RightHand, overlaySight.position);
         overlayAnimator.SetIKPositionWeight(AvatarIKGoal.RightHand, rightHandWeight);
     }
 
