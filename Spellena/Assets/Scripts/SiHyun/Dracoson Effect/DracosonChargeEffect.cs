@@ -9,6 +9,6 @@ public class DracosonChargeEffect : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //this.transform.position = new Vector3(staffTop.position.x, staffTop.position.y, staffTop.position.z);
+
     }
 }
