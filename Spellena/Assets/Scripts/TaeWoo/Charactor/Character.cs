@@ -135,7 +135,7 @@ namespace Player
             SetPlayerKeys(PlayerActionState.Skill3, "Skill3");
             SetPlayerKeys(PlayerActionState.Skill4, "Skill4");
             currentSight = sight.transform.position;
-            soundManagerView = characterSoundManager.GetComponent<PhotonView>();
+            //soundManagerView = characterSoundManager.GetComponent<PhotonView>();
         }
 
         void SetPlayerKeys(PlayerActionState playerActionState, string action)
@@ -277,7 +277,7 @@ namespace Player
 
         protected void MakeMoveSound()
         {
-            if (playerActionDatas[(int)PlayerActionState.Jump].isExecuting)
+            /*if (playerActionDatas[(int)PlayerActionState.Jump].isExecuting)
             {
                 soundManagerView.RPC("PlayAudio", RpcTarget.All, "JumpSound", 1.0f, false, "ActSounds");
             }
@@ -303,7 +303,7 @@ namespace Player
                 {
                      soundManagerView.RPC("PlayAudio", RpcTarget.All, "NoSound", 1.0f, true, "ActSounds");
                 }
-            }
+            }*/
         }
 
         protected void PlayerMove()
@@ -527,13 +527,13 @@ namespace Player
 
         private void OnCollisionEnter(Collision collision)
         {
-            if (photonView.IsMine)
+            /*if (photonView.IsMine)
             {
                 if (collision.gameObject.layer == LayerMask.NameToLayer("Map"))
                 {
                     soundManagerView.RPC("PlayAudio", RpcTarget.All, "LandSound", 1.0f, false);
                 }
-            }
+            }*/
         }
 
         private void OnCollisionStay(Collision collision)
@@ -592,7 +592,7 @@ namespace Player
                     avatarForOther.GetChild(i).gameObject.layer = LayerMask.NameToLayer("Me");
                     avatarForOther.GetChild(i).gameObject.GetComponent<SkinnedMeshRenderer>().enabled = false;
                 }
-                //avatarForMe.gameObject.SetActive(false);
+                //avatarForMe.gameObject.SetActive(true);
 
                 for (int i = 0; i < avatarForMe.childCount; i++)
                 {

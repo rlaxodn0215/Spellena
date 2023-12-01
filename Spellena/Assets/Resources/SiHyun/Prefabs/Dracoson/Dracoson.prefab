@@ -3272,7 +3272,6 @@ MonoBehaviour:
   charactor: 0
   sight: {fileID: 7267348054410182224}
   camera: {fileID: 3262650437543207638}
-  enemyCam: {fileID: 0}
   UI: {fileID: 3602122834190627366}
   Alive: {fileID: 2632883152937596190}
   Dead: {fileID: 7407658348955654873}
@@ -3307,11 +3306,13 @@ MonoBehaviour:
   moveVec: {x: 0, y: 0, z: 0}
   dracosonData: {fileID: 11400000, guid: 19dd9cf2a92f33941922f97a9027b6bc, type: 2}
   overlaycamera: {fileID: 8682694506761360486}
+  minimapCamera: {fileID: 5698612198676346242}
   aim: {fileID: 172717306690440475}
   overlayAnimator: {fileID: 1645116359377027629}
   overlaySight: {fileID: 1760511831256791459}
   overlayRightHand: {fileID: 3478192072228431495}
-  staffTop: {fileID: 8765695025057911529}
+  staffTopForMe: {fileID: 8765695025057911529}
+  staffTopForOther: {fileID: 2917594863632224344}
   projectile: 1
   weight: 0.5
 --- !u!136 &7740467404657155948
@@ -3950,7 +3951,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8765695025057911529}
   m_Layer: 0
-  m_Name: Staff Top
+  m_Name: Staff_Top_For_Me
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3964,7 +3965,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1325913431453206842}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0, y: 0, z: 1.238}
+  m_LocalPosition: {x: -0, y: 0.066, z: 1.472}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4730,7 +4731,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &2134548101139683478
 Transform:
   m_ObjectHideFlags: 0
@@ -13376,6 +13377,37 @@ SkinnedMeshRenderer:
     m_Center: {x: 0.2756779, y: -0.052524433, z: -0.07344512}
     m_Extent: {x: 0.39130864, y: 0.29840064, z: 0.23745942}
   m_DirtyAABB: 0
+--- !u!1 &5661884149258025670
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2917594863632224344}
+  m_Layer: 0
+  m_Name: Staff_Top_For_Other
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2917594863632224344
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5661884149258025670}
+  m_LocalRotation: {x: -0.00000014901151, y: 0.0000000894069, z: -0.00000014714887, w: 1}
+  m_LocalPosition: {x: 0.00000027753416, y: 0.06600015, z: 1.4720016}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6836731625060934705}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5695350247142239755
 GameObject:
   m_ObjectHideFlags: 0

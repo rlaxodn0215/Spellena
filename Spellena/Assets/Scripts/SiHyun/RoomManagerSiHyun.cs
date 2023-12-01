@@ -24,6 +24,7 @@ public class RoomManagerSiHyun : MonoBehaviourPunCallbacks
     {
         base.OnConnectedToMaster();
 
+
         Debug.Log(message: "Connected to Server");
 
         PhotonNetwork.JoinLobby();
@@ -56,7 +57,9 @@ public class RoomManagerSiHyun : MonoBehaviourPunCallbacks
         if (PhotonNetwork.IsMasterClient)
         {
             _gameCenter = PhotonNetwork.Instantiate("ChanYoung/Prefabs/GameCenter", spawnPoint.position, Quaternion.identity);
+            Debug.Log("마스터 클라이언트다 ");
         }
+
 
         player = PhotonNetwork.Instantiate("SiHyun/Prefabs/Dracoson/Dracoson", spawnPoint.position, Quaternion.identity);
         player.GetComponent<Player.Character>().IsLocalPlayer();
