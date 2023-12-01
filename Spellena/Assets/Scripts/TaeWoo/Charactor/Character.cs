@@ -610,7 +610,6 @@ namespace Player
 
             foreach (Character character in characters)
             {
-                Debug.Log(character.playerName);
                 if (!character.gameObject.CompareTag(tag))
                 {
                     OutlineDrawer[] outlineDrawers = character.gameObject.GetComponentsInChildren<OutlineDrawer>();
@@ -668,24 +667,26 @@ namespace Player
                 {
                     var killer = GameCenterTest.FindPlayerWithCustomProperty("Name", enemy);
 
-                    if (killer == null)
-                    {
-                        if(hp<=0) Debug.Log("자살");
-                        else Debug.Log("자해");
-                        return;
-                    }
-
                     // 사망시
                     if (hp <= 0)
                     {
-                        SetUltimatePoint(killer.ActorNumber);
-
                         int temp1 = (int)PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["DeadCount"];
                         PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["ParameterName"] = "DeadCount";
 
                         PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["DamagePart"] = damgePart;
                         PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["DamageDirection"] = direction;
                         PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["DamageForce"] = force;
+
+                        if (killer == null)
+                        {
+                            PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["KillerName"] = enemy;
+
+                            GameCenterTest.ChangePlayerCustomProperties
+                                (PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr], "DeadCount", temp1 + 1);
+                            return;
+                        }
+
+                        SetUltimatePoint(killer.ActorNumber);
                         PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["KillerName"] = killer.CustomProperties["Name"];
 
                         GameCenterTest.ChangePlayerCustomProperties
@@ -710,6 +711,8 @@ namespace Player
                 if (hp < dataHp)
                 {
                     hp -= damage;
+                    if (hp > dataHp) hp = dataHp;
+
                     var healer = GameCenterTest.FindPlayerWithCustomProperty("CharacterViewID", enemy);
                     int temp = (int)healer.CustomProperties["TotalHeal"];
                     healer.CustomProperties["ParameterName"] = "TotalHeal";
@@ -717,7 +720,7 @@ namespace Player
                     GameCenterTest.ChangePlayerCustomProperties(healer, "TotalHeal", temp + (-damage));
                 }
 
-                //Debug.Log("Player Healing !!");
+                
             }
 
             
@@ -761,6 +764,8 @@ namespace Player
         {
             gameObject.transform.position = pos;
             gameObject.transform.rotation = Quaternion.identity;
+            rigidbody.velocity = new Vector3(0, 0, 0);
+            rigidbody.angularVelocity = new Vector3(0, 0, 0);
 
             for(int i = 0; i < ragdollRigid.Length; i++)
             {

@@ -16249,7 +16249,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 300082ec98387d0429616a01ffb54661, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -43422,7 +43422,7 @@ Camera:
   m_GameObject: {fileID: 2619156586059429979}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 2
+  m_ClearFlags: 1
   m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
@@ -95916,6 +95916,7 @@ GameObject:
   - component: {fileID: 1343973531166983375}
   - component: {fileID: 1186020517813930848}
   - component: {fileID: 11046294703936181}
+  - component: {fileID: 4211280850647434729}
   m_Layer: 0
   m_Name: ElementalOrder
   m_TagString: TeamA
@@ -96206,6 +96207,19 @@ CapsuleCollider:
   m_Height: 1.3494909
   m_Direction: 1
   m_Center: {x: 0, y: 0.62497985, z: 0}
+--- !u!65 &4211280850647434729
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7289311857995118453}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.018553495, y: 0.028244868, z: 0.03535056}
+  m_Center: {x: -0.0035818815, y: 0.052488662, z: -0.048989892}
 --- !u!1 &7312070154121174917
 GameObject:
   m_ObjectHideFlags: 0
@@ -109784,6 +109798,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4472446511263050622}
     m_Modifications:
+    - target: {fileID: 292724722166954603, guid: b398e836b6d4c404fbbf017adf7a9fec, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1439430911286120577, guid: b398e836b6d4c404fbbf017adf7a9fec, type: 3}
       propertyPath: m_Name
       value: ElementalOrderSoundManager

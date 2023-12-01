@@ -50,7 +50,7 @@ public class GameResultUI : MonoBehaviourPunCallbacks
 
         for (int i = 0; i < 5; i++)
         {
-            UIObjects["player_" + i + "_Friendly"] = GameCenterTest.FindObject(charts, "Player" + i + "_Friendly");
+            UIObjects["player_" + i + "_Friendly"] = GameCenterTest.FindObject(charts, "Player_" + i + "_Friendly");
 
             UIObjects["playerName_" + i + "_Friendly"] = GameCenterTest.FindObject(charts, "PlayerName_" + i + "_Friendly");
             friendyPlayerNames.Add(UIObjects["playerName_" + i + "_Friendly"].GetComponent<Text>());
@@ -62,7 +62,7 @@ public class GameResultUI : MonoBehaviourPunCallbacks
             friendyTotalDamages.Add(UIObjects["totalDamage_" + i + "_Friendly"].GetComponent<Text>());
 
 
-            UIObjects["player_" + i + "_Enemy"] = GameCenterTest.FindObject(charts, "Player" + i + "_Enemy");
+            UIObjects["player_" + i + "_Enemy"] = GameCenterTest.FindObject(charts, "Player_" + i + "_Enemy");
 
             UIObjects["playerName_" + i + "_Enemy"] = GameCenterTest.FindObject(charts, "PlayerName_" + i + "_Enemy");
             enemyPlayerNames.Add(UIObjects["playerName_" + i + "_Enemy"].GetComponent<Text>());

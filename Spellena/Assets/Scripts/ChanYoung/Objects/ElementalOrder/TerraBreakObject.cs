@@ -200,12 +200,12 @@ public class TerraBreakObject : SpawnObject
                         Vector3 _tempDirection = (_rootObject.transform.position - transform.position).normalized;
                         if (isFirst == true)
                         {
-                            _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBuffered,
+                            _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.All,
                                  playerName, (int)(elementalOrderData.terraBreakDamageFirst), hitObject.name, _tempDirection, 20f);
                         }
                         else
                         {
-                            _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBuffered,
+                            _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.All,
                                  playerName, (int)(elementalOrderData.terraBreakDamage / 4), hitObject.name, _tempDirection, 20f);
                         }
                     }

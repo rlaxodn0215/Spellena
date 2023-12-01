@@ -8,7 +8,7 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 public class DuringRound : CenterState
 {
     bool isOnce = true;
-    bool checkRoundEndOnce = true;
+    //bool checkRoundEndOnce = true;
     bool OccupyBarCountOnce = true;
 
     public override void StateExecution()
@@ -27,9 +27,6 @@ public class DuringRound : CenterState
         CheckPlayerReSpawn();
 
         CheckRoundEnd();
-
-        foreach(var player in PhotonNetwork.CurrentRoom.Players.Values)
-            Debug.Log((int)player.CustomProperties["CharacterViewID"]);
     }
 
     void OccupyBarCount()
@@ -103,6 +100,7 @@ public class DuringRound : CenterState
                  case "KillCount":
                      if (gameCenter.inGameUIView == null) break;
                     gameCenter.inGameUIView.RPC("ShowKillUI", targetPlayer, gameCenter.tempVictim);
+                    Debug.Log("KillCount ShowKillLog : " + targetPlayer.CustomProperties["Name"]);
                     gameCenter.inGameUIView.RPC("ShowKillLog", RpcTarget.AllBuffered, targetPlayer.CustomProperties["Name"],
                          gameCenter.tempVictim, ((string)targetPlayer.CustomProperties["Team"] == "A"), targetPlayer.ActorNumber);
                     CheckPlayerHealAssist(targetPlayer);
@@ -114,12 +112,11 @@ public class DuringRound : CenterState
                     gameCenter.tempVictim = (string)targetPlayer.CustomProperties["Name"];
                     ShowTeamMateDead((string)targetPlayer.CustomProperties["Team"], (string)targetPlayer.CustomProperties["Name"]);
 
-                    Debug.LogWarning("view in DeadCount : " + view.name);
                     view.RPC("PlayerDeadForAll", RpcTarget.AllBuffered, (string)targetPlayer.CustomProperties["DamagePart"],
                          (Vector3)targetPlayer.CustomProperties["DamageDirection"], (float)targetPlayer.CustomProperties["DamageForce"]);
 
                      view.RPC("PlayerDeadPersonal", targetPlayer);
-                    gameCenter.deathUIView.RPC("ShowKillerData", targetPlayer, (string)targetPlayer.CustomProperties["KillerName"]);
+                     gameCenter.deathUIView.RPC("ShowKillerData", targetPlayer, (string)targetPlayer.CustomProperties["KillerName"]);
 
                     CheckPlayerDealAssist(targetPlayer,(string)targetPlayer.CustomProperties["KillerName"]);
                     break;
@@ -207,6 +204,8 @@ public class DuringRound : CenterState
             if (gameCenter.occupyingTeam.rate > 0f)
             {
                 gameCenter.occupyingTeam.rate -= Time.deltaTime;
+                gameCenter.bgmManagerView.RPC("StopAudio", RpcTarget.All, "Occupying");
+
                 if (gameCenter.occupyingTeam.rate < 0f)
                 {
                     gameCenter.occupyingTeam.rate = 0f;
@@ -224,9 +223,6 @@ public class DuringRound : CenterState
             if ((bool)player.CustomProperties["IsAlive"] && (bool)player.CustomProperties["IsAlive"] == true) continue;
             if ((float)player.CustomProperties["ReSpawnTime"] <= GameCenterTest.globalTimer)
             {
-                Debug.LogWarning("PlayerReSpawn !! / Name : " + player.CustomProperties["Name"]);
-                Debug.LogWarning("PlayerReSpawn !! / ReSpawnTime : " + (float)player.CustomProperties["ReSpawnTime"]);
-
                 PhotonView view = PhotonView.Find((int)player.CustomProperties["CharacterViewID"]);
                 GameCenterTest.ChangePlayerCustomProperties(player, "IsAlive", true);
                 GameCenterTest.ChangePlayerCustomProperties(player, "ReSpawnTime", 100000000.0f);
@@ -386,9 +382,8 @@ public class DuringRound : CenterState
     {
         if (gameCenter.occupyingTeam.name == name)
         {
-            if (gameCenter.currentOccupationTeam == name)
-                return;
-            gameCenter.occupyingTeam.rate += gameCenter.occupyingGaugeRate * Time.deltaTime;
+            if (gameCenter.currentOccupationTeam == name) return;
+
             if (gameCenter.occupyingTeam.rate >= 100)
             {
                 gameCenter.currentOccupationTeam = name;
@@ -420,6 +415,12 @@ public class DuringRound : CenterState
 
                 }
             }
+
+            else
+            {
+                gameCenter.occupyingTeam.rate += gameCenter.occupyingGaugeRate * Time.deltaTime;
+                gameCenter.bgmManagerView.RPC("PlayAudio", RpcTarget.All, "Occupying", 1.0f, true, false);
+            }
         }
         else if (gameCenter.occupyingTeam.name == "")
         {
@@ -428,9 +429,11 @@ public class DuringRound : CenterState
             gameCenter.occupyingTeam.name = name;
             gameCenter.occupyingTeam.rate += gameCenter.occupyingGaugeRate * Time.deltaTime;
         }
+
         else
         {
             gameCenter.occupyingTeam.rate -= gameCenter.occupyingGaugeRate * Time.deltaTime;
+            gameCenter.bgmManagerView.RPC("StopAudio", RpcTarget.All, "Occupying");
             if (gameCenter.occupyingTeam.rate < 0)
             {
                 gameCenter.occupyingTeam.name = "";
@@ -444,13 +447,14 @@ public class DuringRound : CenterState
         if (gameCenter.occupyingA.rate >= gameCenter.occupyingComplete &&
             gameCenter.currentOccupationTeam == gameCenter.teamA && gameCenter.teamBOccupying <= 0)
         {
-            if(checkRoundEndOnce)
+            //if(checkRoundEndOnce)
             {
                 gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "extraObj", true);
                 gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "redExtraUI", false);
                 gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "redExtraObj", true);
                 gameCenter.bgmManagerView.RPC("PlayAudio", RpcTarget.All, "RoundAlmostEnd", 1.0f, true,true);
-                checkRoundEndOnce = false;
+                //checkRoundEndOnce = false;
+                //Debug.Log("RoundAlmostEnd _ A");
             }
 
             gameCenter.roundEndTimer -= Time.deltaTime;
@@ -459,13 +463,13 @@ public class DuringRound : CenterState
         else if (gameCenter.occupyingB.rate >= gameCenter.occupyingComplete &&
             gameCenter.currentOccupationTeam == gameCenter.teamB && gameCenter.teamAOccupying <= 0)
         {
-            if (checkRoundEndOnce)
+            //if (checkRoundEndOnce)
             {
                 gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "extraObj", true);
                 gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "blueExtraUI", false);
                 gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "blueExtraObj", true);
                 gameCenter.bgmManagerView.RPC("PlayAudio", RpcTarget.All, "RoundAlmostEnd", 1.0f, true,true);
-                checkRoundEndOnce = false;
+                //checkRoundEndOnce = false;
             }
 
             gameCenter.roundEndTimer -= Time.deltaTime;
@@ -474,7 +478,7 @@ public class DuringRound : CenterState
         else
         {
             gameCenter.roundEndTimer = gameCenter.roundEndTime;
-            checkRoundEndOnce = true;
+           // checkRoundEndOnce = true;
         }
 
         if (gameCenter.roundEndTimer <= 0.0f)
@@ -484,6 +488,7 @@ public class DuringRound : CenterState
             {
                 gameCenter.occupyingA.rate = 100;
                 GameCenterTest.roundA++;
+                Debug.Log("A ÆÀ ½Â¸®");
 
                 if (GameCenterTest.roundA == 1)
                 {
@@ -500,6 +505,8 @@ public class DuringRound : CenterState
                         gameCenter.inGameUIView.RPC("ShowRoundLoose", player, GameCenterTest.roundA + GameCenterTest.roundB);
                         gameCenter.bgmManagerView.RPC("PlayAudio", player, "RoundLoose", 1.0f, false,true);
                     }
+
+                    Debug.Log("A ÆÀ 1½Â");
                 }
 
                 else if (GameCenterTest.roundA == 2)
@@ -517,6 +524,8 @@ public class DuringRound : CenterState
                         gameCenter.inGameUIView.RPC("ActiveInGameUIObj", player, "defeat", true);
                         gameCenter.bgmManagerView.RPC("PlayAudio", player, "RoundLoose", 1.0f, false,true);
                     }
+
+                    Debug.Log("A ÆÀ 2½Â");
                 }
 
             }
@@ -525,6 +534,7 @@ public class DuringRound : CenterState
             {
                 gameCenter.occupyingB.rate = 100;
                 GameCenterTest.roundB++;
+                Debug.Log("B ÆÀ ½Â¸®");
 
                 if (GameCenterTest.roundB == 1)
                 {
@@ -541,6 +551,8 @@ public class DuringRound : CenterState
                         gameCenter.inGameUIView.RPC("ShowRoundLoose", player, GameCenterTest.roundA + GameCenterTest.roundB);
                         gameCenter.bgmManagerView.RPC("PlayAudio", player, "RoundLoose", 1.0f, false, true);
                     }
+
+                    Debug.Log("B ÆÀ 1½Â");
                 }
 
                 else if (GameCenterTest.roundB == 2)
@@ -558,6 +570,8 @@ public class DuringRound : CenterState
                         gameCenter.inGameUIView.RPC("ActiveInGameUIObj", player, "defeat", true);
                         gameCenter.bgmManagerView.RPC("PlayAudio", player, "RoundLoose", 1.0f, false,true);
                     }
+
+                    Debug.Log("B ÆÀ 2½Â");
                 }
             }
 

@@ -20,7 +20,7 @@ MonoBehaviour:
   backSpeed: 2
   sideSpeed: 3
   runSpeedRatio: 1.5
-  jumpHeight: 7
+  jumpHeight: 5
   headShotRatio: 1.5
   basicAttackTime: 1
   DimenstionSlash_0_lifeTime: 10

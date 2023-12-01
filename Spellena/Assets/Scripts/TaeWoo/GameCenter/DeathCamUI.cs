@@ -63,21 +63,33 @@ public class DeathCamUI : MonoBehaviourPunCallbacks
     [PunRPC]
     public void ShowKillerData(string killerID)
     {
-        foreach(var player in PhotonNetwork.CurrentRoom.Players.Values)
+        if (killerID == "World")
         {
-            if((string)player.CustomProperties["Name"] == killerID)
-            {
-                ShowCharacterIcon((string)player.CustomProperties["Character"]);
+            ShowCharacterIcon(killerID);
 
-                killerCharacter.text = "처치자 : " + (string)player.CustomProperties["Character"];
-                killerCharacter1.text = "내 영웅 처치 : " + (string)player.CustomProperties["Character"];
-                killerName.text = killerName1.text = killerID;
-                killerStat.text = (int)player.CustomProperties["KillCount"] + " / " + (int)player.CustomProperties["DeadCount"]
-                    + " / " + (int)player.CustomProperties["AsisstCount"];
-                break;
-            }
+            killerCharacter.text = "처치자 : World" ;
+            killerCharacter1.text = "내 영웅 처치 : World";
+            killerName.text = killerName1.text = killerID;
+            killerStat.text = "";
         }
 
+        else
+        {
+            foreach (var player in PhotonNetwork.CurrentRoom.Players.Values)
+            {
+                if ((string)player.CustomProperties["Name"] == killerID)
+                {
+                    ShowCharacterIcon((string)player.CustomProperties["Character"]);
+
+                    killerCharacter.text = "처치자 : " + (string)player.CustomProperties["Character"];
+                    killerCharacter1.text = "내 영웅 처치 : " + (string)player.CustomProperties["Character"];
+                    killerName.text = killerName1.text = killerID;
+                    killerStat.text = (int)player.CustomProperties["KillCount"] + " / " + (int)player.CustomProperties["DeadCount"]
+                        + " / " + (int)player.CustomProperties["AsisstCount"];
+                    break;
+                }
+            }
+        }
         showKillerData.SetActive(true);
     }
 
@@ -92,11 +104,14 @@ public class DeathCamUI : MonoBehaviourPunCallbacks
     {
         switch (name)
         {
-            case "Aeterna":
+            case "World":
                 killerIcon.sprite = characterIcons[0];
                 break;
-            case "ElementalOrder":
+            case "Aeterna":
                 killerIcon.sprite = characterIcons[1];
+                break;
+            case "ElementalOrder":
+                killerIcon.sprite = characterIcons[2];
                 break;
             default:
                 break;

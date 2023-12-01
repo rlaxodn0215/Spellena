@@ -21,13 +21,11 @@ public class RoundEnd : CenterState
 
         if (GameCenterTest.globalTimer >= gameCenter.globalDesiredTimer)
         {
-
             if (GameCenterTest.roundA >= 2 || GameCenterTest.roundB >= 2)
             {
                 gameCenter.currentGameState = GameCenterTest.GameState.GameResult;
                 gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "victory", false);
-                gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "defeat", false);
-                Debug.Log("Game End");
+                gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "defeat", false);              
             }
 
             else
@@ -62,15 +60,44 @@ public class RoundEnd : CenterState
         gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "blueExtraObj", false);
         gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "etcUI", true);
 
-        // 플레이어 소환 위치로 이동
+        // 플레이어 초기화
         foreach (var player in PhotonNetwork.CurrentRoom.Players.Values)
         {
-            if (player.CustomProperties["SpawnPoint"] != null)
+            PhotonView view = PhotonView.Find((int)player.CustomProperties["CharacterViewID"]);
+            if (view == null) continue;
+            GameCenterTest.ChangePlayerCustomProperties(player, "IsAlive", true);
+            GameCenterTest.ChangePlayerCustomProperties(player, "ReSpawnTime", 100000000.0f);
+            GameCenterTest.ChangePlayerCustomProperties(player, "UltimateCount", 0);
+
+            if ((string)player.CustomProperties["Team"] == "A")
             {
-                PhotonView view = PhotonView.Find((int)player.CustomProperties["CharacterViewID"]);
-                if (view == null) continue;
-                view.RPC("PlayerTeleport", RpcTarget.All, (Vector3)player.CustomProperties["SpawnPoint"]);
+                view.RPC("PlayerReBornForAll", RpcTarget.All, (Vector3)player.CustomProperties["SpawnPoint"]);
             }
+
+            else if ((string)player.CustomProperties["Team"] == "B")
+            {
+                view.RPC("PlayerReBornForAll", RpcTarget.All, (Vector3)player.CustomProperties["SpawnPoint"]);
+            }
+
+            view.RPC("PlayerReBornPersonal", player);
+            gameCenter.deathUIView.RPC("DisableDeathCamUI", player);
+
+            if ((string)player.CustomProperties["Team"] == "A")
+            {
+                foreach (var playerA in gameCenter.playersA)
+                {
+                    gameCenter.inGameUIView.RPC("ShowTeamLifeDead", playerA, (string)player.CustomProperties["Name"], false);
+                }
+            }
+
+            else if ((string)player.CustomProperties["Team"] == "B")
+            {
+                foreach (var playerB in gameCenter.playersB)
+                {
+                    gameCenter.inGameUIView.RPC("ShowTeamLifeDead", playerB, (string)player.CustomProperties["Name"], false);
+                }
+            }
+
         }
 
     }

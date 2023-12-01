@@ -47,9 +47,6 @@ public class CharacterSelect : CenterState
             gameCenter.photonView.RPC("ActiveObject", RpcTarget.All, "betweenBGMObj", false);
 
             gameCenter.currentGameState = GameCenterTest.GameState.GameReady;
-
-            foreach (var player in PhotonNetwork.CurrentRoom.Players.Values)
-                Debug.Log((int)player.CustomProperties["CharacterViewID"]);
         }
     }
 

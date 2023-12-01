@@ -48,7 +48,7 @@ public class BurstFlareObject : SpawnObject
             _tempData[0] = tunnelCommand;
         }
 
-        photonView.RPC("CallRPCTunnelElementalOrderSpell2", RpcTarget.AllBuffered, _tempData);
+        photonView.RPC("CallRPCTunnelElementalOrderSpell2", RpcTarget.All, _tempData);
     }
 
     [PunRPC]
@@ -87,21 +87,31 @@ public class BurstFlareObject : SpawnObject
 
     void TriggerParticle(GameObject hitObject, Vector3 pos)
     {
-        if(hitObject.layer == 11)
+        Debug.Log("TriggerParticle first");
+        //if (hitObject.layer == 11)
+        //{
+        //    RunExplode(pos);
+        //    return;
+        //}
+        if (hitObject.CompareTag("Wall"))
         {
             RunExplode(pos);
             return;
         }
-        if(PhotonNetwork.IsMasterClient)
+
+        if (PhotonNetwork.IsMasterClient)
         {
-            if(hitObject.transform.root.gameObject.name != hitObject.name)
+            Debug.Log("TriggerParticle");
+            if (hitObject.transform.root.gameObject.name != hitObject.name)
             {
                 GameObject _rootObject = hitObject.transform.root.gameObject;
                 if(_rootObject.GetComponent<Character>() != null)
                 {
+                    Debug.Log("Hit Character");
                     if(_rootObject.tag != tag)
                     {
-                        _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBuffered,
+                        Debug.Log("Hit Enemy");
+                        _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.All,
                          playerName, (int)(elementalOrderData.burstFlareDamage), hitObject.name, transform.forward, 20f);
                     }
                 }

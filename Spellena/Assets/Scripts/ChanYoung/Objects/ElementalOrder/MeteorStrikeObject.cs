@@ -99,7 +99,7 @@ public class MeteorStrikeObject : SpawnObject
                                 return;
                         }
                         hitObjects.Add(_rootObject.name);
-                        _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBuffered,
+                        _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.All,
                          playerName, (int)(elementalOrderData.meteorStrikeDamage), hitObject.name, transform.forward, 20f);
                     }
                 }

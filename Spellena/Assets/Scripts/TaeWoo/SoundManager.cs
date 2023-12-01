@@ -48,6 +48,7 @@ public class SoundManager : MonoBehaviourPunCallbacks
     {
         if (audios.ContainsKey(name))
         {
+            //Debug.Log("audios[name].isPlaying : " + audios[name].isPlaying + " / " + "audios[name].loop == isLoop" + (audios[name].loop==isLoop));
             if (audios[name].isPlaying && audios[name].loop == isLoop) return;
 
             if (isOnly)
@@ -61,6 +62,7 @@ public class SoundManager : MonoBehaviourPunCallbacks
             audios[name].volume = vol;
             audios[name].loop = isLoop;
             audios[name].Play();
+            Debug.Log(name);
         }
 
         else
@@ -103,6 +105,8 @@ public class SoundManager : MonoBehaviourPunCallbacks
     {
         if (audios.ContainsKey(name))
         {
+            if (!audios[name].isPlaying) return;
+
             audios[name].Stop();
         }
 

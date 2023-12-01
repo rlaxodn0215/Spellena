@@ -192,7 +192,7 @@ public class RagnaEdgeObject : SpawnObject
                             }
 
                             hitFloorObjects.Add(_rootObject.name);
-                            _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBuffered,
+                            _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.All,
                                 playerName, (int)elementalOrderData.ragnaEdgeFloorDamage, hitObject.name, transform.forward, 20f);
                         }   
                     }
@@ -221,7 +221,7 @@ public class RagnaEdgeObject : SpawnObject
                         if (tag != _rootObject.tag)
                         {
                             hitCylinderObjects.Add(_rootObject.name);
-                            _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBuffered,
+                            _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.All,
                                 playerName, (int)elementalOrderData.ragnaEdgeCylinderDamage, hitObject.name, transform.forward, 20f);
                         }
                     }

@@ -75,7 +75,7 @@ namespace Player
                 direction.Normalize();
                 direction *= InnerForce;
                 player.MovePosition(player.transform.position + direction*Time.deltaTime);
-                Debug.Log("GiveGravity");
+                //Debug.Log("GiveGravity");
             }
         }
 
