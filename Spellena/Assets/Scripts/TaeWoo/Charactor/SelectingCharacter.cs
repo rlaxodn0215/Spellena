@@ -68,33 +68,50 @@ public class SelectingCharacter : MonoBehaviour
     }
 
     public void SelectCharacter(string name)
-   {
+    {
+        selectName = name;
+        noChoose.SetActive(false);
+        audioSource.clip = clips[0];
+        audioSource.Play();
+
         switch (name)
         {
             case "Aeterna":
-                selectName = name;
-                avatar[0].SetActive(true);
-                avatar[1].SetActive(false);
-                noChoose.SetActive(false);
-                audioSource.clip = clips[0];
-                audioSource.Play();
+                ShowCharacter(0);
                 break;
             case "ElementalOrder":
-                selectName = name;
-                avatar[0].SetActive(false);
-                avatar[1].SetActive(true);
-                noChoose.SetActive(false);
-                audioSource.clip = clips[0];
-                audioSource.Play();
+                ShowCharacter(1);
+                break;
+            case "Dracoson":
+                ShowCharacter(2);
+                break;
+            case "Cultist":
+                ShowCharacter(3);
                 break;
             default:
                 break;
         }
-   }
+    }
+
+    void ShowCharacter(int index)
+    {
+        for(int i = 0; i < avatar.Count; i++)
+        {
+            if(i == index)
+            {
+                avatar[i].SetActive(true);
+            }
+
+            else
+            {
+                avatar[i].SetActive(false);
+            }
+        }
+    }
 
     public void ConfirmCharacter()
     {
-        if (!avatar[0].activeSelf && !avatar[1].activeSelf) return;
+        if (!avatar[0].activeSelf && !avatar[1].activeSelf && !avatar[2].activeSelf && !avatar[3].activeSelf) return;
 
         confirm.SetActive(false);
         reSelect.SetActive(true);

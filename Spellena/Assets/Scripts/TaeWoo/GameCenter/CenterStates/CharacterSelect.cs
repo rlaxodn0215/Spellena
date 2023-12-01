@@ -75,6 +75,7 @@ public class CharacterSelect : CenterState
             {
                 GameObject playerCharacter = PhotonNetwork.Instantiate("Characters/" + choseCharacter, 
                     gameCenter.playerSpawnA[aTeamIndex].position, Quaternion.identity);
+                if (playerCharacter == null) continue;
 
                 playerCharacter.GetComponent<PhotonView>().TransferOwnership(player.ActorNumber);
                 playerCharacter.GetComponent<PhotonView>().RPC("IsLocalPlayer", player);
@@ -92,6 +93,7 @@ public class CharacterSelect : CenterState
             {
                 GameObject playerCharacter = PhotonNetwork.Instantiate("Characters/" + choseCharacter,
                     gameCenter.playerSpawnB[bTeamIndex].position, Quaternion.identity);
+                if (playerCharacter == null) continue;
 
                 playerCharacter.GetComponent<PhotonView>().TransferOwnership(player.ActorNumber);
                 playerCharacter.GetComponent<PhotonView>().RPC("IsLocalPlayer", player);

@@ -113,6 +113,12 @@ public class DeathCamUI : MonoBehaviourPunCallbacks
             case "ElementalOrder":
                 killerIcon.sprite = characterIcons[2];
                 break;
+            case "Dracoson":
+                killerIcon.sprite = characterIcons[3];
+                break;
+            case "Cultist":
+                killerIcon.sprite = characterIcons[4];
+                break;
             default:
                 break;
         }

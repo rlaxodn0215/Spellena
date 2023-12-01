@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CharacterSelectIdle : MonoBehaviour
 {
-    float changeIdleTime = 10.5f;
+    float changeIdleTime = 8.5f;
     Animator animator;
     Coroutine coroutine;
 
