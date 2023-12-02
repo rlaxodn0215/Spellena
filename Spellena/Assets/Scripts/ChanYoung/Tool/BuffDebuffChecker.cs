@@ -6,14 +6,14 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
+using Photon.Realtime;
 
 public class BuffDebuffChecker : MonoBehaviourPunCallbacks
 {
-
     public GameObject tentacleObject;
+    public BuffDebuffTunnel buffDebuffTunnel;
     NavMeshAgent agent;
     GameObject target;
-
     public class Tentacle
     {
         public bool isActive = false;
@@ -27,12 +27,21 @@ public class BuffDebuffChecker : MonoBehaviourPunCallbacks
     //촉수가 가지고 있는 정보
     Tentacle[] tentacles = new Tentacle[4];
 
+    float horrorDamageTime = 0.1f;
+    float currentHorrorDamageTime = 0f;
+
     //가지고 있는 버프 디버프
     List<string> buffsAndDebuffs = new List<string>();
     //버프 디버프의 유지 시간
     List<float> leftTime = new List<float>();
 
+    //이시스의 축복 연산할 플레이어들
+    List<GameObject> blessingTargets = new List<GameObject>();
+
+    public int horrorViewID = -1;
+
     float chasingTimer = 0f;
+
 
     private void Start()
     {
@@ -55,6 +64,17 @@ public class BuffDebuffChecker : MonoBehaviourPunCallbacks
         }
     }
 
+    private void Update()
+    {
+        if(agent.enabled == true)
+            agent.baseOffset = Mathf.Lerp(agent.baseOffset, -0.5f, Time.deltaTime * 3f);
+        else
+            agent.baseOffset = Mathf.Lerp(agent.baseOffset, 0f, Time.deltaTime * 3f);
+
+    }
+
+
+
     private void FixedUpdate()
     {
         //버프 디버프 시간 처리
@@ -70,6 +90,11 @@ public class BuffDebuffChecker : MonoBehaviourPunCallbacks
             {
                 if (leftTime[i] <= 0f)
                 {
+                    if (buffsAndDebuffs[i] == "Horror")
+                    {
+                        currentHorrorDamageTime = 0f;
+                        CallRPCTunnel("SetHorrorViewID", -1);
+                    }
                     RemoveBuffDebuffData(buffsAndDebuffs[i], i);
                     buffsAndDebuffs.RemoveAt(i);
                     leftTime.RemoveAt(i);
@@ -77,11 +102,59 @@ public class BuffDebuffChecker : MonoBehaviourPunCallbacks
                 }
             }
 
+            for (int i = 0; i < buffsAndDebuffs.Count; i++)
+            {
+                if (buffsAndDebuffs[i] == "Horror")
+                {
+                    if (currentHorrorDamageTime > 0f)
+                    {
+                        currentHorrorDamageTime -= Time.deltaTime;
+                        if (currentHorrorDamageTime < 0f)
+                        {
+                            currentHorrorDamageTime = horrorDamageTime;
+                            //공포 디버프 데미지
+                        }
+                    }
+                }
+                else if (buffsAndDebuffs[i] == "BlessingCast")
+                {
+                    Debug.Log(blessingTargets.Count);
+                    for(int j = 0; j < blessingTargets.Count; j++)
+                    {
+                        if (blessingTargets[j] == gameObject)
+                            continue;
+                        Vector3 _viewPort = blessingTargets[j].GetComponent<Character>().camera.GetComponent<Camera>().WorldToViewportPoint(transform.position);
+
+                        //카메라안에 들어오는가 확인
+                        if(_viewPort.x >= 0 && _viewPort.x <= 1 && _viewPort.y >= 0 && _viewPort.y <=1)
+                        {
+                            Vector3 _playerCameraPos = blessingTargets[j].transform.position + new Vector3(0, 1, 0);
+                            Vector3 _cameraPos = transform.position + new Vector3(0, 1, 0);
+                            Vector3 _direction = _playerCameraPos - _cameraPos;
+                            float _distance = _direction.magnitude;
+                            Vector3 _normalizedDirection = _direction.normalized;
+                            Ray _tempRay = new Ray();
+                            _tempRay.direction = _normalizedDirection;
+                            _tempRay.origin = _cameraPos;
+                            //맵이 있는지 확인 후 없으면 카메라를 밑으로 내려버린다
+                            LayerMask _layerMask = LayerMask.GetMask("Map");
+                            RaycastHit _tempHit;
+                            if ((Physics.Raycast(_tempRay, out _tempHit, _distance, _layerMask)))
+                                Debug.Log("벽에 막힘");
+                            else
+                                blessingTargets[j].GetComponent<BuffDebuffChecker>().CallRPCTunnel("DownCamera");
+
+                        }
+
+                    }
+                }
+            }
+
             //데이터 갱신
             CallRPCTunnel("UpdateData");
         }
 
-        for(int i = 0; i < tentacles.Length; i++)
+        for (int i = 0; i < tentacles.Length; i++)
         {
             if (tentacles[i].isActive == true)
             {
@@ -101,7 +174,6 @@ public class BuffDebuffChecker : MonoBehaviourPunCallbacks
                     if (chasingTimer <= 0f)
                     {
                         agent.enabled = false;
-                        GetComponent<Character>().camera.transform.localPosition -= new Vector3(0, 0.5f);
                         photonView.RPC("ResetTentacleRequest", RpcTarget.MasterClient);
                     }
                 }
@@ -124,7 +196,7 @@ public class BuffDebuffChecker : MonoBehaviourPunCallbacks
             _tempData[1] = buffsAndDebuffs.ToArray();
             _tempData[2] = leftTime.ToArray();
         }
-        else if(tunnelCommand == "AddTentacle")
+        else if (tunnelCommand == "AddTentacle" || tunnelCommand == "SetHorrorViewID")
         {
             _tempData = new object[2];
             _tempData[0] = tunnelCommand;
@@ -150,6 +222,38 @@ public class BuffDebuffChecker : MonoBehaviourPunCallbacks
             ResetAllTentacles();
         else if ((string)data[0] == "AddTentacleForce")
             AddTentacleForce();
+        else if ((string)data[0] == "SetHorrorViewID")
+            SetHorrorViewID(data);
+        else if ((string)data[0] == "ActiveBlessingCollider")
+            ActiveBlessingCollider(data);
+        else if ((string)data[0] == "DownCamera")
+            DownCamera();
+    }
+
+    void DownCamera()
+    {
+        if(photonView.IsMine)
+        {
+            MouseControl _mouseControl = GetComponent<Character>().camera.GetComponent<MouseControl>();
+            Vector3 _tempEulerCamera = GetComponent<Character>().camera.transform.localEulerAngles;
+            Vector3 _tempEuler = transform.localEulerAngles;
+            _tempEulerCamera.x += 1f;
+            _mouseControl.ApplyPos(_tempEuler.y ,_tempEulerCamera.x);
+        }
+    }
+
+    void ActiveBlessingCollider(object[]data)
+    {
+        if ((bool)data[1])
+            buffDebuffTunnel.ActiveBuffDebuff("BlessingTrigger");
+        else
+            buffDebuffTunnel.InactiveBuffDebuff("BlessingTrigger");
+    }
+
+    void SetHorrorViewID(object[] data)
+    {
+        horrorViewID = (int)data[1];
+        Debug.Log(horrorViewID);
     }
 
     void ResetAllTentacles()
@@ -161,6 +265,7 @@ public class BuffDebuffChecker : MonoBehaviourPunCallbacks
             {
                 Debug.Log("쿨타임 끝");
                 Destroy(tentacleOnBody[i]);
+                buffDebuffTunnel.InactiveBuffDebuff("TerribleTentacle");
             }
         }
     }
@@ -189,6 +294,11 @@ public class BuffDebuffChecker : MonoBehaviourPunCallbacks
         AddBuffDebuff(buffDebuff, data);
     }
 
+    public void SpreadBuffDebuff(string buffDebuff, params object[] data)
+    {
+        buffDebuffTunnel.GetSphereArea(buffDebuff, (Vector3)data[0]);
+    }
+
     void AddBuffDebuff(string buffDebuff, object[] data)
     {
         if (buffDebuff == "TerribleTentacles")
@@ -197,7 +307,30 @@ public class BuffDebuffChecker : MonoBehaviourPunCallbacks
             leftTime.Add(10f);
             CallRPCTunnel("AddTentacle", (int)data[0]);
         }
+        else if(buffDebuff == "Horror")
+        {
+            buffsAndDebuffs.Add(buffDebuff);
+            leftTime.Add(0.8f);
+            CallRPCTunnel("SetHorrorViewID", (int)data[0]);
+        }
+        else if(buffDebuff == "BlessingCast")
+        {
+            buffsAndDebuffs.Add(buffDebuff);
+            leftTime.Add((float)data[0]);
+            //CallRPCTunnel("ActiveBlessingCollider", true);
+            Photon.Realtime.Player[] _players = PhotonNetwork.PlayerList;
+            //모든 플레이어를 가져와서 이시스의 축복 스킬을 체크한다
+            blessingTargets.Clear();
+            for(int i = 0; i < _players.Length; i++)
+            {
+                int _viewID = (int)_players[i].CustomProperties["CharacterViewID"];
+                PhotonView _photonView = PhotonNetwork.GetPhotonView(_viewID);
+                if(_photonView.GetComponent<Character>() != null)
+                    blessingTargets.Add(_photonView.gameObject);
+            }
+        }
     }
+
 
     void UpdateBuffDebuff(string buffDebuff, int i, object[] data)
     {
@@ -205,6 +338,11 @@ public class BuffDebuffChecker : MonoBehaviourPunCallbacks
         {
             leftTime[i] = 10f;
             CallRPCTunnel("AddTentacle", (int)data[0]);
+        }
+        else if(buffDebuff == "Horror")
+        {
+            leftTime[i] = 0.8f;
+            CallRPCTunnel("SetHorrorViewID", (int)data[0]);
         }
     }
 
@@ -218,6 +356,10 @@ public class BuffDebuffChecker : MonoBehaviourPunCallbacks
                 _count--;
                 tentacles[i].isActive = true;
                 tentacles[i].currentCoolDownTime = 0f;
+
+                if (i == 0)
+                    buffDebuffTunnel.ActiveBuffDebuff("TerribleTentacle");
+
                 if (_count <= 0)
                     break;
             }
@@ -226,12 +368,10 @@ public class BuffDebuffChecker : MonoBehaviourPunCallbacks
         //몸에 붙어 있는 촉수 갱신
         UpdateTentacle();
 
-        if (tentacles[0].isActive == true)
+        if (tentacles[3].isActive == true)
         {
             if(photonView.IsMine)
-            {
                 ChaseNearEnemy();
-            }
         }
     }
 
@@ -257,7 +397,6 @@ public class BuffDebuffChecker : MonoBehaviourPunCallbacks
                     agent.enabled = true;
                     target = _tempList[i].gameObject;
                     chasingTimer = 4f;
-                    GetComponent<Character>().camera.transform.localPosition += new Vector3(0, 0.5f);
                     break;
                 }
             }
@@ -305,6 +444,8 @@ public class BuffDebuffChecker : MonoBehaviourPunCallbacks
         {
             if (buffDebuff == "TerribleTentacles")
                 return tentacles[(int)data[0]].isActive;
+            else if (buffDebuff == "Horror")
+                return true;
         }
 
         return false;

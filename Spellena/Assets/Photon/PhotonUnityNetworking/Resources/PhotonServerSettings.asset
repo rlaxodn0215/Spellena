@@ -160,6 +160,18 @@ MonoBehaviour:
   - UseTeleportManager
   - AddTentacle
   - ResetTentacleRequest
+  - ControlActAudio
+  - ControlSkillAudio
+  - ControlSpeakAudio
+  - PlayAudio
+  - Skill4ChargeStage
+  - StopAllAudio
+  - StopAudio
+  - VolumControl
+  - CallRPCTunnelOnBuffDebuffTunnel
+  - TestRPC
+  - TeleportToPoint
+  - CancelSkill2
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1
