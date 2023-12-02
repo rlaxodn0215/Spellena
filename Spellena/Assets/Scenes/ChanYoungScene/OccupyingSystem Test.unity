@@ -107,13 +107,13 @@ NavMeshSettings:
     serializedVersion: 2
     agentTypeID: 0
     agentRadius: 0.5
-    agentHeight: 1
+    agentHeight: 2
     agentSlope: 45
     agentClimb: 0.5
     ledgeDropHeight: 0
     maxJumpAcrossDistance: 0
     minRegionArea: 2
-    manualCellSize: 0
+    manualCellSize: 1
     cellSize: 0.16666667
     manualTileSize: 0
     tileSize: 256
@@ -81097,6 +81097,7 @@ MonoBehaviour:
   UI: {fileID: 8018560931942860469}
   Alive: {fileID: 8805390818395439501}
   Dead: {fileID: 4068900050320993866}
+  characterSoundManager: {fileID: 0}
   playerName: ElementalOrderTester
   isOccupying: 0
   chargeCount: 0
@@ -81123,6 +81124,7 @@ MonoBehaviour:
   dataHeadShotRatio: 0
   animator: {fileID: 0}
   rigidbody: {fileID: 0}
+  soundManagerView: {fileID: 0}
   moveVec: {x: 0, y: 0, z: 0}
   elementalOrderData: {fileID: 11400000, guid: f59593c682ebc2b41896b199699b9e9c, type: 2}
   overlayCamera: {fileID: 2793860877440901365}

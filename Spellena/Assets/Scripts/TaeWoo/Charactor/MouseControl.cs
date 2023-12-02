@@ -27,6 +27,11 @@ namespace Player
 
         void Start()
         {
+            Init();
+        }
+
+        void Init()
+        {
             // 카메라의 회전 값 저장
             targetDirection = transform.localRotation.eulerAngles;
 
@@ -37,7 +42,6 @@ namespace Player
             // 커서 고정
             if (eraseCursor)
                 EraseCursor();
-
         }
 
         public void EraseCursor()
@@ -87,6 +91,35 @@ namespace Player
                 var yRotation = Quaternion.AngleAxis(mouseAbsolute.x, transform.InverseTransformDirection(Vector3.up));
                 transform.localRotation *= yRotation;
             }
+        }
+
+        public float ChangeAngle(float angle)
+        {
+            angle %= 360f;
+            if (angle > 180f)
+                angle -= 360f;
+            else if (angle < -180f)
+                angle += 360f;
+            return angle;
+        }
+
+        public void SetNewDirection()
+        {
+            Init();
+            mouseAbsolute = Vector2.zero;
+            smoothMouse = Vector2.zero;
+            mouseDelta = Vector2.zero;
+        }
+
+        public void ApplyPos(float xPos, float yPos)
+        {
+            float newAbsoluteY = -ChangeAngle(yPos);
+            if (newAbsoluteY < -60)
+                newAbsoluteY = -60;
+            if (newAbsoluteY > 60)
+                newAbsoluteY = 60;
+            mouseAbsolute.x = ChangeAngle(xPos);
+            mouseAbsolute.y = newAbsoluteY;
         }
     }
 

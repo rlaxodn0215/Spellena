@@ -8,6 +8,8 @@ using System.Linq;
 using HashTable = ExitGames.Client.Photon.Hashtable;
 using UnityEditor;
 using System.Security.Cryptography;
+using UnityEngine.InputSystem;
+using System.ComponentModel;
 
 public class Cultist : Character
 {
@@ -29,6 +31,8 @@ public class Cultist : Character
     public GameObject invocationEffectOrb;
 
     public Animator overlayAnimator;
+
+    GameObject phlegmHorror;
 
     BuffDebuffChecker buffDebuffChecker;
 
@@ -69,7 +73,13 @@ public class Cultist : Character
         Skill4Ready, Skill4Casting
     }
 
+    public enum LocalStateCultist
+    {
+        None, Skill2
+    }
+
     SkillStateCultist skillState = SkillStateCultist.None;
+    LocalStateCultist localState = LocalStateCultist.None;
 
     //0 : 스킬1, 1 : 스킬2, 2 : 스킬3, 3 : 스킬4
     float[] skillCoolDownTime = new float[4];
@@ -166,7 +176,6 @@ public class Cultist : Character
         {
             overlayInvocationEffect.transform.GetChild(i).gameObject.layer = 8;
         }
-
     }
 
     protected override void Update()
@@ -179,6 +188,7 @@ public class Cultist : Character
 
         if (photonView.IsMine)
         {
+            CheckOnLocalClient();
             CheckAnimationSpeed();
             CheckAnimatorExtra();
         }
@@ -187,15 +197,17 @@ public class Cultist : Character
     protected override void FixedUpdate()
     {
         if (photonView.IsMine)
+        {
+            CheckOnLocalClientFixed();
             CheckChanneling();
+        }
         base.FixedUpdate();
     }
 
     void CheckChanneling()
     {
-        
         if (skillState == SkillStateCultist.Skill2Channeling
-            || skillState == SkillStateCultist.Skill4Casting)
+            || skillState == SkillStateCultist.Skill4Casting || skillState == SkillStateCultist.Skill3Casting)
             moveVec = Vector3.zero;
 
         if (skillState == SkillStateCultist.LungeHolding)
@@ -229,6 +241,39 @@ public class Cultist : Character
     }
 
     //로컬 클라이언트에서 작동
+
+
+    void CheckOnLocalClient()
+    {
+        if (localState == LocalStateCultist.Skill2 && phlegmHorror != null)
+        {
+        }
+        //이건 나중에 캐릭터 클래스로 이동 시킨다.
+        if(buffDebuffChecker.CheckBuffDebuff("Horror") == true)
+        {
+            PhotonView _photonView = PhotonNetwork.GetPhotonView(buffDebuffChecker.horrorViewID);
+            if (_photonView != null)
+            {
+                MouseControl _mouseControl = camera.GetComponent<MouseControl>();
+                Vector3 _directionVector = (_photonView.transform.position - camera.transform.position + new Vector3(0, 1f, 0)).normalized;
+                Quaternion _tempQ = Quaternion.LookRotation(_directionVector);
+                Vector3 _tempEuler = _tempQ.eulerAngles;
+                _mouseControl.ApplyPos(_tempEuler.y , _tempEuler.x);
+            }
+        }
+        //여기 까지
+    }
+
+    
+    void CheckOnLocalClientFixed()
+    {
+        if(localState == LocalStateCultist.Skill2 && phlegmHorror != null)
+        {
+            phlegmHorror.GetComponent<Rigidbody>().MovePosition(phlegmHorror.GetComponent<Rigidbody>().transform.position +
+             Time.deltaTime * camera.transform.forward * 5f);
+        }
+    }
+    
 
     //마스터 클라이언트에서만 작동
     void CheckOnMasterClient()
@@ -305,7 +350,6 @@ public class Cultist : Character
             {
                 skillCastingCheck[0] = false;
                 skillState = SkillStateCultist.Skill1Channeling;
-                CallRPCEvent("ResetAnimation", "Response");
                 CallRPCEvent("UpdateData", "Response", skillState, "skillChannelingTime", 0, skill1ChannelingTime, true);
             }
         }
@@ -315,16 +359,20 @@ public class Cultist : Character
             {
                 skillState = SkillStateCultist.None;
                 CallRPCEvent("UseSkill", "Response", 0);
+                CallRPCEvent("ResetAnimation", "Response");
                 CallRPCEvent("UpdateData", "Response", skillState, "OnlySkillState", 0, 0f, false);
                 CallRPCEvent("SetCoolDownTime", "Response", 0);
             }
         }
         else if (skillState == SkillStateCultist.Skill2Casting)
         {
-            if (skillCastingTime[1] <= 0f)
+            if (skillCastingTime[1] <= 0f && skillCastingCheck[1])
             {
+                skillCastingCheck[1] = false;
                 skillState = SkillStateCultist.Skill2Channeling;
                 CallRPCEvent("UpdateData", "Response", skillState, "skillChannelingTime", 1, skill2ChannelingTime, false);
+                //캐스팅 끝나고 바로 스킬이 사용됨
+                CallRPCEvent("UseSkill", "Response", 1);
             }
         }
         else if (skillState == SkillStateCultist.Skill2Channeling)
@@ -334,6 +382,8 @@ public class Cultist : Character
                 skillState = SkillStateCultist.None;
                 CallRPCEvent("ResetAnimation", "Response");
                 CallRPCEvent("UpdateData", "Response", skillState, "OnlySkillState", 0, 0f, false);
+                CallRPCEvent("SetCoolDownTime", "Response", 1);
+                CallRPCEvent("EndSkill", "Response", 1);
                 //쿨타임 적용
             }
         }
@@ -342,6 +392,7 @@ public class Cultist : Character
             if (skillCastingTime[2] <= 0f)
             {
                 skillState = SkillStateCultist.Skill3Channeling;
+                buffDebuffChecker.SetNewBuffDebuff("BlessingCast", skill3ChannelingTime);
                 CallRPCEvent("UpdateData", "Response", skillState, "skillChannelingTime", 2, skill3ChannelingTime, false);
             }
         }
@@ -474,6 +525,9 @@ public class Cultist : Character
             SetCoolDownTime(data);
         else if ((string)data[0] == "UseSkill")
             UseSkill(data);
+        else if ((string)data[0] == "EndSkill")
+            EndSkill();
+
     }
 
     //RPC 요청
@@ -637,6 +691,7 @@ public class Cultist : Character
                 skillState = SkillStateCultist.Skill4Casting;
                 CallRPCEvent("SetAnimation", "Response", "isSkill4", true);
                 CallRPCEvent("UpdateData", "Response", skillState, "skillCastingTime", 3, skill4CastingTime, true);
+                buffDebuffChecker.SpreadBuffDebuff("UniteAndOmen", transform.position + new Vector3(0, 1, 0));
             }
         }
         else
@@ -730,6 +785,23 @@ public class Cultist : Character
 
     }
 
+    void EndSkill()
+    {
+        if(photonView.IsMine)
+        {
+            if(localState == LocalStateCultist.Skill2)
+            {
+                localState = LocalStateCultist.None;
+                overlayCamera.SetActive(true);
+                GetComponent<PlayerInput>().enabled = true;
+                camera.transform.parent = transform;
+                camera.GetComponent<MouseControl>().characterBody = gameObject;
+                camera.transform.localPosition = defaultCameraLocalVec;
+                PhotonNetwork.Destroy(phlegmHorror);
+            }
+        }
+    }
+        
     void UseSkill(object[] data)
     {
         if (photonView.IsMine)
@@ -737,6 +809,8 @@ public class Cultist : Character
             int _index = (int)data[1];
             if (_index == 0)//스킬 1 사용
                 UseSkill1();
+            else if(_index == 1)
+                UseSkill2();
         }
     }
 
@@ -744,6 +818,22 @@ public class Cultist : Character
     {
         Ray _tempRay = camera.GetComponent<Camera>().ScreenPointToRay(aim.transform.position);
         CallRPCEvent("ProgressSkillLogic", "Request", 0, _tempRay.origin, _tempRay.direction);
+    }
+
+    void UseSkill2()
+    {
+        object[] _data = new object[4];
+        _data[0] = name;
+        _data[1] = tag;
+        _data[2] = "PhlegmHorror";
+        _data[3] = photonView.ViewID;
+        phlegmHorror = PhotonNetwork.Instantiate("ChanYoung/Prefabs/Cultist/PhlegmHorror", camera.transform.position, transform.rotation
+            , data: _data);
+        localState = LocalStateCultist.Skill2;
+        overlayCamera.SetActive(false);
+        GetComponent<PlayerInput>().enabled = false;
+        camera.transform.parent = phlegmHorror.transform;
+        camera.GetComponent<MouseControl>().characterBody = phlegmHorror;
     }
 
     void SetAnimation(object[] data)
@@ -966,5 +1056,33 @@ public class Cultist : Character
     {
         overlayLeftHandWeight = Mathf.Lerp(overlayLeftHandWeight, weight, Time.deltaTime * 8f);
         overlayRightHandWeight = Mathf.Lerp(overlayRightHandWeight, weight, Time.deltaTime * 8f);
+    }
+
+    [PunRPC]
+    public void TeleportToPoint(Vector3 origin, Vector3 direction)
+    {
+        if (photonView.IsMine)
+        {
+            MouseControl _mouseControl = camera.GetComponent<MouseControl>();
+            EndSkill();
+            transform.position = origin + direction * 2f;
+            Vector3 _tempDirection = (origin - camera.transform.position + new Vector3(0, 1, 0)).normalized;
+            Quaternion _tempQ = Quaternion.LookRotation(_tempDirection);
+
+            Vector3 _tempEulerCamera = _tempQ.eulerAngles;
+            _mouseControl.ApplyPos(_tempEulerCamera.y ,_tempEulerCamera.x);
+        }
+    }
+
+    [PunRPC]
+    public void CancelSkill2(Vector3 point)
+    {
+        skillState = SkillStateCultist.None;
+        CallRPCEvent("ResetAnimation", "Response");
+        CallRPCEvent("UpdateData", "Response", skillState, "OnlySkillState", 0, 0f, false);
+        CallRPCEvent("SetCoolDownTime", "Response", 1);
+        CallRPCEvent("EndSkill", "Response", 1);
+
+        buffDebuffChecker.SpreadBuffDebuff("Horror", point);
     }
 }
