@@ -3278,6 +3278,7 @@ MonoBehaviour:
   characterSoundManager: {fileID: 0}
   playerName: DracosonTester
   isOccupying: 0
+  isAlive: 1
   chargeCount: 0
   ultimateCount: 0
   hp: 0

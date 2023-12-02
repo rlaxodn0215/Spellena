@@ -139,6 +139,7 @@ public class Dracoson : Character, IPunObservable
         if (PhotonNetwork.IsMasterClient)
         {
             CheckCoolDownTime();
+            CheckChargePhase();
             UpdateData();
             Debug.Log(skillState);
         }
@@ -146,7 +147,7 @@ public class Dracoson : Character, IPunObservable
         if (photonView.IsMine)
         {
             CheckAnimator();
-            CheckChargePhase();
+            
             if (chargeCount != previouseChargeCount)
             {
                 SetChargeEffect();
@@ -219,77 +220,85 @@ public class Dracoson : Character, IPunObservable
         }
     }
 
+    protected override void FixedUpdate()
+    {
+        base.FixedUpdate();
+
+    }
+
     void CheckChargePhase()
     {
         if (isClicked)
         {
-            CallSetAnimation("HoldingCancel", false);
-            holdingTime = Time.time - holdingStartTime;
+            /*if (photonView.IsMine)
+            {*/
+                CallSetAnimation("HoldingCancel", false);
+                holdingTime = Time.time - holdingStartTime;
 
-            float _chargePhase1 = 1.3f;
-            float _chargePhase2 = 2.0f;
-            float _chargePhase3 = 3.0f;
-            float _chargePhaseOver = 4.0f;
+                float _chargePhase1 = 1.3f;
+                float _chargePhase2 = 2.0f;
+                float _chargePhase3 = 3.0f;
+                float _chargePhaseOver = 4.0f;
 
-            if (holdingTime >= _chargePhase1 && holdingTime < _chargePhase2)
-            {
-                object[] _tempData = new object[6];
-                _tempData[0] = "SetChargeCount";
-                _tempData[1] = 1;
-                _tempData[2] = true;
-                _tempData[3] = false;
-                _tempData[4] = false;
-                _tempData[5] = false;
-                RequestRPCCall(_tempData);
-                Debug.Log("1단계 차지");
-                
-            }
-            else if (holdingTime >= _chargePhase2 && holdingTime < _chargePhase3)
-            {
-                object[] _tempData = new object[6];
-                _tempData[0] = "SetChargeCount";
-                _tempData[1] = 2;
-                _tempData[2] = false;
-                _tempData[3] = true;
-                _tempData[4] = false;
-                _tempData[5] = false;
-                RequestRPCCall(_tempData);
-                Debug.Log("2단계 차지");
+                if (holdingTime >= _chargePhase1 && holdingTime < _chargePhase2)
+                {
+                    object[] _tempData = new object[6];
+                    _tempData[0] = "SetChargeCount";
+                    _tempData[1] = 1;
+                    _tempData[2] = true;
+                    _tempData[3] = false;
+                    _tempData[4] = false;
+                    _tempData[5] = false;
+                    RequestRPCCall(_tempData);
+                    Debug.Log("1단계 차지");
 
-            }
-            else if (holdingTime >= _chargePhase3 /*&& holdingTime < _chargePhaseOver*/)
-            {
-                object[] _tempData = new object[6];
-                _tempData[0] = "SetChargeCount";
-                _tempData[1] = 3;
-                _tempData[2] = false;
-                _tempData[3] = false;
-                _tempData[4] = true;
-                _tempData[5] = false;
-                RequestRPCCall(_tempData);
-                Debug.Log("3단계 차지");
+                }
+                else if (holdingTime >= _chargePhase2 && holdingTime < _chargePhase3)
+                {
+                    object[] _tempData = new object[6];
+                    _tempData[0] = "SetChargeCount";
+                    _tempData[1] = 2;
+                    _tempData[2] = false;
+                    _tempData[3] = true;
+                    _tempData[4] = false;
+                    _tempData[5] = false;
+                    RequestRPCCall(_tempData);
+                    Debug.Log("2단계 차지");
 
-            }
-            /*else if (holdingTime >= _chargePhaseOver)
-            {
-                Debug.Log("오버 차지");
-                SetChargePhase(false, false, false, true);
-                chargeCount = 4;
-            }*/
-            else
-            {
-                object[] _tempData = new object[6];
-                _tempData[0] = "SetChargeCount";
-                _tempData[1] = 0;
-                _tempData[2] = false;
-                _tempData[3] = false;
-                _tempData[4] = false;
-                _tempData[5] = false;
-                RequestRPCCall(_tempData);
-                Debug.Log("차지 실패");
-                previouseChargeCount = 0;
-            }
-            
+                }
+                else if (holdingTime >= _chargePhase3 /*&& holdingTime < _chargePhaseOver*/)
+                {
+                    object[] _tempData = new object[6];
+                    _tempData[0] = "SetChargeCount";
+                    _tempData[1] = 3;
+                    _tempData[2] = false;
+                    _tempData[3] = false;
+                    _tempData[4] = true;
+                    _tempData[5] = false;
+                    RequestRPCCall(_tempData);
+                    Debug.Log("3단계 차지");
+
+                }
+                /*else if (holdingTime >= _chargePhaseOver)
+                {
+                    Debug.Log("오버 차지");
+                    SetChargePhase(false, false, false, true);
+                    chargeCount = 4;
+                }*/
+                else
+                {
+                    object[] _tempData = new object[6];
+                    _tempData[0] = "SetChargeCount";
+                    _tempData[1] = 0;
+                    _tempData[2] = false;
+                    _tempData[3] = false;
+                    _tempData[4] = false;
+                    _tempData[5] = false;
+                    RequestRPCCall(_tempData);
+                    Debug.Log("차지 실패");
+                    previouseChargeCount = 0;
+                }
+            /*}*/
         }
     }
 
@@ -419,8 +428,7 @@ public class Dracoson : Character, IPunObservable
 
     void InstantiateObject(int chargePhase)
     {
-        if(photonView.IsMine)
-        {
+       
             Ray _tempRay = camera.GetComponent<Camera>().ScreenPointToRay(aim.transform.position);
             Quaternion _tempQ = Quaternion.LookRotation(_tempRay.direction);
 
@@ -435,7 +443,6 @@ public class Dracoson : Character, IPunObservable
                 PhotonNetwork.Instantiate("SiHyun/Prefabs/Dracoson/Dragonic Flame Projectile " + projectile,
                 _tempRay.origin + _tempRay.direction * 0.5f, _tempQ, data: null);
             }
-        }
     }
 
     void InstantiateChargeEffect(int chargePhase)
