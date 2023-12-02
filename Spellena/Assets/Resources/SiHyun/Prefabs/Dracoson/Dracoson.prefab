@@ -3225,28 +3225,28 @@ MonoBehaviour:
     SynchronizeType: 0
     Name: Spell4Speed
   - Type: 4
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: isHolding
   - Type: 4
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: Breathe
   - Type: 4
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: Flying
   - Type: 4
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: HoldingCancel
   - Type: 9
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: Skill1
   - Type: 4
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: Skill1Ready
   - Type: 4
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: Skill2
   - Type: 4
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: Skill2Ready
   m_SynchronizeLayers:
   - SynchronizeType: 2
@@ -3965,7 +3965,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1325913431453206842}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0, y: 0.066, z: 1.472}
+  m_LocalPosition: {x: -0, y: 0.066, z: 1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -13401,7 +13401,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5661884149258025670}
   m_LocalRotation: {x: -0.00000014901151, y: 0.0000000894069, z: -0.00000014714887, w: 1}
-  m_LocalPosition: {x: 0.00000027753416, y: 0.06600015, z: 1.4720016}
+  m_LocalPosition: {x: 0.00000027753416, y: 0.06600015, z: 1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

@@ -168,6 +168,9 @@ MonoBehaviour:
   - StopAllAudio
   - StopAudio
   - VolumControl
+  - SetChargeCount
+  - SetChargePhase
+  - DracosonChargeEffect
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

@@ -26,7 +26,8 @@ public class Dracoson : Character, IPunObservable
     [Range(0, 1)]
     public float weight = 0.5f;
 
-    private GameObject currentObject;
+    private GameObject currentObjectForMe;
+    private GameObject currentObjectForOther;
     private int previouseChargeCount = 0;
 
     Vector3 defaultCameraLocalVec;
@@ -145,41 +146,49 @@ public class Dracoson : Character, IPunObservable
         if (photonView.IsMine)
         {
             CheckAnimator();
-        }
-        DracosonChargeEffect();
-
-    }
-
-    void DracosonChargeEffect()
-    {
-        if (photonView.IsMine)
-        {
             CheckChargePhase();
-
             if (chargeCount != previouseChargeCount)
             {
-                previouseChargeCount = chargeCount;
-                switch (chargeCount)
-                {
-                    case 1:
-                        InstantiateChargeEffect(chargeCount);
-                        break;
-                    case 2:
-                        Destroy(currentObject);
-                        InstantiateChargeEffect(chargeCount);
-                        break;
-                    case 3:
-                        Destroy(currentObject);
-                        InstantiateChargeEffect(chargeCount);
-                        break;
-                    case 0:
-                        Destroy(currentObject);
-                        PhotonNetwork.Destroy(currentObject);
-                        break;
-                    default:
-                        break;
-                }
+                SetChargeEffect();
             }
+        }
+        Debug.Log("ChargeCount : " + chargeCount);
+    }
+
+    void SetChargeEffect()
+    {
+        photonView.RPC("DracosonChargeEffect", RpcTarget.AllBuffered);
+    }
+
+    [PunRPC]
+    public void DracosonChargeEffect()
+    {
+        previouseChargeCount = chargeCount;
+
+        switch (chargeCount)
+        {
+            case 1:
+                InstantiateChargeEffect(chargeCount);
+                break;
+            case 2:
+                Destroy(currentObjectForMe);
+                Destroy(currentObjectForOther);
+                InstantiateChargeEffect(chargeCount);
+                break;
+            case 3:
+                Destroy(currentObjectForMe);
+                Destroy(currentObjectForOther);
+                InstantiateChargeEffect(chargeCount);
+                break;
+            case 0:
+                Destroy(currentObjectForMe);
+                Destroy(currentObjectForOther);
+                PhotonNetwork.Destroy(currentObjectForMe);
+                PhotonNetwork.Destroy(currentObjectForOther);
+                break;
+            default:
+                break;
+
         }
     }
 
@@ -196,7 +205,6 @@ public class Dracoson : Character, IPunObservable
             if (globalCastingTime <= 0f)
             {
                 CallSetAnimation("Skill1", false);
-                overlayAnimator.SetBool("Skill1", false);
                 skillState = SkillStateDracoson.None;
             }
         }
@@ -205,19 +213,10 @@ public class Dracoson : Character, IPunObservable
             if(globalCastingTime <= 0f)
             {
                 CallSetAnimation("Skill2", false);
-                overlayAnimator.SetBool("Skill2", false);
                 skillState = SkillStateDracoson.None;
                 animator.SetLayerWeight(1, animator.GetLayerWeight(1) + Time.deltaTime * 8);
             }
         }
-    }
-
-    void SetChargePhase(bool phase1, bool phase2, bool phase3, bool phaseOver)
-    {
-        overlayAnimator.SetBool("ChargePhase1", phase1);
-        overlayAnimator.SetBool("ChargePhase2", phase2);
-        overlayAnimator.SetBool("ChargePhase3", phase3);
-        overlayAnimator.SetBool("ChargePhaseOver", phaseOver);
     }
 
     void CheckChargePhase()
@@ -225,7 +224,6 @@ public class Dracoson : Character, IPunObservable
         if (isClicked)
         {
             CallSetAnimation("HoldingCancel", false);
-            overlayAnimator.SetBool("HoldingCancel", false);
             holdingTime = Time.time - holdingStartTime;
 
             float _chargePhase1 = 1.3f;
@@ -235,21 +233,42 @@ public class Dracoson : Character, IPunObservable
 
             if (holdingTime >= _chargePhase1 && holdingTime < _chargePhase2)
             {
+                object[] _tempData = new object[6];
+                _tempData[0] = "SetChargeCount";
+                _tempData[1] = 1;
+                _tempData[2] = true;
+                _tempData[3] = false;
+                _tempData[4] = false;
+                _tempData[5] = false;
+                RequestRPCCall(_tempData);
                 Debug.Log("1단계 차지");
-                SetChargePhase(true, false, false, false);
-                chargeCount = 1;
+                
             }
             else if (holdingTime >= _chargePhase2 && holdingTime < _chargePhase3)
             {
+                object[] _tempData = new object[6];
+                _tempData[0] = "SetChargeCount";
+                _tempData[1] = 2;
+                _tempData[2] = false;
+                _tempData[3] = true;
+                _tempData[4] = false;
+                _tempData[5] = false;
+                RequestRPCCall(_tempData);
                 Debug.Log("2단계 차지");
-                SetChargePhase(false, true, false, false);
-                chargeCount = 2;
+
             }
             else if (holdingTime >= _chargePhase3 /*&& holdingTime < _chargePhaseOver*/)
             {
+                object[] _tempData = new object[6];
+                _tempData[0] = "SetChargeCount";
+                _tempData[1] = 3;
+                _tempData[2] = false;
+                _tempData[3] = false;
+                _tempData[4] = true;
+                _tempData[5] = false;
+                RequestRPCCall(_tempData);
                 Debug.Log("3단계 차지");
-                SetChargePhase(false, false, true, false);
-                chargeCount = 3;
+
             }
             /*else if (holdingTime >= _chargePhaseOver)
             {
@@ -259,10 +278,18 @@ public class Dracoson : Character, IPunObservable
             }*/
             else
             {
-                chargeCount = 0;
-                SetChargePhase(false, false, false, false);
+                object[] _tempData = new object[6];
+                _tempData[0] = "SetChargeCount";
+                _tempData[1] = 0;
+                _tempData[2] = false;
+                _tempData[3] = false;
+                _tempData[4] = false;
+                _tempData[5] = false;
+                RequestRPCCall(_tempData);
                 Debug.Log("차지 실패");
+                previouseChargeCount = 0;
             }
+            
         }
     }
 
@@ -346,6 +373,7 @@ public class Dracoson : Character, IPunObservable
     void RequestRPCCall(object[] data)
     {
         photonView.RPC("CallRPCCultistMasterClient", RpcTarget.MasterClient, data);
+        Debug.Log("RPC 쏘는중");
     }
 
     [PunRPC]
@@ -359,6 +387,8 @@ public class Dracoson : Character, IPunObservable
             ClickMouse();
         else if ((string)data[0] == "CancelHolding")
             CancelHolding();
+        else if ((string)data[0] == "SetChargeCount")
+            SetChargeCount(data);
     }
 
     void SetSkill(object[] data)
@@ -369,13 +399,11 @@ public class Dracoson : Character, IPunObservable
             {
                 skillState = SkillStateDracoson.Skill1Ready;
                 CallSetAnimation("Skill1Ready", true);
-                overlayAnimator.SetBool("Skill1Ready", true);
             }
             else if ((int)data[1] == 2)
             {
                 skillState = SkillStateDracoson.Skill2Ready;
                 CallSetAnimation("Skill2Ready", true);
-                overlayAnimator.SetBool("Skill2Ready", true);
             }
             else if ((int)data[1] == 3)
                 skillState = SkillStateDracoson.Skill3;
@@ -414,17 +442,28 @@ public class Dracoson : Character, IPunObservable
     {
         if (photonView.IsMine)
         {
-            if (currentObject != null)
+            if (currentObjectForMe != null)
             {
-                PhotonNetwork.Destroy(currentObject);
+                PhotonNetwork.Destroy(currentObjectForMe);
+            }
+            if (currentObjectForOther != null)
+            {
+                PhotonNetwork.Destroy(currentObjectForOther);
             }
 
-            Quaternion _staffRotation = Quaternion.LookRotation(staffTopForMe.forward);
-            currentObject = PhotonNetwork.Instantiate("SiHyun/Prefabs/Dracoson/Dracoson Charge Effect " + chargePhase,
-                staffTopForMe.position, _staffRotation);
+            Quaternion _staffRotationForMe = Quaternion.LookRotation(staffTopForMe.forward);
+            currentObjectForMe = PhotonNetwork.Instantiate("SiHyun/Prefabs/Dracoson/Dracoson Charge Effect " + chargePhase,
+                staffTopForMe.position, _staffRotationForMe);
 
-            currentObject.transform.parent = staffTopForMe.transform;
-            currentObject.layer = 8;
+            currentObjectForMe.transform.parent = staffTopForMe.transform;
+            currentObjectForMe.layer = 8;
+
+            Quaternion _staffRotationForOther = Quaternion.LookRotation(staffTopForOther.forward);
+            currentObjectForOther = PhotonNetwork.Instantiate("SiHyun/Prefabs/Dracoson/Dracoson Charge Effect " + chargePhase,
+                staffTopForOther.position, _staffRotationForOther);
+
+            currentObjectForOther.transform.parent = staffTopForOther.transform;
+            currentObjectForOther.layer = 6;
         }
     }
 
@@ -436,17 +475,14 @@ public class Dracoson : Character, IPunObservable
             if (chargeCount == 0)
             {
                 CallSetAnimation("HoldingCancel", true);
-                overlayAnimator.SetBool("HoldingCancel", true);
             }
             globalCastingTime = 0f;
             CallSetAnimation("isHolding", false);
-            overlayAnimator.SetBool("isHolding", false);
             InstantiateObject(chargeCount);
             skillState = SkillStateDracoson.None;
             holdingStartTime = 0f;
             holdingTime = 0f;
             chargeCount = 0;
-            SetChargePhase(false, false, false, false);
             Debug.Log("홀딩 취소");
         }
     }
@@ -458,7 +494,7 @@ public class Dracoson : Character, IPunObservable
             // 용의 시선
             holdingStartTime = Time.time;
             CallSetAnimation("isHolding", true);
-            overlayAnimator.SetBool("isHolding", true);
+            CallSetAnimation("HoldingCancel", false);
             skillState = SkillStateDracoson.Holding;
 
         }
@@ -469,9 +505,7 @@ public class Dracoson : Character, IPunObservable
             globalCastingTime = 1f;
             skillState = SkillStateDracoson.Skill1;
             CallSetAnimation("Skill1Ready", false);
-            overlayAnimator.SetBool("Skill1Ready", false);
             CallSetAnimation("Skill1", true);
-            overlayAnimator.SetBool("Skill1", true);
         }
         else if (skillState == SkillStateDracoson.Skill2Ready)
         {
@@ -480,9 +514,7 @@ public class Dracoson : Character, IPunObservable
             globalCastingTime = 1f;
             skillState = SkillStateDracoson.Skill2;
             CallSetAnimation("Skill2Ready", false);
-            overlayAnimator.SetBool("Skill2Ready", false);
             CallSetAnimation("Skill2", true);
-            overlayAnimator.SetBool("Skill2", true);
             animator.SetLayerWeight(1, 0);
             animator.SetLayerWeight(1, animator.GetLayerWeight(1) - Time.deltaTime * 8);
         }
@@ -498,6 +530,12 @@ public class Dracoson : Character, IPunObservable
         }
     }
 
+    void SetChargeCount(object[] data)
+    {
+        photonView.RPC("SetChargeCount", RpcTarget.AllBuffered, (int)data[1]);
+        photonView.RPC("SetChargePhase", RpcTarget.AllBuffered, data);
+    }
+
     void CallSetAnimation(string parameter, bool isParameter)
     {
         object[] _tempData = new object[3];
@@ -511,7 +549,24 @@ public class Dracoson : Character, IPunObservable
     void ResponseRPCCall(object[] data)
     {
         photonView.RPC("CallRPCCulTistToAll", RpcTarget.AllBuffered, data);
+        Debug.Log("RPC를 모두에게 쏘는중");
     }
+
+    [PunRPC]
+    public void SetChargeCount(int chargePhase)
+    {
+        chargeCount = chargePhase;
+    }
+
+    [PunRPC]
+    public void SetChargePhase(object[] data)
+    {
+        overlayAnimator.SetBool("ChargePhase1", (bool)data[2]);
+        overlayAnimator.SetBool("ChargePhase2", (bool)data[3]);
+        overlayAnimator.SetBool("ChargePhase3", (bool)data[4]);
+        overlayAnimator.SetBool("ChargePhaseOver", (bool)data[5]);
+    }
+
 
     [PunRPC]
     public void CallRPCCulTistToAll(object[] data)
@@ -527,6 +582,7 @@ public class Dracoson : Character, IPunObservable
         if (photonView.IsMine)
         {
             animator.SetBool((string)data[1], (bool)data[2]);
+            overlayAnimator.SetBool((string)data[1], (bool)data[2]);
         }
     }
 

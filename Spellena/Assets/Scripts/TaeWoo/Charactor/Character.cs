@@ -23,7 +23,8 @@ namespace Player
     public enum PlayerCharactor
     {
         Aeterna,
-        ElementalOrder
+        ElementalOrder,
+        Dracoson
     }
 
     public class Character : MonoBehaviourPunCallbacks, IPunObservable
