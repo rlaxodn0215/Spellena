@@ -171,6 +171,9 @@ MonoBehaviour:
   - SetChargeCount
   - SetChargePhase
   - DracosonChargeEffect
+  - BetweenBGMPlay
+  - DisActiveMe
+  - ShowGameResult
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

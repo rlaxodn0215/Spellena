@@ -18,6 +18,7 @@ namespace Player
     public class ElementalOrder : Character, IPunObservable
     {
         public ElementalOrderData elementalOrderData;
+        public GameObject avatarForOther;
 
         public GameObject overlayCamera;
         public GameObject minimapCamera;
@@ -130,6 +131,7 @@ namespace Player
                 overlayCameraDefaultPos = overlayCamera.transform.localPosition;
             }
             dataHp = elementalOrderData.hp;
+            animator = avatarForOther.GetComponent<Animator>();
         }
         protected override void Update()
         {
