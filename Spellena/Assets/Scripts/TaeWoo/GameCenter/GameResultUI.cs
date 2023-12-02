@@ -91,18 +91,18 @@ public class GameResultUI : MonoBehaviourPunCallbacks
             if((string)player.CustomProperties["Team"] == team)
             {
                 friendyPlayerNames[friendlyIndex].text = (string)player.CustomProperties["Name"];
-                friendyKDAs[friendlyIndex].text = string.Format((string)player.CustomProperties["KillCount"] + " / " 
-                    + (string)player.CustomProperties["DeadCount"] + " / " + (string)player.CustomProperties["AsisstCount"]);
-                friendyTotalDamages[friendlyIndex].text = (string)player.CustomProperties["TotalDamage"];
+                friendyKDAs[friendlyIndex].text = string.Format((int)player.CustomProperties["KillCount"] + " / " 
+                    + (int)player.CustomProperties["DeadCount"] + " / " + (int)player.CustomProperties["AsisstCount"]);
+                friendyTotalDamages[friendlyIndex].text = ((int)player.CustomProperties["TotalDamage"]).ToString();
                 friendlyIndex++;
             }
 
             else
             {
                 enemyPlayerNames[enemyIndex].text = (string)player.CustomProperties["Name"];
-                enemyKDAs[enemyIndex].text = string.Format((string)player.CustomProperties["KillCount"] + " / "
-                    + (string)player.CustomProperties["DeadCount"] + " / " + (string)player.CustomProperties["AsisstCount"]);
-                enemyTotalDamages[enemyIndex].text = (string)player.CustomProperties["TotalDamage"];
+                enemyKDAs[enemyIndex].text = string.Format((int)player.CustomProperties["KillCount"] + " / "
+                    + (int)player.CustomProperties["DeadCount"] + " / " + (int)player.CustomProperties["AsisstCount"]);
+                enemyTotalDamages[enemyIndex].text = ((int)player.CustomProperties["TotalDamage"]).ToString();
                 enemyIndex++;
             }
         }
@@ -160,7 +160,10 @@ public class GameResultUI : MonoBehaviourPunCallbacks
             GameCenterTest.roundA = 0;
             GameCenterTest.roundB = 0;
 
-            LoadSceneManager.GoBackToMenu("SiHyun RoomLobby Test");
+            //LoadSceneManager.GoBackToMenu("SiHyun RoomLobby Test");
+            PhotonNetwork.LeaveRoom();
+
+            LoadSceneManager.GoBackToMenu("SiHyun MainLobby Test");
         }
     }
 }

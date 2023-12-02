@@ -71,7 +71,7 @@ namespace Player
             None, BurstFlare, GaiaTied, EterialStorm, RagnaEdge, TerraBreak, MeteorStrike
         }
 
-        SkillState skillState = SkillState.None;
+        public SkillState skillState = SkillState.None;
 
         RagnaEdge ragnaEdge = new RagnaEdge();
         BurstFlare burstFlare = new BurstFlare();
@@ -82,12 +82,18 @@ namespace Player
 
         float spell1DefaultAnimationLength;
 
-        float ragnaEdgeCoolDownTime = 0f;
-        float burstFlareCoolDownTime = 0f;
-        float gaiaTiedCoolDownTime = 0f;
-        float meteorStrikeCoolDownTime = 0f;
-        float terraBreakCoolDownTime = 0f;
-        float eterialStormCoolDownTime = 0f;
+        [HideInInspector]
+        public float ragnaEdgeCoolDownTime = 0f;
+        [HideInInspector]
+        public float burstFlareCoolDownTime = 0f;
+        [HideInInspector]
+        public float gaiaTiedCoolDownTime = 0f;
+        [HideInInspector]
+        public float meteorStrikeCoolDownTime = 0f;
+        [HideInInspector]
+        public float terraBreakCoolDownTime = 0f;
+        [HideInInspector]
+        public float eterialStormCoolDownTime = 0f;
 
         //로컬 클라이언트에서 접근
         bool isRagnaEdge = false;

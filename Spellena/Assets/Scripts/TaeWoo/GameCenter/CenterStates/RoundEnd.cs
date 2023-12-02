@@ -15,6 +15,7 @@ public class RoundEnd : CenterState
             isCheckTimer = !isCheckTimer;
             tempTimer = GameCenterTest.globalTimer;
             gameCenter.globalDesiredTimer = tempTimer + gameCenter.roundEndResultTime;
+            Debug.Log("isCheckTimer");
         }
 
         GameCenterTest.globalTimer += Time.deltaTime;
@@ -33,8 +34,13 @@ public class RoundEnd : CenterState
                 gameCenter.currentGameState = GameCenterTest.GameState.GameReady;
                 gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "roundWin", false);
                 gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "roundLoose", false);
-                isCheckTimer = !isCheckTimer;
-                ResetRound();
+
+                if (isCheckTimer)
+                {
+                    isCheckTimer = !isCheckTimer;
+                    ResetRound();
+                    Debug.Log("ResetRound");
+                }
             }
         }
     }
@@ -68,6 +74,8 @@ public class RoundEnd : CenterState
             GameCenterTest.ChangePlayerCustomProperties(player, "IsAlive", true);
             GameCenterTest.ChangePlayerCustomProperties(player, "ReSpawnTime", 100000000.0f);
             GameCenterTest.ChangePlayerCustomProperties(player, "UltimateCount", 0);
+
+            view.RPC("AddUltimatePoint", RpcTarget.AllBuffered, 0);
 
             if ((string)player.CustomProperties["Team"] == "A")
             {

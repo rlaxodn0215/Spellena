@@ -48,6 +48,7 @@ namespace Player
         //실시간 갱신 데이터
         public string playerName;
         public bool isOccupying = false;
+        public bool isAlive = true;
         public int chargeCount = 0;
         public int ultimateCount = 0;
 
@@ -135,7 +136,7 @@ namespace Player
             SetPlayerKeys(PlayerActionState.Skill3, "Skill3");
             SetPlayerKeys(PlayerActionState.Skill4, "Skill4");
             currentSight = sight.transform.position;
-            //soundManagerView = characterSoundManager.GetComponent<PhotonView>();
+            soundManagerView = characterSoundManager.GetComponent<PhotonView>();
         }
 
         void SetPlayerKeys(PlayerActionState playerActionState, string action)
@@ -277,7 +278,7 @@ namespace Player
 
         protected void MakeMoveSound()
         {
-            /*if (playerActionDatas[(int)PlayerActionState.Jump].isExecuting)
+            if (playerActionDatas[(int)PlayerActionState.Jump].isExecuting)
             {
                 soundManagerView.RPC("PlayAudio", RpcTarget.All, "JumpSound", 1.0f, false, "ActSounds");
             }
@@ -288,7 +289,7 @@ namespace Player
 
                 if (playerActionDatas[(int)PlayerActionState.Move].isExecuting)
                 {
-                    if(playerActionDatas[(int)PlayerActionState.Run].isExecuting)
+                    if (playerActionDatas[(int)PlayerActionState.Run].isExecuting)
                     {
                         soundManagerView.RPC("PlayAudio", RpcTarget.All, "RunSound", 1.0f, true, "ActSounds");
                     }
@@ -298,12 +299,12 @@ namespace Player
                         soundManagerView.RPC("PlayAudio", RpcTarget.All, "WalkSound", 1.0f, true, "ActSounds");
                     }
                 }
-                
+
                 else
                 {
-                     soundManagerView.RPC("PlayAudio", RpcTarget.All, "NoSound", 1.0f, true, "ActSounds");
+                    soundManagerView.RPC("PlayAudio", RpcTarget.All, "NoSound", 1.0f, true, "ActSounds");
                 }
-            }*/
+            }
         }
 
         protected void PlayerMove()
@@ -652,7 +653,7 @@ namespace Player
         [PunRPC]
         public void PlayerDamaged(string enemy ,int damage, string damgePart, Vector3 direction, float force)
         {
-            if (!(bool)PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["IsAlive"]) return;
+            if (isAlive == false) return;
 
             if (damage > 0)
             {
@@ -670,6 +671,7 @@ namespace Player
                     // 사망시
                     if (hp <= 0)
                     {
+                        isAlive = false;
                         int temp1 = (int)PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["DeadCount"];
                         PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["ParameterName"] = "DeadCount";
 
@@ -679,6 +681,8 @@ namespace Player
 
                         if (killer == null)
                         {
+                            if (!(bool)PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["IsAlive"]) return;
+
                             PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["KillerName"] = enemy;
 
                             GameCenterTest.ChangePlayerCustomProperties
@@ -691,6 +695,7 @@ namespace Player
 
                         GameCenterTest.ChangePlayerCustomProperties
                             (PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr], "DeadCount", temp1 + 1);
+                        Debug.Log("DeadCount");
 
                         int temp2 = (int)killer.CustomProperties["KillCount"];
                         killer.CustomProperties["ParameterName"] = "KillCount";
@@ -766,8 +771,9 @@ namespace Player
             gameObject.transform.rotation = Quaternion.identity;
             rigidbody.velocity = new Vector3(0, 0, 0);
             rigidbody.angularVelocity = new Vector3(0, 0, 0);
+            isAlive = true;
 
-            for(int i = 0; i < ragdollRigid.Length; i++)
+            for (int i = 0; i < ragdollRigid.Length; i++)
             {
                 ragdollRigid[i].transform.localPosition = ragdollPos[i];
                 ragdollRigid[i].transform.localRotation = ragdollRot[i];
@@ -829,6 +835,12 @@ namespace Player
             {
                 hp += addHp;
             }
+        }
+
+        [PunRPC]
+        public void DisActiveMe()
+        {
+            gameObject.SetActive(false);
         }
 
         protected virtual void OnAnimatorIK()

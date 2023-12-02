@@ -25,14 +25,14 @@ public class CharacterSelect : CenterState
 
         GameCenterTest.globalTimer += Time.deltaTime;
 
-        gameCenter.characterSelectView.RPC("ReceiveTimerCount", RpcTarget.All, gameCenter.globalDesiredTimer - GameCenterTest.globalTimer);
+        gameCenter.characterSelectView.RPC("ReceiveTimerCount", RpcTarget.AllBuffered, gameCenter.globalDesiredTimer - GameCenterTest.globalTimer);
         
         // 일정 시간이 지나면 소리가 점차 감소됨
         if (gameCenter.globalDesiredTimer - GameCenterTest.globalTimer <= soundDecreaseTime)
         {
             if (gameCenter.bgmManagerView != null)
             {
-                gameCenter.photonView.RPC("BetweenBGMVolumControl", RpcTarget.All, soundDecreaseSpeed * Time.deltaTime / 10, false);
+                gameCenter.photonView.RPC("BetweenBGMVolumControl", RpcTarget.AllBuffered, soundDecreaseSpeed * Time.deltaTime / 10, false);
             }
         }
 
@@ -44,7 +44,8 @@ public class CharacterSelect : CenterState
             MakeCharacter();
             MakeTeamStateUI();
 
-            gameCenter.photonView.RPC("ActiveObject", RpcTarget.All, "betweenBGMObj", false);
+            gameCenter.photonView.RPC("BetweenBGMPlay", RpcTarget.AllBuffered, false);
+            gameCenter.photonView.RPC("BetweenBGMVolumControl", RpcTarget.AllBuffered, 1.0f, true);
 
             gameCenter.currentGameState = GameCenterTest.GameState.GameReady;
         }

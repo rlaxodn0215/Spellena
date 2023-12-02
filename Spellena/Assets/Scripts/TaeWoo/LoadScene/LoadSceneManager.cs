@@ -11,6 +11,7 @@ public class LoadSceneManager : MonoBehaviourPunCallbacks
     public static List<int> redTeamActorNums = new List<int>();
     public static List<int> blueTeamActorNums = new List<int>();
     public float loadingTime = 5.0f;
+    private GameObject betweenBGMObj;
 
     public static void LoadNextScene(string sceneName, List<int> redTeam, List<int> blueTeam)
     {
@@ -32,6 +33,11 @@ public class LoadSceneManager : MonoBehaviourPunCallbacks
     {
         if (PhotonNetwork.IsMasterClient) ToDoMaster();
         StartCoroutine(LoadSceneProcess());
+
+        betweenBGMObj = GameObject.Find("LoadingCharacterBGM");
+        if (betweenBGMObj == null) return;
+        if(nextScene == "TaeWooScene_3")
+            betweenBGMObj.GetComponent<AudioSource>().Play();
     }
 
     void ToDoMaster()

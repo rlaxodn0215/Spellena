@@ -13,7 +13,7 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
     public GameObject inGameUIObj;
     public GameObject deathUIObj;
     public GameObject gameResultObj;
-    public PlayerStats playerStat;
+    public GameObject playerStatObj;
 
     [HideInInspector]
     public PhotonView characterSelectView;
@@ -37,6 +37,9 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
     public DeathCamUI deathUI;
     [HideInInspector]
     public PhotonView deathUIView;
+
+    [HideInInspector]
+    public PlayerStats playerStat;
 
     // 플레이어 소환 좌표
     [HideInInspector]
@@ -113,9 +116,9 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
     [HideInInspector]
     public OccupyingTeam occupyingTeam;
 
-    [HideInInspector]
+    //[HideInInspector]
     public List<Photon.Realtime.Player> playersA = new List<Photon.Realtime.Player>(); // Red
-    [HideInInspector]
+    //[HideInInspector]
     public List<Photon.Realtime.Player> playersB = new List<Photon.Realtime.Player>(); // Blue 
 
     // 이 이하는 테스트용 일시적 정보이다.
@@ -189,6 +192,7 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
         bgmManagerView = bgmManagerObj.GetComponent<PhotonView>();
         deathUI = deathUIObj.GetComponent<DeathCamUI>();
         deathUIView = deathUIObj.GetComponent<PhotonView>();
+        playerStat = playerStatObj.GetComponent<PlayerStats>();
 
         ConnectBetweenBGM("LoadingCharacterBGM");
 
@@ -196,7 +200,7 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
         currentCenterState = centerStates[currentGameState];
     }
 
-    void ConnectBetweenBGM(string objName)
+    public void ConnectBetweenBGM(string objName)
     {
         betweenBGMObj = GameObject.Find(objName);
         if(betweenBGMObj == null)
@@ -279,9 +283,57 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
             case "betweenBGMObj":
                 betweenBGMObj.SetActive(isActive);
                 break;
+            case "gameResultObj":
+                gameResultObj.SetActive(isActive);
+                break;
+            case "playerStatObj":
+                playerStatObj.SetActive(isActive);
+                break;
+            case "deathUIObj":
+                deathUIObj.SetActive(isActive);
+                break;
             default:
                 Debug.LogWarning("잘못된 게임 오브젝트 이름 사용");
                 break;
+        }
+    }
+
+    [PunRPC]
+    public void ShowGameResult()
+    {
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
+        foreach (var player in PhotonNetwork.CurrentRoom.Players.Values)
+        {
+            PhotonView view = PhotonView.Find((int)player.CustomProperties["CharacterViewID"]);
+            if (view == null) continue;
+
+            view.RPC("DisActiveMe", RpcTarget.AllBuffered);
+        }
+
+        playerStatObj.SetActive(false);
+        deathUIObj.SetActive(false);
+        inGameUIObj.SetActive(false);
+        betweenBGMObj.SetActive(true);
+        betweenBGMSource.Stop();
+
+        gameResultObj.SetActive(true);
+    }
+
+    [PunRPC]
+    public void BetweenBGMPlay(bool isPlay)
+    {
+        if (betweenBGMSource.clip == null) return;
+
+        if(isPlay)
+        {
+            betweenBGMSource.Play();
+        }
+
+        else
+        {
+            betweenBGMSource.Stop();
         }
     }
 

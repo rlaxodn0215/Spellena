@@ -12,15 +12,7 @@ public class GameResult : CenterState
         if(isOnce)
         {
             isOnce = false;
-
-            foreach(var player in PhotonNetwork.CurrentRoom.Players.Values)
-            {
-                PhotonView view = PhotonView.Find((int)player.CustomProperties["CharacterViewID"]);
-                if (view == null) continue;
-                PhotonNetwork.Destroy(view);
-            }
-
-            gameCenter.gameResultObj.SetActive(true);
+            gameCenter.photonView.RPC("ShowGameResult", RpcTarget.AllBuffered);
         }
     }
 }

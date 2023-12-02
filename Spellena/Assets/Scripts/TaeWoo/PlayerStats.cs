@@ -92,6 +92,7 @@ public class PlayerStats : MonoBehaviourPunCallbacks
         if (isGameReady)
         {
             pings[PhotonNetwork.LocalPlayer.ActorNumber] = PhotonNetwork.GetPing();
+
             photonView.RPC("SerializePings", RpcTarget.AllBufferedViaServer,
                 PhotonNetwork.LocalPlayer.ActorNumber, pings[PhotonNetwork.LocalPlayer.ActorNumber]);
 

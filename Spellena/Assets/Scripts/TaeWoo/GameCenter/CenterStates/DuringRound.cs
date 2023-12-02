@@ -100,7 +100,7 @@ public class DuringRound : CenterState
                  case "KillCount":
                      if (gameCenter.inGameUIView == null) break;
                     gameCenter.inGameUIView.RPC("ShowKillUI", targetPlayer, gameCenter.tempVictim);
-                    Debug.Log("KillCount ShowKillLog : " + targetPlayer.CustomProperties["Name"]);
+                    //Debug.Log("KillCount ShowKillLog : " + targetPlayer.CustomProperties["Name"]);
                     gameCenter.inGameUIView.RPC("ShowKillLog", RpcTarget.AllBuffered, targetPlayer.CustomProperties["Name"],
                          gameCenter.tempVictim, ((string)targetPlayer.CustomProperties["Team"] == "A"), targetPlayer.ActorNumber);
                     CheckPlayerHealAssist(targetPlayer);
@@ -119,6 +119,13 @@ public class DuringRound : CenterState
                      gameCenter.deathUIView.RPC("ShowKillerData", targetPlayer, (string)targetPlayer.CustomProperties["KillerName"]);
 
                     CheckPlayerDealAssist(targetPlayer,(string)targetPlayer.CustomProperties["KillerName"]);
+
+                    if((string)targetPlayer.CustomProperties["KillerName"] == "World")
+                    {
+                        gameCenter.inGameUIView.RPC("ShowKillLog", RpcTarget.AllBuffered, "World",
+                            (string)targetPlayer.CustomProperties["Name"], ((string)targetPlayer.CustomProperties["Team"] == "A"), -1);
+                    }
+
                     break;
                 case "AngelStatueCoolTime":
                     if(GameCenterTest.globalTimer >= (float)targetPlayer.CustomProperties["AngelStatueCoolTime"])
@@ -483,7 +490,9 @@ public class DuringRound : CenterState
 
         if (gameCenter.roundEndTimer <= 0.0f)
         {
+            //gameCenter.roundEndTimer= gameCenter.roundEndTime;
             //¶ó¿îµå Á¾·á
+            //Debug.Log("RoundEnd / gameCenter.roundEndTimer = " + gameCenter.roundEndTime);
             if (gameCenter.currentOccupationTeam == gameCenter.teamA)
             {
                 gameCenter.occupyingA.rate = 100;
@@ -497,13 +506,13 @@ public class DuringRound : CenterState
                     foreach (var player in gameCenter.playersA)
                     {
                         gameCenter.inGameUIView.RPC("ShowRoundWin", player, GameCenterTest.roundA + GameCenterTest.roundB);
-                        gameCenter.bgmManagerView.RPC("PlayAudio", player, "RoundWin", 1.0f, false,true);
+                        gameCenter.bgmManagerView.RPC("PlayAudio", player, "RoundWin", 1.0f, false, true);
                     }
 
                     foreach (var player in gameCenter.playersB)
                     {
                         gameCenter.inGameUIView.RPC("ShowRoundLoose", player, GameCenterTest.roundA + GameCenterTest.roundB);
-                        gameCenter.bgmManagerView.RPC("PlayAudio", player, "RoundLoose", 1.0f, false,true);
+                        gameCenter.bgmManagerView.RPC("PlayAudio", player, "RoundLoose", 1.0f, false, true);
                     }
 
                     Debug.Log("A ÆÀ 1½Â");
@@ -516,13 +525,13 @@ public class DuringRound : CenterState
                     foreach (var player in gameCenter.playersA)
                     {
                         gameCenter.inGameUIView.RPC("ActiveInGameUIObj", player, "victory", true);
-                        gameCenter.bgmManagerView.RPC("PlayAudio", player, "RoundWin", 1.0f, false,true);
+                        gameCenter.bgmManagerView.RPC("PlayAudio", player, "RoundWin", 1.0f, false, true);
                     }
 
                     foreach (var player in gameCenter.playersB)
                     {
                         gameCenter.inGameUIView.RPC("ActiveInGameUIObj", player, "defeat", true);
-                        gameCenter.bgmManagerView.RPC("PlayAudio", player, "RoundLoose", 1.0f, false,true);
+                        gameCenter.bgmManagerView.RPC("PlayAudio", player, "RoundLoose", 1.0f, false, true);
                     }
 
                     Debug.Log("A ÆÀ 2½Â");
@@ -562,13 +571,13 @@ public class DuringRound : CenterState
                     foreach (var player in gameCenter.playersB)
                     {
                         gameCenter.inGameUIView.RPC("ActiveInGameUIObj", player, "victory", true);
-                        gameCenter.bgmManagerView.RPC("PlayAudio", player, "RoundWin", 1.0f, false,true);
+                        gameCenter.bgmManagerView.RPC("PlayAudio", player, "RoundWin", 1.0f, false, true);
                     }
 
                     foreach (var player in gameCenter.playersA)
                     {
                         gameCenter.inGameUIView.RPC("ActiveInGameUIObj", player, "defeat", true);
-                        gameCenter.bgmManagerView.RPC("PlayAudio", player, "RoundLoose", 1.0f, false,true);
+                        gameCenter.bgmManagerView.RPC("PlayAudio", player, "RoundLoose", 1.0f, false, true);
                     }
 
                     Debug.Log("B ÆÀ 2½Â");

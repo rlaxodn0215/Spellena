@@ -62,7 +62,7 @@ public class SoundManager : MonoBehaviourPunCallbacks
             audios[name].volume = vol;
             audios[name].loop = isLoop;
             audios[name].Play();
-            Debug.Log(name);
+            //Debug.Log(name);
         }
 
         else
