@@ -19,9 +19,14 @@ public class CultistLungeAttack : MonoBehaviourPunCallbacks
         playerName = GetComponent<Player.Character>().playerName;
     }
 
+    public void ResetHitObjects()
+    {
+        hitObjects.Clear();
+    }
+
     void TriggerEvent(GameObject hitObject)
     {
-        if (isColliderOn)
+        if (isColliderOn && PhotonNetwork.IsMasterClient)
         {
             if (hitObject.transform.root.gameObject.name != hitObject.name)
             {

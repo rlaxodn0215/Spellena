@@ -23,14 +23,24 @@ public class Cultist : Character
 
     public GameObject dagger;
     public GameObject overlayDagger;
+    public GameObject healEffect;
+    public GameObject overlayHealEffect;
 
     public GameObject lungeEffect;
     public GameObject overlayInvocationEffect;
     public GameObject overlayInvocationEffectOrb;
     public GameObject invocationEffect;
     public GameObject invocationEffectOrb;
+    public GameObject phlegmHorrorEffect;
+    public GameObject blessingCastingEffect;
+    public GameObject overlayBlessingCastingEffect;
+    public GameObject blessingChannelingEffect;
+    public GameObject ritualEffect;
 
     public Animator overlayAnimator;
+
+    public GameObject rightSight;
+    public GameObject leftSight;
 
     GameObject phlegmHorror;
 
@@ -61,6 +71,8 @@ public class Cultist : Character
 
     float overlayLeftHandWeight = 0.4f;
     float overlayRightHandWeight = 0.4f;
+    float leftHandWeight = 0f;
+    float rightHandWeight = 0f;
 
     public enum SkillStateCultist
     {
@@ -167,6 +179,22 @@ public class Cultist : Character
         minimapCamera.SetActive(true);
         dagger.SetActive(false);
 
+        blessingCastingEffect.layer = 6;
+        overlayBlessingCastingEffect.layer = 8;
+
+        overlayHealEffect.layer = 8;
+        for(int i = 0; i < 2; i++)
+        {
+            overlayHealEffect.transform.GetChild(i).gameObject.layer = 8;
+        }
+
+        healEffect.layer = 6;
+        for(int i = 0; i < 2; i++)
+        {
+            healEffect.transform.GetChild(i).gameObject.layer = 6;
+        }
+        
+
         dagger.layer = 6;
         lungeEffect.transform.GetChild(0).gameObject.layer = 6;
 
@@ -208,7 +236,14 @@ public class Cultist : Character
     {
         if (skillState == SkillStateCultist.Skill2Channeling
             || skillState == SkillStateCultist.Skill4Casting || skillState == SkillStateCultist.Skill3Casting)
+        {
             moveVec = Vector3.zero;
+            if (skillState == SkillStateCultist.Skill2Channeling)
+            {
+                rigidbody.velocity = Vector3.zero;
+                rigidbody.angularVelocity = Vector3.zero;
+            }
+        }
 
         if (skillState == SkillStateCultist.LungeHolding)
         {
@@ -270,7 +305,7 @@ public class Cultist : Character
         if(localState == LocalStateCultist.Skill2 && phlegmHorror != null)
         {
             phlegmHorror.GetComponent<Rigidbody>().MovePosition(phlegmHorror.GetComponent<Rigidbody>().transform.position +
-             Time.deltaTime * camera.transform.forward * 5f);
+             Time.deltaTime * camera.transform.forward * moveSpeed * 1.4f);
         }
     }
     
@@ -351,6 +386,7 @@ public class Cultist : Character
                 skillCastingCheck[0] = false;
                 skillState = SkillStateCultist.Skill1Channeling;
                 CallRPCEvent("UpdateData", "Response", skillState, "skillChannelingTime", 0, skill1ChannelingTime, true);
+                CallRPCEvent("ResetAnimation", "Response");
             }
         }
         else if (skillState == SkillStateCultist.Skill1Channeling)
@@ -362,6 +398,9 @@ public class Cultist : Character
                 CallRPCEvent("ResetAnimation", "Response");
                 CallRPCEvent("UpdateData", "Response", skillState, "OnlySkillState", 0, 0f, false);
                 CallRPCEvent("SetCoolDownTime", "Response", 0);
+                CallRPCEvent("PlayHealEffect", "Response");
+                overlayHealEffect.GetComponent<ParticleSystem>().Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+                overlayHealEffect.GetComponent<ParticleSystem>().Play(true);
             }
         }
         else if (skillState == SkillStateCultist.Skill2Casting)
@@ -373,6 +412,7 @@ public class Cultist : Character
                 CallRPCEvent("UpdateData", "Response", skillState, "skillChannelingTime", 1, skill2ChannelingTime, false);
                 //캐스팅 끝나고 바로 스킬이 사용됨
                 CallRPCEvent("UseSkill", "Response", 1);
+                CallRPCEvent("PlayPhlegmHorrorEffect", "Response");
             }
         }
         else if (skillState == SkillStateCultist.Skill2Channeling)
@@ -389,11 +429,12 @@ public class Cultist : Character
         }
         else if (skillState == SkillStateCultist.Skill3Casting)
         {
-            if (skillCastingTime[2] <= 0f)
+            if (skillCastingTime[2] <= 0f && skillCastingCheck[2])
             {
                 skillState = SkillStateCultist.Skill3Channeling;
                 buffDebuffChecker.SetNewBuffDebuff("BlessingCast", skill3ChannelingTime);
                 CallRPCEvent("UpdateData", "Response", skillState, "skillChannelingTime", 2, skill3ChannelingTime, false);
+                CallRPCEvent("PlayBlessingChannelingEffect", "Response");
             }
         }
         else if (skillState == SkillStateCultist.Skill3Channeling)
@@ -527,6 +568,16 @@ public class Cultist : Character
             UseSkill(data);
         else if ((string)data[0] == "EndSkill")
             EndSkill();
+        else if ((string)data[0] == "PlayHealEffect")
+            PlayHealEffect();
+        else if ((string)data[0] == "PlayPhlegmHorrorEffect")
+            PlayPhlegmHorrorEffect();
+        else if ((string)data[0] == "PlayBlessingCastingEffect")
+            PlayBlessingCastingEffect();
+        else if ((string)data[0] == "PlayBlessingChannelingEffect")
+            PlayBlessingChannelingEffect();
+        else if ((string)data[0] == "PlayRitualEffect")
+            PlayRitualEffect();
 
     }
 
@@ -585,8 +636,11 @@ public class Cultist : Character
                         break;
                     else if (_rootObject.tag == tag)
                     {
-                        _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.MasterClient,
+                        //회복
+                        _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.All,
                             playerName, -(int)(cultistData.skill1Damage), _tempObject.name, Vector3.zero, 0f);
+                        PhotonNetwork.Instantiate("ChanYoung/Prefabs/Cultist/CultistHealEffect",
+                            _rootObject.transform.position + new Vector3(0, 1, 0), Quaternion.identity);
 
                         _rootObject.GetComponent<BuffDebuffChecker>().SetNewBuffDebuff("TerribleTentacles", 1);
 
@@ -598,10 +652,13 @@ public class Cultist : Character
 
             if (_check == 0)
             {
-                GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.MasterClient,
-                            playerName, -(int)(cultistData.skill1Damage), "null", Vector3.zero, 0f);
+                GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.All,
+                            playerName, -(int)(cultistData.skill1Damage), "", Vector3.zero, 0f);
                 //체크부분
                 buffDebuffChecker.SetNewBuffDebuff("TerribleTentacles", 2);
+
+                PhotonNetwork.Instantiate("ChanYoung/Prefabs/Cultist/CultistHealEffect",
+               transform.position + new Vector3(0, 1, 0), Quaternion.identity);
             }
 
 
@@ -673,25 +730,36 @@ public class Cultist : Character
                 skillState = SkillStateCultist.Skill1Casting;
                 CallRPCEvent("SetAnimation", "Response","isSkill1", true);
                 CallRPCEvent("UpdateData", "Response", skillState, "skillCastingTime", 0, skill1CastingTime, true);
+                CallRPCEvent("SetDagger", "Response", false);
             }
             else if (skillState == SkillStateCultist.Skill2Ready)
             {
                 skillState = SkillStateCultist.Skill2Casting;
                 CallRPCEvent("SetAnimation", "Response","isSkill2", true);
                 CallRPCEvent("UpdateData", "Response", skillState, "skillCastingTime", 1, skill2CastingTime, true);
+                CallRPCEvent("SetDagger", "Response", false);
             }
             else if (skillState == SkillStateCultist.Skill3Ready)
             {
                 skillState = SkillStateCultist.Skill3Casting;
                 CallRPCEvent("SetAnimation","Response" ,"isSkill3", true);
                 CallRPCEvent("UpdateData", "Response", skillState, "skillCastingTime", 2, skill3CastingTime, true);
+                CallRPCEvent("SetDagger", "Response", false);
+                CallRPCEvent("PlayBlessingCastingEffect", "Response");
             }
             else if (skillState == SkillStateCultist.Skill4Ready)
             {
                 skillState = SkillStateCultist.Skill4Casting;
                 CallRPCEvent("SetAnimation", "Response", "isSkill4", true);
                 CallRPCEvent("UpdateData", "Response", skillState, "skillCastingTime", 3, skill4CastingTime, true);
-                buffDebuffChecker.SpreadBuffDebuff("UniteAndOmen", transform.position + new Vector3(0, 1, 0));
+                CallRPCEvent("SetDagger", "Response", false);
+                if (buffDebuffChecker.ritualStacks < 8)
+                {
+                    CallRPCEvent("PlayRitualEffect", "Response");
+                    buffDebuffChecker.SpreadBuffDebuff("UniteAndOmen", transform.position + new Vector3(0, 1, 0));
+                }
+                else
+                    ChaseAllAlivePlayer();
             }
         }
         else
@@ -706,6 +774,29 @@ public class Cultist : Character
                 }
             }
         }
+    }
+
+    void ChaseAllAlivePlayer()
+    {
+        Photon.Realtime.Player[] _players = PhotonNetwork.PlayerList;
+        for(int i = 0; i < _players.Length; i++)
+        {
+            int _viewID = (int)_players[i].CustomProperties["CharacterViewID"];
+            PhotonView _photonView = PhotonNetwork.GetPhotonView(_viewID);
+            if (_photonView.tag != tag)
+            {
+                object[] _data = new object[5];
+                _data[0] = name;
+                _data[1] = tag;
+                _data[2] = "CultistChaser";
+                _data[3] = _photonView.ViewID;
+                _data[4] = playerName;
+                GameObject _tempObject = PhotonNetwork.Instantiate("ChanYoung/Prefabs/Cultist/CultistChaser",
+                    transform.position, transform.rotation, data: _data);
+                _tempObject.GetComponent<PhotonView>().TransferOwnership(ownerNum);
+            }
+        }
+        buffDebuffChecker.ritualStacks = 0;
     }
 
     void CancelHolding()
@@ -836,6 +927,47 @@ public class Cultist : Character
         camera.GetComponent<MouseControl>().characterBody = phlegmHorror;
     }
 
+    void PlayHealEffect()
+    {
+        healEffect.transform.position = camera.transform.position + camera.transform.forward;
+        healEffect.GetComponent<ParticleSystem>().Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        healEffect.GetComponent<ParticleSystem>().Play(true);
+    }
+
+    void PlayPhlegmHorrorEffect()
+    {
+        for(int i = 0; i < 4; i++)
+        {
+            phlegmHorrorEffect.transform.GetChild(i).GetComponent<ParticleSystem>().Stop(false, ParticleSystemStopBehavior.StopEmittingAndClear);
+            phlegmHorrorEffect.transform.GetChild(i).GetComponent<ParticleSystem>().Play();
+        }
+    }
+
+    void PlayBlessingCastingEffect()
+    {
+        blessingCastingEffect.GetComponent<ParticleSystem>().Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        blessingCastingEffect.GetComponent<ParticleSystem>().Play(true);
+
+        overlayBlessingCastingEffect.GetComponent<ParticleSystem>().Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        overlayBlessingCastingEffect.GetComponent<ParticleSystem>().Play(true);
+    }
+
+    void PlayBlessingChannelingEffect()
+    {
+        blessingChannelingEffect.GetComponent<ParticleSystem>().Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        blessingChannelingEffect.GetComponent<ParticleSystem>().Play(true);
+    }
+
+    void PlayRitualEffect()
+    {
+        Debug.Log("안녕");
+        for(int i = 0; i < 6; i++)
+        {
+            ritualEffect.transform.GetChild(i).GetComponent<ParticleSystem>().Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            ritualEffect.transform.GetChild(i).GetComponent<ParticleSystem>().Play(true);
+        }
+    }
+
     void SetAnimation(object[] data)
     {
         if (photonView.IsMine)
@@ -911,7 +1043,10 @@ public class Cultist : Character
 
     void SetLungeCollider(object[] data)
     {
-        GetComponent<CultistLungeAttack>().isColliderOn = (bool)data[1];
+        bool _isLungeCollider = (bool)data[1];
+        GetComponent<CultistLungeAttack>().isColliderOn = _isLungeCollider;
+        if (_isLungeCollider == false)
+            GetComponent<CultistLungeAttack>().ResetHitObjects();
     }
 
     void SetInvocationEffect(object[] data)
@@ -974,7 +1109,8 @@ public class Cultist : Character
             SetAnimationSpeed("Skill3CastingSpeed", skill3CastingTime);
         else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Skill3"))
             SetAnimationSpeed("Skill3Speed", skill3ChannelingTime);
-        else if (animator.GetCurrentAnimatorStateInfo(4).IsName("Skill4"))
+
+        if (animator.GetCurrentAnimatorStateInfo(4).IsName("Skill4"))
             SetAnimationSpeedExtra("Skill4CastingSpeed", skill4CastingTime);
 
     }
@@ -1024,35 +1160,56 @@ public class Cultist : Character
     {
         base.OnAnimatorIK();
         if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Idle"))
-            LerpWeight(0.5f);
+            LerpWeightOverlay(0.5f);
         else if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Invocation"))
-            LerpWeight(0f);
+            LerpWeightOverlay(0f);
         else if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("LungeHolding"))
-            LerpWeight(0.2f);
+            LerpWeightOverlay(0.2f);
         else if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("LungeAttack"))
-            LerpWeight(0.25f);
+            LerpWeightOverlay(0.25f);
         else if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Throw"))
-            LerpWeight(0f);
+            LerpWeightOverlay(0f);
         else if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Skill1Casting"))
-            LerpWeight(0f);
+            LerpWeightOverlay(0f);
         else if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Skill1"))
-            LerpWeight(0.7f);
+            LerpWeightOverlay(0.7f);
         else if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Skill2"))
-            LerpWeight(0.2f);
+            LerpWeightOverlay(0.2f);
         else if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Skill3Casting"))
-            LerpWeight(0.2f);
+            LerpWeightOverlay(0.2f);
         else if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Skill3"))
-            LerpWeight(0.2f);
+            LerpWeightOverlay(0.2f);
         else if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Skill4"))
-            LerpWeight(0f);
+            LerpWeightOverlay(0f);
 
         overlayAnimator.SetIKPosition(AvatarIKGoal.LeftHand, overlaySightLeft.transform.position);
         overlayAnimator.SetIKPosition(AvatarIKGoal.RightHand, overlaySightRight.transform.position);
         overlayAnimator.SetIKPositionWeight(AvatarIKGoal.LeftHand, overlayLeftHandWeight);
         overlayAnimator.SetIKPositionWeight(AvatarIKGoal.RightHand, overlayRightHandWeight);
+
+        LerpWeightAnimator();
+
+        animator.SetIKPosition(AvatarIKGoal.LeftHand, leftSight.transform.position);
+        animator.SetIKPosition(AvatarIKGoal.RightHand, rightSight.transform.position);
+        animator.SetIKPositionWeight(AvatarIKGoal.LeftHand, leftHandWeight);
+        animator.SetIKPositionWeight(AvatarIKGoal.RightHand, rightHandWeight);
+    }
+
+    void LerpWeightAnimator()
+    {
+        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Skill1"))
+            LerpWeight(1f);
+        else
+            LerpWeight(0f);
     }
 
     void LerpWeight(float weight)
+    {
+        leftHandWeight = Mathf.Lerp(leftHandWeight, weight, Time.deltaTime * 8f);
+        rightHandWeight = Mathf.Lerp(rightHandWeight, weight, Time.deltaTime * 8f);
+    }
+
+    void LerpWeightOverlay(float weight)
     {
         overlayLeftHandWeight = Mathf.Lerp(overlayLeftHandWeight, weight, Time.deltaTime * 8f);
         overlayRightHandWeight = Mathf.Lerp(overlayRightHandWeight, weight, Time.deltaTime * 8f);

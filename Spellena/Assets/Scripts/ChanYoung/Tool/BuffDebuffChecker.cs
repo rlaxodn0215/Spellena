@@ -14,6 +14,11 @@ public class BuffDebuffChecker : MonoBehaviourPunCallbacks
     public BuffDebuffTunnel buffDebuffTunnel;
     NavMeshAgent agent;
     GameObject target;
+
+    //컬티스트만 사용 -> 의식 스택
+    //라운드 종료시에만 스택이 쌓임
+    public int ritualStacks = 0;
+
     public class Tentacle
     {
         public bool isActive = false;
@@ -29,6 +34,7 @@ public class BuffDebuffChecker : MonoBehaviourPunCallbacks
 
     float horrorDamageTime = 0.1f;
     float currentHorrorDamageTime = 0f;
+    string horrorPlayer;
 
     //가지고 있는 버프 디버프
     List<string> buffsAndDebuffs = new List<string>();
@@ -112,6 +118,9 @@ public class BuffDebuffChecker : MonoBehaviourPunCallbacks
                         if (currentHorrorDamageTime < 0f)
                         {
                             currentHorrorDamageTime = horrorDamageTime;
+                            GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.All, horrorPlayer, 10, "",
+                               Vector3.zero, 0f);
+
                             //공포 디버프 데미지
                         }
                     }
@@ -253,6 +262,7 @@ public class BuffDebuffChecker : MonoBehaviourPunCallbacks
     void SetHorrorViewID(object[] data)
     {
         horrorViewID = (int)data[1];
+        horrorPlayer = PhotonNetwork.GetPhotonView(horrorViewID).gameObject.name;
         Debug.Log(horrorViewID);
     }
 
@@ -469,5 +479,10 @@ public class BuffDebuffChecker : MonoBehaviourPunCallbacks
         }
     }
 
+    [PunRPC]
+    public void AddRitualStack(int stacks)
+    {
+        ritualStacks += stacks;
+    }
 
 }
