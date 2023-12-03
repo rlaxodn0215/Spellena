@@ -81093,13 +81093,13 @@ MonoBehaviour:
   charactor: 1
   sight: {fileID: 4206405490679761603}
   camera: {fileID: 8358023699266262597}
-  enemyCam: {fileID: 0}
   UI: {fileID: 8018560931942860469}
   Alive: {fileID: 8805390818395439501}
   Dead: {fileID: 4068900050320993866}
   characterSoundManager: {fileID: 0}
   playerName: ElementalOrderTester
   isOccupying: 0
+  isAlive: 1
   chargeCount: 0
   ultimateCount: 0
   hp: 0
@@ -81127,6 +81127,7 @@ MonoBehaviour:
   soundManagerView: {fileID: 0}
   moveVec: {x: 0, y: 0, z: 0}
   elementalOrderData: {fileID: 11400000, guid: f59593c682ebc2b41896b199699b9e9c, type: 2}
+  avatarForOther: {fileID: 0}
   overlayCamera: {fileID: 2793860877440901365}
   minimapCamera: {fileID: 1274343420450128145}
   Aim: {fileID: 6692195618646817160}
@@ -81141,6 +81142,13 @@ MonoBehaviour:
   rangePointStrikeArea: {fileID: 4106216975277047175}
   rangeBoxArea: {fileID: 267267126561930929}
   overlayAnimator: {fileID: 4048493668805308692}
+  skillState: 0
+  ragnaEdgeCoolDownTime: 0
+  burstFlareCoolDownTime: 0
+  gaiaTiedCoolDownTime: 0
+  meteorStrikeCoolDownTime: 0
+  terraBreakCoolDownTime: 0
+  eterialStormCoolDownTime: 0
 --- !u!224 &6782679584328168518
 RectTransform:
   m_ObjectHideFlags: 0

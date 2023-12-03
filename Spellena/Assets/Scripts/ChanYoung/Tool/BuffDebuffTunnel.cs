@@ -125,6 +125,9 @@ public class BuffDebuffTunnel : MonoBehaviourPunCallbacks
                                     //플레이어 데미지
                                     tentacleHitCoolDownTime[i] = 1f;
                                     CallRPCTunnel("ResetCoolDownTimeTentacle", _rootObject.name);
+                                    _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.All,
+                                        transform.root.GetComponent<Character>().playerName,
+                                        50, hitObject.name, Vector3.zero, 0f);
                                     Debug.Log("데미지2");
                                     return;
                                 }
@@ -132,6 +135,9 @@ public class BuffDebuffTunnel : MonoBehaviourPunCallbacks
                         }
                         //플레이어 데미지
                         Debug.Log("데미지");
+                        _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.All,
+                                        transform.root.GetComponent<Character>().playerName,
+                                        50, hitObject.name, Vector3.zero, 0f);
                         tentacleHitObjects.Add(_rootObject.name);
                         tentacleHitCoolDownTime.Add(1f);
                         CallRPCTunnel("AddNewObjectTentacle", _rootObject.name);
@@ -182,23 +188,35 @@ public class BuffDebuffTunnel : MonoBehaviourPunCallbacks
         else if(buffDebuff == "UniteAndOmen")
         {
             RaycastHit[] _hits = Physics.SphereCastAll(point, 5f, Vector3.up, 0f);
-            List<GameObject> _hitObjects = new List<GameObject>();
+            List<GameObject> _deadPlayer = new List<GameObject>();
 
             for(int i = 0; i < _hits.Length; i++)
             {
-                if (_hits[i].transform.gameObject.GetComponent<Character>() != null)
+                if (_hits[i].transform.root.GetComponent<Character>() != null)
                 {
-                    GameObject _player = _hits[i].transform.gameObject;
-                    if(_player.tag == transform.root.tag)
+                    GameObject _rootObject = _hits[i].transform.root.gameObject;
+                    //죽은 친구
+                    if (_rootObject.GetComponent<Character>().Dead.active)
                     {
+                        int _check = 0;
+                        for(int j = 0; j < _deadPlayer.Count; j++)
+                        {
+                            if (_deadPlayer[j] == _rootObject)
+                            {
+                                _check = 1;
+                                break;
+                            }
+                        }
 
-                    }
-                    else
-                    {
-
+                        if (_check == 1)
+                            continue;
+                        else
+                            _deadPlayer.Add(_rootObject);
                     }
                 }
             }
+
+            transform.root.GetComponent<PhotonView>().RPC("AddRitualStack", RpcTarget.All, _deadPlayer.Count);
         }
 
 

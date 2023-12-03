@@ -37,5 +37,5 @@ MonoBehaviour:
   skill3CastingTime: 1.5
   skill3ChannelingTime: 5
   skill3CoolDownTime: 5
-  skill4CastingTime: 2
+  skill4CastingTime: 3
   skill4CoolDownTime: 5
