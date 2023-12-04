@@ -93,7 +93,7 @@ public class BurstFlareObject : SpawnObject
         //    RunExplode(pos);
         //    return;
         //}
-        if (hitObject.CompareTag("Wall"))
+        if (hitObject.tag == "Wall" || hitObject.layer == 11)
         {
             RunExplode(pos);
             return;

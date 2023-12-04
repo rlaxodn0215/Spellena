@@ -45,6 +45,7 @@ namespace Player
         public GameObject Alive;
         public GameObject Dead;
         public GameObject characterSoundManager;
+        public BuffDebuffChecker buffDebuffChecker;
 
         //실시간 갱신 데이터
         public string playerName;
@@ -184,6 +185,19 @@ namespace Player
 
             if (photonView.IsMine)
             {
+                if (buffDebuffChecker.CheckBuffDebuff("Horror") == true)
+                {
+                    PhotonView _photonView = PhotonNetwork.GetPhotonView(buffDebuffChecker.horrorViewID);
+                    if (_photonView != null)
+                    {
+                        MouseControl _mouseControl = camera.GetComponent<MouseControl>();
+                        Vector3 _directionVector = (_photonView.transform.position - camera.transform.position + new Vector3(0, 1f, 0)).normalized;
+                        Quaternion _tempQ = Quaternion.LookRotation(_directionVector);
+                        Vector3 _tempEuler = _tempQ.eulerAngles;
+                        _mouseControl.ApplyPos(_tempEuler.y, _tempEuler.x);
+                    }
+                }
+
                 lookRay = camera.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
 
                 if(Physics.Raycast(lookRay,out lookHit,1.5f))

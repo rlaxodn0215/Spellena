@@ -69,10 +69,8 @@ public class CultistDagger : SpawnObject
     {
         if (PhotonNetwork.IsMasterClient)
         {
-            if (hitObject.gameObject.layer == 11)
-            {
+            if (hitObject.gameObject.layer == 11 || hitObject.tag == "Wall")
                 CallRPCTunnel("RequestDestroy");
-            }
             if (hitObject.transform.root.gameObject.name != hitObject.name)
             {
                 GameObject _rootObject = hitObject.transform.root.gameObject;
