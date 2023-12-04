@@ -18064,6 +18064,7 @@ MonoBehaviour:
   Alive: {fileID: 522942226379776697}
   Dead: {fileID: 522942227110977971}
   characterSoundManager: {fileID: 142876488271527261}
+  buffDebuffChecker: {fileID: 3796433313867198420}
   playerName: 
   isOccupying: 0
   isAlive: 1

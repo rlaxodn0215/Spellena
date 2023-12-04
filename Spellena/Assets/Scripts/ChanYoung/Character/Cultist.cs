@@ -44,8 +44,6 @@ public class Cultist : Character
 
     GameObject phlegmHorror;
 
-    BuffDebuffChecker buffDebuffChecker;
-
     int ownerNum;
     Vector3 defaultCameraLocalVec;
 
@@ -167,8 +165,6 @@ public class Cultist : Character
         skill2CoolDownTime = cultistData.skill2CoolDownTime;
         skill3CoolDownTime = cultistData.skill3CoolDownTime;
         skill4CoolDownTime = cultistData.skill4CoolDownTime;
-
-        buffDebuffChecker = GetComponent<BuffDebuffChecker>();
     }
 
     [PunRPC]
@@ -284,18 +280,6 @@ public class Cultist : Character
         {
         }
         //이건 나중에 캐릭터 클래스로 이동 시킨다.
-        if(buffDebuffChecker.CheckBuffDebuff("Horror") == true)
-        {
-            PhotonView _photonView = PhotonNetwork.GetPhotonView(buffDebuffChecker.horrorViewID);
-            if (_photonView != null)
-            {
-                MouseControl _mouseControl = camera.GetComponent<MouseControl>();
-                Vector3 _directionVector = (_photonView.transform.position - camera.transform.position + new Vector3(0, 1f, 0)).normalized;
-                Quaternion _tempQ = Quaternion.LookRotation(_directionVector);
-                Vector3 _tempEuler = _tempQ.eulerAngles;
-                _mouseControl.ApplyPos(_tempEuler.y , _tempEuler.x);
-            }
-        }
         //여기 까지
     }
 

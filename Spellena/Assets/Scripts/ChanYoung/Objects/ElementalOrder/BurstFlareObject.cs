@@ -93,7 +93,7 @@ public class BurstFlareObject : SpawnObject
         //    RunExplode(pos);
         //    return;
         //}
-        if (hitObject.CompareTag("Wall"))
+        if (hitObject.tag == "Wall" || hitObject.layer == 11)
         {
             RunExplode(pos);
             return;
@@ -113,6 +113,7 @@ public class BurstFlareObject : SpawnObject
                         Debug.Log("Hit Enemy");
                         _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.All,
                          playerName, (int)(elementalOrderData.burstFlareDamage), hitObject.name, transform.forward, 20f);
+                        RunExplode(pos);
                     }
                 }
             }

@@ -161,6 +161,174 @@ MonoBehaviour:
   m_SynchronizeRotation: 1
   m_SynchronizeScale: 0
   m_UseLocal: 1
+--- !u!1 &692811719223838258
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 113282, guid: 0502286443532c148af28948eecd8216, type: 3}
+  m_PrefabInstance: {fileID: 692811719223884976}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8034277419094357370}
+  - component: {fileID: 1101649043365121130}
+  - component: {fileID: 3389443509417462430}
+  m_Layer: 0
+  m_Name: 'Enchanted 2.01.1 Sword Buff tier 1 (Missing Prefab with guid: 0502286443532c148af28948eecd8216)'
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8034277419094357370
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 416216, guid: 0502286443532c148af28948eecd8216, type: 3}
+  m_PrefabInstance: {fileID: 692811719223884976}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 692811719223838258}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3698660788154219954}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1028100141600703981
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 1711279095464942, guid: d8b3796a4e3c855478f115e4766a895c, type: 3}
+  m_PrefabInstance: {fileID: 1027559344242902531}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8279112092078084054}
+  - component: {fileID: 97037962993009559}
+  - component: {fileID: 187194820058405054}
+  m_Layer: 0
+  m_Name: 'MoonSword 1b (Missing Prefab with guid: d8b3796a4e3c855478f115e4766a895c)'
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8279112092078084054
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 4107041482953256, guid: d8b3796a4e3c855478f115e4766a895c, type: 3}
+  m_PrefabInstance: {fileID: 1027559344242902531}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1028100141600703981}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3698660788154219954}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1174816906308881489
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 177562, guid: f9dce4312afc1b54abda67c8de777702, type: 3}
+  m_PrefabInstance: {fileID: 1174816906308794827}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6372183610155429665}
+  - component: {fileID: 4446514901900478021}
+  - component: {fileID: 8041478940391741155}
+  m_Layer: 0
+  m_Name: 'Enchanted 2.10.2 Sword Arcane tier 2 (Missing Prefab with guid: f9dce4312afc1b54abda67c8de777702)'
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6372183610155429665
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 468860, guid: f9dce4312afc1b54abda67c8de777702, type: 3}
+  m_PrefabInstance: {fileID: 1174816906308794827}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1174816906308881489}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5637739405458239510}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1289198259020646352
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5527803053732063787}
+  - component: {fileID: 5649731449788623370}
+  - component: {fileID: 1500787466454383420}
+  m_Layer: 0
+  m_Name: BuffDebuffTool
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5527803053732063787
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1289198259020646352}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 6655714216096276156}
+  m_Father: {fileID: 5471340395045458450}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5649731449788623370
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1289198259020646352}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
+--- !u!114 &1500787466454383420
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1289198259020646352}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55c97fcd10512774da33bac8e44eb46e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TentacleTrigger: {fileID: 4345739643463259671}
 --- !u!1 &1420116632908713199
 GameObject:
   m_ObjectHideFlags: 0
@@ -244,6 +412,64 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &4345739643463259671
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6655714216096276156}
+  - component: {fileID: 3259707643819843594}
+  - component: {fileID: 7433254073826427157}
+  m_Layer: 0
+  m_Name: TentacleTrigger
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &6655714216096276156
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4345739643463259671}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5527803053732063787}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3259707643819843594
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4345739643463259671}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c27186e3d952af74494d2ce0917f74f2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!135 &7433254073826427157
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4345739643463259671}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1.5
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &4430521052732862933
 GameObject:
   m_ObjectHideFlags: 0
@@ -276,8 +502,75 @@ Transform:
   - {fileID: 338266741}
   - {fileID: 1844791845}
   - {fileID: 4557316277003749351}
+  - {fileID: 5527803053732063787}
   m_Father: {fileID: 5624648683831435769}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &5096477109094330502
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 1711279095464942, guid: d8b3796a4e3c855478f115e4766a895c, type: 3}
+  m_PrefabInstance: {fileID: 5097026443706299240}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5531691028896917021}
+  - component: {fileID: 790799850613207858}
+  - component: {fileID: 2240123765462035261}
+  m_Layer: 0
+  m_Name: 'MoonSword 1b (Missing Prefab with guid: d8b3796a4e3c855478f115e4766a895c)'
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5531691028896917021
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 4107041482953256, guid: d8b3796a4e3c855478f115e4766a895c, type: 3}
+  m_PrefabInstance: {fileID: 5097026443706299240}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5096477109094330502}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5637739405458239510}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &5153379377384960668
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 177562, guid: f9dce4312afc1b54abda67c8de777702, type: 3}
+  m_PrefabInstance: {fileID: 5153379377384785670}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3108492467065543274}
+  - component: {fileID: 3180472230788192598}
+  - component: {fileID: 8949765767574356398}
+  m_Layer: 0
+  m_Name: 'Enchanted 2.10.2 Sword Arcane tier 2 (Missing Prefab with guid: f9dce4312afc1b54abda67c8de777702)'
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3108492467065543274
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 468860, guid: f9dce4312afc1b54abda67c8de777702, type: 3}
+  m_PrefabInstance: {fileID: 5153379377384785670}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5153379377384960668}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3698660788154219954}
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5624648683831435768
 GameObject:
@@ -297,6 +590,8 @@ GameObject:
   - component: {fileID: 1517351802}
   - component: {fileID: 1254214872}
   - component: {fileID: 683120009}
+  - component: {fileID: 2628121825258516268}
+  - component: {fileID: 4865067437783240023}
   m_Layer: 0
   m_Name: Aeterna
   m_TagString: Untagged
@@ -486,6 +781,7 @@ MonoBehaviour:
   Alive: {fileID: 4430521052732862933}
   Dead: {fileID: 8752021104387909173}
   characterSoundManager: {fileID: 5565686762596105014}
+  buffDebuffChecker: {fileID: 2628121825258516268}
   playerName: 
   isOccupying: 0
   isAlive: 1
@@ -579,6 +875,143 @@ CapsuleCollider:
   m_Height: 1.8245289
   m_Direction: 1
   m_Center: {x: 0, y: 0.8624989, z: 0}
+--- !u!114 &2628121825258516268
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5624648683831435768}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7ddb5cb34430894c884e9767f25d07a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tentacleObject: {fileID: 6732772786770581920, guid: 6211b2131d0b3a04f8ec0708c603b574, type: 3}
+  buffDebuffTunnel: {fileID: 1500787466454383420}
+  ritualStacks: 0
+  horrorViewID: -1
+--- !u!195 &4865067437783240023
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5624648683831435768}
+  m_Enabled: 0
+  m_AgentTypeID: 0
+  m_Radius: 0.5
+  m_Speed: 3
+  m_Acceleration: 80
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 2
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 0
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
+--- !u!1 &7320973641813912996
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 1821482385955872, guid: 9e3ccb5d46edb7e4095888928abdaa2e, type: 3}
+  m_PrefabInstance: {fileID: 7322617826806903172}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7784149137745455264}
+  - component: {fileID: 2649598173798259622}
+  - component: {fileID: 7790164812911965645}
+  m_Layer: 0
+  m_Name: 'MoonSword 2b (Missing Prefab with guid: 9e3ccb5d46edb7e4095888928abdaa2e)'
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7784149137745455264
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 4775197332251522, guid: 9e3ccb5d46edb7e4095888928abdaa2e, type: 3}
+  m_PrefabInstance: {fileID: 7322617826806903172}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7320973641813912996}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5637739405458239510}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &7459333629246381867
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 1821482385955872, guid: 9e3ccb5d46edb7e4095888928abdaa2e, type: 3}
+  m_PrefabInstance: {fileID: 7458691929632359179}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8091828031016881873}
+  - component: {fileID: 3837020366896073018}
+  - component: {fileID: 8534882648129295060}
+  m_Layer: 0
+  m_Name: 'MoonSword 2b (Missing Prefab with guid: 9e3ccb5d46edb7e4095888928abdaa2e)'
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8091828031016881873
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 4775197332251522, guid: 9e3ccb5d46edb7e4095888928abdaa2e, type: 3}
+  m_PrefabInstance: {fileID: 7458691929632359179}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7459333629246381867}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3698660788154219954}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8050784735572968472
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 113282, guid: 0502286443532c148af28948eecd8216, type: 3}
+  m_PrefabInstance: {fileID: 8050784735573016218}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1510621456212392258}
+  - component: {fileID: 1734305363047264967}
+  - component: {fileID: 5779232009861459145}
+  m_Layer: 0
+  m_Name: 'Enchanted 2.01.1 Sword Buff tier 1 (Missing Prefab with guid: 0502286443532c148af28948eecd8216)'
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1510621456212392258
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 416216, guid: 0502286443532c148af28948eecd8216, type: 3}
+  m_PrefabInstance: {fileID: 8050784735573016218}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8050784735572968472}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5637739405458239510}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8752021104387909173
 GameObject:
   m_ObjectHideFlags: 0
@@ -745,11 +1178,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0502286443532c148af28948eecd8216, type: 3}
---- !u!1 &692811719223838258 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 113282, guid: 0502286443532c148af28948eecd8216, type: 3}
-  m_PrefabInstance: {fileID: 692811719223884976}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &1101649043365121130
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -846,11 +1274,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d8b3796a4e3c855478f115e4766a895c, type: 3}
---- !u!1 &1028100141600703981 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1711279095464942, guid: d8b3796a4e3c855478f115e4766a895c, type: 3}
-  m_PrefabInstance: {fileID: 1027559344242902531}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &97037962993009559
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1023,11 +1446,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f9dce4312afc1b54abda67c8de777702, type: 3}
---- !u!1 &1174816906308881489 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 177562, guid: f9dce4312afc1b54abda67c8de777702, type: 3}
-  m_PrefabInstance: {fileID: 1174816906308794827}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &4446514901900478021
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3692,11 +4110,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d8b3796a4e3c855478f115e4766a895c, type: 3}
---- !u!1 &5096477109094330502 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1711279095464942, guid: d8b3796a4e3c855478f115e4766a895c, type: 3}
-  m_PrefabInstance: {fileID: 5097026443706299240}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &790799850613207858
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3935,11 +4348,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f9dce4312afc1b54abda67c8de777702, type: 3}
---- !u!1 &5153379377384960668 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 177562, guid: f9dce4312afc1b54abda67c8de777702, type: 3}
-  m_PrefabInstance: {fileID: 5153379377384785670}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &3180472230788192598
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5211,11 +5619,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9e3ccb5d46edb7e4095888928abdaa2e, type: 3}
---- !u!1 &7320973641813912996 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1821482385955872, guid: 9e3ccb5d46edb7e4095888928abdaa2e, type: 3}
-  m_PrefabInstance: {fileID: 7322617826806903172}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &2649598173798259622
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5312,11 +5715,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9e3ccb5d46edb7e4095888928abdaa2e, type: 3}
---- !u!1 &7459333629246381867 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1821482385955872, guid: 9e3ccb5d46edb7e4095888928abdaa2e, type: 3}
-  m_PrefabInstance: {fileID: 7458691929632359179}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &3837020366896073018
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5675,11 +6073,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0502286443532c148af28948eecd8216, type: 3}
---- !u!1 &8050784735572968472 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 113282, guid: 0502286443532c148af28948eecd8216, type: 3}
-  m_PrefabInstance: {fileID: 8050784735573016218}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &1734305363047264967
 MonoBehaviour:
   m_ObjectHideFlags: 0
