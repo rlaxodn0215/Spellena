@@ -71,14 +71,14 @@ public class CultistDagger : SpawnObject
         {
             if (hitObject.gameObject.layer == 11 || hitObject.tag == "Wall")
                 CallRPCTunnel("RequestDestroy");
-            if (hitObject.transform.root.gameObject.name != hitObject.name)
+            //if (hitObject.transform.root.gameObject.name != hitObject.name)
             {
                 GameObject _rootObject = hitObject.transform.root.gameObject;
                 if (_rootObject.GetComponent<Character>() != null)
                 {
                     if (_rootObject.tag != tag)
                     {
-                        _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.MasterClient,
+                        _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBuffered,
                          playerName, (int)(cultistData.skill1Damage), hitObject.name, transform.forward, 20f);
                         CallRPCTunnel("RequestDestroy");
                     }

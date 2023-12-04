@@ -27,12 +27,12 @@ MonoBehaviour:
   DimenstionSlash_0_Damage: 200
   DimenstionSlash_0_Speed: 10
   DimenstionSlash_0_Healing: 200
-  skill1Time: 5
+  skill1Time: 50
   skill1DoorCoolTime: 20
   skill1DoorSpawnMaxRange: 8
   skill1DoorRange: 1
   skill1InnerForce: 1.5
-  skill2DurationTime: 10
+  skill2DurationTime: 100
   skill2HoldTime: 10
   skill2CoolTime: 15
   skill3DurationTime: 10

@@ -100,7 +100,7 @@ public class DuringRound : CenterState
                  case "KillCount":
                      if (gameCenter.inGameUIView == null) break;
                     gameCenter.inGameUIView.RPC("ShowKillUI", targetPlayer, gameCenter.tempVictim);
-                    //Debug.Log("KillCount ShowKillLog : " + targetPlayer.CustomProperties["Name"]);
+                    Debug.Log("KillCount ShowKillLog : " + targetPlayer.CustomProperties["Name"]);
                     gameCenter.inGameUIView.RPC("ShowKillLog", RpcTarget.AllBuffered, targetPlayer.CustomProperties["Name"],
                          gameCenter.tempVictim, ((string)targetPlayer.CustomProperties["Team"] == "A"), targetPlayer.ActorNumber);
                     CheckPlayerHealAssist(targetPlayer);

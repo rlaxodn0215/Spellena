@@ -81,6 +81,7 @@ namespace Player
 
         public void OnTriggerEnter(Collider other)
         {
+            Debug.Log("PortalTiggerEnter");
             if (other.transform.root.CompareTag(enemyTag))
             {
                 if(other.transform.root.GetComponent<Character>())
@@ -98,15 +99,18 @@ namespace Player
 
                 else if(other.transform.root.GetComponent<SpawnObject>())
                 {
-                    if (PhotonNetwork.IsMasterClient)
-                    {
-                        other.transform.root.GetComponent<SpawnObject>().DestorySpawnObject();
-                    }
+                    Debug.Log("PortalSpawnObject");
+                    //other.transform.root.GetComponent<PhotonView>().TransferOwnership(PhotonNetwork.MasterClient);
+                    other.transform.root.GetComponent<PhotonView>().RPC("DestoryObject", RpcTarget.AllBuffered);
+                    //if (PhotonNetwork.IsMasterClient)
+                    //{
+                    //    other.transform.root.GetComponent<SpawnObject>().DestorySpawnObject();
+                    //}
 
-                    else
-                    {
-                        other.transform.root.GetComponent<PhotonView>().RPC("DestorySpawnObject", RpcTarget.MasterClient);
-                    }
+                    //else
+                    //{
+                    //    other.transform.root.GetComponent<PhotonView>().RPC("DestorySpawnObject", RpcTarget.MasterClient);
+                    //}
                 }
             }
         }

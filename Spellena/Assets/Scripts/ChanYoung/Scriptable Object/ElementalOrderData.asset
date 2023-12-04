@@ -33,7 +33,7 @@ MonoBehaviour:
   burstFlareDamage: 50
   burstFlareCoolDownTime: 6
   burstFlareCastingTime: 0.5
-  burstFlareLifeTime: 4
+  burstFlareLifeTime: 2.5
   gaiaTiedDamage: 200
   gaiaTiedCoolDownTime: 13
   gaiaTiedCastingTime: 2

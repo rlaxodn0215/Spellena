@@ -109,32 +109,36 @@ namespace Player
 
         public void OnTriggerEnter(Collider other)
         {
-            //Debug.Log("Hit Collider");
+            Debug.Log("Hit Collider");
 
             if (other.transform.root.CompareTag(enemyTag))
             {
-                //Debug.Log("Hit Enemy");
+                Debug.Log("Hit Enemy");
 
                 if (player.playerActionDatas[(int)PlayerActionState.Skill2].isExecuting && player.skill2Phase == 1)
                 {
                     if (other.transform.root.GetComponent<SpawnObject>())
                     {
+                        Debug.Log("Hit SpawnObject");
+
                         if (other.transform.root.GetComponent<SpawnObject>().type == SpawnObjectType.Projectile)
                         {
+                            Debug.Log("Hit Projectile");
                             contactObjectData = other.transform.root.GetComponent<SpawnObject>().data;
                             player.dimensionIO.CheckHold();
-                            
                         }
 
-                        if (PhotonNetwork.IsMasterClient)
-                        {
-                            other.transform.root.GetComponent<SpawnObject>().DestorySpawnObject();
-                        }
+                        other.transform.root.GetComponent<PhotonView>().RPC("DestoryObject", RpcTarget.AllBuffered);
 
-                        else
-                        {
-                            other.transform.root.GetComponent<PhotonView>().RPC("DestorySpawnObject", RpcTarget.MasterClient);
-                        }
+                        //if (PhotonNetwork.IsMasterClient)
+                        //{
+                        //    other.transform.root.GetComponent<SpawnObject>().DestorySpawnObject();
+                        //}
+
+                        //else
+                        //{
+                        //    other.transform.root.GetComponent<PhotonView>().RPC("DestorySpawnObject", RpcTarget.MasterClient);
+                        //}
                     }
 
                 }

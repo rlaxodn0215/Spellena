@@ -5087,9 +5087,9 @@ MonoBehaviour:
   type: 1
   objectName: 
   hitParticles:
-  - TaeWoo/Prefabs/Effect/DimensionCut_HitEffect_Deal
-  - TaeWoo/Prefabs/Effect/DimensionCut_HitEffect_Heal
-  - TaeWoo/Prefabs/Effect/DimensionCut_HitEffect_Healing
+  - Projectiles/DimensionCut_HitEffect_Deal
+  - Projectiles/DimensionCut_HitEffect_Heal
+  - Projectiles/DimensionCut_HitEffect_Healing
   aeternaData: {fileID: 11400000, guid: 3ab088a29565a8742af0c359ef4214cd, type: 2}
   chargeNum: 1
   damage: 0

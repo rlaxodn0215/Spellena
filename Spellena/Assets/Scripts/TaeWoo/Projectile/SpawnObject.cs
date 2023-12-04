@@ -39,6 +39,13 @@ namespace Player
 
         }
 
+        [PunRPC]
+        public void DestoryObject()
+        {
+            Destroy(gameObject.transform.root.gameObject);  
+        }
+
+        [PunRPC]
         public void DestorySpawnObject()
         {
             if (this != null && PhotonNetwork.IsMasterClient)
@@ -47,6 +54,7 @@ namespace Player
             }
         }
 
+        [PunRPC]
         public void DestorySpawnObject(Vector3 hitPos, int index)
         {
             if (this !=null && PhotonNetwork.IsMasterClient)

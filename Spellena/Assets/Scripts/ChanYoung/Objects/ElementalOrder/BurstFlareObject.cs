@@ -74,12 +74,14 @@ public class BurstFlareObject : SpawnObject
     void Init()
     {
         lifeTime = elementalOrderData.burstFlareLifeTime;
+
         if (data != null)
         {
             this.gameObject.transform.position = (Vector3)data[3];
             direction = (Vector3)data[4];
         }
         transform.rotation = Quaternion.LookRotation(direction);
+
         currentLifeTime = lifeTime;
         explodeParticle.Stop();
         shootParticle.GetComponent<ParticleEventCall>().explodeEvent += TriggerParticle;
@@ -93,24 +95,23 @@ public class BurstFlareObject : SpawnObject
             return;
         }
 
+        Debug.Log("TriggerParticle");
+
         if (PhotonNetwork.IsMasterClient)
         {
-            Debug.Log("TriggerParticle");
-            if (hitObject.transform.root.gameObject.name != hitObject.name)
+            GameObject _rootObject = hitObject.transform.root.gameObject;
+            if(_rootObject.GetComponent<Character>() != null)
             {
-                GameObject _rootObject = hitObject.transform.root.gameObject;
-                if(_rootObject.GetComponent<Character>() != null)
+                Debug.Log("Hit Character");
+                if(_rootObject.tag != tag)
                 {
-                    Debug.Log("Hit Character");
-                    if(_rootObject.tag != tag)
-                    {
-                        Debug.Log("Hit Enemy");
-                        _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.All,
-                         playerName, (int)(elementalOrderData.burstFlareDamage), hitObject.name, transform.forward, 20f);
-                        RunExplode(pos);
-                    }
+                    Debug.Log("Hit Enemy");
+                    _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.All,
+                     playerName, (int)(elementalOrderData.burstFlareDamage), hitObject.name, transform.forward, 20f);
+                    RunExplode(pos);
                 }
             }
+            
         }
     }
 
