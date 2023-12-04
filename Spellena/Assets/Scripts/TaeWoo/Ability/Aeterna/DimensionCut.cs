@@ -53,7 +53,7 @@ namespace Player
             data[3] = rot;
             data[4] = ishealing;
 
-            PhotonNetwork.Instantiate("TaeWoo/Prefabs/Effect/" + (string)data[2],
+            PhotonNetwork.Instantiate("Projectiles/" + (string)data[2],
                 Player.camera.transform.position, Player.transform.localRotation, 0, data);
         }
     }

@@ -131,7 +131,7 @@ namespace Player
                 overlayCameraDefaultPos = overlayCamera.transform.localPosition;
             }
             dataHp = elementalOrderData.hp;
-            animator = avatarForOther.GetComponent<Animator>();
+           // animator = GetComponent<Animator>();
         }
         protected override void Update()
         {
@@ -321,6 +321,13 @@ namespace Player
 
         void AddCommand(int command)
         {
+            if (buffDebuffChecker.CheckBuffDebuff("TerribleTentacles", command - 1))//true면 스킬 사용 불가
+            {
+                buffDebuffChecker.UseTerribleTentacles(command - 1);
+                return;
+            }
+
+
             if (commands.Count < 2)
                 commands.Add(command);
 

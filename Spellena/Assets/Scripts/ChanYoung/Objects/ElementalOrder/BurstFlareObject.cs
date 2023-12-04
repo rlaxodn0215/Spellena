@@ -87,12 +87,6 @@ public class BurstFlareObject : SpawnObject
 
     void TriggerParticle(GameObject hitObject, Vector3 pos)
     {
-        Debug.Log("TriggerParticle first");
-        //if (hitObject.layer == 11)
-        //{
-        //    RunExplode(pos);
-        //    return;
-        //}
         if (hitObject.tag == "Wall" || hitObject.layer == 11)
         {
             RunExplode(pos);

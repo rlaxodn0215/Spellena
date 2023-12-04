@@ -52,7 +52,7 @@ namespace Player
             data[2] = "DimensionSlash_0";
             data[3] = rot;
 
-             PhotonNetwork.Instantiate("TaeWoo/Prefabs/Effect/" + (string)data[2],
+             PhotonNetwork.Instantiate("Projectiles/" + (string)data[2],
                 Player.camera.transform.position, Player.transform.localRotation, 0, data);
         }
 

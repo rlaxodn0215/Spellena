@@ -40,7 +40,7 @@ public class CultistChaser : SpawnObject
     {
         if(other.gameObject == targetObject)
         {
-            targetObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.All, playerName, 10, "",
+            targetObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.All, playerName, 100000, "",
                                Vector3.zero, 0f);
         }
     }

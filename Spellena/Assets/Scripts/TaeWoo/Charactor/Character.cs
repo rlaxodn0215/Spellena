@@ -24,7 +24,8 @@ namespace Player
     {
         Aeterna,
         ElementalOrder,
-        Dracoson
+        Dracoson,
+        Cultist
     }
 
     public class Character : MonoBehaviourPunCallbacks, IPunObservable
@@ -755,6 +756,9 @@ namespace Player
             animator.enabled = false;
             GetComponent<CapsuleCollider>().enabled = false;
             Alive.SetActive(false);
+
+            rigidbody.velocity = Vector3.zero;
+            rigidbody.angularVelocity = Vector3.zero;
 
             Rigidbody[] bodyParts = Dead.GetComponentsInChildren<Rigidbody>();
             
