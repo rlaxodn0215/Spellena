@@ -193,6 +193,7 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
         deathUI = deathUIObj.GetComponent<DeathCamUI>();
         deathUIView = deathUIObj.GetComponent<PhotonView>();
         playerStat = playerStatObj.GetComponent<PlayerStats>();
+        inGameUIView = inGameUIObj.GetComponent<PhotonView>();
 
         ConnectBetweenBGM("LoadingCharacterBGM");
 
