@@ -204,7 +204,7 @@ public class EterialStormObject : SpawnObject,IPunObservable
                 _rootObject.GetComponent<Rigidbody>().AddForce(_outsideVector * impulsePower, ForceMode.Impulse);
                 if(_distance <= 3.0f)
                 {
-                    _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.All,
+                    _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBuffered,
                          playerName, (int)(elementalOrderData.eterialStormDamage / 8), other.name, _outsideVector, 20f);
                 }
             }
@@ -216,7 +216,7 @@ public class EterialStormObject : SpawnObject,IPunObservable
             _rootObject.GetComponent<Rigidbody>().AddForce(_outsideVector * impulsePower, ForceMode.Impulse);
             if (_distance <= 3.0f)
             {
-                _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.All,
+                _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBuffered,
                          playerName, (int)(elementalOrderData.eterialStormDamage / 8), other.name, _outsideVector, 20f);
             }
         }

@@ -96,6 +96,8 @@ public class BuffDebuffChecker : MonoBehaviourPunCallbacks
             {
                 if (leftTime[i] <= 0f)
                 {
+                    Debug.Log(buffsAndDebuffs[i]);
+                    Debug.Log(leftTime[i]);
                     if (buffsAndDebuffs[i] == "Horror")
                     {
                         currentHorrorDamageTime = 0f;
@@ -262,6 +264,7 @@ public class BuffDebuffChecker : MonoBehaviourPunCallbacks
     void SetHorrorViewID(object[] data)
     {
         horrorViewID = (int)data[1];
+        Debug.Log(horrorViewID);
         horrorPlayer = PhotonNetwork.GetPhotonView(horrorViewID).gameObject.name;
         Debug.Log(horrorViewID);
     }

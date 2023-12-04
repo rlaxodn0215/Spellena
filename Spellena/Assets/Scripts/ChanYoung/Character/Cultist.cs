@@ -113,11 +113,11 @@ public class Cultist : Character
         base.Awake();
         if (photonView.IsMine)
         {
-            //테스트 정보
-            HashTable _tempTable = new HashTable();
-            _tempTable.Add("CharacterViewID", photonView.ViewID);
-            _tempTable.Add("IsAlive", true);
-            PhotonNetwork.LocalPlayer.SetCustomProperties(_tempTable);
+            ////테스트 정보
+            //HashTable _tempTable = new HashTable();
+            //_tempTable.Add("CharacterViewID", photonView.ViewID);
+            //_tempTable.Add("IsAlive", true);
+            //PhotonNetwork.LocalPlayer.SetCustomProperties(_tempTable);
 
 
             object[] _tempData = new object[2];
@@ -1095,7 +1095,7 @@ public class Cultist : Character
             SetAnimationSpeed("Skill3Speed", skill3ChannelingTime);
 
         if (animator.GetCurrentAnimatorStateInfo(4).IsName("Skill4"))
-            SetAnimationSpeedExtra("Skill4CastingSpeed", skill4CastingTime);
+            SetAnimationSpeedExtra("Skill4Speed", skill4CastingTime);
 
     }
 

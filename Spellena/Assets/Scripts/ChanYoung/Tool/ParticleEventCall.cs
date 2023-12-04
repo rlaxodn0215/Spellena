@@ -13,5 +13,6 @@ public class ParticleEventCall : MonoBehaviourPunCallbacks
         ParticleCollisionEvent[] _collisionEvents = new ParticleCollisionEvent[1];
         GetComponent<ParticleSystem>().GetCollisionEvents(other, _collisionEvents);
         explodeEvent(other, _collisionEvents[0].intersection);
+        Debug.Log(other.name);
     }
 }
