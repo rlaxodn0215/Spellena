@@ -84,22 +84,22 @@ public class BurstFlareObject : SpawnObject
 
         currentLifeTime = lifeTime;
         explodeParticle.Stop();
-        shootParticle.GetComponent<ParticleEventCall>().explodeEvent += TriggerParticle;
+        //shootParticle.GetComponent<ParticleEventCall>().explodeEvent += TriggerParticle;
     }
 
-    void TriggerParticle(GameObject hitObject, Vector3 pos)
+    void OnTriggerEnter(Collider other)
     {
-        if (hitObject.tag == "Wall" || hitObject.layer == 11)
+        if (other.tag == "Wall" || other.gameObject.layer == 11)
         {
-            RunExplode(pos);
+            RunExplode(other.ClosestPointOnBounds(other.transform.position));
             return;
         }
 
-        Debug.Log("TriggerParticle");
+        //Debug.Log("TriggerParticle : " + hitObject.transform.root.gameObject.name);
 
         if (PhotonNetwork.IsMasterClient)
         {
-            GameObject _rootObject = hitObject.transform.root.gameObject;
+            GameObject _rootObject = other.transform.root.gameObject;
             if(_rootObject.GetComponent<Character>() != null)
             {
                 Debug.Log("Hit Character");
@@ -107,8 +107,9 @@ public class BurstFlareObject : SpawnObject
                 {
                     Debug.Log("Hit Enemy");
                     _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.All,
-                     playerName, (int)(elementalOrderData.burstFlareDamage), hitObject.name, transform.forward, 20f);
-                    RunExplode(pos);
+                     playerName, (int)(elementalOrderData.burstFlareDamage), other.name, transform.forward, 20f);
+                    photonView.RPC("")
+                    RunExplode(other.ClosestPointOnBounds(other.transform.position));
                 }
             }
             
