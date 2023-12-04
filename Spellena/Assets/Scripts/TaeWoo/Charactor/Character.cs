@@ -137,7 +137,7 @@ namespace Player
             SetPlayerKeys(PlayerActionState.Skill3, "Skill3");
             SetPlayerKeys(PlayerActionState.Skill4, "Skill4");
             currentSight = sight.transform.position;
-            //soundManagerView = characterSoundManager.GetComponent<PhotonView>();
+            soundManagerView = characterSoundManager.GetComponent<PhotonView>();
         }
 
         void SetPlayerKeys(PlayerActionState playerActionState, string action)
@@ -614,13 +614,13 @@ namespace Player
             {
                 if (!character.gameObject.CompareTag(tag))
                 {
-                    /*OutlineDrawer[] outlineDrawers = character.gameObject.GetComponentsInChildren<OutlineDrawer>();
+                    OutlineDrawer[] outlineDrawers = character.gameObject.GetComponentsInChildren<OutlineDrawer>();
                     if (outlineDrawers == null) return;
 
                     foreach (OutlineDrawer outline in outlineDrawers)
                     {
                         outline.enabled = true;
-                    }*/
+                    }
                 }
             }
         }
