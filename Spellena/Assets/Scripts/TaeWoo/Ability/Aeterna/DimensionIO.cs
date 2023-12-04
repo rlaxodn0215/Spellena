@@ -107,7 +107,7 @@ namespace Player
 
             Debug.Log((string)data[2]);
 
-            PhotonNetwork.Instantiate("TaeWoo/Prefabs/Effect/" + (string)data[2],
+            PhotonNetwork.Instantiate("Projectiles/" + (string)data[2],
                 Player.camera.transform.position, Player.transform.localRotation, 0, data);
         }
     }

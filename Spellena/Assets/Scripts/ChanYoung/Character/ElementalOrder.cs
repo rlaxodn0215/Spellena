@@ -131,7 +131,7 @@ namespace Player
                 overlayCameraDefaultPos = overlayCamera.transform.localPosition;
             }
             dataHp = elementalOrderData.hp;
-            animator = avatarForOther.GetComponent<Animator>();
+           // animator = GetComponent<Animator>();
         }
         protected override void Update()
         {
