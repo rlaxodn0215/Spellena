@@ -78,7 +78,15 @@ public class CharacterSelect : CenterState
                     gameCenter.playerSpawnA[aTeamIndex].position, Quaternion.identity);
                 if (playerCharacter == null) continue;
 
-                playerCharacter.GetComponent<PhotonView>().TransferOwnership(player.ActorNumber);
+                //playerCharacter.GetComponent<PhotonView>().TransferOwnership(player.ActorNumber);
+
+                PhotonView[] views = playerCharacter.GetComponentsInChildren<PhotonView>();
+
+                foreach(var view in views)
+                {
+                    view.TransferOwnership(player.ActorNumber);
+                }
+
                 playerCharacter.GetComponent<PhotonView>().RPC("IsLocalPlayer", player);
                 playerCharacter.GetComponent<PhotonView>().RPC("ChangeName", RpcTarget.All, (string)player.CustomProperties["Name"]);
 
@@ -96,7 +104,16 @@ public class CharacterSelect : CenterState
                     gameCenter.playerSpawnB[bTeamIndex].position, Quaternion.identity);
                 if (playerCharacter == null) continue;
 
-                playerCharacter.GetComponent<PhotonView>().TransferOwnership(player.ActorNumber);
+                //playerCharacter.GetComponent<PhotonView>().TransferOwnership(player.ActorNumber);
+
+                PhotonView[] views = playerCharacter.GetComponentsInChildren<PhotonView>();
+
+                foreach (var view in views)
+                {
+                    view.TransferOwnership(player.ActorNumber);
+                }
+
+
                 playerCharacter.GetComponent<PhotonView>().RPC("IsLocalPlayer", player);
                 playerCharacter.GetComponent<PhotonView>().RPC("ChangeName", RpcTarget.All, (string)player.CustomProperties["Name"]);
 
