@@ -490,14 +490,12 @@ public class DuringRound : CenterState
 
         if (gameCenter.roundEndTimer <= 0.0f)
         {
-            //gameCenter.roundEndTimer= gameCenter.roundEndTime;
-            //¶ó¿îµå Á¾·á
-            //Debug.Log("RoundEnd / gameCenter.roundEndTimer = " + gameCenter.roundEndTime);
+            Debug.Log("¶ó¿îµå ½ÂÆÐ °áÁ¤");
+
             if (gameCenter.currentOccupationTeam == gameCenter.teamA)
             {
                 gameCenter.occupyingA.rate = 100;
                 GameCenterTest.roundA++;
-                Debug.Log("A ÆÀ ½Â¸®");
 
                 if (GameCenterTest.roundA == 1)
                 {
@@ -515,7 +513,6 @@ public class DuringRound : CenterState
                         gameCenter.bgmManagerView.RPC("PlayAudio", player, "RoundLoose", 1.0f, false, true);
                     }
 
-                    Debug.Log("A ÆÀ 1½Â");
                 }
 
                 else if (GameCenterTest.roundA == 2)
@@ -534,7 +531,6 @@ public class DuringRound : CenterState
                         gameCenter.bgmManagerView.RPC("PlayAudio", player, "RoundLoose", 1.0f, false, true);
                     }
 
-                    Debug.Log("A ÆÀ 2½Â");
                 }
 
             }
@@ -543,7 +539,6 @@ public class DuringRound : CenterState
             {
                 gameCenter.occupyingB.rate = 100;
                 GameCenterTest.roundB++;
-                Debug.Log("B ÆÀ ½Â¸®");
 
                 if (GameCenterTest.roundB == 1)
                 {
@@ -561,7 +556,6 @@ public class DuringRound : CenterState
                         gameCenter.bgmManagerView.RPC("PlayAudio", player, "RoundLoose", 1.0f, false, true);
                     }
 
-                    Debug.Log("B ÆÀ 1½Â");
                 }
 
                 else if (GameCenterTest.roundB == 2)
@@ -580,7 +574,6 @@ public class DuringRound : CenterState
                         gameCenter.bgmManagerView.RPC("PlayAudio", player, "RoundLoose", 1.0f, false, true);
                     }
 
-                    Debug.Log("B ÆÀ 2½Â");
                 }
             }
 
