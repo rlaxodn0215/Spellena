@@ -156,6 +156,9 @@ namespace Player
         {
             if (photonView.IsMine && (bool)PhotonNetwork.LocalPlayer.CustomProperties["IsAlive"])
             {
+
+                CheckDebuff(1);
+
                 foreach (KeyValuePair<string, Ability> keyValue in Skills)
                 {
                     Ability ability = keyValue.Value;
@@ -190,6 +193,9 @@ namespace Player
         {
             if (photonView.IsMine && (bool)PhotonNetwork.LocalPlayer.CustomProperties["IsAlive"])
             {
+
+                CheckDebuff(2);
+
                 foreach (KeyValuePair<string, Ability> keyValue in Skills)
                 {
                     Ability ability = keyValue.Value;
@@ -228,6 +234,9 @@ namespace Player
 
         void OnSkill3()
         {
+
+            CheckDebuff(3);
+
             if (photonView.IsMine && (bool)PhotonNetwork.LocalPlayer.CustomProperties["IsAlive"])
             {
                 foreach (KeyValuePair<string, Ability> keyValue in Skills)
@@ -314,6 +323,16 @@ namespace Player
                 }
 
             }
+        }
+
+        void CheckDebuff(int num)
+        {
+            if (buffDebuffChecker.CheckBuffDebuff("TerribleTentacles", num - 1))//true면 스킬 사용 불가
+            {
+                buffDebuffChecker.UseTerribleTentacles(num - 1);
+                return;
+            }
+
         }
 
         private void BasicAttackExecute()

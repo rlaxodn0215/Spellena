@@ -658,15 +658,6 @@ namespace Player
         {
             int _skillNum = (int)data[1];
 
-            if (GetComponent<Cultist>() != null)
-            {
-                if (buffDebuffChecker.CheckBuffDebuff("TerribleTentacles", _skillNum - 1))//true면 스킬 사용 불가
-                {
-                    buffDebuffChecker.UseTerribleTentacles(_skillNum - 1);
-                    return;
-                }
-            }
-
 
             if (skillCoolDownTime[_skillNum - 1] <= 0f)
             {
@@ -685,7 +676,7 @@ namespace Player
                         else if (_skillNum == 3)
                             skillState = SkillStateCultist.Skill3Ready;
                         else if (_skillNum == 4)
-                            if(ultimateCount >= 3)
+                            if(ultimateCount >= -1000)
                                 skillState = SkillStateCultist.Skill4Ready;
                     }
                 }
@@ -738,13 +729,13 @@ namespace Player
                 }
                 else if (skillState == SkillStateCultist.Skill4Ready)
                 {
-                    if (ultimateCount >= 3)
+                    if (ultimateCount >= -1000)
                     {
                         skillState = SkillStateCultist.Skill4Casting;
                         CallRPCEvent("SetAnimation", "Response", "isSkill4", true);
                         CallRPCEvent("UpdateData", "Response", skillState, "skillCastingTime", 3, skill4CastingTime, true);
                         CallRPCEvent("SetDagger", "Response", false);
-                        if (buffDebuffChecker.ritualStacks < 8)
+                        if (buffDebuffChecker.ritualStacks > 8)
                         {
                             CallRPCEvent("PlayRitualEffect", "Response");
                             buffDebuffChecker.SpreadBuffDebuff("UniteAndOmen", transform.position + new Vector3(0, 1, 0));
