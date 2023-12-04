@@ -113,6 +113,7 @@ public class BurstFlareObject : SpawnObject
                         Debug.Log("Hit Enemy");
                         _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.All,
                          playerName, (int)(elementalOrderData.burstFlareDamage), hitObject.name, transform.forward, 20f);
+                        RunExplode(pos);
                     }
                 }
             }
