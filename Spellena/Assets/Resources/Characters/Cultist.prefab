@@ -129512,6 +129512,7 @@ MonoBehaviour:
   skill1Lock: {fileID: 2733839047091794487}
   skill2Lock: {fileID: 4030077310389788702}
   skill3Lock: {fileID: 591798071448007246}
+  skill4Lock: {fileID: 5674806383648277058}
   skill1Active: {fileID: 2700431193873943296}
   skill2Active: {fileID: 8998653309175652763}
   skill3Active: {fileID: 194307360418961721}
@@ -129538,6 +129539,7 @@ MonoBehaviour:
   - {fileID: 6131329811585393687}
   - {fileID: 3080857797840798395}
   - {fileID: 328605062514124662}
+  chargeBar: {fileID: 8737012994851147967}
 --- !u!1 &8090557117535697889
 GameObject:
   m_ObjectHideFlags: 0

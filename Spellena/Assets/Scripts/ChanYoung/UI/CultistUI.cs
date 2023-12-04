@@ -18,6 +18,7 @@ namespace Player
         public GameObject skill1Lock;
         public GameObject skill2Lock;
         public GameObject skill3Lock;
+        public GameObject skill4Lock;
 
         public GameObject skill1Active;
         public GameObject skill2Active;
@@ -26,6 +27,8 @@ namespace Player
 
         public GameObject[] circleEmpty;
         public GameObject[] circleFilled;
+
+        public Image chargeBar;
 
         void Update()
         {
@@ -49,6 +52,13 @@ namespace Player
                 skill3Lock.SetActive(false);
             else
                 skill3Lock.SetActive(true);
+
+            if (cultist.ultimateCount >= 3)
+                skill4Lock.SetActive(false);
+            else
+                skill4Lock.SetActive(true);
+
+
 
             if (cultist.skillState == SkillStateCultist.Skill1Channeling)
                 skill1Active.SetActive(true);
@@ -83,6 +93,8 @@ namespace Player
                     circleFilled[i].SetActive(false);
                 }
             }
+
+            chargeBar.fillAmount = cultist.chargeCount / 4;
 
 
         }

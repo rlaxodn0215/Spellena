@@ -159,7 +159,6 @@ public class BuffDebuffChecker : MonoBehaviourPunCallbacks
                 }
             }
 
-            //데이터 갱신
             CallRPCTunnel("UpdateData");
         }
 
@@ -217,7 +216,7 @@ public class BuffDebuffChecker : MonoBehaviourPunCallbacks
             _tempData[0] = tunnelCommand;
         }
 
-        photonView.RPC("CallRPCTunnelBuffDebuff", RpcTarget.AllBuffered, _tempData);
+        photonView.RPC("CallRPCTunnelBuffDebuff", RpcTarget.All, _tempData);
     }
 
     [PunRPC]
@@ -262,8 +261,9 @@ public class BuffDebuffChecker : MonoBehaviourPunCallbacks
     void SetHorrorViewID(object[] data)
     {
         horrorViewID = (int)data[1];
-        horrorPlayer = PhotonNetwork.GetPhotonView(horrorViewID).gameObject.name;
-        Debug.Log(horrorViewID);
+        if(horrorViewID != -1)
+            horrorPlayer = PhotonNetwork.GetPhotonView(horrorViewID).gameObject.name;
+
     }
 
     void ResetAllTentacles()
@@ -290,6 +290,8 @@ public class BuffDebuffChecker : MonoBehaviourPunCallbacks
     {
         buffsAndDebuffs = ((string[])data[1]).ToList();
         leftTime = ((float[])data[2]).ToList();
+        Debug.Log(transform.root.gameObject.name + buffsAndDebuffs.Count);
+        Debug.Log(transform.root.gameObject.name + leftTime.Count);
     }
     public void SetNewBuffDebuff(string buffDebuff, params object[] data)
     {
