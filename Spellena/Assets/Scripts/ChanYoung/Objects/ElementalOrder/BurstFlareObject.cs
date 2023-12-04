@@ -108,7 +108,7 @@ public class BurstFlareObject : SpawnObject
                     Debug.Log("Hit Enemy");
                     _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.All,
                      playerName, (int)(elementalOrderData.burstFlareDamage), other.name, transform.forward, 20f);
-                    photonView.RPC("")
+                    photonView.RPC("DestoryObject", RpcTarget.AllBuffered);
                     RunExplode(other.ClosestPointOnBounds(other.transform.position));
                 }
             }
