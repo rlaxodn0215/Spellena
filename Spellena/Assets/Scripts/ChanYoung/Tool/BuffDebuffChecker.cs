@@ -290,8 +290,8 @@ public class BuffDebuffChecker : MonoBehaviourPunCallbacks
     {
         buffsAndDebuffs = ((string[])data[1]).ToList();
         leftTime = ((float[])data[2]).ToList();
-        Debug.Log(transform.root.gameObject.name + buffsAndDebuffs.Count);
-        Debug.Log(transform.root.gameObject.name + leftTime.Count);
+        //Debug.Log(transform.root.gameObject.name + buffsAndDebuffs.Count);
+        //Debug.Log(transform.root.gameObject.name + leftTime.Count);
     }
     public void SetNewBuffDebuff(string buffDebuff, params object[] data)
     {

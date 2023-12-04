@@ -105,6 +105,11 @@ namespace Player
 
         private Vector3 handPoint;
 
+        [HideInInspector]
+        public Animator animatorForOther;
+        [HideInInspector]
+        public Animator topAnimator;
+
         protected override void Awake()
         {
             base.Awake();
@@ -130,12 +135,15 @@ namespace Player
                 Initialize();
                 overlayCameraDefaultPos = overlayCamera.transform.localPosition;
             }
+
             dataHp = elementalOrderData.hp;
-           // animator = GetComponent<Animator>();
+            topAnimator = animator;
+            animator = animatorForOther = avatarForOther.GetComponent<Animator>();
         }
         protected override void Update()
         {
             base.Update();
+
             if (photonView.IsMine)
             {
                 CheckOverlayAnimator();
@@ -144,15 +152,16 @@ namespace Player
                 CheckSkillOnMine();
             }
 
-            if(PhotonNetwork.IsMasterClient)
-            {
-                CheckCoolDown();
-            }
+            //if(PhotonNetwork.IsMasterClient)
+            //{
+            //    CheckCoolDown();
+            //}
         }
 
         protected override void FixedUpdate()
         {
             base.FixedUpdate();
+            CheckCoolDown();
         }
 
         private void Initialize()
@@ -172,6 +181,21 @@ namespace Player
             base.IsLocalPlayer();
             overlayCamera.SetActive(true);
             minimapCamera.SetActive(true);
+        }
+
+        [PunRPC]
+        public override void PlayerDeadForAll(string damgePart, Vector3 direction, float force)
+        {
+            base.PlayerDeadForAll(damgePart, direction, force);
+            topAnimator.enabled = false;
+            Debug.Log("Dead");
+        }
+
+        [PunRPC]
+        public override void PlayerReBornForAll(Vector3 pos)
+        {
+            base.PlayerReBornForAll(pos);
+            topAnimator.enabled = true;
         }
 
         //쿨타임
@@ -452,7 +476,7 @@ namespace Player
             if (photonView.IsMine)
             {
                 overlayAnimator.SetBool((string)data[1], (bool)data[2]);
-                animator.SetBool((string)data[1], (bool)data[2]);
+                animatorForOther.SetBool((string)data[1], (bool)data[2]);
             }
         }
 
@@ -533,7 +557,7 @@ namespace Player
 
 
                     isPointStrike = false;
-                    ragnaEdgeCoolDownTime = elementalOrderData.rangaEdgeCoolDownTime;
+                    photonView.RPC("SetCoolTime", RpcTarget.AllBuffered, "ragnaEdgeCoolDownTime", elementalOrderData.rangaEdgeCoolDownTime);
                     ragnaEdge.EndSkill();
 
                     skillState = SkillState.None;
@@ -565,7 +589,7 @@ namespace Player
                     if (_result == true)
                     {
                         SetAnimation("Spell2", false);
-                        burstFlareCoolDownTime = elementalOrderData.burstFlareCoolDownTime;
+                        photonView.RPC("SetCoolTime", RpcTarget.AllBuffered, "burstFlareCoolDownTime", elementalOrderData.burstFlareCoolDownTime);
                         burstFlare.EndSkill();
                         skillState = SkillState.None;
                     }
@@ -593,7 +617,7 @@ namespace Player
                     _tempObject.GetComponent<PhotonView>().TransferOwnership(ownerActorNum);
 
                     isPointStrike = false;
-                    gaiaTiedCoolDownTime = elementalOrderData.gaiaTiedCoolDownTime;
+                    photonView.RPC("SetCoolTime", RpcTarget.AllBuffered, "gaiaTiedCoolDownTime", elementalOrderData.gaiaTiedCoolDownTime);
                     gaiaTied.EndSkill();
                     skillState = SkillState.None;
                 }
@@ -622,7 +646,7 @@ namespace Player
                         _tempObject.GetComponent<PhotonView>().TransferOwnership(ownerActorNum);
 
                         isPointStrike = false;
-                        meteorStrikeCoolDownTime = elementalOrderData.meteorStrikeCoolDownTime;
+                        photonView.RPC("SetCoolTime", RpcTarget.AllBuffered, "meteorStrikeCoolDownTime", elementalOrderData.meteorStrikeCoolDownTime);
                         meteorStrike.EndSkill();
                         skillState = SkillState.None;
                     }
@@ -649,7 +673,7 @@ namespace Player
                     _tempObject.GetComponent<PhotonView>().TransferOwnership(ownerActorNum);
 
                     isPointStrike = false;
-                    terraBreakCoolDownTime = terraBreak.GetSkillCoolDownTime();
+                    photonView.RPC("SetCoolTime", RpcTarget.AllBuffered, "terraBreakCoolDownTime", terraBreak.GetSkillCoolDownTime());
                     terraBreak.EndSkill();
                     skillState = SkillState.None;
                 }
@@ -670,10 +694,37 @@ namespace Player
                     _tempObject.GetComponent<PhotonView>().TransferOwnership(ownerActorNum);
 
                     isPointStrike = false;
-                    eterialStormCoolDownTime = elementalOrderData.eterialStormCoolDownTime;
+                    photonView.RPC("SetCoolTime", RpcTarget.AllBuffered, "eterialStormCoolDownTime", elementalOrderData.eterialStormCoolDownTime);
                     skillState = SkillState.None;
                 }
             }
+        }
+
+        [PunRPC]
+        void SetCoolTime(string name, float time)
+        {
+            switch (name)
+            {
+                case "ragnaEdgeCoolDownTime":
+                    ragnaEdgeCoolDownTime = time;
+                    break;
+                case "burstFlareCoolDownTime":
+                    burstFlareCoolDownTime = time;
+                    break;
+                case "gaiaTiedCoolDownTime":
+                    gaiaTiedCoolDownTime = time;
+                    break;
+                case "meteorStrikeCoolDownTime":
+                    meteorStrikeCoolDownTime = time;
+                    break;
+                case "terraBreakCoolDownTime":
+                    terraBreakCoolDownTime = time;
+                    break;
+                case "eterialStormCoolDownTime":
+                    eterialStormCoolDownTime = time;
+                    break;
+            }
+
         }
 
         //로컬 클라이언트에서 확인하는 요소
@@ -846,12 +897,12 @@ namespace Player
 
         }
 
-
         //요청
 
         public override void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
         {
             base.OnPhotonSerializeView(stream, info);
+
             if (stream.IsWriting)
             {
                 stream.SendNext(handPoint);
@@ -940,50 +991,50 @@ namespace Player
         }
         void CheckAnimator()
         {
-            if (animator.GetCurrentAnimatorStateInfo(0).IsName("Spell1"))
+            if (animatorForOther.GetCurrentAnimatorStateInfo(0).IsName("Spell1"))
             {
-                float _animationLength = animator.GetCurrentAnimatorStateInfo(0).length;
+                float _animationLength = animatorForOther.GetCurrentAnimatorStateInfo(0).length;
                 float _normalizedSpeed = _animationLength / elementalOrderData.ragnaEdgeCastingTime;
-                animator.SetFloat("Spell1Speed", _normalizedSpeed);
-                animator.SetBool("Spell1", false);
+                animatorForOther.SetFloat("Spell1Speed", _normalizedSpeed);
+                animatorForOther.SetBool("Spell1", false);
             }
-            else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Spell2"))
+            else if (animatorForOther.GetCurrentAnimatorStateInfo(0).IsName("Spell2"))
             {
                 float _animationLength = animator.GetCurrentAnimatorStateInfo(0).length;
                 float _normalizedSpeed = _animationLength / elementalOrderData.burstFlareCastingTime;
-                animator.SetFloat("Spell2Speed", _normalizedSpeed);
+                animatorForOther.SetFloat("Spell2Speed", _normalizedSpeed);
                 if (burstFlare.CheckReady() == false)
                 {
-                    animator.SetBool("Spell2", false);
+                    animatorForOther.SetBool("Spell2", false);
                 }
             }
-            else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Spell3"))
+            else if (animatorForOther.GetCurrentAnimatorStateInfo(0).IsName("Spell3"))
             {
-                float _animationLength = animator.GetCurrentAnimatorStateInfo(0).length;
+                float _animationLength = animatorForOther.GetCurrentAnimatorStateInfo(0).length;
                 float _normalizedSpeed = _animationLength / elementalOrderData.gaiaTiedCastingTime;
-                animator.SetFloat("Spell3Speed", _normalizedSpeed);
-                animator.SetBool("Spell3", false);
+                animatorForOther.SetFloat("Spell3Speed", _normalizedSpeed);
+                animatorForOther.SetBool("Spell3", false);
             }
-            else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Spell4"))
+            else if (animatorForOther.GetCurrentAnimatorStateInfo(0).IsName("Spell4"))
             {
-                float _animationLength = animator.GetCurrentAnimatorStateInfo(0).length;
+                float _animationLength = animatorForOther.GetCurrentAnimatorStateInfo(0).length;
                 float _normalizedSpeed = _animationLength / elementalOrderData.meteorStrikeCastingTime;
-                animator.SetFloat("Spell4Speed", _normalizedSpeed);
-                animator.SetBool("Spell4", false);
+                animatorForOther.SetFloat("Spell4Speed", _normalizedSpeed);
+                animatorForOther.SetBool("Spell4", false);
             }
-            else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Spell5"))
+            else if (animatorForOther.GetCurrentAnimatorStateInfo(0).IsName("Spell5"))
             {
-                float _animationLength = animator.GetCurrentAnimatorStateInfo(0).length;
+                float _animationLength = animatorForOther.GetCurrentAnimatorStateInfo(0).length;
                 float _normalizedSpeed = _animationLength / elementalOrderData.terraBreakCastingTime;
-                animator.SetFloat("Spell5Speed", _normalizedSpeed);
-                animator.SetBool("Spell5", false);
+                animatorForOther.SetFloat("Spell5Speed", _normalizedSpeed);
+                animatorForOther.SetBool("Spell5", false);
             }
-            else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Spell6"))
+            else if (animatorForOther.GetCurrentAnimatorStateInfo(0).IsName("Spell6"))
             {
-                float _animationLength = animator.GetCurrentAnimatorStateInfo(0).length;
+                float _animationLength = animatorForOther.GetCurrentAnimatorStateInfo(0).length;
                 float _normalizedSpeed = _animationLength / elementalOrderData.eterialStormCastingTime;
-                animator.SetFloat("Spell6Speed", _normalizedSpeed);
-                animator.SetBool("Spell6", false);
+                animatorForOther.SetFloat("Spell6Speed", _normalizedSpeed);
+                animatorForOther.SetBool("Spell6", false);
             }
         }
 
@@ -1090,22 +1141,22 @@ namespace Player
                 else
                     SetHandEffectPositionIK(commands[0], commands[1]);
 
-                animator.SetIKPosition(AvatarIKGoal.LeftHand, handPoint);
-                animator.SetIKPosition(AvatarIKGoal.RightHand, handPoint);
-                animator.SetIKPositionWeight(AvatarIKGoal.LeftHand, leftCurrentWeight);
-                animator.SetIKPositionWeight(AvatarIKGoal.RightHand, rightCurrentWeight);
+                animatorForOther.SetIKPosition(AvatarIKGoal.LeftHand, handPoint);
+                animatorForOther.SetIKPosition(AvatarIKGoal.RightHand, handPoint);
+                animatorForOther.SetIKPositionWeight(AvatarIKGoal.LeftHand, leftCurrentWeight);
+                animatorForOther.SetIKPositionWeight(AvatarIKGoal.RightHand, rightCurrentWeight);
             }
             else
             {
                 Vector3 _tempHandPoint = Vector3.Lerp(currentHandPoint, networkHandPoint, Time.deltaTime * 5);
-                animator.SetIKPosition(AvatarIKGoal.LeftHand, _tempHandPoint);
-                animator.SetIKPosition(AvatarIKGoal.RightHand, _tempHandPoint);
+                animatorForOther.SetIKPosition(AvatarIKGoal.LeftHand, _tempHandPoint);
+                animatorForOther.SetIKPosition(AvatarIKGoal.RightHand, _tempHandPoint);
                 currentHandPoint = _tempHandPoint;
 
                 float _tempRightHandWeight = Mathf.Lerp(rightNotMineCurrentWeight, networkRightCurrentWeight, Time.deltaTime * 5);
                 float _tempLeftHandWeight = Mathf.Lerp(leftNotMineCurrentWeight, networkLeftCurrentWeight, Time.deltaTime * 5);
-                animator.SetIKPositionWeight(AvatarIKGoal.RightHand, _tempRightHandWeight);
-                animator.SetIKPositionWeight(AvatarIKGoal.LeftHand, _tempLeftHandWeight);
+                animatorForOther.SetIKPositionWeight(AvatarIKGoal.RightHand, _tempRightHandWeight);
+                animatorForOther.SetIKPositionWeight(AvatarIKGoal.LeftHand, _tempLeftHandWeight);
                 rightNotMineCurrentWeight = _tempRightHandWeight;
                 leftNotMineCurrentWeight = _tempLeftHandWeight;
             }

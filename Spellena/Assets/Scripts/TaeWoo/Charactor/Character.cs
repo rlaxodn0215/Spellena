@@ -748,7 +748,7 @@ namespace Player
         }
 
         [PunRPC]
-        public void PlayerDeadForAll(string damgePart, Vector3 direction, float force)
+        public virtual void PlayerDeadForAll(string damgePart, Vector3 direction, float force)
         {
             // Ragdoll로 처리
             hp = dataHp;
@@ -784,7 +784,7 @@ namespace Player
         }
 
         [PunRPC]
-        public void PlayerReBornForAll(Vector3 pos)
+        public virtual void PlayerReBornForAll(Vector3 pos)
         {
             gameObject.transform.position = pos;
             gameObject.transform.rotation = Quaternion.identity;

@@ -45,9 +45,9 @@ MonoBehaviour:
   - 0.5
   - 0.5
   - 0.5
-  meteorStrikeDamage: 550
+  meteorStrikeDamage: 400
   meteorStrikeCoolDownTime: 20
-  meteorStrikeCastingTime: 3.5
+  meteorStrikeCastingTime: 5.5
   meteorStrikeMaxDistance: 7
   meteorStrikeLifeTime: 1
   terraBreakDamageFirst: 200

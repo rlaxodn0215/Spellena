@@ -91978,22 +91978,22 @@ MonoBehaviour:
     SynchronizeType: 2
     Name: Spell6
   - Type: 1
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: Spell1Speed
   - Type: 1
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: Spell2Speed
   - Type: 1
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: Spell3Speed
   - Type: 1
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: Spell4Speed
   - Type: 1
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: Spell5Speed
   - Type: 1
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: Spell6Speed
   m_SynchronizeLayers:
   - SynchronizeType: 2
@@ -92266,6 +92266,8 @@ MonoBehaviour:
   meteorStrikeCoolDownTime: 0
   terraBreakCoolDownTime: 0
   eterialStormCoolDownTime: 0
+  animatorForOther: {fileID: 0}
+  topAnimator: {fileID: 0}
 --- !u!114 &1343973531166983375
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -92351,22 +92353,22 @@ MonoBehaviour:
     SynchronizeType: 2
     Name: Spell6
   - Type: 1
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: Spell1Speed
   - Type: 1
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: Spell2Speed
   - Type: 1
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: Spell3Speed
   - Type: 1
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: Spell4Speed
   - Type: 1
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: Spell5Speed
   - Type: 1
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: Spell6Speed
   m_SynchronizeLayers:
   - SynchronizeType: 2
