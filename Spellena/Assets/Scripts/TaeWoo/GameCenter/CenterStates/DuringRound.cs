@@ -451,53 +451,30 @@ public class DuringRound : CenterState
 
     void CheckRoundEnd()
     {
-        if (gameCenter.occupyingA.rate >= gameCenter.occupyingComplete && gameCenter.currentOccupationTeam == gameCenter.teamA)
+        if (gameCenter.occupyingA.rate >= gameCenter.occupyingComplete && 
+            gameCenter.currentOccupationTeam == gameCenter.teamA && gameCenter.teamBOccupying <= 0)
         {
             gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "extraObj", true);
             gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "redExtraUI", false);
             gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "redExtraObj", true);
             gameCenter.bgmManagerView.RPC("PlayAudio", RpcTarget.All, "RoundAlmostEnd", 1.0f, true, true);
-
-            if (gameCenter.teamBOccupying <= 0)
-            {
-                gameCenter.roundEndTimer -= Time.deltaTime;
-            }
-
-            //else
-            //{
-            //    gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "extraObj", true);
-            //    gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "redExtraUI", false);
-            //    gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "redExtraObj", true);
-            //    gameCenter.bgmManagerView.RPC("PlayAudio", RpcTarget.All, "RoundAlmostEnd", 1.0f, true, true);
-            //}
+            gameCenter.roundEndTimer -= Time.deltaTime;
 
         }
 
-        else if (gameCenter.occupyingB.rate >= gameCenter.occupyingComplete && gameCenter.currentOccupationTeam == gameCenter.teamB && gameCenter.teamAOccupying <= 0)
+        else if (gameCenter.occupyingB.rate >= gameCenter.occupyingComplete &&
+            gameCenter.currentOccupationTeam == gameCenter.teamB && gameCenter.teamAOccupying <= 0)
         {
             gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "extraObj", true);
             gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "blueExtraUI", false);
             gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "blueExtraObj", true);
             gameCenter.bgmManagerView.RPC("PlayAudio", RpcTarget.All, "RoundAlmostEnd", 1.0f, true, true);
-
-            if (gameCenter.teamAOccupying <= 0)
-            {
-                gameCenter.roundEndTimer -= Time.deltaTime;
-            }
-            
-            //else
-            //{
-            //    gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "extraObj", true);
-            //    gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "blueExtraUI", false);
-            //    gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "blueExtraObj", true);
-            //    gameCenter.bgmManagerView.RPC("PlayAudio", RpcTarget.All, "RoundAlmostEnd", 1.0f, true,true);
-            //}
+            gameCenter.roundEndTimer -= Time.deltaTime;
         }
 
         else
         {
             gameCenter.roundEndTimer = gameCenter.roundEndTime;
-           // checkRoundEndOnce = true;
         }
 
         if (gameCenter.roundEndTimer <= 0.0f)

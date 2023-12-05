@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Photon.Pun;
 
 namespace Player
 {
@@ -19,14 +20,14 @@ namespace Player
 
         int skillNum = 0;
 
-        int chargeCount = 0;
+        int assistCount = 0;
         int ultimateCount = 0;
 
         private void Start()
         {
             ConnectUI();
 
-            chargeCount = aeterna.chargeCount;
+            assistCount = (int)PhotonNetwork.LocalPlayer.CustomProperties["AsisstCount"];
             ultimateCount = aeterna.ultimateCount;
         }
 
@@ -142,10 +143,10 @@ namespace Player
 
         void ShowChargeBar()
         {
-            if (chargeCount != aeterna.chargeCount)
+            if (assistCount != (int)PhotonNetwork.LocalPlayer.CustomProperties["AsisstCount"])
             {
-                chargeCount = aeterna.chargeCount;
-                skill4ChargeBarImage.fillAmount = 0.25f * aeterna.chargeCount;
+                assistCount = (int)PhotonNetwork.LocalPlayer.CustomProperties["AsisstCount"];
+                skill4ChargeBarImage.fillAmount = 0.25f * assistCount;
             }
         }
 

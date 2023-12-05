@@ -17,6 +17,7 @@ namespace Player
         public GameObject DimensionDoorGUI;
         public GameObject teleportPoints;
         public GameObject teleportManager;
+        public GameObject minimapCamera;
 
         [HideInInspector]
         public DimensionSword dimensionSword;
@@ -132,6 +133,13 @@ namespace Player
         {
             base.SetTag(team);
             DimensionSword.GetComponent<PhotonView>().RPC("SetSwordTag", RpcTarget.AllBufferedViaServer);
+        }
+
+        [PunRPC]
+        public override void IsLocalPlayer()
+        {
+            base.IsLocalPlayer();
+            minimapCamera.SetActive(true);
         }
 
         void OnButtonCancel()

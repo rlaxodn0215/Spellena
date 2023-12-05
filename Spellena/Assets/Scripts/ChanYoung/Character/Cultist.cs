@@ -247,7 +247,7 @@ namespace Player
             if (skillState == SkillStateCultist.LungeHolding)
             {
                 moveVec = Vector3.zero;
-                rigidbody.MovePosition(rigidbody.transform.position + transform.forward * moveSpeed * runSpeedRatio * Time.deltaTime);
+                rigidbody.MovePosition(rigidbody.transform.position + transform.forward * moveSpeed * runSpeedRatio * Time.deltaTime * 1.5f);
                 animator.SetInteger("VerticalSpeed", 1);
                 animator.SetInteger("HorizontalSpeed", 0);
             }

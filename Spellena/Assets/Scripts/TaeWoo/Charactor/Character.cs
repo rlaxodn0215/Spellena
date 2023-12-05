@@ -773,6 +773,7 @@ namespace Player
 
         }
 
+
         [PunRPC]
         public void PlayerDeadPersonal()
         {
