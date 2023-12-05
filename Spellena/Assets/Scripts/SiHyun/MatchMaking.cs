@@ -147,6 +147,16 @@ public class MatchMaking : MonoBehaviourPunCallbacks
         Application.Quit();
     }
 
+    public void OnClickQuickMatch()
+    {
+        FirebaseLoginManager.Instance.SetLobbyMaster(user.UserId, true);
+    }
+
+    public void OnClickExitQuickMatch()
+    {
+        FirebaseLoginManager.Instance.SetLobbyMaster(user.UserId, false);
+    }
+
     //포톤 콜백 함수
     #region 
 

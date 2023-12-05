@@ -63,7 +63,11 @@ public class PlayerItem : MonoBehaviourPunCallbacks
             wasSetSibiling = true;
             this.transform.SetAsLastSibling();
         }
-        if (!PhotonNetwork.IsMasterClient)
+        if (PhotonNetwork.IsMasterClient)
+        {
+            popUpButton.SetActive(true);
+        }
+        else if(!PhotonNetwork.IsMasterClient)
         {
             popUpButton.SetActive(false);
         }
@@ -125,7 +129,33 @@ public class PlayerItem : MonoBehaviourPunCallbacks
 
     public void OnClickKickPlayer()
     {
-        photonView.RPC("KickPlayerRPC", RpcTarget.AllBuffered, photonView.Owner.ActorNumber);
+        ExitGames.Client.Photon.Hashtable _hastable
+            = new ExitGames.Client.Photon.Hashtable();
+        _hastable.Add("isKicked", true);
+        player.SetCustomProperties(_hastable);
+    }
+
+    public override void OnPlayerPropertiesUpdate(Photon.Realtime.Player targetPlayer, ExitGames.Client.Photon.Hashtable changedProps)
+    {
+        if(targetPlayer == PhotonNetwork.LocalPlayer)
+        {
+            // isKicked property가 존재할경우
+            if (changedProps["isKicked"] !=null)
+            {
+                // isKicked property가 true일 경우에만 진행
+                if ((bool)changedProps["isKicked"])
+                {
+                    string[] _removeProperties = new string[1];
+                    _removeProperties[0] = "isKicked";
+                    PhotonNetwork.RemovePlayerCustomProperties(_removeProperties);
+                    PhotonNetwork.LeaveRoom();
+                }
+            }
+        }
+        else
+        {
+            Debug.Log(targetPlayer.NickName + " : 로컬 플레이어 아님");
+        }
     }
 
     [PunRPC]
@@ -134,12 +164,6 @@ public class PlayerItem : MonoBehaviourPunCallbacks
         targetObject = GameObject.Find(_teamList);
         playerItemParent = targetObject.transform;
         this.transform.SetParent(playerItemParent);
-    }
-
-    [PunRPC]
-    public void KickPlayerRPC(int _targetActorNumber)
-    {
-        PhotonNetwork.CloseConnection(PhotonNetwork.PlayerList[_targetActorNumber - 1]);
     }
 
     public PlayerItem GetPlayerItem()

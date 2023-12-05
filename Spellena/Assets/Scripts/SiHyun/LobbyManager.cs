@@ -139,7 +139,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         if (PlayerItem.localPlayerItemInstance == null)
         {
             GameObject _playerItemObj = 
-                PhotonNetwork.Instantiate(playerItemPrefab.name, Vector3.zero, Quaternion.identity);
+                PhotonNetwork.Instantiate("SiHyun/Prefabs/PlayerItem", Vector3.zero, Quaternion.identity);
             PlayerItem _playerItem = _playerItemObj.GetComponent<PlayerItem>();
             _playerItem.transform.SetParent(playerItemParentA);
             if(_playerItem.photonView.IsMine)
@@ -188,12 +188,13 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         if (PlayerItem.localPlayerItemInstance == null)
         {
             GameObject _playerItemObj = 
-                PhotonNetwork.Instantiate(playerItemPrefab.name, Vector3.zero, Quaternion.identity);
+                PhotonNetwork.Instantiate("SiHyun/Prefabs/PlayerItem", Vector3.zero, Quaternion.identity);
             PlayerItem _playerItem = _playerItemObj.GetComponent<PlayerItem>();
             _playerItem.transform.SetParent(playerItemParentA);
             if(_playerItem.photonView.IsMine)
             {
-                _playerItem.SetPlayerInfo(_newPlayer.UserId, _newPlayer.NickName);
+                //_playerItem.SetPlayerInfo(_newPlayer.UserId, _newPlayer.NickName);
+                _playerItem.SetPlayerInfo(_newPlayer, PunTeams.Team.red);
             }
 
             CanvasScaler canvasScaler = playerItemParentA.GetComponentInParent<CanvasScaler>();
