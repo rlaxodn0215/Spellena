@@ -9,7 +9,7 @@ public class CultistDagger : SpawnObject
     public TriggerEventer triggerEventer;
     public CultistData cultistData;
 
-    float daggerSpeed = 50f;
+    float daggerSpeed = 5f;
 
     float lifeTime = 10f;
     float currentLifeTime = 0f;
@@ -67,11 +67,13 @@ public class CultistDagger : SpawnObject
 
     void TriggerEvent(GameObject hitObject)
     {
+        Debug.LogError(hitObject.name);
+
         if (PhotonNetwork.IsMasterClient)
         {
             if (hitObject.gameObject.layer == 11 || hitObject.tag == "Wall")
                 CallRPCTunnel("RequestDestroy");
-            //if (hitObject.transform.root.gameObject.name != hitObject.name)
+            if (hitObject.transform.root.gameObject.name != hitObject.name)
             {
                 GameObject _rootObject = hitObject.transform.root.gameObject;
                 if (_rootObject.GetComponent<Character>() != null)

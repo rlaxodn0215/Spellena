@@ -106,10 +106,15 @@ namespace Player
             if((string)data[2] == "BurstFlare")
             {
                 data[3] = Player.camera.transform.position;
-                data[4] = Player.camera.transform.forward;
+                data[4] = Player.camera.transform.localRotation * Vector3.forward;
+                PhotonNetwork.Instantiate("Projectiles/" + (string)data[2], Vector3.zero, Quaternion.identity, 0, data);
             }
 
-            PhotonNetwork.Instantiate("Projectiles/" + (string)data[2], Vector3.zero, Quaternion.identity, 0, data);
+            else if((string)data[2] == "Dagger")
+            {
+                PhotonNetwork.Instantiate("Projectiles/" + (string)data[2], Player.camera.transform.position, Player.camera.transform.rotation, 0, data);
+            }
+
         }
 
 

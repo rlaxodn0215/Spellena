@@ -16267,7 +16267,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.29803923}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -48205,7 +48205,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad4994d6e8d4dc2449c0c7aae260867a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  material: {fileID: 2100000, guid: 57ca3328d02f3b9459f4678e47bf7fe7, type: 2}
+  material: {fileID: 0}
 --- !u!1 &3248290935242218809
 GameObject:
   m_ObjectHideFlags: 0
@@ -67403,7 +67403,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad4994d6e8d4dc2449c0c7aae260867a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  material: {fileID: 2100000, guid: 57ca3328d02f3b9459f4678e47bf7fe7, type: 2}
+  material: {fileID: 0}
 --- !u!1 &4221937830215814474
 GameObject:
   m_ObjectHideFlags: 0
@@ -82658,7 +82658,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad4994d6e8d4dc2449c0c7aae260867a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  material: {fileID: 2100000, guid: 57ca3328d02f3b9459f4678e47bf7fe7, type: 2}
+  material: {fileID: 0}
 --- !u!1 &5148342522961422375
 GameObject:
   m_ObjectHideFlags: 0
@@ -98114,7 +98114,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad4994d6e8d4dc2449c0c7aae260867a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  material: {fileID: 2100000, guid: 57ca3328d02f3b9459f4678e47bf7fe7, type: 2}
+  material: {fileID: 0}
 --- !u!1 &6374021066659776868
 GameObject:
   m_ObjectHideFlags: 0
@@ -103498,7 +103498,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 1, b: 0.039997578, a: 1}
+  m_Color: {r: 0, g: 1, b: 0.039997578, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -108765,7 +108765,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad4994d6e8d4dc2449c0c7aae260867a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  material: {fileID: 2100000, guid: 57ca3328d02f3b9459f4678e47bf7fe7, type: 2}
+  material: {fileID: 0}
 --- !u!1 &7257823671470220166
 GameObject:
   m_ObjectHideFlags: 0

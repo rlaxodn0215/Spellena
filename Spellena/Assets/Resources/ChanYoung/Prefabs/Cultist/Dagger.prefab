@@ -19518,7 +19518,7 @@ MonoBehaviour:
   Group: 0
   prefixField: -1
   Synchronization: 3
-  OwnershipTransfer: 0
+  OwnershipTransfer: 1
   observableSearch: 2
   ObservedComponents:
   - {fileID: -5850560005361106304}
@@ -19538,7 +19538,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerName: 
-  type: 0
+  type: 1
   objectName: 
   hitParticles: []
   triggerEventer: {fileID: 5415677164695840397}
