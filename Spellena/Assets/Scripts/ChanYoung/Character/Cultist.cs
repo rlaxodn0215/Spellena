@@ -223,12 +223,12 @@ namespace Player
 
         protected override void FixedUpdate()
         {
+            base.FixedUpdate();
             if (photonView.IsMine)
             {
                 CheckOnLocalClientFixed();
                 CheckChanneling();
             }
-            base.FixedUpdate();
         }
 
         void CheckChanneling()
