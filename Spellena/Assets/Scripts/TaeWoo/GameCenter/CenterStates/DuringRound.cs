@@ -31,6 +31,7 @@ public class DuringRound : CenterState
 
     void OccupyBarCount()
     {
+        Debug.Log(Time.deltaTime);
         //지역이 점령되어있으면 점령한 팀의 점령비율이 높아진다.
         if (gameCenter.currentOccupationTeam == gameCenter.teamA)
         {
@@ -100,9 +101,14 @@ public class DuringRound : CenterState
                  case "KillCount":
                      if (gameCenter.inGameUIView == null) break;
                     gameCenter.inGameUIView.RPC("ShowKillUI", targetPlayer, gameCenter.tempVictim);
+
                     Debug.Log("KillCount ShowKillLog : " + targetPlayer.CustomProperties["Name"]);
-                    gameCenter.inGameUIView.RPC("ShowKillLog", RpcTarget.AllBuffered, targetPlayer.CustomProperties["Name"],
-                         gameCenter.tempVictim, ((string)targetPlayer.CustomProperties["Team"] == "A"), targetPlayer.ActorNumber);
+
+                    if (PhotonNetwork.IsMasterClient)
+                    {
+                        gameCenter.inGameUIView.RPC("ShowKillLog", RpcTarget.All, targetPlayer.CustomProperties["Name"],
+                             gameCenter.tempVictim, ((string)targetPlayer.CustomProperties["Team"] == "A"), targetPlayer.ActorNumber);
+                    }
                     CheckPlayerHealAssist(targetPlayer);
                     break;
                  case "DeadCount":
@@ -122,6 +128,7 @@ public class DuringRound : CenterState
 
                     if((string)targetPlayer.CustomProperties["KillerName"] == "World")
                     {
+                        Debug.Log("World Kill");
                         gameCenter.inGameUIView.RPC("ShowKillLog", RpcTarget.AllBuffered, "World",
                             (string)targetPlayer.CustomProperties["Name"], ((string)targetPlayer.CustomProperties["Team"] == "A"), -1);
                     }

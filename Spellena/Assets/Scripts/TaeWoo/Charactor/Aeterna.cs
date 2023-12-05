@@ -142,6 +142,16 @@ namespace Player
             minimapCamera.SetActive(true);
         }
 
+        [PunRPC]
+        public override void PlayerReBornForAll(Vector3 pos)
+        {
+            base.PlayerReBornForAll(pos);
+            for(int i = 0; i < skillTimer.Length; i++)
+            {
+                skillTimer[i] = 0.0f;
+            }
+        }
+
         void OnButtonCancel()
         {
             if (photonView.IsMine && (bool)PhotonNetwork.LocalPlayer.CustomProperties["IsAlive"])

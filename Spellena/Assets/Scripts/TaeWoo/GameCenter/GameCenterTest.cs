@@ -216,7 +216,10 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
     void Update()
     {
         //ChangePlayerCustomProperties(PhotonNetwork.LocalPlayer, "Ping", PhotonNetwork.GetPing());
+    }
 
+    private void FixedUpdate()
+    {
         if (PhotonNetwork.IsMasterClient)
         {
             currentCenterState.StateExecution();

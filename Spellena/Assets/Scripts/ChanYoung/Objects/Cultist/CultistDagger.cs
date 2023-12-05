@@ -9,7 +9,7 @@ public class CultistDagger : SpawnObject
     public TriggerEventer triggerEventer;
     public CultistData cultistData;
 
-    float daggerSpeed = 50f;
+    float daggerSpeed = 10f;
 
     float lifeTime = 10f;
     float currentLifeTime = 0f;

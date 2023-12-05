@@ -179,10 +179,6 @@ namespace Player
 
         protected virtual void Update()
         {
-            if (PhotonNetwork.IsMasterClient)
-            {
-                isOccupying = false;
-            }
 
             if (photonView.IsMine)
             {
@@ -289,6 +285,11 @@ namespace Player
             {
                 PlayerMove();
                 MakeMoveSound();
+            }
+
+            if (PhotonNetwork.IsMasterClient)
+            {
+                isOccupying = false;
             }
         }
 
@@ -583,6 +584,7 @@ namespace Player
                 if (other.tag == "OccupationArea" && 
                     (bool) PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["IsAlive"])
                 {
+                    Debug.Log("체크");
                     isOccupying = true;
                 }
             }
@@ -709,6 +711,7 @@ namespace Player
                         SetUltimatePoint(killer.ActorNumber);
                         PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["KillerName"] = killer.CustomProperties["Name"];
 
+                        Debug.Log("Player Character Dead");
                         GameCenterTest.ChangePlayerCustomProperties
                             (PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr], "DeadCount", temp1 + 1);
                         Debug.Log("DeadCount");
@@ -751,14 +754,11 @@ namespace Player
         public virtual void PlayerDeadForAll(string damgePart, Vector3 direction, float force)
         {
             // Ragdoll로 처리
-            hp = dataHp;
             Dead.SetActive(true);
             animator.enabled = false;
             GetComponent<CapsuleCollider>().enabled = false;
             Alive.SetActive(false);
-
-            rigidbody.velocity = Vector3.zero;
-            rigidbody.angularVelocity = Vector3.zero;
+            moveVec = Vector3.zero;
 
             Rigidbody[] bodyParts = Dead.GetComponentsInChildren<Rigidbody>();
             
@@ -789,8 +789,7 @@ namespace Player
         {
             gameObject.transform.position = pos;
             gameObject.transform.rotation = Quaternion.identity;
-            rigidbody.velocity = new Vector3(0, 0, 0);
-            rigidbody.angularVelocity = new Vector3(0, 0, 0);
+            moveVec = Vector3.zero;
             isAlive = true;
 
             for (int i = 0; i < ragdollRigid.Length; i++)
@@ -804,6 +803,8 @@ namespace Player
             animator.enabled = true;
             GetComponent<CapsuleCollider>().enabled = true;
             Dead.SetActive(false);
+
+            hp = dataHp;
         }
 
         [PunRPC]

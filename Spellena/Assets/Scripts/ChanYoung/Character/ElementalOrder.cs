@@ -188,7 +188,6 @@ namespace Player
         {
             base.PlayerDeadForAll(damgePart, direction, force);
             topAnimator.enabled = false;
-            Debug.Log("Dead");
         }
 
         [PunRPC]
@@ -196,7 +195,15 @@ namespace Player
         {
             base.PlayerReBornForAll(pos);
             topAnimator.enabled = true;
+
+            ragnaEdgeCoolDownTime = 0f;
+            burstFlareCoolDownTime = 0f;
+            gaiaTiedCoolDownTime = 0f;
+            meteorStrikeCoolDownTime = 0f;
+            terraBreakCoolDownTime = 0f;
+            eterialStormCoolDownTime = 0f;
         }
+
 
         //ÄðÅ¸ÀÓ
         void CheckCoolDown()

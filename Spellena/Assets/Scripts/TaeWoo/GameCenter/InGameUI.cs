@@ -282,6 +282,8 @@ public class InGameUI : MonoBehaviourPunCallbacks,IPunObservable
     {
         MoveKillLog();
 
+        Debug.Log("ShowKillLog : " + PhotonNetwork.IsMasterClient);
+
         murderNames[0].text = _killer;
         victimNames[0].text = _victim;
         playerKillLogDatas[0].isRed = _isRed;
