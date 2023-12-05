@@ -31,7 +31,6 @@ public class DuringRound : CenterState
 
     void OccupyBarCount()
     {
-        Debug.Log(Time.deltaTime);
         //지역이 점령되어있으면 점령한 팀의 점령비율이 높아진다.
         if (gameCenter.currentOccupationTeam == gameCenter.teamA)
         {
@@ -466,7 +465,6 @@ public class DuringRound : CenterState
             gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "redExtraObj", true);
             gameCenter.bgmManagerView.RPC("PlayAudio", RpcTarget.All, "RoundAlmostEnd", 1.0f, true, true);
             gameCenter.roundEndTimer -= Time.deltaTime;
-
         }
 
         else if (gameCenter.occupyingB.rate >= gameCenter.occupyingComplete &&
