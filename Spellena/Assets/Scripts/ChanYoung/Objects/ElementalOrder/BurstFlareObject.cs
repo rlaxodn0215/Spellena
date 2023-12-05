@@ -91,7 +91,7 @@ public class BurstFlareObject : SpawnObject
     {
         if (other.tag == "Wall" || other.gameObject.layer == 11)
         {
-            RunExplode(other.ClosestPointOnBounds(other.transform.position));
+            RunExplode(other.ClosestPointOnBounds(transform.GetChild(2).position));
             return;
         }
 
@@ -109,7 +109,7 @@ public class BurstFlareObject : SpawnObject
                     _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.All,
                      playerName, (int)(elementalOrderData.burstFlareDamage), other.name, transform.forward, 20f);
                     photonView.RPC("DestoryObject", RpcTarget.AllBuffered);
-                    RunExplode(other.ClosestPointOnBounds(other.transform.position));
+                    RunExplode(other.ClosestPointOnBounds(transform.GetChild(2).position));
                 }
             }
             
