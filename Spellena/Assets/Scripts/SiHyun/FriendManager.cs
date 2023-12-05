@@ -202,6 +202,12 @@ public class FriendManager : MonoBehaviour
         }
     }
 
+    public void AcceptParty(string _userId, string _friendId)
+    {
+        reference.Child("users").Child(_userId).Child("partyMemberList").Child(_friendId).SetValueAsync("party");
+        reference.Child("users").Child(_friendId).Child("partyMemberList").Child(_userId).SetValueAsync("party");
+    }
+
     async void PartyRequestAlarm(DataSnapshot _data)
     {
         DataSnapshot _ref = _data.Child(userId);
@@ -242,11 +248,7 @@ public class FriendManager : MonoBehaviour
         }
     }
 
-    public void AcceptParty(string _userId, string _friendId)
-    {
-        reference.Child("users").Child(_userId).Child("partyMemberList").Child(_friendId).SetValueAsync("party");
-        reference.Child("users").Child(_friendId).Child("partyMemberList").Child(_userId).SetValueAsync("party");
-    }
+    
 
     async void UpdatePartyMemberList(string _userId)
     {
