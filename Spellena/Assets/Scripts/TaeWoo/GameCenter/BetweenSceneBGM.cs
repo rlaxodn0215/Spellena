@@ -28,4 +28,10 @@ public class BetweenSceneBGM : MonoBehaviour
         }
         
     }
+
+    private void OnApplicationQuit()
+    {
+        // ·Î±× ¾Æ¿ô
+    }
+
 }
