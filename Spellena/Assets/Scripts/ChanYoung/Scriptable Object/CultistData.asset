@@ -16,7 +16,7 @@ MonoBehaviour:
   moveSpeed: 5
   backSpeed: 5
   sideSpeed: 5
-  runSpeedRatio: 1.2
+  runSpeedRatio: 1.5
   sitSpeed: 5
   sitSideSpeed: 5
   sitBackSpeed: 5
