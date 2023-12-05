@@ -597,7 +597,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerName: {fileID: 5499581094619960308}
-  popUpButton: {fileID: 234058252557629243}
+  popUpButton: {fileID: 438018344272142300}
   playerItem: {fileID: 2348458300079429452}
 --- !u!114 &6791798440595302129
 MonoBehaviour:

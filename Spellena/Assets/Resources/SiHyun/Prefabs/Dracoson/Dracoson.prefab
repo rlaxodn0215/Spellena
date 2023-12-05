@@ -3276,6 +3276,7 @@ MonoBehaviour:
   Alive: {fileID: 2632883152937596190}
   Dead: {fileID: 7407658348955654873}
   characterSoundManager: {fileID: 0}
+  buffDebuffChecker: {fileID: 0}
   playerName: DracosonTester
   isOccupying: 0
   isAlive: 1
