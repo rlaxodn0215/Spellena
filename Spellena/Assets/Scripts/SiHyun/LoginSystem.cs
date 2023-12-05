@@ -123,4 +123,9 @@ public class LoginSystem : MonoBehaviour
 
         resultPasswardText.text = _result;
     }
+
+    public void OnClickGameExit()
+    {
+        Application.Quit();
+    }
 }

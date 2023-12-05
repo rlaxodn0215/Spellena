@@ -96,6 +96,19 @@ public class FirebaseLoginManager
         auth.StateChanged += OnChanged;
     }
 
+    void OnApplicationQuit()
+    {
+        SignOut();
+    }
+
+    private void OnApplicationFocus(bool hasFocus)
+    {
+        if(!hasFocus)
+        {
+            SignOut();
+        }
+    }
+
     public DatabaseReference GetReference()
     {
         return reference;
@@ -459,4 +472,6 @@ public class FirebaseLoginManager
     {
         phoneNumber = _phoneNumber;
     }
+
+
 }

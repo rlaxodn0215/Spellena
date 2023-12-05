@@ -840,7 +840,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: bce03b3e8f27e824da608931dd8e5e39, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 5e3ab9f98c7c0dc42be34ffc2729ec4b, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -4212,7 +4212,7 @@ GameObject:
   - component: {fileID: 657361579}
   - component: {fileID: 657361578}
   m_Layer: 5
-  m_Name: ' OperationPanel'
+  m_Name: OperationPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
