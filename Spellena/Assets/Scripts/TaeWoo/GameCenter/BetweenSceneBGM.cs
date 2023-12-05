@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Firebase;
 
 public class BetweenSceneBGM : MonoBehaviour
 {
@@ -29,9 +30,19 @@ public class BetweenSceneBGM : MonoBehaviour
         
     }
 
+    private void OnApplicationFocus(bool focus)
+    {
+        if(!focus)
+        {
+            FirebaseLoginManager.Instance.SignOut();
+        }
+
+    }
+
     private void OnApplicationQuit()
     {
         // ·Î±× ¾Æ¿ô
+        FirebaseLoginManager.Instance.SignOut();
     }
 
 }

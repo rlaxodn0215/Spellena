@@ -439,6 +439,21 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
         inGameUI.occupyingTeamUI.rate = occupyingTeam.rate;
     }
 
+    private void OnApplicationFocus(bool focus)
+    {
+        if (!focus)
+        {
+            FirebaseLoginManager.Instance.SignOut();
+        }
+
+    }
+
+    private void OnApplicationQuit()
+    {
+        // 로그 아웃
+        FirebaseLoginManager.Instance.SignOut();
+    }
+
     ////인게임 프레임 확인
     //void OnGUI()
     //{
