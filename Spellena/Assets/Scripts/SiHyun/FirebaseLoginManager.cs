@@ -101,13 +101,6 @@ public class FirebaseLoginManager
         SignOut();
     }
 
-    private void OnApplicationFocus(bool hasFocus)
-    {
-        if(!hasFocus)
-        {
-            SignOut();
-        }
-    }
 
     public DatabaseReference GetReference()
     {
