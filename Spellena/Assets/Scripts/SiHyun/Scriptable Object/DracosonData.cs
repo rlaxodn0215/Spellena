@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "Data", menuName = "ScriptableObject/DracosonData")]
+[CreateAssetMenu(fileName = "DracosonData", menuName = "ScriptableObject/DracosonData")]
 public class DracosonData : ScriptableObject
 {
     public int hp;
@@ -16,15 +16,22 @@ public class DracosonData : ScriptableObject
     public float jumpHeight;
     public float headShotRatio;
 
-    public float invocationCastingTime;
-    public float lungeHoldingTime;
-    public float lungeAttackTime;
-    public float throwTime;
+    public float dragonSightHoldingTime;
+    public float dragonSightAttackTime;
     public float skill1CastingTime;
-    public float skill1Time;
+    public float skill1ChannelingTime;
+    public float skill1Damage;
     public float skill2CastingTime;
     public float skill2ChannelingTime;
+    public float skill2Damage;
     public float skill3CastingTime;
     public float skill3ChannelingTime;
-    public float skill4Time;
+    public float skill3ShieldGage;
+    public float skill4CastingTime;
+
+    public float dragonSightCoolDownTime;
+    public float skill1CoolDownTime;
+    public float skill2CoolDownTime;
+    public float skill3CoolDownTime;
+    public float skill4CoolDownTime;
 }
