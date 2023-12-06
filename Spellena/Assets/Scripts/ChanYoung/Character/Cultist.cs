@@ -117,10 +117,10 @@ namespace Player
             if (photonView.IsMine)
             {
                 ////테스트 정보
-                //HashTable _tempTable = new HashTable();
-                //_tempTable.Add("CharacterViewID", photonView.ViewID);
-                //_tempTable.Add("IsAlive", true);
-                //PhotonNetwork.LocalPlayer.SetCustomProperties(_tempTable);
+                HashTable _tempTable = new HashTable();
+                _tempTable.Add("CharacterViewID", photonView.ViewID);
+                _tempTable.Add("IsAlive", true);
+                PhotonNetwork.LocalPlayer.SetCustomProperties(_tempTable);
 
 
                 object[] _tempData = new object[2];

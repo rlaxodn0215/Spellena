@@ -28,7 +28,86 @@ namespace Player
         public GameObject[] circleEmpty;
         public GameObject[] circleFilled;
 
+        public GameObject screenEffect;
+        Image hitEffect;
+        Image healEffect;
         public Image chargeBar;
+
+        class ScreenEffect
+        {
+            public bool isUp = true;
+            public string type;
+            public int frame = 10;//fixedUpdate �� 10������
+        }
+
+        List<ScreenEffect> screenEffects = new List<ScreenEffect>();
+
+
+
+        private void Start()
+        {
+            hitEffect = screenEffect.transform.Find("HitEffect").GetComponent<Image>();
+            healEffect = screenEffect.transform.Find("HealEffect").GetComponent<Image>();
+        }
+
+
+        private void FixedUpdate()
+        {
+            PlayEffect();
+        }
+
+        private void PlayEffect()
+        {
+            for(int i = 0; i < screenEffects.Count; i++)
+            {
+                Color _tempColor;
+                if (screenEffects[i].type == "Hit")
+                {
+                    _tempColor = hitEffect.color;
+                    if (screenEffects[i].isUp)
+                    {
+                        _tempColor.a += 255 / 5;
+                        screenEffects[i].frame--;
+                        hitEffect.color = _tempColor;
+                        if (screenEffects[i].frame <= 5)
+                            screenEffects[i].isUp = false;
+                    }
+                    else
+                    {
+                        _tempColor.a -= 255 / 5;
+                        screenEffects[i].frame--;
+                        hitEffect.color = _tempColor;
+                    }
+                }
+                else if(screenEffects[i].type == "Heal")
+                {
+                    _tempColor = healEffect.color;
+                    if (screenEffects[i].isUp)
+                    {
+                        _tempColor.a += 255 / 5;
+                        screenEffects[i].frame--;
+                        healEffect.color = _tempColor;
+                        if (screenEffects[i].frame <= 5)
+                            screenEffects[i].isUp = false;
+                    }
+                    else
+                    {
+                        _tempColor.a -= 255 / 5;
+                        screenEffects[i].frame--;
+                        healEffect.color = _tempColor;
+                    }
+                }
+            }
+
+            for(int i = 0; i < screenEffects.Count; i++)
+            {
+                if (screenEffects[i].frame <= 0)
+                {
+                    screenEffects.RemoveAt(i);
+                    i = -1;
+                }
+            }
+        }
 
         void Update()
         {
@@ -95,8 +174,21 @@ namespace Player
             }
 
             chargeBar.fillAmount = cultist.chargeCount / 4;
-
-
         }
+
+
+        public void PlayDamageEffect(int damage)
+        {
+            ScreenEffect _tempEffect = new ScreenEffect();
+            if (damage == 0)
+                return;
+            else if (damage > 0)
+                _tempEffect.type = "Hit";
+            else if (damage < 0)
+                _tempEffect.type = "Heal";
+            screenEffects.Add(_tempEffect);
+        }
+
+
     }
 }
