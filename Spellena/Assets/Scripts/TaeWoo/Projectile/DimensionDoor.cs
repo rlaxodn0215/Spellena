@@ -99,7 +99,7 @@ namespace Player
                        photonView.RPC("DeBuff", RpcTarget.AllBuffered, other.transform.root.GetComponent<Character>().playerName);  
                     }
 
-                    else if (other.transform.root.GetComponent<SpawnObject>() && type == SpawnObjectType.Projectile)
+                    else if (other.transform.root.GetComponent<SpawnObject>().type == SpawnObjectType.Projectile)
                     {
                         other.transform.root.GetComponent<PhotonView>().RPC("DestoryObject", RpcTarget.AllBuffered);
                         soundManger.GetComponent<PhotonView>().RPC("PlayAudioOverlap", RpcTarget.AllBuffered, "Absorb", 1.0f, false, false);
