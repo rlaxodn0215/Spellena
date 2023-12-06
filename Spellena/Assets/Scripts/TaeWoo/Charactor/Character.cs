@@ -110,7 +110,6 @@ namespace Player
 
         // 임시 사용 데이터
         public Vector3 moveVec;
-
         private bool isGrounded = false;
         private bool canInteraction = false;
         private Transform avatarForOther;
@@ -141,7 +140,6 @@ namespace Player
             SetPlayerKeys(PlayerActionState.Skill2, "Skill2");
             SetPlayerKeys(PlayerActionState.Skill3, "Skill3");
             SetPlayerKeys(PlayerActionState.Skill4, "Skill4");
-
             currentSight = sight.transform.position;
             soundManager = characterSoundManager.GetComponent<SoundManager>();
             soundManagerView = characterSoundManager.GetComponent<PhotonView>();
@@ -181,11 +179,10 @@ namespace Player
             }
         }
 
-        
-
 
         protected virtual void Update()
         {
+
             if (photonView.IsMine)
             {
                 if (buffDebuffChecker.CheckBuffDebuff("Horror") == true)
@@ -283,8 +280,6 @@ namespace Player
                    // MakeSound();
                 }
             }
-
-
         }
 
         protected virtual void FixedUpdate()
@@ -292,11 +287,43 @@ namespace Player
             if(photonView.IsMine)
             {
                 PlayerMove();
+                MakeMoveSound();
             }
 
             if (PhotonNetwork.IsMasterClient)
             {
                 isOccupying = false;
+            }
+        }
+
+        protected void MakeMoveSound()
+        {
+            if (playerActionDatas[(int)PlayerActionState.Jump].isExecuting)
+            {
+                soundManagerView.RPC("PlayAudio", RpcTarget.All, "JumpSound", 1.0f, false, "ActSounds");
+            }
+
+            else
+            {
+                // 하나만 소라가 나야 한다면 한 조건문 안에 한 사운드를 넣어라
+
+                if (playerActionDatas[(int)PlayerActionState.Move].isExecuting)
+                {
+                    if (playerActionDatas[(int)PlayerActionState.Run].isExecuting)
+                    {
+                        soundManagerView.RPC("PlayAudio", RpcTarget.All, "RunSound", 1.0f, true, "ActSounds");
+                    }
+
+                    else
+                    {
+                        soundManagerView.RPC("PlayAudio", RpcTarget.All, "WalkSound", 1.0f, true, "ActSounds");
+                    }
+                }
+
+                else
+                {
+                    soundManagerView.RPC("PlayAudio", RpcTarget.All, "NoSound", 1.0f, true, "ActSounds");
+                }
             }
         }
 
@@ -428,12 +455,10 @@ namespace Player
 
                 if (moveVec.magnitude <= 0)
                 {
-                    soundManagerView.RPC("PlayAudio", RpcTarget.All, "NoSound", 1.0f, true, "ActSounds", "EffectSound");
                     playerActionDatas[(int)PlayerActionState.Move].isExecuting = false;
                 }
                 else
                 {
-                    soundManagerView.RPC("PlayAudio", RpcTarget.All, "WalkSound", 1.0f, true, "ActSounds", "EffectSound");
                     playerActionDatas[(int)PlayerActionState.Move].isExecuting = true;
                 }
             }
@@ -455,33 +480,15 @@ namespace Player
         {
             if (photonView.IsMine && (bool)PhotonNetwork.LocalPlayer.CustomProperties["IsAlive"])
             {
+
                 if (!playerActionDatas[(int)PlayerActionState.Run].isExecuting)
                 {
                     animator.SetBool("Run", true);
-                    soundManagerView.RPC("PlayAudio", RpcTarget.All, "RunSound", 1.0f, true, "ActSounds", "EffectSound");
                     playerActionDatas[(int)PlayerActionState.Run].isExecuting = true;
                 }
 
                 else
                 {
-                    if (playerActionDatas[(int)PlayerActionState.Jump].isExecuting)
-                    {
-                        soundManagerView.RPC("PlayAudio", RpcTarget.All, "NoSound", 1.0f, true, "ActSounds", "EffectSound");
-                    }
-
-                    else
-                    {
-                        if (playerActionDatas[(int)PlayerActionState.Move].isExecuting)
-                        {
-                            soundManagerView.RPC("PlayAudio", RpcTarget.All, "WalkSound", 1.0f, true, "ActSounds", "EffectSound");
-                        }
-
-                        else
-                        {
-                            soundManagerView.RPC("PlayAudio", RpcTarget.All, "NoSound", 1.0f, true, "ActSounds", "EffectSound");
-                        }
-                    }
-
                     animator.SetBool("Run", false);
                     playerActionDatas[(int)PlayerActionState.Run].isExecuting = false;
                 }
@@ -556,31 +563,8 @@ namespace Player
             {
                 if (collision.gameObject.layer == LayerMask.NameToLayer("Map"))
                 {
-                    playerActionDatas[(int)PlayerActionState.Jump].isExecuting = false;
-
-                    if(!isGrounded)
-                    {
-                        if (playerActionDatas[(int)PlayerActionState.Move].isExecuting)
-                        {
-                            if(playerActionDatas[(int)PlayerActionState.Run].isExecuting)
-                            {
-                                soundManagerView.RPC("PlayAudio", RpcTarget.All, "RunSound", 1.0f, true, "ActSounds", "EffectSound");
-                            }
-
-                            else
-                            {
-                                soundManagerView.RPC("PlayAudio", RpcTarget.All, "WalkSound", 1.0f, true, "ActSounds", "EffectSound");
-                            }
-
-                        }
-
-                        else
-                        {
-                            soundManagerView.RPC("PlayAudio", RpcTarget.All, "NoSound", 1.0f, true, "ActSounds", "EffectSound");
-                        }
-                    }
-
                     isGrounded = true;
+                    playerActionDatas[(int)PlayerActionState.Jump].isExecuting = false;
                 }
             }
         }
@@ -591,12 +575,8 @@ namespace Player
             {
                 if (collision.gameObject.layer == LayerMask.NameToLayer("Map"))
                 {
-                    playerActionDatas[(int)PlayerActionState.Jump].isExecuting = true;
-                    if(isGrounded)
-                    {
-                        soundManagerView.RPC("PlayAudio", RpcTarget.All, "JumpSound", 1.0f, false, "ActSounds", "EffectSound");
-                    }
                     isGrounded = false;
+                    playerActionDatas[(int)PlayerActionState.Jump].isExecuting = true;
                 }
             }
         }
@@ -701,7 +681,9 @@ namespace Player
                 if (hp <= dataHp)
                 {
                     hp -= damage;
-                    soundManager.PlayRandomAudio("Hit", 1.0f, false, false, 0, 1, "VoiceSound");
+                    if (GetComponent<Cultist>() != null)
+                        UI.GetComponent<CultistUI>().PlayDamageEffect(damage);
+                    Debug.Log("Player Damaged !! : " + damage + " EnemyName: " + enemy);
                 }
 
                 // 마스터 클라이언트이기 때문에 동기화 안되도 게임센터의 값과 같다. 
@@ -713,7 +695,6 @@ namespace Player
                     if (hp <= 0)
                     {
                         isAlive = false;
-                        soundManager.PlayAudio("Death", 1.0f, false, true, "EffectSound");
                         int temp1 = (int)PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["DeadCount"];
                         PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["ParameterName"] = "DeadCount";
 
