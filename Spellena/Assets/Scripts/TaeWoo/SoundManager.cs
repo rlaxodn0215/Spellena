@@ -36,7 +36,7 @@ public class SoundManager : MonoBehaviourPunCallbacks
     {
         if (audios.ContainsKey(name))
         {           
-            if (audios[name].isPlaying && audios[name].loop == isLoop) return;
+            if (audios[name].isPlaying) return;
 
             if (isOnly)
             {
@@ -63,7 +63,7 @@ public class SoundManager : MonoBehaviourPunCallbacks
     {
         if (audios.ContainsKey(name))
         {
-            if (audios[name].isPlaying && audios[name].loop == isLoop) return;
+            if (audios[name].isPlaying) return;
 
             if (isOnly)
             {
@@ -90,7 +90,7 @@ public class SoundManager : MonoBehaviourPunCallbacks
     {
         if (audios.ContainsKey(name))
         {
-            if (audios[name].isPlaying && audios[name].loop == isLoop) return;
+            if (audios[name].isPlaying) return;
             if (audioObjs[parrentName] == null)
             {
                 Debug.LogError("해당 부모의 이름이 없습니다 : " + parrentName);
@@ -122,7 +122,7 @@ public class SoundManager : MonoBehaviourPunCallbacks
 
         if (audios.ContainsKey(name + randomIndex))
         {
-            if (audios[name + randomIndex].isPlaying && audios[name + randomIndex].loop == isLoop) return;
+            if (audios[name + randomIndex].isPlaying) return;
 
             if (isOnly)
             {
@@ -151,7 +151,7 @@ public class SoundManager : MonoBehaviourPunCallbacks
 
         if (audios.ContainsKey(name + randomIndex))
         {
-            if (audios[name + randomIndex].isPlaying && audios[name + randomIndex].loop == isLoop)
+            if (audios[name + randomIndex].isPlaying)
             {
                 audios[name + randomIndex].Stop();
             }
@@ -181,7 +181,7 @@ public class SoundManager : MonoBehaviourPunCallbacks
     {
         if (audios.ContainsKey(name))
         {
-            if (audios[name].isPlaying && audios[name].loop == isLoop)
+            if (audios[name].isPlaying)
             {
                 audios[name].Stop();
             }
@@ -221,6 +221,23 @@ public class SoundManager : MonoBehaviourPunCallbacks
         {
             Debug.LogError("해당 이름의 오디오가 없습니다 : " + name);
         }
+    }
+
+    [PunRPC]
+    public void StopLocalAudio(string parrentName)
+    {
+        if (audioObjs[parrentName] == null)
+        {
+            Debug.LogError("해당 부모의 이름이 없습니다 : " + parrentName);
+            return;
+        }
+
+        for (int i = 0; i < audioObjs[parrentName].childCount; i++)
+        {
+            audios[audioObjs[parrentName].GetChild(i).name].Stop();
+        }
+
+        Debug.Log("StopLocalAudio");
     }
 
 
