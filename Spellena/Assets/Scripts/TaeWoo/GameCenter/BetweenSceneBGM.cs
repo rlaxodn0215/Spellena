@@ -5,7 +5,7 @@ using Firebase;
 
 public class BetweenSceneBGM : MonoBehaviour
 {
-    public static BetweenSceneBGM instance;
+    private static BetweenSceneBGM instance;
 
     public static BetweenSceneBGM Instance
     {
@@ -14,6 +14,8 @@ public class BetweenSceneBGM : MonoBehaviour
             return instance;
         }
     }
+
+    private SettingManager settingManager;
 
     private void Awake()
     {
@@ -28,6 +30,40 @@ public class BetweenSceneBGM : MonoBehaviour
             Destroy(gameObject);
         }
         
+    }
+
+    private void Start()
+    {
+        LinkSettingManager();
+    }
+
+    private void Update()
+    {
+        SetVol();
+    }
+
+    void LinkSettingManager()
+    {
+        GameObject temp = GameObject.Find("SettingManager");
+
+        if (temp == null)
+        {
+            Debug.LogError("SettingManager을 찾을 수 없습니다.");
+            return;
+        }
+
+        settingManager = temp.GetComponent<SettingManager>();
+
+        if (settingManager == null)
+        {
+            Debug.LogError("SettingManager의 Component을 찾을 수 없습니다.");
+            return;
+        }
+    }
+
+    void SetVol()
+    {
+        GetComponent<AudioSource>().volume = 1.0f * settingManager.soundVal * settingManager.bgmVal;
     }
 
     //private void OnApplicationFocus(bool focus)

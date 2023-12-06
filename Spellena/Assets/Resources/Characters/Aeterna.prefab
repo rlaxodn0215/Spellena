@@ -101,9 +101,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c8a83aeb2db7954d872f15235c3d1e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  clampInDegrees: {x: 360, y: 120}
+  clampInDegrees: {x: 360, y: 150}
   eraseCursor: 1
   Sensitivity: {x: 6, y: 6}
+  isOpposite: 0
   characterBody: {fileID: 5624648683831435768}
   scoped: 0
 --- !u!114 &8769827529325309009
@@ -118,8 +119,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7ca334b338680849af01eab505491fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  clampInDegrees: {x: 360, y: 120}
-  sensitivity: {x: 6, y: 6}
+  clampInDegrees: {x: 360, y: 150}
+  Sensitivity: {x: 6, y: 6}
+  isOpposite: 0
   distance: 2
   deathCamUI: {fileID: 0}
 --- !u!114 &3598417007937201718

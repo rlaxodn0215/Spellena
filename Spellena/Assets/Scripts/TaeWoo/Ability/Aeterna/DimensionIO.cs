@@ -76,7 +76,7 @@ namespace Player
             Player.skillTimer[2] = Player.aeternaData.skill2HoldTime;
             Player.skillButton = 0;
 
-            Player.soundManager.PlayAudio("SweepSound", 1.0f, false, false);
+            Player.soundManager.PlayAudio("SweepSound", 1.0f, false, false, "EffectSound");
         }
 
         private void OnHoldShoot()

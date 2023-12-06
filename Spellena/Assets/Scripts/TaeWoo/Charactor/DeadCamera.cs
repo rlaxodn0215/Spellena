@@ -6,7 +6,8 @@ public class DeadCamera : MonoBehaviour
 {
     [Header("Settings")]
     public Vector2 clampInDegrees = new Vector2(360, 120);
-    public Vector2 sensitivity = new Vector2(6, 6);
+    public Vector2 Sensitivity = new Vector2(6, 6);
+    public bool isOpposite = false;
     public float distance = 2;
 
     [HideInInspector]
@@ -21,11 +22,33 @@ public class DeadCamera : MonoBehaviour
     private Vector2 smoothMouse;
 
     private Vector2 mouseDelta;
+    private SettingManager settingManager;
+    private bool showSettings = false;
 
     List<Character> players = new List<Character>();
     private void Start()
     {
         deathCamUI = GameObject.Find("DeathUI").GetComponent<DeathCamUI>();
+        LinkSettingManager();
+    }
+
+    void LinkSettingManager()
+    {
+        GameObject temp = GameObject.Find("SettingManager");
+
+        if (temp == null)
+        {
+            Debug.LogError("SettingManager을 찾을 수 없습니다.");
+            return;
+        }
+
+        settingManager = temp.GetComponent<SettingManager>();
+
+        if (settingManager == null)
+        {
+            Debug.LogError("SettingManager의 Component을 찾을 수 없습니다.");
+            return;
+        }
     }
 
     // 활성화 될 때 현재 같은 팀에있는 플레이어의 리스트를 받는다 -> 중간 탈주 고려
@@ -47,6 +70,8 @@ public class DeadCamera : MonoBehaviour
 
     }
 
+    
+
     private void Update()
     {
         if (Input.GetMouseButtonDown(0))
@@ -55,7 +80,49 @@ public class DeadCamera : MonoBehaviour
             ChangeCamera(targetPlayer.name);
         }
 
-        TPSView();
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            showSettings = !showSettings;
+
+            if (showSettings)
+            {
+                ShowCursor();
+            }
+
+            else
+            {
+                EraseCursor();
+            }
+        }
+
+        if (showSettings)
+        {
+            SetData();
+        }
+
+        else
+        {
+            TPSView();
+        }
+    }
+
+    public void EraseCursor()
+    {
+        // 커서를 숨기고 고정시킨다.
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+    }
+
+    public void ShowCursor()
+    {
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+    }
+
+    void SetData()
+    {
+        Sensitivity = new Vector2(settingManager.sensitivityVal * 20, settingManager.sensitivityVal * 20);
+        isOpposite = settingManager.isOpposite;
     }
 
     void ChangePlayerCam()
@@ -74,11 +141,20 @@ public class DeadCamera : MonoBehaviour
 
     void TPSView()
     {
-        mouseDelta = new Vector2(Input.GetAxisRaw("Mouse X"), Input.GetAxisRaw("Mouse Y"));
-        mouseDelta = Vector2.Scale(mouseDelta, new Vector2(sensitivity.x, sensitivity.y));
+        if(isOpposite)
+        {
+            mouseDelta = new Vector2(-Input.GetAxisRaw("Mouse X"), Input.GetAxisRaw("Mouse Y"));
+        }
 
-        smoothMouse.x = Mathf.Lerp(smoothMouse.x, mouseDelta.x, 1f / sensitivity.x);
-        smoothMouse.y = Mathf.Lerp(smoothMouse.y, mouseDelta.y, 1f / sensitivity.y);
+        else
+        {
+            mouseDelta = new Vector2(Input.GetAxisRaw("Mouse X"), Input.GetAxisRaw("Mouse Y"));
+        }
+
+        mouseDelta = Vector2.Scale(mouseDelta, new Vector2(Sensitivity.x, Sensitivity.y));
+
+        smoothMouse.x = Mathf.Lerp(smoothMouse.x, mouseDelta.x, 1f / Sensitivity.x);
+        smoothMouse.y = Mathf.Lerp(smoothMouse.y, mouseDelta.y, 1f / Sensitivity.y);
 
         mouseAbsolute += smoothMouse;
 

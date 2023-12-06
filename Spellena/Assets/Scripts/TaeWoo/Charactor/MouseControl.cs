@@ -10,6 +10,7 @@ namespace Player
         public bool eraseCursor = true;
 
         public Vector2 Sensitivity = new Vector2(6, 6);
+        public bool isOpposite = false;
 
         [Header("First Person")]
         public GameObject characterBody;
@@ -21,6 +22,8 @@ namespace Player
         private Vector2 smoothMouse;
 
         private Vector2 mouseDelta;
+        private SettingManager settingManager;
+        private bool showSettings = false;
 
         [HideInInspector]
         public bool scoped;
@@ -42,6 +45,55 @@ namespace Player
             // 커서 고정
             if (eraseCursor)
                 EraseCursor();
+
+            LinkSettingManager();
+        }
+
+        void LinkSettingManager()
+        {
+            GameObject temp = GameObject.Find("SettingManager");
+
+            if (temp == null)
+            {
+                Debug.LogError("SettingManager을 찾을 수 없습니다.");
+                return;
+            }
+
+            settingManager = temp.GetComponent<SettingManager>();
+
+            if (settingManager == null)
+            {
+                Debug.LogError("SettingManager의 Component을 찾을 수 없습니다.");
+                return;
+            }
+        }
+
+        void Update()
+        {
+            if(Input.GetKeyDown(KeyCode.Escape))
+            {
+                showSettings = !showSettings;
+
+                if (showSettings)
+                {
+                    ShowCursor();
+                }
+
+                else
+                {
+                    EraseCursor();
+                }
+            }
+
+            if(showSettings)
+            {
+                SetData();
+            }
+
+            else
+            {
+                Control();
+            }
         }
 
         public void EraseCursor()
@@ -51,14 +103,29 @@ namespace Player
             Cursor.visible = false;
         }
 
-        void Update()
+        public void ShowCursor()
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+
+        void Control()
         {
             // Allow the script to clamp based on a desired target value.
             var targetOrientation = Quaternion.Euler(targetDirection);
             var targetCharacterOrientation = Quaternion.Euler(targetCharacterDirection);
 
             // Get raw mouse input for a cleaner reading on more sensitive mice.
-            mouseDelta = new Vector2(Input.GetAxisRaw("Mouse X"), Input.GetAxisRaw("Mouse Y"));
+
+            if (isOpposite)
+            {
+                mouseDelta = new Vector2(Input.GetAxisRaw("Mouse X"), -Input.GetAxisRaw("Mouse Y"));
+            }
+
+            else
+            {
+                mouseDelta = new Vector2(Input.GetAxisRaw("Mouse X"), Input.GetAxisRaw("Mouse Y"));
+            }
 
             // Scale input against the sensitivity setting and multiply that against the smoothing value.
             mouseDelta = Vector2.Scale(mouseDelta, new Vector2(Sensitivity.x, Sensitivity.y));
@@ -91,6 +158,12 @@ namespace Player
                 var yRotation = Quaternion.AngleAxis(mouseAbsolute.x, transform.InverseTransformDirection(Vector3.up));
                 transform.localRotation *= yRotation;
             }
+        }
+
+        void SetData()
+        {
+            Sensitivity = new Vector2(settingManager.sensitivityVal * 20, settingManager.sensitivityVal * 20);
+            isOpposite = settingManager.isOpposite;      
         }
 
         public float ChangeAngle(float angle)

@@ -43,7 +43,7 @@ namespace Player
             soundView = soundManger.GetComponent<PhotonView>();
 
             soundManger.GetComponent<SoundManager>().InitAudioSettings();
-            soundManger.GetComponent<SoundManager>().PlayAudio("Idle", 1.0f, true, false);
+            soundManger.GetComponent<SoundManager>().PlayAudio("Idle", 1.0f, true, false, "EffectSound");
 
             StartCoroutine(Gone());
         }

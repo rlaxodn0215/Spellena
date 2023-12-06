@@ -368,7 +368,8 @@ namespace Player
         public void BasicAttackTrigger()
         {
             animator.SetTrigger("BasicAttack");
-            soundManager.PlayAudio("SwingSound", 1.0f, false, false,0.5f);
+            soundManager.PlayAudio("SwingSound", 1.0f, false, false, 0.5f, "EffectSound");
+            soundManager.PlayRandomAudio("Attack", 1.0f, false, false, 0, 3, "VoiceSound");
         }
 
         private void Skill1Execute()

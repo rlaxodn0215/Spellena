@@ -113,7 +113,6 @@ public class CharacterSelect : CenterState
                     view.TransferOwnership(player.ActorNumber);
                 }
 
-
                 playerCharacter.GetComponent<PhotonView>().RPC("IsLocalPlayer", player);
                 playerCharacter.GetComponent<PhotonView>().RPC("ChangeName", RpcTarget.All, (string)player.CustomProperties["Name"]);
 
