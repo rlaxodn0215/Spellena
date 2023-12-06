@@ -5,8 +5,11 @@ using UnityEngine;
 public class BurstFlareObject : SpawnObject
 {
     public ElementalOrderData elementalOrderData;
-
+   
     public int instantiateCode = -1;
+
+    [HideInInspector]
+    public bool isHit = false;
 
     Vector3 direction;
 
@@ -89,37 +92,38 @@ public class BurstFlareObject : SpawnObject
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.tag == "Wall" || other.gameObject.layer == 11)
-        {
-            RunExplode(other.ClosestPointOnBounds(transform.GetChild(2).position));
-            return;
-        }
-
-        //Debug.Log("TriggerParticle : " + hitObject.transform.root.gameObject.name);
-
         if (PhotonNetwork.IsMasterClient)
         {
+            if (other.tag == "Wall" || other.gameObject.layer == 11)
+            {
+                isHit = true;
+                photonView.RPC("RunExplode", RpcTarget.AllBuffered, other.ClosestPointOnBounds(transform.GetChild(2).position));
+                photonView.RPC("DestoryObject", RpcTarget.AllBuffered, 0.8f);
+                return;
+            }
+
             GameObject _rootObject = other.transform.root.gameObject;
             if(_rootObject.GetComponent<Character>() != null)
             {
-                Debug.Log("Hit Character");
                 if(_rootObject.tag != tag)
                 {
-                    Debug.Log("Hit Enemy");
+                    isHit = true;
                     _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.All,
                      playerName, (int)(elementalOrderData.burstFlareDamage), other.name, transform.forward, 20f);
-                    photonView.RPC("DestoryObject", RpcTarget.AllBuffered);
-                    RunExplode(other.ClosestPointOnBounds(transform.GetChild(2).position));
+                    photonView.RPC("RunExplode", RpcTarget.AllBuffered, other.ClosestPointOnBounds(transform.GetChild(2).position));
+                    photonView.RPC("DestoryObject", RpcTarget.AllBuffered, 0.8f);
                 }
             }
             
         }
     }
 
+    [PunRPC]
     void RunExplode(Vector3 pos)
     {
         shootParticle.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
         explodeParticle.transform.position = pos;
         explodeParticle.Play(true);
     }
+    
 }

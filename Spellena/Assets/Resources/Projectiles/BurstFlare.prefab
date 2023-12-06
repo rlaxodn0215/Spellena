@@ -53940,6 +53940,7 @@ MonoBehaviour:
   hitParticles: []
   elementalOrderData: {fileID: 11400000, guid: f59593c682ebc2b41896b199699b9e9c, type: 2}
   instantiateCode: -1
+  isHit: 0
   shootParticle: {fileID: 546465675545352016}
   explodeParticle: {fileID: 3825644428435986582}
 --- !u!54 &403125806500956618
@@ -68661,6 +68662,7 @@ GameObject:
   - component: {fileID: 7436405992022169538}
   - component: {fileID: 7562529164884209754}
   - component: {fileID: 791402981064273064}
+  - component: {fileID: 3587558087229721695}
   m_Layer: 0
   m_Name: Collider
   m_TagString: Untagged
@@ -68708,7 +68710,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b08bb67fde0071940a767e6233484bff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  burstFlareObject: {fileID: 6615612863486490475}
   speed: 15
+--- !u!114 &3587558087229721695
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5489646615382810935}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1 &6180676133429121095
 GameObject:
   m_ObjectHideFlags: 0

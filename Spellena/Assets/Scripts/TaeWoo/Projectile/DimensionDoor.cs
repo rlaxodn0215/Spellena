@@ -8,11 +8,14 @@ namespace Player
     public class DimensionDoor : SpawnObject
     {
         public AeternaData aeternaData;
+        public GameObject soundManger;
         private float InnerForce;
 
         private string enemyTag;
         private List<string> playerInArea;
         private List<Rigidbody> playerInAreaObject = new List<Rigidbody>();
+
+        private PhotonView soundView;
 
         public override void OnEnable()
         {
@@ -20,7 +23,7 @@ namespace Player
 
             name = playerName + "_Portal";
             type = SpawnObjectType.FixedObject;
-            objectName = "Portal";  
+            objectName = "Portal";
 
             if (CompareTag("TeamA"))
             {
@@ -37,6 +40,11 @@ namespace Player
             GetComponent<SphereCollider>().radius = aeternaData.skill1DoorRange;
             InnerForce = aeternaData.skill1InnerForce;
 
+            soundView = soundManger.GetComponent<PhotonView>();
+
+            soundManger.GetComponent<SoundManager>().InitAudioSettings();
+            soundManger.GetComponent<SoundManager>().PlayAudio("Idle", 1.0f, true, false);
+
             StartCoroutine(Gone());
         }
 
@@ -50,11 +58,13 @@ namespace Player
             if (PhotonNetwork.IsMasterClient)
             {
                 DestorySpawnObject();
+                InstanitateObject("SpawnObjects/PortalDestorySound", transform.position);
             }
 
             else
             {
                 photonView.RPC("DestorySpawnObject", RpcTarget.MasterClient); 
+                photonView.RPC("InstanitateObject", RpcTarget.MasterClient, "SpawnObjects/PortalDestorySound", transform.position); 
             }
 
         }
@@ -75,44 +85,29 @@ namespace Player
                 direction.Normalize();
                 direction *= InnerForce;
                 player.MovePosition(player.transform.position + direction*Time.deltaTime);
-                //Debug.Log("GiveGravity");
             }
         }
 
         public void OnTriggerEnter(Collider other)
         {
-            Debug.Log("PortalTiggerEnter");
-            if (other.transform.root.CompareTag(enemyTag))
+            if(PhotonNetwork.IsMasterClient)
             {
-                if(other.transform.root.GetComponent<Character>())
+                if (other.transform.root.CompareTag(enemyTag))
                 {
-                    if (PhotonNetwork.IsMasterClient)
+                    if (other.transform.root.GetComponent<Character>())
                     {
-                        DeBuff(other.transform.root.GetComponent<Character>().playerName);
+                       photonView.RPC("DeBuff", RpcTarget.AllBuffered, other.transform.root.GetComponent<Character>().playerName);  
                     }
 
-                    else
+                    else if (other.transform.root.GetComponent<SpawnObject>() && type == SpawnObjectType.Projectile)
                     {
-                        photonView.RPC("DeBuff", RpcTarget.AllBuffered, other.transform.root.GetComponent<Character>().playerName);
+                        other.transform.root.GetComponent<PhotonView>().RPC("DestoryObject", RpcTarget.AllBuffered);
+                        soundManger.GetComponent<PhotonView>().RPC("PlayAudioOverlap", RpcTarget.AllBuffered, "Absorb", 1.0f, false, false);
+                        Debug.Log("Play Absorb Audio");
                     }
-                }
-
-                else if(other.transform.root.GetComponent<SpawnObject>())
-                {
-                    Debug.Log("PortalSpawnObject");
-                    //other.transform.root.GetComponent<PhotonView>().TransferOwnership(PhotonNetwork.MasterClient);
-                    other.transform.root.GetComponent<PhotonView>().RPC("DestoryObject", RpcTarget.AllBuffered);
-                    //if (PhotonNetwork.IsMasterClient)
-                    //{
-                    //    other.transform.root.GetComponent<SpawnObject>().DestorySpawnObject();
-                    //}
-
-                    //else
-                    //{
-                    //    other.transform.root.GetComponent<PhotonView>().RPC("DestorySpawnObject", RpcTarget.MasterClient);
-                    //}
                 }
             }
+
         }
 
         public void OnTriggerExit(Collider other)

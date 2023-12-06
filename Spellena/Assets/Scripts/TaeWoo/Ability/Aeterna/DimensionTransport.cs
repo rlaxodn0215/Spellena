@@ -48,9 +48,11 @@ namespace Player
 
         public void Transport(GameObject enemy)
         {
+            Player.soundManager.PlayAudio("SweepSound", 1.0f, false, false);
+
             int randomIndex = Random.Range(0, trasportPoints.Count);
 
-            Player.teleportManager.GetComponent<PhotonView>().RPC("UseTeleportManager",RpcTarget.AllBuffered, enemy.transform.position ,trasportPoints[randomIndex].position);
+            Player.teleportManager.GetComponent<PhotonView>().RPC("UseTeleportManager",RpcTarget.AllBuffered, enemy.transform.position ,trasportPoints[randomIndex].position, enemy.GetComponent<PhotonView>().OwnerActorNr);
             enemy.GetComponent<PhotonView>().RPC("PlayerTeleport", RpcTarget.AllBuffered, trasportPoints[randomIndex].position);
 
             Sword.GetComponent<BoxCollider>().enabled = false;

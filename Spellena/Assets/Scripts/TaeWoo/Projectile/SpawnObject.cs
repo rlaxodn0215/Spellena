@@ -40,9 +40,21 @@ namespace Player
         }
 
         [PunRPC]
+        public void InstanitateObject(string address,Vector3 pos)
+        {
+            PhotonNetwork.Instantiate(address, pos, Quaternion.identity);        
+        }
+
+        [PunRPC]
         public void DestoryObject()
         {
             Destroy(gameObject.transform.root.gameObject);  
+        }
+
+        [PunRPC]
+        public void DestoryObject(float delayTime)
+        {
+            Destroy(gameObject.transform.root.gameObject,delayTime);
         }
 
         [PunRPC]

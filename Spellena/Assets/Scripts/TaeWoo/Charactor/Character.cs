@@ -104,6 +104,8 @@ namespace Player
         [HideInInspector]
         public RaycastHit lookHit;
         [HideInInspector]
+        public SoundManager soundManager;
+        [HideInInspector]
         public PhotonView soundManagerView;
 
         // 임시 사용 데이터
@@ -139,6 +141,7 @@ namespace Player
             SetPlayerKeys(PlayerActionState.Skill3, "Skill3");
             SetPlayerKeys(PlayerActionState.Skill4, "Skill4");
             currentSight = sight.transform.position;
+            soundManager = characterSoundManager.GetComponent<SoundManager>();
             soundManagerView = characterSoundManager.GetComponent<PhotonView>();
         }
 

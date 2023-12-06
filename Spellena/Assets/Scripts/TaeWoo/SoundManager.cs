@@ -11,6 +11,12 @@ public class SoundManager : MonoBehaviourPunCallbacks
 
     void Awake()
     {
+        InitAudioSettings();
+    }
+
+    [PunRPC]
+    public void InitAudioSettings()
+    {
         Transform[] childTransforms = GetComponentsInChildren<Transform>(true);
 
         foreach (Transform childTransform in childTransforms)
@@ -20,26 +26,8 @@ public class SoundManager : MonoBehaviourPunCallbacks
             if (audioObjs[childTransform.name].GetComponent<AudioSource>())
             {
                 audios[childTransform.name] = childTransform.gameObject.GetComponent<AudioSource>();
+                //Debug.Log("Add Audio : " + childTransform.name);
             }
-        }
-    }
-
-    [PunRPC]
-    public void PlayAudio(string name, float vol, bool isLoop)
-    {
-        if(audios.ContainsKey(name))
-        {
-            if (audios[name].isPlaying && audios[name].loop == isLoop) return;
-
-            audios[name].volume = vol;
-            audios[name].loop = isLoop;
-
-            audios[name].Play();
-        }
-
-        else
-        {
-            Debug.LogError("해당 이름의 오디오가 없습니다 : " + name);
         }
     }
 
@@ -47,8 +35,7 @@ public class SoundManager : MonoBehaviourPunCallbacks
     public void PlayAudio(string name, float vol, bool isLoop, bool isOnly) // only일 경우 다른 모든 소리는 OFF
     {
         if (audios.ContainsKey(name))
-        {
-            //Debug.Log("audios[name].isPlaying : " + audios[name].isPlaying + " / " + "audios[name].loop == isLoop" + (audios[name].loop==isLoop));
+        {           
             if (audios[name].isPlaying && audios[name].loop == isLoop) return;
 
             if (isOnly)
@@ -62,7 +49,34 @@ public class SoundManager : MonoBehaviourPunCallbacks
             audios[name].volume = vol;
             audios[name].loop = isLoop;
             audios[name].Play();
-            //Debug.Log(name);
+            Debug.Log("PlayAudio : " + (name));
+        }
+
+        else
+        {
+            Debug.LogError("해당 이름의 오디오가 없습니다 : " + name);
+        }
+    }
+
+    [PunRPC]
+    public void PlayAudio(string name, float vol, bool isLoop, bool isOnly, float delayTime) // only일 경우 다른 모든 소리는 OFF
+    {
+        if (audios.ContainsKey(name))
+        {
+            if (audios[name].isPlaying && audios[name].loop == isLoop) return;
+
+            if (isOnly)
+            {
+                foreach (var source in audios.Values)
+                {
+                    source.Stop();
+                }
+            }
+
+            audios[name].volume = vol;
+            audios[name].loop = isLoop;
+            audios[name].PlayDelayed(delayTime);
+            Debug.Log("PlayAudio : " + (name));
         }
 
         else
@@ -83,8 +97,8 @@ public class SoundManager : MonoBehaviourPunCallbacks
                 return;
             }
 
-            
-            for(int i = 0; i < audioObjs[parrentName].childCount; i++)
+
+            for (int i = 0; i < audioObjs[parrentName].childCount; i++)
             {
                 audios[audioObjs[parrentName].GetChild(i).name].Stop();
             }
@@ -92,6 +106,98 @@ public class SoundManager : MonoBehaviourPunCallbacks
             audios[name].volume = vol;
             audios[name].loop = isLoop;
             audios[name].Play();
+            Debug.Log("PlayAudio : " + (name));
+        }
+
+        else
+        {
+            Debug.LogError("해당 이름의 오디오가 없습니다 : " + name);
+        }
+    }
+
+    [PunRPC]
+    public void PlayRandomAudio(string name, float vol, bool isLoop, bool isOnly, int start, int end) // 일정 인덱스 번호의 사운드 랜덤 재생
+    {
+        int randomIndex = Random.Range(start, end + 1);
+
+        if (audios.ContainsKey(name + randomIndex))
+        {
+            if (audios[name + randomIndex].isPlaying && audios[name + randomIndex].loop == isLoop) return;
+
+            if (isOnly)
+            {
+                foreach (var source in audios.Values)
+                {
+                    source.Stop();
+                }
+            }
+
+            audios[name + randomIndex].volume = vol;
+            audios[name + randomIndex].loop = isLoop;
+            audios[name + randomIndex].Play();
+            Debug.Log("PlayAudio : " + (name + randomIndex));
+        }
+
+        else
+        {
+            Debug.LogError("해당 이름의 오디오가 없습니다 : " + name);
+        }
+    }
+
+    [PunRPC]
+    public void PlayRandomAudioOverlap(string name, float vol, bool isLoop, bool isOnly, int start, int end) // 일정 인덱스 번호의 사운드 랜덤 재생
+    {
+        int randomIndex = Random.Range(start, end + 1);
+
+        if (audios.ContainsKey(name + randomIndex))
+        {
+            if (audios[name + randomIndex].isPlaying && audios[name + randomIndex].loop == isLoop)
+            {
+                audios[name + randomIndex].Stop();
+            }
+
+            if (isOnly)
+            {
+                foreach (var source in audios.Values)
+                {
+                    source.Stop();
+                }
+            }
+
+            audios[name + randomIndex].volume = vol;
+            audios[name + randomIndex].loop = isLoop;
+            audios[name + randomIndex].Play();
+            Debug.Log("PlayAudio : " + (name + randomIndex));
+        }
+
+        else
+        {
+            Debug.LogError("해당 이름의 오디오가 없습니다 : " + name);
+        }
+    }
+
+    [PunRPC]
+    public void PlayAudioOverlap(string name, float vol, bool isLoop, bool isOnly) // 연속적으로 재생 가능
+    {
+        if (audios.ContainsKey(name))
+        {
+            if (audios[name].isPlaying && audios[name].loop == isLoop)
+            {
+                audios[name].Stop();
+            }
+
+            if (isOnly)
+            {
+                foreach (var source in audios.Values)
+                {
+                    source.Stop();
+                }
+            }
+
+            audios[name].volume = vol;
+            audios[name].loop = isLoop;
+            audios[name].Play();
+            Debug.Log("PlayAudio : " + (name));
         }
 
         else
@@ -108,6 +214,7 @@ public class SoundManager : MonoBehaviourPunCallbacks
             if (!audios[name].isPlaying) return;
 
             audios[name].Stop();
+            Debug.Log("StopAudio : " + (name));
         }
 
         else

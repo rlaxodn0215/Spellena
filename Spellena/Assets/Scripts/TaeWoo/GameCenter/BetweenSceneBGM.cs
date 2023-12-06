@@ -30,19 +30,19 @@ public class BetweenSceneBGM : MonoBehaviour
         
     }
 
-    private void OnApplicationFocus(bool focus)
-    {
-        if(!focus)
-        {
-            FirebaseLoginManager.Instance.SignOut();
-        }
+    //private void OnApplicationFocus(bool focus)
+    //{
+    //    if(!focus)
+    //    {
+    //        FirebaseLoginManager.Instance.SignOut();
+    //    }
 
-    }
+    //}
 
-    private void OnApplicationQuit()
-    {
-        // ·Î±× ¾Æ¿ô
-        FirebaseLoginManager.Instance.SignOut();
-    }
+    //private void OnApplicationQuit()
+    //{
+    //    // ·Î±× ¾Æ¿ô
+    //    FirebaseLoginManager.Instance.SignOut();
+    //}
 
 }

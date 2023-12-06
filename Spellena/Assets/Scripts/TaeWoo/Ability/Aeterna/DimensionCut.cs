@@ -23,6 +23,7 @@ namespace Player
             Sword.GetComponent<PhotonView>().RPC("ActivateSkill4Sword", RpcTarget.AllBuffered, isHealingSword);
             Sword.GetComponent<PhotonView>().RPC("ActivateSkill4Sword", RpcTarget.AllBuffered, isHealingSword);
             isHealingSword = !isHealingSword;
+            Player.soundManager.PlayAudio("GrandSwordSound", 1.0f, false, false);
         }
 
         public override void IsDisActive()
@@ -32,7 +33,6 @@ namespace Player
 
         public override void Execution(ref int chargeCount)
         {
-
             if (PhotonNetwork.IsMasterClient)
             {
                 SpawnDimensionCut(chargeCount, Player.camera.transform.localRotation, !isHealingSword);
@@ -41,6 +41,8 @@ namespace Player
             {
                 photonView.RPC("SpawnDimensionCut", RpcTarget.MasterClient, chargeCount, Player.camera.transform.localRotation, !isHealingSword);
             }
+
+            Player.soundManager.PlayAudio("GrandSlashSound", 1.0f, false, false);
         }
 
         [PunRPC]

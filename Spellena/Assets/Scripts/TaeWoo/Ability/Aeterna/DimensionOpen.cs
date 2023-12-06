@@ -89,7 +89,7 @@ namespace Player
             temp[0] = Player.playerName;
             temp[1] = tag;
             temp[2] = "Portal";
-            dimensionDoor = PhotonNetwork.Instantiate("Projectiles/Portal", spawnPoint, Quaternion.identity, 0, temp);
+            dimensionDoor = PhotonNetwork.Instantiate("SpawnObjects/Portal", spawnPoint, Quaternion.identity, 0, temp);
         }
 
         private void Update()
