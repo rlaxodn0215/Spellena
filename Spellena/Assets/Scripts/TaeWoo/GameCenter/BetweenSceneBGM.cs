@@ -35,11 +35,12 @@ public class BetweenSceneBGM : MonoBehaviour
     private void Start()
     {
         LinkSettingManager();
+        SetVol();
     }
 
     private void Update()
     {
-        SetVol();
+        //SetVol();
     }
 
     void LinkSettingManager()
