@@ -27098,6 +27098,7 @@ MonoBehaviour:
   clampInDegrees: {x: 360, y: 120}
   eraseCursor: 1
   Sensitivity: {x: 6, y: 6}
+  isOpposite: 0
   characterBody: {fileID: 522942227572226233}
   scoped: 0
 --- !u!114 &7615004451634822563
@@ -27113,7 +27114,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   clampInDegrees: {x: 360, y: 120}
-  sensitivity: {x: 6, y: 6}
+  Sensitivity: {x: 6, y: 6}
+  isOpposite: 0
   distance: 2
   deathCamUI: {fileID: 0}
 --- !u!114 &6822282297619001302
