@@ -689,6 +689,10 @@ namespace Player
                 if (hp <= dataHp)
                 {
                     hp -= damage;
+                    if(GetComponent<Cultist>() != null)
+                    {
+                        UI.GetComponent<ScreenEffectManager>().PlayDamageEffect(damage);
+                    }
                     Debug.Log("Player Damaged !! : " + damage + " EnemyName: " + enemy);
                 }
 
