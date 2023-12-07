@@ -30,8 +30,6 @@ public class SettingManager : MonoBehaviour
         }
     }
 
-    bool isShowed = false;
-
     int previousWidth;   // 이전 화면 너비
     int previousHeight;  // 이전 화면 높이
     int previousNum;     // 이전 드롭박스 인덱스 번호
@@ -83,43 +81,38 @@ public class SettingManager : MonoBehaviour
         previousNum = resolutionDropdown.value;
         resolutionCheckPanel.SetActive(false);
 
-        Screen.SetResolution(1336, 768, FullScreenMode.Windowed);
-
+        SettingPanel.SetActive(false);
         UpdateSliderValueToText();
+
+        Screen.SetResolution(1336, 768, FullScreenMode.Windowed);
     }
 
     private void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
-            ActivatePlayerInput(isShowed);
-            isShowed = !isShowed;
-
-            if (isShowed)
+            if (SceneManager.GetActiveScene().name != "SiHyun MainLobby Test" &&
+                SceneManager.GetActiveScene().name != "SiHyun RoomLobby Test")
             {
-                SettingPanel.SetActive(true);
-                UpdateSliderValueToText();
-
-                if(SceneManager.GetActiveScene().name == "SiHyun MainLobby Test")
+                if (SettingPanel.activeSelf)
                 {
-                    backImage.SetActive(true);
-                    escButton.SetActive(true);
+                    SettingPanel.SetActive(false);
+                    ActivatePlayerInput(true);
                 }
 
                 else
                 {
+                    SettingPanel.SetActive(true);
+                    ActivatePlayerInput(false);
+                    UpdateSliderValueToText();
                     backImage.SetActive(false);
                     escButton.SetActive(false);
                 }
             }
-
-            else
-            {
-                SettingPanel.SetActive(false);
-            }
+          
         }
 
-        if (isShowed)
+        if (SettingPanel.activeSelf)
             UpdateSliderValueToText();
     }
 

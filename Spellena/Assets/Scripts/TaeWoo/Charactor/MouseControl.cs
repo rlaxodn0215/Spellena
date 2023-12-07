@@ -1,5 +1,5 @@
 using UnityEngine;
-
+using System;
 
 namespace Player
 {
@@ -23,7 +23,6 @@ namespace Player
 
         private Vector2 mouseDelta;
         private SettingManager settingManager;
-        private bool showSettings = false;
 
         [HideInInspector]
         public bool scoped;
@@ -70,30 +69,23 @@ namespace Player
 
         void Update()
         {
-            if(Input.GetKeyDown(KeyCode.Escape))
-            {
-                showSettings = !showSettings;
-
-                if (showSettings)
-                {
-                    ShowCursor();
-                }
-
-                else
-                {
-                    EraseCursor();
-                }
-            }
-
-            if(showSettings)
+            if(settingManager.SettingPanel.activeSelf)
             {
                 SetData();
+                ShowCursor();
             }
 
             else
             {
                 Control();
+                EraseCursor();
             }
+        }
+
+        public void ShowCursor()
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
         }
 
         public void EraseCursor()
@@ -101,12 +93,6 @@ namespace Player
             // 커서를 숨기고 고정시킨다.
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
-        }
-
-        public void ShowCursor()
-        {
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
         }
 
         void Control()

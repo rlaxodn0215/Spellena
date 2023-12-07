@@ -36,6 +36,7 @@ namespace Player
             if (Player.playerActionDatas[(int)PlayerActionState.Skill3].isExecuting && Player.skill3Phase == 1)
             {
                 Sword.GetComponent<PhotonView>().RPC("ActivateParticle", RpcTarget.AllBuffered, 3, false);
+                Player.dimensionSwordForMe[3].SetActive(false);
                 Player.skillTimer[3] = 0.1f;
             }
         }
@@ -61,7 +62,10 @@ namespace Player
             Player.skill3Phase = 2;
 
             if (Sword.GetComponent<AeternaSword>().skill3BuffParticle)
+            {
                 Sword.GetComponent<PhotonView>().RPC("ActivateParticle", RpcTarget.AllBuffered, 3, false);
+                Player.dimensionSwordForMe[3].SetActive(false);
+            }
         }
     }
 }

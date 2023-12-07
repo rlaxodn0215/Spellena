@@ -21,7 +21,9 @@ namespace Player
         public override void IsActive()
         {
             Sword.GetComponent<PhotonView>().RPC("ActivateSkill4Sword", RpcTarget.AllBuffered, isHealingSword);
-            Sword.GetComponent<PhotonView>().RPC("ActivateSkill4Sword", RpcTarget.AllBuffered, isHealingSword);
+            Player.dimensionSwordForMe[1].SetActive(false);
+            Player.dimensionSwordForMe[4].SetActive(isHealingSword);
+            Player.dimensionSwordForMe[5].SetActive(!isHealingSword);
             isHealingSword = !isHealingSword;
             Player.soundManager.PlayAudioOverlap("GrandSwordSound", 1.0f, false, false,"EffectSound");
         }
@@ -29,6 +31,9 @@ namespace Player
         public override void IsDisActive()
         {
             Sword.GetComponent<PhotonView>().RPC("DisActivateSkill4Sword", RpcTarget.AllBuffered);
+            Player.dimensionSwordForMe[1].SetActive(true);
+            Player.dimensionSwordForMe[4].SetActive(false);
+            Player.dimensionSwordForMe[5].SetActive(false);
         }
 
         public override void Execution(ref int chargeCount)

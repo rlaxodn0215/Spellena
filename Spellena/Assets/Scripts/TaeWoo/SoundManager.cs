@@ -17,7 +17,7 @@ public class SoundManager : MonoBehaviourPunCallbacks
         InitAudioSettings();
     }
 
-    void LinkSettingManager()
+    public void LinkSettingManager()
     {
         GameObject temp = GameObject.Find("SettingManager");
 

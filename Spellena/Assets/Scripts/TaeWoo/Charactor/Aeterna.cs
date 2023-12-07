@@ -12,6 +12,7 @@ namespace Player
 
         public GameObject aeternaUI;
         public GameObject DimensionSword;
+        public GameObject DimensionSwordForMe;
         public GameObject DimensionSlash;
         public GameObject DimensionDoor;
         public GameObject DimensionDoorGUI;
@@ -25,6 +26,8 @@ namespace Player
 
         [HideInInspector]
         public DimensionSword dimensionSword;
+        [HideInInspector]
+        public List<GameObject> dimensionSwordForMe;
         [HideInInspector]
         public DimensionOpen dimensionOpen;
         [HideInInspector]
@@ -98,6 +101,11 @@ namespace Player
             dimensionSword.AddPlayer(this);
             Skills["BasicAttack"] = dimensionSword;
 
+            for(int i = 0; i < DimensionSwordForMe.transform.childCount; i++)
+            {
+                dimensionSwordForMe.Add(DimensionSwordForMe.transform.GetChild(i).gameObject);
+            }
+
             dimensionOpen = this.gameObject.AddComponent<DimensionOpen>();
             dimensionOpen.AddPlayer(this);
             Skills["Skill1"] = dimensionOpen;
@@ -166,13 +174,11 @@ namespace Player
                 if(tran.GetComponent<MeshRenderer>())
                 {
                     tran.GetComponent<MeshRenderer>().enabled = false;
-                    Debug.Log("Disable MeshRenderer");
                 }
 
                 else if (tran.GetComponent<SkinnedMeshRenderer>())
                 {
                     tran.GetComponent<SkinnedMeshRenderer>().enabled = false;
-                    Debug.Log("Disable SkinnedMeshRenderer");
                 }
             }
             
@@ -426,6 +432,7 @@ namespace Player
         public void BasicAttackTrigger()
         {
             animator.SetTrigger("BasicAttack");
+            overlayAnimator.SetTrigger("BasicAttack");
             soundManager.PlayAudio("SwingSound", 1.0f, false, false, 0.5f, "EffectSound");
             soundManager.PlayRandomAudio("Attack", 1.0f, false, false, 0, 3, "VoiceSound");
         }
@@ -452,6 +459,8 @@ namespace Player
                         case 1:
                             skillTimer[2] = aeternaData.skill2DurationTime;
                             DimensionSword.GetComponent<PhotonView>().RPC("ActivateParticle", RpcTarget.AllBuffered, 2, true);
+                            dimensionSwordForMe[2].SetActive(true);
+                            dimensionSwordForMe[6].SetActive(false);
                             StartCoroutine(SkillTimer(2));
                             break;
                         case 2:
@@ -486,6 +495,7 @@ namespace Player
                     {
                         skillTimer[3] = aeternaData.skill3DurationTime;
                         DimensionSword.GetComponent<PhotonView>().RPC("ActivateParticle", RpcTarget.AllBuffered, 3, true);
+                        dimensionSwordForMe[3].SetActive(true);
                         StartCoroutine(SkillTimer(3));
                     }
                     playerActionDatas[(int)PlayerActionState.Skill3].isExecuting = true;
@@ -542,10 +552,16 @@ namespace Player
                 }
 
                 animator.SetBool("isHolding", false);
+                overlayAnimator.SetBool("isHolding", false);
+
                 chargeCount = 1;
 
                 DimensionSword.GetComponent<PhotonView>().RPC("ActivateParticle", RpcTarget.AllBuffered, 4, false);
 
+                for (int i = 7; i < 10; i++)
+                {
+                    dimensionSwordForMe[i].SetActive(false);
+                }
             }
             
         }
@@ -554,8 +570,10 @@ namespace Player
         {
             photonView.RPC("BasicAttackTrigger", RpcTarget.AllBufferedViaServer);
             animator.SetBool("isHolding", false);
+            overlayAnimator.SetBool("isHolding", false);
             yield return new WaitForSeconds(animator.GetCurrentAnimatorClipInfo(1).Length/ 10.0f);
             animator.SetBool("isHolding", true);
+            overlayAnimator.SetBool("isHolding", true);
             StopCoroutine(skill4SlashCoroutine);
         }
 
@@ -598,6 +616,8 @@ namespace Player
             if(phase==1 || phase==2)
             {
                 DimensionSword.GetComponent<PhotonView>().RPC("ActivateParticle", RpcTarget.AllBuffered, 2, false);
+                dimensionSwordForMe[2].SetActive(false);
+                dimensionSwordForMe[6].SetActive(true);
                 playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = true;
                 skillTimer[2] = aeternaData.skill2CoolTime;
                 StartCoroutine(SkillTimer(2));
@@ -616,6 +636,7 @@ namespace Player
             {
                 skillTimer[3] = aeternaData.skill3CoolTime;
                 DimensionSword.GetComponent<PhotonView>().RPC("ActivateParticle", RpcTarget.AllBuffered, 3, false);
+                dimensionSwordForMe[3].SetActive(false);
                 playerActionDatas[(int)PlayerActionState.Skill3].isExecuting = true;
                 phase = 2;
                 StartCoroutine(SkillTimer(3));
@@ -654,17 +675,28 @@ namespace Player
             }
         }
 
-       [PunRPC]
-       public void Skill4ChargeStage(int index)
-       {
+        [PunRPC]
+        public void Skill4ChargeStage(int index)
+        {
             for (int i = 1; i <= 3; i++)
             {
-                if(i == index)
-                    DimensionSword.GetComponent<AeternaSword>().skill4OverChargeParticles[i-1].SetActive(true);
+                if (!photonView.IsMine)
+                {
+                    if (i == index)
+                        DimensionSword.GetComponent<AeternaSword>().skill4OverChargeParticles[i - 1].SetActive(true);
+                    else
+                        DimensionSword.GetComponent<AeternaSword>().skill4OverChargeParticles[i - 1].SetActive(false);
+                }
+
                 else
-                    DimensionSword.GetComponent<AeternaSword>().skill4OverChargeParticles[i-1].SetActive(false);
+                {
+                    if (i == index)
+                        dimensionSwordForMe[i + 6].SetActive(true);
+                    else
+                        dimensionSwordForMe[i + 6].SetActive(false);
+                }
             }
-       }
+        }
 
         public override void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
         {

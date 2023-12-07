@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Player;
+using System;
 
 public class DeadCamera : MonoBehaviour
 {
@@ -70,40 +71,31 @@ public class DeadCamera : MonoBehaviour
 
     }
 
-    
-
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-            ChangePlayerCam();
-            ChangeCamera(targetPlayer.name);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            showSettings = !showSettings;
-
-            if (showSettings)
-            {
-                ShowCursor();
-            }
-
-            else
-            {
-                EraseCursor();
-            }
-        }
-
-        if (showSettings)
+        if(settingManager.SettingPanel.activeSelf)
         {
             SetData();
+            ShowCursor();
         }
 
         else
         {
+            EraseCursor();
+            if (Input.GetMouseButtonDown(0))
+            {
+                ChangePlayerCam();
+                ChangeCamera(targetPlayer.name);
+            }
+
             TPSView();
         }
+    }
+
+    public void ShowCursor()
+    {
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
 
     public void EraseCursor()
@@ -111,12 +103,6 @@ public class DeadCamera : MonoBehaviour
         // 커서를 숨기고 고정시킨다.
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-    }
-
-    public void ShowCursor()
-    {
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
     }
 
     void SetData()

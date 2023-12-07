@@ -29,6 +29,7 @@ namespace Player
             if(Player.playerActionDatas[(int)PlayerActionState.Skill2].isExecuting && Player.skill2Phase == 1)
             {
                 sword.GetComponent<PhotonView>().RPC("ActivateParticle", RpcTarget.AllBuffered, 2, false);
+                Player.dimensionSwordForMe[2].SetActive(false);
                 Player.skillTimer[2] = 0.1f;
             }
         }
@@ -64,6 +65,8 @@ namespace Player
             sword.GetComponent<BoxCollider>().enabled = false;
 
             sword.GetComponent<PhotonView>().RPC("ActivateParticle", RpcTarget.AllBuffered, 2, false);
+            Player.dimensionSwordForMe[2].SetActive(false);
+            Player.dimensionSwordForMe[6].SetActive(true);
 
             enemyObjectData = sword.GetComponent<AeternaSword>().contactObjectData;
 

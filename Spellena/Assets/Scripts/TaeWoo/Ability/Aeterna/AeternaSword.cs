@@ -5,7 +5,7 @@ using Photon.Pun;
 
 namespace Player
 {
-    public class AeternaSword : MonoBehaviour
+    public class AeternaSword : MonoBehaviourPunCallbacks
     {
         [HideInInspector]
         public object[] contactObjectData;
@@ -47,54 +47,84 @@ namespace Player
         [PunRPC]
         public void ActivateParticle(int skillNum, bool isActive)
         {
-            if(skillNum == 2)
+            if (!photonView.IsMine)
             {
-               skill2BuffParticle.SetActive(isActive);
-               skill2HitParticle.SetActive(!isActive);
-            }
-
-            else if(skillNum == 3)
-            {
-                skill3BuffParticle.SetActive(isActive);
-            }
-
-            else if(skillNum == 4)
-            {
-                for (int i = 0; i < 3; i++)
+                if (skillNum == 2)
                 {
-                    skill4OverChargeParticles[i].SetActive(isActive);
-                }
-            }
+                    skill2BuffParticle.SetActive(isActive);
 
-            else
-            {
-                Debug.LogError("No SkillNum");
-                return;
+                    if (contactObjectData != null)
+                        skill2HitParticle.SetActive(!isActive);
+                }
+
+                else if (skillNum == 3)
+                {
+                    skill3BuffParticle.SetActive(isActive);
+                }
+
+                else if (skillNum == 4)
+                {
+                    for (int i = 0; i < 3; i++)
+                    {
+                        skill4OverChargeParticles[i].SetActive(isActive);
+                    }
+                }
+
+                else
+                {
+                    Debug.LogError("No SkillNum");
+                    return;
+                }
             }
         }
 
         [PunRPC]
         public void ActivateSkill4Sword(bool isHealingSword)
         {
-            normalSword.SetActive(false);
-            skill4HealingSword.SetActive(isHealingSword);
-            skill4AttackSword.SetActive(!isHealingSword);
-
-            for (int i = 0; i < 3; i++)
+            if (!photonView.IsMine)
             {
-                ParticleSystem[] systems = skill4OverChargeParticles[i].GetComponentsInChildren<ParticleSystem>(true);
+                normalSword.SetActive(false);
+                skill4HealingSword.SetActive(isHealingSword);
+                skill4AttackSword.SetActive(!isHealingSword);
 
-                foreach (ParticleSystem particle in systems)
+                for (int i = 0; i < 3; i++)
                 {
-                    Color color;
+                    ParticleSystem[] systems = skill4OverChargeParticles[i].GetComponentsInChildren<ParticleSystem>(true);
 
-                    if (isHealingSword)
-                        ColorUtility.TryParseHtmlString("#FFFFFF", out color);
-                    else
-                        ColorUtility.TryParseHtmlString("#912AFF", out color);
+                    foreach (ParticleSystem particle in systems)
+                    {
+                        Color color;
 
-                    ParticleSystem.MainModule module = particle.main;
-                    module.startColor = color;
+                        if (isHealingSword)
+                            ColorUtility.TryParseHtmlString("#FFFFFF", out color);
+                        else
+                            ColorUtility.TryParseHtmlString("#912AFF", out color);
+
+                        ParticleSystem.MainModule module = particle.main;
+                        module.startColor = color;
+                    }
+                }
+
+            }
+
+            else
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    ParticleSystem[] systems = player.dimensionSwordForMe[i + 7].GetComponentsInChildren<ParticleSystem>(true);
+
+                    foreach (ParticleSystem particle in systems)
+                    {
+                        Color color;
+
+                        if (isHealingSword)
+                            ColorUtility.TryParseHtmlString("#FFFFFF", out color);
+                        else
+                            ColorUtility.TryParseHtmlString("#912AFF", out color);
+
+                        ParticleSystem.MainModule module = particle.main;
+                        module.startColor = color;
+                    }
                 }
             }
         }
@@ -102,9 +132,12 @@ namespace Player
         [PunRPC]
         public void DisActivateSkill4Sword()
         {
-            normalSword.SetActive(true);
-            skill4HealingSword.SetActive(false);
-            skill4AttackSword.SetActive(false);
+            if (!photonView.IsMine)
+            {
+                normalSword.SetActive(true);
+                skill4HealingSword.SetActive(false);
+                skill4AttackSword.SetActive(false);
+            }
         }
 
         public void OnTriggerEnter(Collider other)

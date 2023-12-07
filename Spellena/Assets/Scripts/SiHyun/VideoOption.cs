@@ -8,10 +8,39 @@ public class VideoOption : MonoBehaviour
     public GameObject friendsPanel;
     public GameObject playPanel;
     public GameObject gameOffPanel;
+    public GameObject characterPanel;
     public Button mainEscButton;
     public Button friendEscButton;
     public Button playEscButton;
+    public Button characterEscButton;
+
     Button escButton;
+    SettingManager settingManager;
+
+    private void OnEnable()
+    {
+        LinkSettingManager();
+    }
+
+    void LinkSettingManager()
+    {
+        GameObject temp = GameObject.Find("SettingManager");
+
+        if (temp == null)
+        {
+            Debug.LogError("SettingManager을 찾을 수 없습니다.");
+            return;
+        }
+
+        settingManager = temp.GetComponent<SettingManager>();
+
+        if (settingManager == null)
+        {
+            Debug.LogError("SettingManager의 Component을 찾을 수 없습니다.");
+            return;
+        }
+    }
+
 
     private void Update()
     {
@@ -29,7 +58,11 @@ public class VideoOption : MonoBehaviour
             {
                 gameOffPanel.SetActive(false);
             }
-            else 
+            else if (characterPanel.activeSelf)
+            {
+                OnClickEscButton(characterEscButton);
+            }
+            else
             {
                 OnClickEscButton(mainEscButton);
             }
@@ -41,7 +74,24 @@ public class VideoOption : MonoBehaviour
     public void OnClickEscButton(Button _btn)
     {
         escButton = _btn;
-        escButton.onClick.Invoke();
+
+        if (escButton == mainEscButton)
+        {
+            if (settingManager.SettingPanel.activeSelf)
+            {
+                settingManager.SettingPanel.SetActive(false);
+            }
+
+            else
+            {
+                settingManager.SettingPanel.SetActive(true);
+            }
+        }
+
+        else
+        {
+            escButton.onClick.Invoke();
+        }
     }
 }
 

@@ -2667,7 +2667,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 508341b64f52d04428179992d5a4af07, type: 3}
+  m_Sprite: {fileID: 21300000, guid: af3f08b87799087429a563fa825ef586, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -10849,9 +10849,11 @@ MonoBehaviour:
   friendsPanel: {fileID: 1577645908}
   playPanel: {fileID: 1572303974}
   gameOffPanel: {fileID: 289312570}
+  characterPanel: {fileID: 1972429444}
   mainEscButton: {fileID: 157212793}
   friendEscButton: {fileID: 1445411315}
   playEscButton: {fileID: 262408653}
+  characterEscButton: {fileID: 954105018}
 --- !u!1 &993748909
 GameObject:
   m_ObjectHideFlags: 0
@@ -14887,7 +14889,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -136.65308, y: 38.178833}
+  m_AnchoredPosition: {x: -136.65302, y: 38.178833}
   m_SizeDelta: {x: -475.946, y: -541.0474}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1416637807
@@ -16438,7 +16440,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 508341b64f52d04428179992d5a4af07, type: 3}
+  m_Sprite: {fileID: 21300000, guid: ce49f8b7b403ddc42847d6d356fa2281, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -22821,7 +22823,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -136.65308, y: 38.178833}
+  m_AnchoredPosition: {x: -136.65302, y: 38.178833}
   m_SizeDelta: {x: -475.946, y: -541.0474}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2037117382
