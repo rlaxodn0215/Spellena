@@ -42,7 +42,7 @@ namespace Player
                 photonView.RPC("SpawnSlash", RpcTarget.MasterClient, Player.camera.transform.localRotation);
             }
 
-            Player.soundManager.PlayRandomAudioOverlap("SlashSound", 1.0f, false, false, 0, 1);
+            Player.soundManager.PlayRandomAudioOverlap("SlashSound", 1.0f, false, false, 0, 1, "EffectSound");
         }
 
         [PunRPC]

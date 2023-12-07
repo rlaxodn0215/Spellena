@@ -8,7 +8,7 @@ namespace Player
     // 플레이어의 동작 상태
     public enum PlayerActionState
     {
-        Move, Jump, Run, Sit, Interaction, ButtonCancel ,BasicAttack, Skill1, Skill2, Skill3, Skill4
+        Move, Jump, Run, Sit, Interaction, ButtonCancel, BasicAttack, Skill1, Skill2, Skill3, Skill4
     }
 
     // 플레이어 동작 데이터
@@ -110,6 +110,7 @@ namespace Player
 
         // 임시 사용 데이터
         public Vector3 moveVec;
+
         private bool isGrounded = false;
         private bool canInteraction = false;
         private Transform avatarForOther;
@@ -140,6 +141,7 @@ namespace Player
             SetPlayerKeys(PlayerActionState.Skill2, "Skill2");
             SetPlayerKeys(PlayerActionState.Skill3, "Skill3");
             SetPlayerKeys(PlayerActionState.Skill4, "Skill4");
+
             currentSight = sight.transform.position;
             soundManager = characterSoundManager.GetComponent<SoundManager>();
             soundManagerView = characterSoundManager.GetComponent<PhotonView>();
@@ -180,9 +182,10 @@ namespace Player
         }
 
 
+
+
         protected virtual void Update()
         {
-
             if (photonView.IsMine)
             {
                 if (buffDebuffChecker.CheckBuffDebuff("Horror") == true)
@@ -200,7 +203,7 @@ namespace Player
 
                 lookRay = camera.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
 
-                if(Physics.Raycast(lookRay,out lookHit,1.5f))
+                if (Physics.Raycast(lookRay, out lookHit, 1.5f))
                 {
                     if (lookHit.collider.name == "AngelStatue" && CompareTag(lookHit.collider.tag))
                     {
@@ -222,7 +225,7 @@ namespace Player
 
                 animator.SetBool("Grounded", isGrounded);
 
-                if(isGrounded == true)
+                if (isGrounded == true)
                 {
                     if (playerActionDatas[(int)PlayerActionState.Sit].isExecuting == true)//땅에 있고 앉아있으면
                     {
@@ -257,13 +260,13 @@ namespace Player
                             animator.SetLayerWeight(1, 1);
                         }
 
-                        
+
                     }
 
                 }
                 else//공중에 있을 때
                 {
-                    if(animator.GetLayerWeight(3) < 0)
+                    if (animator.GetLayerWeight(3) < 0)
                     {
                         animator.SetLayerWeight(3, 0);
                     }
@@ -272,62 +275,28 @@ namespace Player
                     animator.SetLayerWeight(2, animator.GetLayerWeight(2) - Time.deltaTime * 8);
                     animator.SetLayerWeight(1, animator.GetLayerWeight(1) - Time.deltaTime * 8);
 
-                    if(animator.GetLayerWeight(3) > 1)
+                    if (animator.GetLayerWeight(3) > 1)
                     {
                         animator.SetLayerWeight(3, 1);
                     }
 
-                   // MakeSound();
+                    // MakeSound();
                 }
             }
+
+
         }
 
         protected virtual void FixedUpdate()
         {
-            if(photonView.IsMine)
+            if (photonView.IsMine)
             {
                 PlayerMove();
-                MakeMoveSound();
             }
 
-            if(PhotonNetwork.IsMasterClient)
+            if (PhotonNetwork.IsMasterClient)
             {
-                if (!((bool)PhotonNetwork.LocalPlayer.CustomProperties["IsAlive"]))
-                {
-                    isOccupying = false;
-                    Debug.Log("죽어있음");
-                }
-            }
-        }
-
-        protected void MakeMoveSound()
-        {
-            if (playerActionDatas[(int)PlayerActionState.Jump].isExecuting)
-            {
-                soundManagerView.RPC("PlayAudio", RpcTarget.All, "JumpSound", 1.0f, false, "ActSounds");
-            }
-
-            else
-            {
-                // 하나만 소라가 나야 한다면 한 조건문 안에 한 사운드를 넣어라
-
-                if (playerActionDatas[(int)PlayerActionState.Move].isExecuting)
-                {
-                    if (playerActionDatas[(int)PlayerActionState.Run].isExecuting)
-                    {
-                        soundManagerView.RPC("PlayAudio", RpcTarget.All, "RunSound", 1.0f, true, "ActSounds");
-                    }
-
-                    else
-                    {
-                        soundManagerView.RPC("PlayAudio", RpcTarget.All, "WalkSound", 1.0f, true, "ActSounds");
-                    }
-                }
-
-                else
-                {
-                    soundManagerView.RPC("PlayAudio", RpcTarget.All, "NoSound", 1.0f, true, "ActSounds");
-                }
+                isOccupying = false;
             }
         }
 
@@ -337,11 +306,11 @@ namespace Player
 
             Vector3 _temp = new Vector3(0, 0, 0);
 
-            if(IsOnSlope())
+            if (IsOnSlope())
             {
                 rigidbody.useGravity = false;
-                if(isGrounded)
-                    rigidbody.velocity = new Vector3(0,0,0);
+                if (isGrounded)
+                    rigidbody.velocity = new Vector3(0, 0, 0);
             }
 
             else
@@ -381,7 +350,7 @@ namespace Player
         bool IsOnSlope()
         {
             Ray ray = new Ray(transform.position, Vector3.down);
-            if(Physics.Raycast(ray, out slopeHit,0.2f))
+            if (Physics.Raycast(ray, out slopeHit, 0.2f))
             {
                 var angle = Vector3.Angle(Vector3.up, slopeHit.normal);
                 return angle != 0.0f;
@@ -448,7 +417,7 @@ namespace Player
 
             }
 
-            
+
         }
 
         void OnMove(InputValue value)
@@ -459,10 +428,12 @@ namespace Player
 
                 if (moveVec.magnitude <= 0)
                 {
+                    soundManagerView.RPC("PlayAudio", RpcTarget.All, "NoSound", 1.0f, true, "ActSounds", "EffectSound");
                     playerActionDatas[(int)PlayerActionState.Move].isExecuting = false;
                 }
                 else
                 {
+                    soundManagerView.RPC("PlayAudio", RpcTarget.All, "WalkSound", 1.0f, true, "ActSounds", "EffectSound");
                     playerActionDatas[(int)PlayerActionState.Move].isExecuting = true;
                 }
             }
@@ -484,15 +455,33 @@ namespace Player
         {
             if (photonView.IsMine && (bool)PhotonNetwork.LocalPlayer.CustomProperties["IsAlive"])
             {
-
                 if (!playerActionDatas[(int)PlayerActionState.Run].isExecuting)
                 {
                     animator.SetBool("Run", true);
+                    soundManagerView.RPC("PlayAudio", RpcTarget.All, "RunSound", 1.0f, true, "ActSounds", "EffectSound");
                     playerActionDatas[(int)PlayerActionState.Run].isExecuting = true;
                 }
 
                 else
                 {
+                    if (playerActionDatas[(int)PlayerActionState.Jump].isExecuting)
+                    {
+                        soundManagerView.RPC("PlayAudio", RpcTarget.All, "NoSound", 1.0f, true, "ActSounds", "EffectSound");
+                    }
+
+                    else
+                    {
+                        if (playerActionDatas[(int)PlayerActionState.Move].isExecuting)
+                        {
+                            soundManagerView.RPC("PlayAudio", RpcTarget.All, "WalkSound", 1.0f, true, "ActSounds", "EffectSound");
+                        }
+
+                        else
+                        {
+                            soundManagerView.RPC("PlayAudio", RpcTarget.All, "NoSound", 1.0f, true, "ActSounds", "EffectSound");
+                        }
+                    }
+
                     animator.SetBool("Run", false);
                     playerActionDatas[(int)PlayerActionState.Run].isExecuting = false;
                 }
@@ -501,7 +490,7 @@ namespace Player
 
         void OnSit()
         {
-            if(photonView.IsMine && (bool)PhotonNetwork.LocalPlayer.CustomProperties["IsAlive"])
+            if (photonView.IsMine && (bool)PhotonNetwork.LocalPlayer.CustomProperties["IsAlive"])
             {
                 photonView.RPC("Sitting", RpcTarget.AllBuffered);
 
@@ -539,7 +528,7 @@ namespace Player
             {
                 // 자기 팀 거점인 것 확인 / 거점 점령시 석상 태그 팀으로 설정
                 // 캐릭터 각자 관리하면 프레임 차이로 인한 시간 차 발생
-                if(canInteraction)
+                if (canInteraction)
                 {
                     float temp = (float)PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["AngelStatueCoolTime"];
                     PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["ParameterName"] = "AngelStatueCoolTime";
@@ -563,24 +552,63 @@ namespace Player
 
         private void OnCollisionStay(Collision collision)
         {
-            if(photonView.IsMine)
+            if (photonView.IsMine)
             {
                 if (collision.gameObject.layer == LayerMask.NameToLayer("Map"))
                 {
-                    isGrounded = true;
                     playerActionDatas[(int)PlayerActionState.Jump].isExecuting = false;
+
+                    if (!isGrounded)
+                    {
+                        if (playerActionDatas[(int)PlayerActionState.Move].isExecuting)
+                        {
+                            if (playerActionDatas[(int)PlayerActionState.Run].isExecuting)
+                            {
+                                soundManagerView.RPC("PlayAudio", RpcTarget.All, "RunSound", 1.0f, true, "ActSounds", "EffectSound");
+                            }
+
+                            else
+                            {
+                                soundManagerView.RPC("PlayAudio", RpcTarget.All, "WalkSound", 1.0f, true, "ActSounds", "EffectSound");
+                            }
+
+                        }
+
+                        else
+                        {
+                            soundManagerView.RPC("PlayAudio", RpcTarget.All, "NoSound", 1.0f, true, "ActSounds", "EffectSound");
+                        }
+                    }
+
+                    isGrounded = true;
                 }
             }
         }
 
         private void OnCollisionExit(Collision collision)
         {
-            if(photonView.IsMine)
+            if (photonView.IsMine)
             {
                 if (collision.gameObject.layer == LayerMask.NameToLayer("Map"))
                 {
-                    isGrounded = false;
                     playerActionDatas[(int)PlayerActionState.Jump].isExecuting = true;
+                    if (isGrounded)
+                    {
+                        soundManagerView.RPC("PlayAudio", RpcTarget.All, "JumpSound", 1.0f, false, "ActSounds", "EffectSound");
+                    }
+                    isGrounded = false;
+                }
+            }
+        }
+        void OnTriggerStay(Collider other)
+        {
+            if (PhotonNetwork.IsMasterClient)
+            {
+                if (other.tag == "OccupationArea" &&
+                    (bool)PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["IsAlive"])
+                {
+                    Debug.Log("체크");
+                    isOccupying = true;
                 }
             }
         }
@@ -588,7 +616,7 @@ namespace Player
         [PunRPC]
         public void ChangeName(string name)
         {
-            gameObject.name  = name;
+            gameObject.name = name;
             playerName = name;
         }
 
@@ -646,17 +674,17 @@ namespace Player
         protected virtual void SetTag(string team)
         {
             this.tag = team;
-            
+
             Transform[] allChildren = GetComponentsInChildren<Transform>();
             if (allChildren == null) return;
 
             foreach (Transform child in allChildren)
             {
                 child.gameObject.tag = team;
-            }       
+            }
         }
 
-        
+
         [PunRPC]
         public void PlayerTeleport(Vector3 pos)
         {
@@ -664,7 +692,7 @@ namespace Player
         }
 
         [PunRPC]
-        public void PlayerDamaged(string enemy ,int damage, string damgePart, Vector3 direction, float force)
+        public void PlayerDamaged(string enemy, int damage, string damgePart, Vector3 direction, float force)
         {
             if (isAlive == false) return;
 
@@ -673,7 +701,8 @@ namespace Player
                 if (hp <= dataHp)
                 {
                     hp -= damage;
-                    //UI.GetComponent<ScreenEffectManager>().PlayDamageEffect(damage);
+                    if (GetComponent<Cultist>() != null)
+                        UI.GetComponent<CultistUI>().PlayDamageEffect(damage);
                     Debug.Log("Player Damaged !! : " + damage + " EnemyName: " + enemy);
                 }
 
@@ -740,10 +769,10 @@ namespace Player
                     GameCenterTest.ChangePlayerCustomProperties(healer, "TotalHeal", temp + (-damage));
                 }
 
-                
+
             }
 
-            
+
         }
 
         [PunRPC]
@@ -757,10 +786,10 @@ namespace Player
             moveVec = Vector3.zero;
 
             Rigidbody[] bodyParts = Dead.GetComponentsInChildren<Rigidbody>();
-            
-            foreach(Rigidbody rb in bodyParts)
+
+            foreach (Rigidbody rb in bodyParts)
             {
-                if(rb.gameObject.name == damgePart)
+                if (rb.gameObject.name == damgePart)
                 {
                     rb.AddForce(direction.normalized * force, ForceMode.Impulse);
                     return;
@@ -794,7 +823,7 @@ namespace Player
                 ragdollRigid[i].transform.localRotation = ragdollRot[i];
                 ragdollRigid[i].velocity = new Vector3(0, 0, 0);
             }
-            
+
             Alive.SetActive(true);
             animator.enabled = true;
             GetComponent<CapsuleCollider>().enabled = true;
@@ -819,7 +848,7 @@ namespace Player
         public void SetChargePoint(int actorNumber)
         {
             chargeCount++;
-            if(chargeCount>=4)
+            if (chargeCount >= 4)
             {
                 chargeCount = 0;
                 SetUltimatePoint(actorNumber);
@@ -831,7 +860,7 @@ namespace Player
             int temp = (int)PhotonNetwork.CurrentRoom.Players[actorNumber].CustomProperties["UltimateCount"];
 
             if (temp < 10)
-            {             
+            {
                 GameCenterTest.ChangePlayerCustomProperties(PhotonNetwork.CurrentRoom.Players[actorNumber], "UltimateCount", temp + 1);
                 PhotonView view = PhotonView.Find((int)PhotonNetwork.CurrentRoom.Players[actorNumber].CustomProperties["CharacterViewID"]);
                 if (view == null) return;
@@ -848,7 +877,7 @@ namespace Player
         [PunRPC]
         public void AngelStatueHP(int addHp)
         {
-            if(hp < dataHp)
+            if (hp < dataHp)
             {
                 hp += addHp;
             }

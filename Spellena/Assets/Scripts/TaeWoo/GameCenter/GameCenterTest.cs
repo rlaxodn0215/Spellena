@@ -41,6 +41,9 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
     [HideInInspector]
     public PlayerStats playerStat;
 
+    [HideInInspector]
+    public SettingManager settingManager;
+
     // 플레이어 소환 좌표
     [HideInInspector]
     public Transform[] playerSpawnA;
@@ -196,12 +199,13 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
         inGameUIView = inGameUIObj.GetComponent<PhotonView>();
 
         ConnectBetweenBGM("LoadingCharacterBGM");
+        LinkSettingManager();
 
         currentGameState = GameState.CharacterSelect;
         currentCenterState = centerStates[currentGameState];
     }
 
-    public void ConnectBetweenBGM(string objName)
+    void ConnectBetweenBGM(string objName)
     {
         betweenBGMObj = GameObject.Find(objName);
         if(betweenBGMObj == null)
@@ -211,6 +215,25 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
         }
 
         betweenBGMSource = betweenBGMObj.GetComponent<AudioSource>();
+    }
+
+    void LinkSettingManager()
+    {
+        GameObject temp = GameObject.Find("SettingManager");
+
+        if (temp == null)
+        {
+            Debug.LogError("SettingManager을 찾을 수 없습니다.");
+            return;
+        }
+
+        settingManager = temp.GetComponent<SettingManager>();
+
+        if (settingManager == null)
+        {
+            Debug.LogError("SettingManager의 Component을 찾을 수 없습니다.");
+            return;
+        }
     }
 
     void Update()
@@ -346,12 +369,12 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
 
         if (isIncrease)
         {
-            betweenBGMSource.volume += size;
+            betweenBGMSource.volume += size * settingManager.bgmVal * settingManager.soundVal;
         }
 
         else
         {
-            betweenBGMSource.volume -= size;
+            betweenBGMSource.volume -= size * settingManager.bgmVal * settingManager.soundVal;
         }
     }
 
@@ -401,6 +424,27 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
         }
 
         if(foundObject == null)
+        {
+            Debug.LogError("해당 이름의 게임 오브젝트를 찾지 못했습니다 : " + name);
+        }
+
+        return foundObject;
+    }
+
+    public static List<GameObject> FindObjects(GameObject parrent, string name)
+    {
+        List<GameObject> foundObject = new List<GameObject>();
+        Transform[] array = parrent.GetComponentsInChildren<Transform>(true);
+
+        foreach (Transform transform in array)
+        {
+            if (transform.name == name)
+            {
+                foundObject.Add(transform.gameObject);
+            }
+        }
+
+        if (foundObject == null)
         {
             Debug.LogError("해당 이름의 게임 오브젝트를 찾지 못했습니다 : " + name);
         }

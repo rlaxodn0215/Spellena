@@ -19,6 +19,10 @@ namespace Player
         public GameObject teleportManager;
         public GameObject minimapCamera;
 
+        public GameObject overlayCamera;
+        //public GameObject overlaySight;
+        public Animator overlayAnimator;
+
         [HideInInspector]
         public DimensionSword dimensionSword;
         [HideInInspector]
@@ -46,6 +50,9 @@ namespace Player
         private IEnumerator attackPauseCoroutine;
         private IEnumerator skill4SlashCoroutine;
 
+        private Vector3 overlayNetworkSight;
+        private Vector3 overlayCurrentSight;
+
         // 0 : 기본 공격
         // 1 : 스킬 1
         // 2 : 스킬 2
@@ -60,12 +67,21 @@ namespace Player
         protected override void Start() 
         {
             base.Start();
-            Initialize();
+            if (photonView.IsMine)
+            {
+                Initialize();
+                overlayCurrentSight = sight.transform.position;
+            }
         }
 
         protected override void Update()
         {
             base.Update();
+
+            if(photonView.IsMine)
+            {
+                //CheckOverlayAnimator();
+            }
         }
 
         protected override void FixedUpdate()
@@ -139,7 +155,21 @@ namespace Player
         public override void IsLocalPlayer()
         {
             base.IsLocalPlayer();
+
+            overlayCamera.SetActive(true);
             minimapCamera.SetActive(true);
+
+            Transform[] transforms = DimensionSword.GetComponentsInChildren<Transform>(true);
+
+            foreach(var tran in transforms)
+            {
+                if(tran.GetComponent<MeshRenderer>())
+                {
+                    tran.GetComponent<MeshRenderer>().enabled = false;
+                    Debug.Log("Disable MeshRenderer");
+                }
+            }
+            
         }
 
         [PunRPC]
@@ -149,6 +179,28 @@ namespace Player
             for(int i = 0; i < skillTimer.Length; i++)
             {
                 skillTimer[i] = 0.0f;
+            }
+        }
+
+        protected override void OnAnimatorIK()
+        {
+            SetLookAtMeObj();
+        }
+
+        void SetLookAtMeObj()
+        {
+            if (overlayAnimator == null) return;
+            if (photonView.IsMine)
+            {
+                overlayAnimator.SetLookAtWeight(1f, 0.9f);
+                overlayAnimator.SetLookAtPosition(sight.transform.position);
+            }
+            else
+            {
+                Vector3 newVec = Vector3.Lerp(overlayCurrentSight, overlayNetworkSight, Time.deltaTime * 10);
+                overlayAnimator.SetLookAtWeight(1f, 0.9f);
+                overlayAnimator.SetLookAtPosition(newVec);
+                overlayCurrentSight = newVec;
             }
         }
 
@@ -368,7 +420,8 @@ namespace Player
         public void BasicAttackTrigger()
         {
             animator.SetTrigger("BasicAttack");
-            soundManager.PlayAudio("SwingSound", 1.0f, false, false,0.5f);
+            soundManager.PlayAudio("SwingSound", 1.0f, false, false, 0.5f, "EffectSound");
+            soundManager.PlayRandomAudio("Attack", 1.0f, false, false, 0, 3, "VoiceSound");
         }
 
         private void Skill1Execute()
@@ -606,5 +659,19 @@ namespace Player
                     DimensionSword.GetComponent<AeternaSword>().skill4OverChargeParticles[i-1].SetActive(false);
             }
        }
+
+        public override void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+        {
+            base.OnPhotonSerializeView(stream, info);
+
+            if (stream.IsWriting)
+            {
+                stream.SendNext(sight.transform.position);
+            }
+            else
+            {
+                overlayNetworkSight = (Vector3)stream.ReceiveNext();
+            }
+        }
     }
 }

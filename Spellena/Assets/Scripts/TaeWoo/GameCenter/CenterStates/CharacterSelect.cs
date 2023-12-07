@@ -23,6 +23,7 @@ public class CharacterSelect : CenterState
             ConnectCharacterSelect();
         }
 
+
         GameCenterTest.globalTimer += Time.deltaTime;
 
         gameCenter.characterSelectView.RPC("ReceiveTimerCount", RpcTarget.AllBuffered, gameCenter.globalDesiredTimer - GameCenterTest.globalTimer);
@@ -32,7 +33,15 @@ public class CharacterSelect : CenterState
         {
             if (gameCenter.bgmManagerView != null)
             {
-                gameCenter.photonView.RPC("BetweenBGMVolumControl", RpcTarget.AllBuffered, soundDecreaseSpeed * Time.deltaTime / 10, false);
+                gameCenter.BetweenBGMVolumControl(soundDecreaseSpeed * Time.deltaTime / 10, false);
+            }
+        }
+
+        else
+        {
+            if (gameCenter.bgmManagerView != null)
+            {
+                gameCenter.betweenBGMSource.volume = 1.0f * gameCenter.settingManager.bgmVal * gameCenter.settingManager.soundVal;
             }
         }
 
@@ -112,7 +121,6 @@ public class CharacterSelect : CenterState
                 {
                     view.TransferOwnership(player.ActorNumber);
                 }
-
 
                 playerCharacter.GetComponent<PhotonView>().RPC("IsLocalPlayer", player);
                 playerCharacter.GetComponent<PhotonView>().RPC("ChangeName", RpcTarget.All, (string)player.CustomProperties["Name"]);

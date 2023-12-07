@@ -48,7 +48,7 @@ namespace Player
 
         public void Transport(GameObject enemy)
         {
-            Player.soundManager.PlayAudio("SweepSound", 1.0f, false, false);
+            Player.soundManager.PlayAudio("SweepSound", 1.0f, false, false, "EffectSound");
 
             int randomIndex = Random.Range(0, trasportPoints.Count);
 
