@@ -15,7 +15,7 @@ public class GameReady : CenterState
             isCheckTimer = !isCheckTimer;
             tempTimer = GameCenterTest.globalTimer;
             gameCenter.globalDesiredTimer = tempTimer + gameCenter.readyTime;
-            gameCenter.bgmManagerView.RPC("PlayAudio", RpcTarget.AllBuffered, "DuringRound", 0.05f, true,true);
+            gameCenter.bgmManagerView.RPC("PlayAudio", RpcTarget.AllBuffered, "DuringRound", 0.05f, true,true, "BGM");
         }
 
         GameCenterTest.globalTimer += Time.deltaTime;
