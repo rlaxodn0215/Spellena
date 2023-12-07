@@ -290,9 +290,13 @@ namespace Player
                 MakeMoveSound();
             }
 
-            if (PhotonNetwork.IsMasterClient)
+            if(PhotonNetwork.IsMasterClient)
             {
-                isOccupying = false;
+                if (!((bool)PhotonNetwork.LocalPlayer.CustomProperties["IsAlive"]))
+                {
+                    isOccupying = false;
+                    Debug.Log("죽어있음");
+                }
             }
         }
 
@@ -580,18 +584,6 @@ namespace Player
                 }
             }
         }
-        void OnTriggerStay(Collider other)
-        {
-            if (PhotonNetwork.IsMasterClient)
-            {
-                if (other.tag == "OccupationArea" && 
-                    (bool) PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["IsAlive"])
-                {
-                    Debug.Log("체크");
-                    isOccupying = true;
-                }
-            }
-        }
 
         [PunRPC]
         public void ChangeName(string name)
@@ -681,8 +673,7 @@ namespace Player
                 if (hp <= dataHp)
                 {
                     hp -= damage;
-                    if (GetComponent<Cultist>() != null)
-                        UI.GetComponent<CultistUI>().PlayDamageEffect(damage);
+                    //UI.GetComponent<ScreenEffectManager>().PlayDamageEffect(damage);
                     Debug.Log("Player Damaged !! : " + damage + " EnemyName: " + enemy);
                 }
 

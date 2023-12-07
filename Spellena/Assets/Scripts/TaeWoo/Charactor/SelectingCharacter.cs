@@ -56,14 +56,10 @@ public class SelectingCharacter : MonoBehaviour
     void ShowTimer()
     {
         if(timer < 0)
-        {
             timeCountText.text = null;
-        }
 
         else
-        {
             timeCountText.text = string.Format("{0:F0}", timer);
-        }
 
     }
 

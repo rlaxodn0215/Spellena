@@ -236,6 +236,7 @@ public class DuringRound : CenterState
             if ((bool)player.CustomProperties["IsAlive"] && (bool)player.CustomProperties["IsAlive"] == true) continue;
             if ((float)player.CustomProperties["ReSpawnTime"] <= GameCenterTest.globalTimer)
             {
+                Debug.Log("부활");
                 PhotonView view = PhotonView.Find((int)player.CustomProperties["CharacterViewID"]);
                 GameCenterTest.ChangePlayerCustomProperties(player, "IsAlive", true);
                 GameCenterTest.ChangePlayerCustomProperties(player, "ReSpawnTime", 100000000.0f);
@@ -489,10 +490,10 @@ public class DuringRound : CenterState
             if (gameCenter.currentOccupationTeam == gameCenter.teamA)
             {
                 gameCenter.occupyingA.rate = 100;
-                GameCenterTest.roundA++;
 
-                if (GameCenterTest.roundA == 1)
+                if (GameCenterTest.roundA == 0)
                 {
+                    GameCenterTest.roundA = 1;
                     gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "redFirstPoint", true);
 
                     foreach (var player in gameCenter.playersA)
@@ -509,8 +510,9 @@ public class DuringRound : CenterState
 
                 }
 
-                else if (GameCenterTest.roundA == 2)
+                else if (GameCenterTest.roundA == 1)
                 {
+                    GameCenterTest.roundA = 2;
                     gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "redSecondPoint", true);
 
                     foreach (var player in gameCenter.playersA)
@@ -534,8 +536,9 @@ public class DuringRound : CenterState
                 gameCenter.occupyingB.rate = 100;
                 GameCenterTest.roundB++;
 
-                if (GameCenterTest.roundB == 1)
+                if (GameCenterTest.roundB == 0)
                 {
+                    GameCenterTest.roundB = 1;
                     gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "blueFirstPoint", true);
 
                     foreach (var player in gameCenter.playersB)
@@ -552,8 +555,9 @@ public class DuringRound : CenterState
 
                 }
 
-                else if (GameCenterTest.roundB == 2)
+                else if (GameCenterTest.roundB == 1)
                 {
+                    GameCenterTest.roundB = 2;
                     gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "blueSecondPoint", true);
 
                     foreach (var player in gameCenter.playersB)
@@ -570,10 +574,8 @@ public class DuringRound : CenterState
 
                 }
             }
-
             //라운드 종료
             gameCenter.currentGameState = GameCenterTest.GameState.RoundEnd;
-
         }
     }
 

@@ -228,9 +228,7 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
             photonView.RPC("SerializeGameCenterDatas", RpcTarget.AllBufferedViaServer, ToDoSerlize());
 
             if (inGameUI != null)
-            {
                 GiveDataToUI();
-            }
         }
     }
 

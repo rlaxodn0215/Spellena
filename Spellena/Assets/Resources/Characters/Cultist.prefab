@@ -15672,6 +15672,7 @@ GameObject:
   - component: {fileID: 522942227572226228}
   - component: {fileID: 522942227572226229}
   - component: {fileID: 522942227572226234}
+  - component: {fileID: 5355456722220566432}
   - component: {fileID: 522942227572226235}
   - component: {fileID: 522942227572226230}
   - component: {fileID: 1372295260490349736}
@@ -15679,7 +15680,6 @@ GameObject:
   - component: {fileID: 3536886607703108361}
   - component: {fileID: 3796433313867198420}
   - component: {fileID: 3273357905724759427}
-  - component: {fileID: 4498942896334328714}
   m_Layer: 15
   m_Name: Cultist
   m_TagString: Untagged
@@ -15792,6 +15792,20 @@ MonoBehaviour:
   m_DefaultActionMap: PlayerActions
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!136 &5355456722220566432
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 522942227572226233}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  m_Radius: 0.1589776
+  m_Height: 1.3494909
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.62497985, z: 0}
 --- !u!136 &522942227572226235
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -16054,19 +16068,6 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!65 &4498942896334328714
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 522942227572226233}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.05, y: 0.05, z: 0.05}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &544523706691571525
 GameObject:
   m_ObjectHideFlags: 0
@@ -16792,7 +16793,7 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1064424928640153001}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 0.6, y: 0.2, z: 0.4}
@@ -124302,7 +124303,6 @@ MonoBehaviour:
   - {fileID: 6131329811585393687}
   - {fileID: 3080857797840798395}
   - {fileID: 328605062514124662}
-  ScreenEffect: {fileID: 677550325675235352}
   chargeBar: {fileID: 8737012994851147967}
 --- !u!1 &8090557117535697889
 GameObject:
