@@ -168,6 +168,12 @@ namespace Player
                     tran.GetComponent<MeshRenderer>().enabled = false;
                     Debug.Log("Disable MeshRenderer");
                 }
+
+                else if (tran.GetComponent<SkinnedMeshRenderer>())
+                {
+                    tran.GetComponent<SkinnedMeshRenderer>().enabled = false;
+                    Debug.Log("Disable SkinnedMeshRenderer");
+                }
             }
             
         }

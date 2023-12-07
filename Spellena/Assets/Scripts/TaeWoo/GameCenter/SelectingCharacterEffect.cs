@@ -8,8 +8,6 @@ public class SelectingCharacterEffect : MonoBehaviour,IPointerEnterHandler,IPoin
     private GameObject cursorEffect;
     private GameObject selectEffect;
 
-    public List<GameObject> seletEffects;
-
     void Start()
     {
         cursorEffect = GameCenterTest.FindObject(gameObject, "CursorEffect");
