@@ -12,12 +12,12 @@ GameObject:
   - component: {fileID: 3938620967942924257}
   - component: {fileID: 5607967604092204143}
   - component: {fileID: 6051594028606843628}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: AngelStatue
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 8
   m_IsActive: 1
 --- !u!4 &2210026083316286690
 Transform:
@@ -92,6 +92,14 @@ PrefabInstance:
     - target: {fileID: 100000, guid: 12b340d4f3cecea4c9012c4820f458ef, type: 3}
       propertyPath: m_Name
       value: angelStatue
+      objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: 12b340d4f3cecea4c9012c4820f458ef, type: 3}
+      propertyPath: m_TagString
+      value: Wall
+      objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: 12b340d4f3cecea4c9012c4820f458ef, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 12b340d4f3cecea4c9012c4820f458ef, type: 3}
       propertyPath: m_RootOrder

@@ -287,7 +287,7 @@ namespace Player
             if(photonView.IsMine)
             {
                 PlayerMove();
-                MakeMoveSound();
+                //MakeMoveSound();
             }
 
             if (PhotonNetwork.IsMasterClient)
@@ -296,36 +296,36 @@ namespace Player
             }
         }
 
-        protected void MakeMoveSound()
-        {
-            if (playerActionDatas[(int)PlayerActionState.Jump].isExecuting)
-            {
-                soundManagerView.RPC("PlayAudio", RpcTarget.All, "JumpSound", 1.0f, false, "ActSounds");
-            }
+        //protected void MakeMoveSound()
+        //{
+        //    if (playerActionDatas[(int)PlayerActionState.Jump].isExecuting)
+        //    {
+        //        soundManagerView.RPC("PlayAudio", RpcTarget.All, "JumpSound", 1.0f, false, "ActSounds");
+        //    }
 
-            else
-            {
-                // 하나만 소라가 나야 한다면 한 조건문 안에 한 사운드를 넣어라
+        //    else
+        //    {
+        //        // 하나만 소라가 나야 한다면 한 조건문 안에 한 사운드를 넣어라
 
-                if (playerActionDatas[(int)PlayerActionState.Move].isExecuting)
-                {
-                    if (playerActionDatas[(int)PlayerActionState.Run].isExecuting)
-                    {
-                        soundManagerView.RPC("PlayAudio", RpcTarget.All, "RunSound", 1.0f, true, "ActSounds");
-                    }
+        //        if (playerActionDatas[(int)PlayerActionState.Move].isExecuting)
+        //        {
+        //            if (playerActionDatas[(int)PlayerActionState.Run].isExecuting)
+        //            {
+        //                soundManagerView.RPC("PlayAudio", RpcTarget.All, "RunSound", 1.0f, true, "ActSounds");
+        //            }
 
-                    else
-                    {
-                        soundManagerView.RPC("PlayAudio", RpcTarget.All, "WalkSound", 1.0f, true, "ActSounds");
-                    }
-                }
+        //            else
+        //            {
+        //                soundManagerView.RPC("PlayAudio", RpcTarget.All, "WalkSound", 1.0f, true, "ActSounds");
+        //            }
+        //        }
 
-                else
-                {
-                    soundManagerView.RPC("PlayAudio", RpcTarget.All, "NoSound", 1.0f, true, "ActSounds");
-                }
-            }
-        }
+        //        else
+        //        {
+        //            soundManagerView.RPC("PlayAudio", RpcTarget.All, "NoSound", 1.0f, true, "ActSounds");
+        //        }
+        //    }
+        //}
 
         protected void PlayerMove()
         {

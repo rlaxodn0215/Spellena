@@ -11,8 +11,9 @@ public class SelectingCharacter : MonoBehaviour
     Text timeCountText;
 
     public List<GameObject> avatar;
-    public List<AudioClip> clips;
+
     // 0 : champSelect, 1 : champSelected
+    public List<AudioClip> clips;
 
     public GameObject noChoose;
     public GameObject confirm;
@@ -125,5 +126,6 @@ public class SelectingCharacter : MonoBehaviour
         confirm.SetActive(true);
         reSelect.SetActive(false);
     }
+
 
 }

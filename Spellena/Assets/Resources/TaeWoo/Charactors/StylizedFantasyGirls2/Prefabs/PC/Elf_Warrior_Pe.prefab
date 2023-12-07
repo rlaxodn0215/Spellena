@@ -651,7 +651,7 @@ SkinnedMeshRenderer:
   m_DirtyAABB: 0
 --- !u!95 &7380785925653383957
 Animator:
-  serializedVersion: 4
+  serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -668,7 +668,8 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1229454124267304365
 GameObject:
   m_ObjectHideFlags: 0
@@ -3463,13 +3464,14 @@ GameObject:
   m_Component:
   - component: {fileID: 7054722569961254019}
   - component: {fileID: 3965212867967678201}
+  - component: {fileID: 346011048377240019}
   m_Layer: 0
   m_Name: Elf_Warrior_Pe
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &7054722569961254019
 Transform:
   m_ObjectHideFlags: 0
@@ -3489,7 +3491,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &3965212867967678201
 Animator:
-  serializedVersion: 4
+  serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -3497,7 +3499,7 @@ Animator:
   m_GameObject: {fileID: 7686721387977307705}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 023d5bc4dbea7a846b00a72ad279bb14, type: 3}
-  m_Controller: {fileID: 9100000, guid: 5b54d1420be4ac04a85d63aa12438962, type: 2}
+  m_Controller: {fileID: 9100000, guid: 50e4f3a45c1016045880635cfda87a37, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -3506,7 +3508,20 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &346011048377240019
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7686721387977307705}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd79b4bded0b3784ab35a08c6604caf9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7688992289935206034
 GameObject:
   m_ObjectHideFlags: 0

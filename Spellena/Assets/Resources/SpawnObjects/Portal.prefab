@@ -9900,6 +9900,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bea9e3f3d58a38f44b619cc10411aedb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  settingManager: {fileID: 0}
 --- !u!114 &2389974980168504125
 MonoBehaviour:
   m_ObjectHideFlags: 0
