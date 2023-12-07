@@ -6040,9 +6040,10 @@ GameObject:
   - component: {fileID: 1517351802}
   - component: {fileID: 1254214872}
   - component: {fileID: 683120009}
+  - component: {fileID: -2320758759326817677}
   - component: {fileID: 2628121825258516268}
   - component: {fileID: 4865067437783240023}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Aeterna
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6324,6 +6325,20 @@ CapsuleCollider:
   m_GameObject: {fileID: 5624648683831435768}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.1589776
+  m_Height: 1.8245289
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.8624989, z: 0}
+--- !u!136 &-2320758759326817677
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5624648683831435768}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
   m_Enabled: 1
   m_Radius: 0.1589776
   m_Height: 1.8245289
