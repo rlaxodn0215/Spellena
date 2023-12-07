@@ -19,6 +19,9 @@ namespace Player
         public GameObject teleportManager;
         public GameObject minimapCamera;
 
+        public GameObject overlayCamera;
+        public GameObject overlaySight;
+
         [HideInInspector]
         public DimensionSword dimensionSword;
         [HideInInspector]
@@ -46,6 +49,8 @@ namespace Player
         private IEnumerator attackPauseCoroutine;
         private IEnumerator skill4SlashCoroutine;
 
+        Vector3 overlayCameraDefaultPos;
+
         // 0 : 기본 공격
         // 1 : 스킬 1
         // 2 : 스킬 2
@@ -60,12 +65,21 @@ namespace Player
         protected override void Start() 
         {
             base.Start();
-            Initialize();
+            if (photonView.IsMine)
+            {
+                Initialize();
+                overlayCameraDefaultPos = overlayCamera.transform.localPosition;
+            }
         }
 
         protected override void Update()
         {
             base.Update();
+
+            if(photonView.IsMine)
+            {
+                //CheckOverlayAnimator();
+            }
         }
 
         protected override void FixedUpdate()
@@ -139,6 +153,7 @@ namespace Player
         public override void IsLocalPlayer()
         {
             base.IsLocalPlayer();
+            overlayCamera.SetActive(true);
             minimapCamera.SetActive(true);
         }
 

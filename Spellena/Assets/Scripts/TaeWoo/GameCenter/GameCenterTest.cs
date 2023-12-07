@@ -433,6 +433,27 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
         return foundObject;
     }
 
+    public static List<GameObject> FindObjects(GameObject parrent, string name)
+    {
+        List<GameObject> foundObject = new List<GameObject>();
+        Transform[] array = parrent.GetComponentsInChildren<Transform>(true);
+
+        foreach (Transform transform in array)
+        {
+            if (transform.name == name)
+            {
+                foundObject.Add(transform.gameObject);
+            }
+        }
+
+        if (foundObject == null)
+        {
+            Debug.LogError("해당 이름의 게임 오브젝트를 찾지 못했습니다 : " + name);
+        }
+
+        return foundObject;
+    }
+
     public static GameObject FindObjectWithViewID(int viewID)
     {
         PhotonView photonView = PhotonView.Find(viewID);

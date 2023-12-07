@@ -21,6 +21,7 @@ public class SelectingCharacter : MonoBehaviour
 
     private string selectName;
     private AudioSource audioSource;
+    private List<GameObject> selectEffects;
 
     [HideInInspector]
     public float timer = -1.0f;
@@ -29,6 +30,8 @@ public class SelectingCharacter : MonoBehaviour
     {
         ConnectUI();
         audioSource = GetComponent<AudioSource>();
+
+        selectEffects = GameCenterTest.FindObjects(gameObject, "SelectEffect");
     }
     void ConnectUI()
     {
@@ -101,11 +104,13 @@ public class SelectingCharacter : MonoBehaviour
             if(i == index)
             {
                 avatar[i].SetActive(true);
+                selectEffects[i].SetActive(true);
             }
 
             else
             {
                 avatar[i].SetActive(false);
+                selectEffects[i].SetActive(false);
             }
         }
     }
