@@ -72,9 +72,11 @@ public class ScreenEffectManager : MonoBehaviour
         }
 
         Color _hitColor = hitEffect.color;
-        _hitColor.a = 51 * _hitFrame;
+        _hitColor.a = 0.2f * _hitFrame;
         Color _healColor = healEffect.color;
-        _healColor.a = 51 * _healFrame;
+        _healColor.a = 0.2f * _healFrame;
+
+        Debug.Log(_hitFrame);
 
         hitEffect.color = _hitColor;
         healEffect.color = _healColor;
