@@ -625,10 +625,13 @@ namespace Player
                             //회복
                             _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.All,
                                 playerName, -(int)(cultistData.skill1Damage), _tempObject.name, Vector3.zero, 0f);
-                            PhotonNetwork.Instantiate("ChanYoung/Prefabs/Cultist/CultistHealEffect",
+                            GameObject _transferObject = PhotonNetwork.Instantiate("ChanYoung/Prefabs/Cultist/CultistHealEffect",
                                 _rootObject.transform.position + new Vector3(0, 1, 0), Quaternion.identity);
 
+                            _transferObject.GetComponent<PhotonView>().TransferOwnership(_rootObject.GetComponent<PhotonView>().OwnerActorNr);
+
                             _rootObject.GetComponent<BuffDebuffChecker>().SetNewBuffDebuff("TerribleTentacles", 1);
+                            
 
                             _check = 1;
                             break;
@@ -643,8 +646,9 @@ namespace Player
                     //체크부분
                     buffDebuffChecker.SetNewBuffDebuff("TerribleTentacles", 2);
 
-                    PhotonNetwork.Instantiate("ChanYoung/Prefabs/Cultist/CultistHealEffect",
+                    GameObject _transferObject = PhotonNetwork.Instantiate("ChanYoung/Prefabs/Cultist/CultistHealEffect",
                    transform.position + new Vector3(0, 1, 0), Quaternion.identity);
+                    _transferObject.GetComponent<PhotonView>().TransferOwnership(GetComponent<PhotonView>().OwnerActorNr);
                 }
 
 
@@ -716,6 +720,8 @@ namespace Player
                     CallRPCEvent("SetAnimation", "Response", "isSkill2", true);
                     CallRPCEvent("UpdateData", "Response", skillState, "skillCastingTime", 1, skill2CastingTime, true);
                     CallRPCEvent("SetDagger", "Response", false);
+                    soundManager.GetComponent<PhotonView>().RPC("PlayAudio", RpcTarget.All, "Skill2Sound", 1.0f, 
+                        false, false, "EffectSound");
                 }
                 else if (skillState == SkillStateCultist.Skill3Ready)
                 {
@@ -724,6 +730,8 @@ namespace Player
                     CallRPCEvent("UpdateData", "Response", skillState, "skillCastingTime", 2, skill3CastingTime, true);
                     CallRPCEvent("SetDagger", "Response", false);
                     CallRPCEvent("PlayBlessingCastingEffect", "Response");
+                    soundManager.GetComponent<PhotonView>().RPC("PlayAudio", RpcTarget.All, "Skill3Sound", 1.0f,
+                       false, false, "EffectSound");
                 }
                 else if (skillState == SkillStateCultist.Skill4Ready)
                 {
@@ -1211,6 +1219,9 @@ namespace Player
 
                 Vector3 _tempEulerCamera = _tempQ.eulerAngles;
                 _mouseControl.ApplyPos(_tempEulerCamera.y, _tempEulerCamera.x);
+
+                soundManager.GetComponent<PhotonView>().RPC("PlayAudio", RpcTarget.All, "TeleportSound", 1.0f,
+                       false, false, "EffectSound");
             }
         }
 

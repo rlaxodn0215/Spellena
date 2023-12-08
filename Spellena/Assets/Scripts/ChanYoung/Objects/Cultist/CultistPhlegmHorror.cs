@@ -10,9 +10,24 @@ public class CultistPhlegmHorror : SpawnObject
     int creatorViewNum;
     bool isCheck = false;
 
+    int audioIndex = 0;
+
+    AudioSource[] audioSource;
+
     private void Start()
     {
         creatorViewNum = (int)data[3];
+        audioSource = GetComponents<AudioSource>();
+    }
+
+    private void FixedUpdate()
+    {
+        if (audioSource[audioIndex].isPlaying == false)
+        {
+            audioIndex = 1 - audioIndex;
+            audioSource[audioIndex].volume = SettingManager.Instance.effectVal * SettingManager.Instance.soundVal;
+            audioSource[audioIndex].Play();
+        }
     }
 
     private void OnTriggerEnter(Collider other)

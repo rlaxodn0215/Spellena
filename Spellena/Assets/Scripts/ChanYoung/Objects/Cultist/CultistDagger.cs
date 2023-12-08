@@ -18,6 +18,7 @@ public class CultistDagger : SpawnObject
     private void Start()
     {
         daggerRigidbody = GetComponent<Rigidbody>();
+        GetComponent<AudioSource>().volume = SettingManager.Instance.effectVal * SettingManager.Instance.soundVal;
         Init();
     }
     private void Update()
