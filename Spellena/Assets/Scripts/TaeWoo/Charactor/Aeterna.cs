@@ -680,20 +680,15 @@ namespace Player
         {
             for (int i = 1; i <= 3; i++)
             {
-                if (!photonView.IsMine)
+                if (i == index)
                 {
-                    if (i == index)
-                        DimensionSword.GetComponent<AeternaSword>().skill4OverChargeParticles[i - 1].SetActive(true);
-                    else
-                        DimensionSword.GetComponent<AeternaSword>().skill4OverChargeParticles[i - 1].SetActive(false);
+                    DimensionSword.GetComponent<AeternaSword>().skill4OverChargeParticles[i - 1].SetActive(true);
+                    dimensionSwordForMe[i + 6].SetActive(true);
                 }
-
                 else
                 {
-                    if (i == index)
-                        dimensionSwordForMe[i + 6].SetActive(true);
-                    else
-                        dimensionSwordForMe[i + 6].SetActive(false);
+                    DimensionSword.GetComponent<AeternaSword>().skill4OverChargeParticles[i - 1].SetActive(false);
+                    dimensionSwordForMe[i + 6].SetActive(false);
                 }
 
             }

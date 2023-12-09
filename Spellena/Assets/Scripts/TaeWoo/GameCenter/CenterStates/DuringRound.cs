@@ -65,7 +65,7 @@ public class DuringRound : CenterState
 
     public override void OnPlayerPropertiesUpdate(Photon.Realtime.Player targetPlayer, Hashtable changedProps)
     {
-         if (targetPlayer != null && changedProps != null)
+         if (targetPlayer != null && changedProps != null && PhotonNetwork.IsMasterClient)
          {
              //pararmeter로 변경된 key값을 찾는다.
              string param = (string)targetPlayer.CustomProperties["ParameterName"];
@@ -85,6 +85,7 @@ public class DuringRound : CenterState
                     targetPlayer.CustomProperties["PlayerAssistViewID"] = "";
 
                     Dictionary<string, float> temp = (Dictionary<string, float>)targetPlayer.CustomProperties["DealAssist"];
+
                     temp["AssistTime_" + victimViewID] = GameCenterTest.globalTimer + gameCenter.assistTime;
                     GameCenterTest.ChangePlayerCustomProperties(targetPlayer, "DealAssist", temp);
                     break;
@@ -101,13 +102,14 @@ public class DuringRound : CenterState
                      if (gameCenter.inGameUIView == null) break;
                     gameCenter.inGameUIView.RPC("ShowKillUI", targetPlayer, gameCenter.tempVictim);
 
-                    Debug.Log("KillCount ShowKillLog : " + targetPlayer.CustomProperties["Name"]);
+                    //Debug.Log("KillCount ShowKillLog : " + targetPlayer.CustomProperties["Name"]);
 
-                    if (PhotonNetwork.IsMasterClient)
+                    //if (PhotonNetwork.IsMasterClient)
                     {
                         gameCenter.inGameUIView.RPC("ShowKillLog", RpcTarget.All, targetPlayer.CustomProperties["Name"],
                              gameCenter.tempVictim, ((string)targetPlayer.CustomProperties["Team"] == "A"), targetPlayer.ActorNumber);
                     }
+
                     CheckPlayerHealAssist(targetPlayer);
                     break;
                  case "DeadCount":
@@ -127,7 +129,7 @@ public class DuringRound : CenterState
 
                     if((string)targetPlayer.CustomProperties["KillerName"] == "World")
                     {
-                        Debug.Log("World Kill");
+                        //Debug.Log("World Kill");
                         gameCenter.inGameUIView.RPC("ShowKillLog", RpcTarget.AllBuffered, "World",
                             (string)targetPlayer.CustomProperties["Name"], ((string)targetPlayer.CustomProperties["Team"] == "A"), -1);
                     }
@@ -357,6 +359,7 @@ public class DuringRound : CenterState
         {
             foreach (var teamPlayer in gameCenter.playersB)
             {
+                // null 문제
                 foreach (var assist in (Dictionary<string, float>)teamPlayer.CustomProperties["HealAssist"])
                 {
                     if (assist.Value >= GameCenterTest.globalTimer)

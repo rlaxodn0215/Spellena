@@ -8,7 +8,6 @@ public class DestoryEffect : MonoBehaviour
 
     IEnumerator Start()
     {
-
         GetComponent<AudioSource>().volume = 1.0f * SettingManager.Instance.effectVal * SettingManager.Instance.soundVal;
         GetComponent<AudioSource>().Play();
 

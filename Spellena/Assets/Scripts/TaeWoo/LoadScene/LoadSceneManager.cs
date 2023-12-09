@@ -141,7 +141,6 @@ public class LoadSceneManager : MonoBehaviourPunCallbacks
             playerData.Add("DeadCount", 0);
             playerData.Add("AsisstCount", 0);
             playerData.Add("UltimateCount", 0);
-            playerData.Add("Ping", 0);
 
             playerData.Add("TotalDamage", 0);
             playerData.Add("TotalHeal", 0);

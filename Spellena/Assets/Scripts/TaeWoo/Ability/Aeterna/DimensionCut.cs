@@ -21,9 +21,30 @@ namespace Player
         public override void IsActive()
         {
             Sword.GetComponent<PhotonView>().RPC("ActivateSkill4Sword", RpcTarget.AllBuffered, isHealingSword);
+
             Player.dimensionSwordForMe[1].SetActive(false);
             Player.dimensionSwordForMe[4].SetActive(isHealingSword);
             Player.dimensionSwordForMe[5].SetActive(!isHealingSword);
+
+            for (int i = 0; i < 3; i++)
+            {
+                ParticleSystem[] systems = Player.dimensionSwordForMe[i + 7].GetComponentsInChildren<ParticleSystem>(true);
+
+                foreach (ParticleSystem particle in systems)
+                {
+                    Color color;
+
+                    if (isHealingSword)
+                        ColorUtility.TryParseHtmlString("#FFFFFF", out color);
+                    else
+                        ColorUtility.TryParseHtmlString("#912AFF", out color);
+
+                    ParticleSystem.MainModule module = particle.main;
+                    module.startColor = color;
+                }
+            }
+
+
             isHealingSword = !isHealingSword;
             Player.soundManager.PlayAudioOverlap("GrandSwordSound", 1.0f, false, false,"EffectSound");
         }
@@ -31,6 +52,7 @@ namespace Player
         public override void IsDisActive()
         {
             Sword.GetComponent<PhotonView>().RPC("DisActivateSkill4Sword", RpcTarget.AllBuffered);
+
             Player.dimensionSwordForMe[1].SetActive(true);
             Player.dimensionSwordForMe[4].SetActive(false);
             Player.dimensionSwordForMe[5].SetActive(false);

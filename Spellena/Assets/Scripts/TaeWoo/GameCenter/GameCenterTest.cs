@@ -15,6 +15,8 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
     public GameObject gameResultObj;
     public GameObject playerStatObj;
 
+    public GameCenterTestData gameCenterTestData;
+
     [HideInInspector]
     public PhotonView characterSelectView;
     [HideInInspector]
@@ -199,6 +201,24 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
 
         currentGameState = GameState.CharacterSelect;
         currentCenterState = centerStates[currentGameState];
+
+        loadingTime = gameCenterTestData.loadingTime;
+        characterSelectTime = gameCenterTestData.characterSelectTime;
+        readyTime = gameCenterTestData.readyTime;
+        playerRespawnTime = gameCenterTestData.playerRespawnTime;
+        assistTime = gameCenterTestData.assistTime;
+
+        angelStatueCoolTime = gameCenterTestData.angelStatueCoolTime;
+        angelStatueHpPerTime = gameCenterTestData.angelStatueHpPerTime;
+        angelStatueContinueTime = gameCenterTestData.angelStatueContinueTime;
+
+        occupyingGaugeRate = gameCenterTestData.occupyingGaugeRate;
+        occupyingReturnTime = gameCenterTestData.occupyingReturnTime;
+        occupyingRate = gameCenterTestData.occupyingRate;
+        occupyingComplete = gameCenterTestData.occupyingComplete;
+        roundEndTime = gameCenterTestData.roundEndTime;
+        roundEndResultTime = gameCenterTestData.roundEndResultTime;
+
     }
 
     void ConnectBetweenBGM(string objName)

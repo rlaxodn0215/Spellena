@@ -57,16 +57,16 @@ public class GameReady : CenterState
 
             foreach (var enemyPlayer in gameCenter.playersB)
             {
-                if (temp.ContainsKey("AssistTime_" + enemyPlayer.CustomProperties["CharacterViewID"])) continue;
-                temp.Add("AssistTime_" + enemyPlayer.CustomProperties["CharacterViewID"], 0.0f);
+                if (temp.ContainsKey("AssistTime_" + (int)enemyPlayer.CustomProperties["CharacterViewID"])) continue;
+                temp.Add("AssistTime_" + (int)enemyPlayer.CustomProperties["CharacterViewID"], 0.0f);
             }
 
             if (!playerData.ContainsKey("DealAssist")) playerData.Add("DealAssist", temp);
 
             foreach (var enemyPlayer in gameCenter.playersA)
             {
-                if (temp1.ContainsKey("AssistTime_" + enemyPlayer.CustomProperties["CharacterViewID"])) continue;
-                temp1.Add("AssistTime_" + enemyPlayer.CustomProperties["CharacterViewID"], 0.0f);
+                if (temp1.ContainsKey("AssistTime_" + (int)enemyPlayer.CustomProperties["CharacterViewID"])) continue;
+                temp1.Add("AssistTime_" + (int)enemyPlayer.CustomProperties["CharacterViewID"], 0.0f);
             }
 
             if (!playerData.ContainsKey("HealAssist")) playerData.Add("HealAssist", temp1);
@@ -80,16 +80,16 @@ public class GameReady : CenterState
 
             foreach (var enemyPlayer in gameCenter.playersA)
             {
-                if (temp.ContainsKey("AssistTime_" + enemyPlayer.CustomProperties["CharacterViewID"])) continue;
-                temp.Add("AssistTime_" + enemyPlayer.CustomProperties["CharacterViewID"], 0.0f);
+                if (temp.ContainsKey("AssistTime_" + (int)enemyPlayer.CustomProperties["CharacterViewID"])) continue;
+                temp.Add("AssistTime_" + (int)enemyPlayer.CustomProperties["CharacterViewID"], 0.0f);
             }
 
             if(!playerData.ContainsKey("DealAssist")) playerData.Add("DealAssist", temp);
             
             foreach (var enemyPlayer in gameCenter.playersB)
             {
-                if (temp1.ContainsKey("AssistTime_" + enemyPlayer.CustomProperties["CharacterViewID"])) continue;
-                temp1.Add("AssistTime_" + enemyPlayer.CustomProperties["CharacterViewID"], 0.0f);
+                if (temp1.ContainsKey("AssistTime_" + (int)enemyPlayer.CustomProperties["CharacterViewID"])) continue;
+                temp1.Add("AssistTime_" + (int)enemyPlayer.CustomProperties["CharacterViewID"], 0.0f);
             }
 
             if(!playerData.ContainsKey("HealAssist")) playerData.Add("HealAssist", temp1); 

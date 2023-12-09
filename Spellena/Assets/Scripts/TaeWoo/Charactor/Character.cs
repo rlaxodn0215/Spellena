@@ -650,6 +650,20 @@ namespace Player
                         outline.enabled = true;
                     }
                 }
+
+                if(character.gameObject.GetComponent<Aeterna>())
+                {
+                    if (character.gameObject.GetComponent<PhotonView>().IsMine)
+                    {
+                        character.gameObject.GetComponent<Aeterna>().DimensionSword.SetActive(false);
+                    }
+
+                    else
+                    {
+                        character.gameObject.GetComponent<Aeterna>().DimensionSwordForMe.SetActive(false);
+                    }
+                }
+
             }
         }
 
@@ -786,6 +800,8 @@ namespace Player
                 }
             }
 
+            characterSoundManager.GetComponent<SoundManager>().PlayAudio("Death", 1.0f, false, "SpeakSound", "VoiceSound");
+
         }
 
 
@@ -907,8 +923,6 @@ namespace Player
                 // 데이터를 보내는 부분
                 stream.SendNext(hp);
                 stream.SendNext(isOccupying);
-                //stream.SendNext(chargeCount);
-                //stream.SendNext(ultimateCount);
                 for (int i = 0; i < playerActionDatas.Count; i++)
                 {
                     stream.SendNext(playerActionDatas[i].isExecuting);
@@ -922,8 +936,6 @@ namespace Player
                 // 데이터를 받는 부분
                 hp = (int)stream.ReceiveNext();
                 isOccupying = (bool)stream.ReceiveNext();
-                //chargeCount = (int)stream.ReceiveNext();
-                //ultimateCount = (int)stream.ReceiveNext();
                 for (int i = 0; i < playerActionDatas.Count; i++)
                 {
                     playerActionDatas[i].isExecuting = (bool)stream.ReceiveNext();

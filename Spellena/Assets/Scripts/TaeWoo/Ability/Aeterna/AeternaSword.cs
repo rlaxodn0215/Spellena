@@ -47,97 +47,69 @@ namespace Player
         [PunRPC]
         public void ActivateParticle(int skillNum, bool isActive)
         {
-            if (!photonView.IsMine)
-            {
-                if (skillNum == 2)
-                {
-                    skill2BuffParticle.SetActive(isActive);
+           if (skillNum == 2)
+           {
+               skill2BuffParticle.SetActive(isActive);
 
-                    if (contactObjectData != null)
-                        skill2HitParticle.SetActive(!isActive);
-                }
+               if (contactObjectData != null)
+                   skill2HitParticle.SetActive(!isActive);
+           }
 
-                else if (skillNum == 3)
-                {
-                    skill3BuffParticle.SetActive(isActive);
-                }
+           else if (skillNum == 3)
+           {
+               skill3BuffParticle.SetActive(isActive);
+           }
 
-                else if (skillNum == 4)
-                {
-                    for (int i = 0; i < 3; i++)
-                    {
-                        skill4OverChargeParticles[i].SetActive(isActive);
-                    }
-                }
+           else if (skillNum == 4)
+           {
+               for (int i = 0; i < 3; i++)
+               {
+                   skill4OverChargeParticles[i].SetActive(isActive);
+               }
+           }
 
-                else
-                {
-                    Debug.LogError("No SkillNum");
-                    return;
-                }
-            }
+           else
+           {
+               Debug.LogError("No SkillNum");
+               return;
+           }
+            
         }
 
         [PunRPC]
         public void ActivateSkill4Sword(bool isHealingSword)
         {
-            if (!photonView.IsMine)
+            normalSword.SetActive(false);
+            skill4HealingSword.SetActive(isHealingSword);
+            skill4AttackSword.SetActive(!isHealingSword);
+
+            for (int i = 0; i < 3; i++)
             {
-                normalSword.SetActive(false);
-                skill4HealingSword.SetActive(isHealingSword);
-                skill4AttackSword.SetActive(!isHealingSword);
+                ParticleSystem[] systems = skill4OverChargeParticles[i].GetComponentsInChildren<ParticleSystem>(true);
 
-                for (int i = 0; i < 3; i++)
+                foreach (ParticleSystem particle in systems)
                 {
-                    ParticleSystem[] systems = skill4OverChargeParticles[i].GetComponentsInChildren<ParticleSystem>(true);
+                    Color color;
 
-                    foreach (ParticleSystem particle in systems)
-                    {
-                        Color color;
+                    if (isHealingSword)
+                        ColorUtility.TryParseHtmlString("#FFFFFF", out color);
+                    else
+                        ColorUtility.TryParseHtmlString("#912AFF", out color);
 
-                        if (isHealingSword)
-                            ColorUtility.TryParseHtmlString("#FFFFFF", out color);
-                        else
-                            ColorUtility.TryParseHtmlString("#912AFF", out color);
-
-                        ParticleSystem.MainModule module = particle.main;
-                        module.startColor = color;
-                    }
-                }
-
-            }
-
-            else
-            {
-                for (int i = 0; i < 3; i++)
-                {
-                    ParticleSystem[] systems = player.dimensionSwordForMe[i + 7].GetComponentsInChildren<ParticleSystem>(true);
-
-                    foreach (ParticleSystem particle in systems)
-                    {
-                        Color color;
-
-                        if (isHealingSword)
-                            ColorUtility.TryParseHtmlString("#FFFFFF", out color);
-                        else
-                            ColorUtility.TryParseHtmlString("#912AFF", out color);
-
-                        ParticleSystem.MainModule module = particle.main;
-                        module.startColor = color;
-                    }
+                    ParticleSystem.MainModule module = particle.main;
+                    module.startColor = color;
                 }
             }
+
         }
 
         [PunRPC]
         public void DisActivateSkill4Sword()
         {
-            if (!photonView.IsMine)
-            {
-                normalSword.SetActive(true);
-                skill4HealingSword.SetActive(false);
-                skill4AttackSword.SetActive(false);
-            }
+           normalSword.SetActive(true);
+           skill4HealingSword.SetActive(false);
+           skill4AttackSword.SetActive(false);
+          
         }
 
         public void OnTriggerEnter(Collider other)
@@ -162,16 +134,6 @@ namespace Player
                         }
 
                         other.transform.root.GetComponent<PhotonView>().RPC("DestoryObject", RpcTarget.AllBuffered);
-
-                        //if (PhotonNetwork.IsMasterClient)
-                        //{
-                        //    other.transform.root.GetComponent<SpawnObject>().DestorySpawnObject();
-                        //}
-
-                        //else
-                        //{
-                        //    other.transform.root.GetComponent<PhotonView>().RPC("DestorySpawnObject", RpcTarget.MasterClient);
-                        //}
                     }
 
                 }

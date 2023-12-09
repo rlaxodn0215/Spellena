@@ -4940,7 +4940,9 @@ MonoBehaviour:
   type: 1
   objectName: 
   hitParticles:
-  - Projectiles/DimensionSlash_0_Hit
+  - Projectiles/DimensionCut_HitEffect_Deal
+  - 'Projectiles/DimensionCut_HitEffect_Heal '
+  - Projectiles/DimensionCut_HitEffect_Healing
   aeternaData: {fileID: 11400000, guid: 3ab088a29565a8742af0c359ef4214cd, type: 2}
   chargeNum: 0
   damage: 0
