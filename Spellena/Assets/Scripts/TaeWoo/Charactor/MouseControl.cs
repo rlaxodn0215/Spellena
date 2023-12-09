@@ -22,7 +22,6 @@ namespace Player
         private Vector2 smoothMouse;
 
         private Vector2 mouseDelta;
-        private SettingManager settingManager;
 
         [HideInInspector]
         public bool scoped;
@@ -44,32 +43,11 @@ namespace Player
             // 커서 고정
             if (eraseCursor)
                 EraseCursor();
-
-            LinkSettingManager();
-        }
-
-        void LinkSettingManager()
-        {
-            GameObject temp = GameObject.Find("SettingManager");
-
-            if (temp == null)
-            {
-                Debug.LogError("SettingManager을 찾을 수 없습니다.");
-                return;
-            }
-
-            settingManager = temp.GetComponent<SettingManager>();
-
-            if (settingManager == null)
-            {
-                Debug.LogError("SettingManager의 Component을 찾을 수 없습니다.");
-                return;
-            }
         }
 
         void Update()
         {
-            if(settingManager.SettingPanel.activeSelf)
+            if(SettingManager.Instance.SettingPanel.activeSelf)
             {
                 SetData();
                 ShowCursor();
@@ -148,8 +126,8 @@ namespace Player
 
         void SetData()
         {
-            Sensitivity = new Vector2(settingManager.sensitivityVal * 20, settingManager.sensitivityVal * 20);
-            isOpposite = settingManager.isOpposite;      
+            Sensitivity = new Vector2(SettingManager.Instance.sensitivityVal * 20, SettingManager.Instance.sensitivityVal * 20);
+            isOpposite = SettingManager.Instance.isOpposite;      
         }
 
         public float ChangeAngle(float angle)
