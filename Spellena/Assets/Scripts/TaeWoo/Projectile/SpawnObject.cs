@@ -67,11 +67,13 @@ namespace Player
         }
 
         [PunRPC]
-        public void DestorySpawnObject(Vector3 hitPos, int index)
+        public void DestorySpawnObject(Vector3 hitPos, int index, bool isTransparent)
         {
             if (this !=null && PhotonNetwork.IsMasterClient)
             {
-                PhotonNetwork.Destroy(gameObject.transform.root.gameObject);
+                if(!isTransparent)
+                    PhotonNetwork.Destroy(gameObject.transform.root.gameObject);
+
                 PhotonNetwork.Instantiate(hitParticles[index], hitPos, Quaternion.identity);
             }
         }

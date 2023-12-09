@@ -15,12 +15,12 @@ public class DimensionSlashWallHitCollider : MonoBehaviourPunCallbacks
             {
                 if(dimensionSlash.isHealingSword)
                 {
-                    dimensionSlash.DestorySpawnObject(other.ClosestPointOnBounds(transform.position), index);
+                    dimensionSlash.DestorySpawnObject(other.ClosestPointOnBounds(transform.position), index, false);
                 }
 
                 else
                 {
-                    dimensionSlash.DestorySpawnObject(other.ClosestPointOnBounds(transform.position),index-1);
+                    dimensionSlash.DestorySpawnObject(other.ClosestPointOnBounds(transform.position),index-1,false);
                 }
             }
         }

@@ -41,7 +41,7 @@ public class CharacterSelect : CenterState
         {
             if (gameCenter.bgmManagerView != null)
             {
-                gameCenter.betweenBGMSource.volume = 1.0f * gameCenter.settingManager.bgmVal * gameCenter.settingManager.soundVal;
+                gameCenter.betweenBGMSource.volume = 1.0f * SettingManager.Instance.bgmVal * SettingManager.Instance.soundVal;
             }
         }
 
@@ -79,7 +79,11 @@ public class CharacterSelect : CenterState
             //string choseCharacter = "Aeterna";
             // 캐릭터 프리팹 한 파일로 통일
             string choseCharacter = (string)player.CustomProperties["Character"];
-            if (choseCharacter == null) GameCenterTest.ChangePlayerCustomProperties(player, "Character", "Aeterna");
+            if (choseCharacter == null)
+            {
+                GameCenterTest.ChangePlayerCustomProperties(player, "Character", "Observer");
+                choseCharacter = "Observer";
+            }
 
             if ((string)player.CustomProperties["Team"] == "A")     // A 팀 (Red)
             {
@@ -87,19 +91,26 @@ public class CharacterSelect : CenterState
                     gameCenter.playerSpawnA[aTeamIndex].position, Quaternion.identity);
                 if (playerCharacter == null) continue;
 
-                //playerCharacter.GetComponent<PhotonView>().TransferOwnership(player.ActorNumber);
-
                 PhotonView[] views = playerCharacter.GetComponentsInChildren<PhotonView>();
 
-                foreach(var view in views)
+                // foreach - > for 문으로
+                foreach(PhotonView view in views)
                 {
                     view.TransferOwnership(player.ActorNumber);
                 }
 
-                playerCharacter.GetComponent<PhotonView>().RPC("IsLocalPlayer", player);
-                playerCharacter.GetComponent<PhotonView>().RPC("ChangeName", RpcTarget.All, (string)player.CustomProperties["Name"]);
+                if(choseCharacter != "Observer")
+                {
+                    playerCharacter.GetComponent<PhotonView>().RPC("IsLocalPlayer", player);
+                    playerCharacter.GetComponent<Character>().SetTagServer("TeamA");
+                }
 
-                playerCharacter.GetComponent<Character>().SetTagServer("TeamA");
+                else
+                {
+                    playerCharacter.GetComponent<PhotonView>().RPC("SetTag", RpcTarget.All, "TeamA");
+                }
+
+                playerCharacter.GetComponent<PhotonView>().RPC("ChangeName", RpcTarget.All, (string)player.CustomProperties["Name"]);
 
                 GameCenterTest.ChangePlayerCustomProperties(player, "CharacterViewID", playerCharacter.GetComponent<PhotonView>().ViewID);
                 GameCenterTest.ChangePlayerCustomProperties(player, "SpawnPoint", gameCenter.playerSpawnA[aTeamIndex].position);
@@ -113,8 +124,6 @@ public class CharacterSelect : CenterState
                     gameCenter.playerSpawnB[bTeamIndex].position, Quaternion.identity);
                 if (playerCharacter == null) continue;
 
-                //playerCharacter.GetComponent<PhotonView>().TransferOwnership(player.ActorNumber);
-
                 PhotonView[] views = playerCharacter.GetComponentsInChildren<PhotonView>();
 
                 foreach (var view in views)
@@ -122,10 +131,18 @@ public class CharacterSelect : CenterState
                     view.TransferOwnership(player.ActorNumber);
                 }
 
-                playerCharacter.GetComponent<PhotonView>().RPC("IsLocalPlayer", player);
-                playerCharacter.GetComponent<PhotonView>().RPC("ChangeName", RpcTarget.All, (string)player.CustomProperties["Name"]);
+                if(choseCharacter != "Observer")
+                {
+                    playerCharacter.GetComponent<PhotonView>().RPC("IsLocalPlayer", player);
+                    playerCharacter.GetComponent<Character>().SetTagServer("TeamB");
+                }
 
-                playerCharacter.GetComponent<Character>().SetTagServer("TeamB");
+                else
+                {
+                    playerCharacter.GetComponent<PhotonView>().RPC("SetTag", RpcTarget.All, "TeamB");
+                }
+
+                playerCharacter.GetComponent<PhotonView>().RPC("ChangeName", RpcTarget.All, (string)player.CustomProperties["Name"]);
 
                 GameCenterTest.ChangePlayerCustomProperties(player, "CharacterViewID", playerCharacter.GetComponent<PhotonView>().ViewID);
                 GameCenterTest.ChangePlayerCustomProperties(player, "SpawnPoint", gameCenter.playerSpawnB[bTeamIndex].position);

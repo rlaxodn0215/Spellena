@@ -12,6 +12,7 @@ public class LoadSceneManager : MonoBehaviourPunCallbacks
     public static List<int> blueTeamActorNums = new List<int>();
     public float loadingTime = 5.0f;
     private GameObject betweenBGMObj;
+    private SettingManager settingManager;
 
     public static void LoadNextScene(string sceneName, List<int> redTeam, List<int> blueTeam)
     {
@@ -29,15 +30,39 @@ public class LoadSceneManager : MonoBehaviourPunCallbacks
         PhotonNetwork.LoadLevel("TaeWoo_BackToMainLoadingScene");
     }
 
-    void Start()
+    void OnEnable()
     {
         if (PhotonNetwork.IsMasterClient) ToDoMaster();
         StartCoroutine(LoadSceneProcess());
 
         betweenBGMObj = GameObject.Find("LoadingCharacterBGM");
         if (betweenBGMObj == null) return;
-        if(nextScene == "TaeWooScene_3")
+
+        if (nextScene == "TaeWooScene_3")
+        {
+            LinkSettingManager();
+            betweenBGMObj.GetComponent<AudioSource>().volume = 1.0f * settingManager.soundVal * settingManager.bgmVal;
             betweenBGMObj.GetComponent<AudioSource>().Play();
+        }
+    }
+
+    void LinkSettingManager()
+    {
+        GameObject temp = GameObject.Find("SettingManager");
+
+        if (temp == null)
+        {
+            Debug.LogError("SettingManager을 찾을 수 없습니다.");
+            return;
+        }
+
+        settingManager = temp.GetComponent<SettingManager>();
+
+        if (settingManager == null)
+        {
+            Debug.LogError("SettingManager의 Component을 찾을 수 없습니다.");
+            return;
+        }
     }
 
     void ToDoMaster()
@@ -110,7 +135,7 @@ public class LoadSceneManager : MonoBehaviourPunCallbacks
             }
 
             playerData.Add("Name", player.NickName);
-            playerData.Add("Character", "Aeterna");
+            playerData.Add("Character", null);
 
             playerData.Add("KillCount", 0);
             playerData.Add("DeadCount", 0);

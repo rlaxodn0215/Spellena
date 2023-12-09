@@ -69,8 +69,8 @@ public class GoogleSheetManager : EditorWindow
             string Data = www.downloadHandler.text;
             Debug.Log("데이터 가져오기 성공");
 
-            SaveToText(Data, i);
-            DividText(i);
+            //SaveToText(Data, i);
+            DividText(Data);
             GiveData(i);
         }
     }
@@ -123,23 +123,22 @@ public class GoogleSheetManager : EditorWindow
         }
     }
 
-    void DividText(int index)
+    void DividText(string tsv)
     {
-        string tsv;
-        if (index == 0)
-        {
-            tsv = ReadTxt("Assets/GameDatas/AeternaData.txt");
-        }
+        //if (index == 0)
+        //{
+        //    tsv = ReadTxt("Assets/GameDatas/AeternaData.txt");
+        //}
 
-        else if(index==1)
-        {
-            tsv = ReadTxt("Assets/GameDatas/ElementalOrderData.txt");
-        }
+        //else if(index==1)
+        //{
+        //    tsv = ReadTxt("Assets/GameDatas/ElementalOrderData.txt");
+        //}
 
-        else
-        {
-            tsv = " ";
-        }
+        //else
+        //{
+        //    tsv = " ";
+        //}
 
         //가로 기준으로 나눈다.
         string[] row = tsv.Split('\n');
@@ -246,6 +245,8 @@ public class GoogleSheetManager : EditorWindow
         elementalOrderData.eterialStormCoolDownTime = float.Parse(dividData[9, 13]);
         elementalOrderData.eterialStormCastingTime = float.Parse(dividData[10, 13]);
         elementalOrderData.eterialStormLifeTime = float.Parse(dividData[16, 13]);
+
+        EditorUtility.SetDirty(elementalOrderData);
     }
 
     void GiveAeternaData()
@@ -340,6 +341,8 @@ public class GoogleSheetManager : EditorWindow
         aeternaData.DimenstionSlash_3_Speed = (int)(float.Parse(dividData[46, 16]));
         //[Tooltip("3단계 공격 힐량")]
         aeternaData.DimenstionSlash_3_Healing = -int.Parse(dividData[8, 11]);
+
+        EditorUtility.SetDirty(aeternaData);
     }
 }
 

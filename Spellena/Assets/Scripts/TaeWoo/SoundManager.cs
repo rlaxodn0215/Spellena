@@ -131,7 +131,7 @@ public class SoundManager : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    public void PlayAudio(string name, float vol, bool isLoop, string parrentName,string type) // 해당 부모를 가지는 오디오만 모두 OFF
+    public void PlayAudio(string name, float vol, bool isLoop, string parrentName, string type) // 해당 부모를 가지는 오디오만 모두 OFF
     {
         if (audios.ContainsKey(name))
         {

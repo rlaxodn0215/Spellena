@@ -695,7 +695,10 @@ namespace Player
                     else
                         dimensionSwordForMe[i + 6].SetActive(false);
                 }
+
             }
+
+            soundManager.PlayAudio("ChargeSound" + (index - 1), 1.0f, false, false, "EffectSound");
         }
 
         public override void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)

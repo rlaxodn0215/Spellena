@@ -6,30 +6,8 @@ using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 using Player;
 
-public class SettingManager : MonoBehaviour
-{
-    private static SettingManager instance;
-    public static SettingManager Instance
-    {
-        get
-        {
-            return instance;
-        }
-    }
-    private void Awake()
-    {
-        if (instance == null)
-        {
-            instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-
-        else
-        {
-            Destroy(gameObject);
-        }
-    }
-
+public class SettingManager : SingletonTemplate<SettingManager>
+{ 
     int previousWidth;   // 이전 화면 너비
     int previousHeight;  // 이전 화면 높이
     int previousNum;     // 이전 드롭박스 인덱스 번호
