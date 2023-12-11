@@ -16090,6 +16090,7 @@ MonoBehaviour:
   soundManager: {fileID: 0}
   soundManagerView: {fileID: 0}
   moveVec: {x: 0, y: 0, z: 0}
+  canInteraction: 0
   cultistData: {fileID: 11400000, guid: 0d67ba31814b2914d90fe94127e215ab, type: 2}
   overlayCamera: {fileID: 522942226218127384}
   overlaySightRight: {fileID: 3456557556656444371}
@@ -27518,7 +27519,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 2231
+    m_Bits: 10423
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -68813,7 +68814,7 @@ GameObject:
   - component: {fileID: 2590644747922758249}
   - component: {fileID: 7269915296028667331}
   m_Layer: 7
-  m_Name: Head_02
+  m_Name: head
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

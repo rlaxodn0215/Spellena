@@ -23,6 +23,9 @@ public class InGameUI : MonoBehaviourPunCallbacks,IPunObservable
     Image redAngelTimerImage;
     Image blueAngelTimerImage;
 
+    Image damageImage_left;
+    Image damageImage_right;
+
     List<Text> murderNames = new List<Text>();
     List<Text> victimNames = new List<Text>();
     List<Text> playerNames = new List<Text>();
@@ -90,6 +93,7 @@ public class InGameUI : MonoBehaviourPunCallbacks,IPunObservable
     public Photon.Realtime.Player[] allPlayers;
     public List<GameObject> playersA = new List<GameObject>(); // Red
     public List<GameObject> playersB = new List<GameObject>(); // Blue
+    public SoundManager soundManager;
     
     void Start()
     {
@@ -124,6 +128,8 @@ public class InGameUI : MonoBehaviourPunCallbacks,IPunObservable
         UIObjects["blueSecondPoint"] = GameCenterTest.FindObject(gameObject, "BlueSecondPoint");
 
         UIObjects["damage"] = GameCenterTest.FindObject(gameObject, "Damage");
+        UIObjects["damage_Left"] = GameCenterTest.FindObject(gameObject, "Damage_Left");
+        UIObjects["damage_Right"] = GameCenterTest.FindObject(gameObject, "Damage_Right");
         UIObjects["killText"] = GameCenterTest.FindObject(gameObject, "KillText");
 
         UIObjects["angelTimer"] = GameCenterTest.FindObject(gameObject, "AngelTimer");
@@ -147,6 +153,9 @@ public class InGameUI : MonoBehaviourPunCallbacks,IPunObservable
         killText = UIObjects["killText"].GetComponent<Text>();
         redAngelTimerImage = UIObjects["redAngelTimer"].GetComponent<Image>();
         blueAngelTimerImage = UIObjects["blueAngelTimer"].GetComponent<Image>();
+
+        damageImage_left = UIObjects["damage_Left"].GetComponent<Image>();
+        damageImage_right = UIObjects["damage_Right"].GetComponent<Image>();
     }
 
     void ConnectKillLogs()
@@ -251,11 +260,28 @@ public class InGameUI : MonoBehaviourPunCallbacks,IPunObservable
     }
 
     [PunRPC]
-    public void ShowDamageUI()
+    public void ShowDamageUI(string damagePart)
     {
         if(UIObjects["damage"])
         {
             UIObjects["damage"].SetActive(true);
+
+            if(damagePart == "head")
+            {
+                damageImage_left.color = Color.red;
+                damageImage_right.color = Color.red;
+
+                soundManager.PlayAudio("AttackSound_Big", 1.0f, false, false, "EffectSound");
+            }
+
+            else
+            {
+                damageImage_left.color = Color.white;
+                damageImage_right.color = Color.white;
+
+                soundManager.PlayAudio("AttackSound_Small", 1.0f, false, false, "EffectSound");
+            }
+
             StartCoroutine(DisableUI("damage", damageActiveTime));
         }
     }
@@ -268,6 +294,7 @@ public class InGameUI : MonoBehaviourPunCallbacks,IPunObservable
             UIObjects["killText"].SetActive(true);
             killText.text = string.Format("<color=red>" + victim + "</color>" + " 처치");
             // 킬 사운드
+            soundManager.PlayAudioOverlap("KillSound", 1.0f, false, false, "EffectSound");
             StartCoroutine(DisableUI("killText", killActiveTime));
         }
    
@@ -281,6 +308,7 @@ public class InGameUI : MonoBehaviourPunCallbacks,IPunObservable
             UIObjects["killText"].SetActive(true);
             killText.text = string.Format("<color=red>" + victim + "</color>" + " 처치 기여");
             // 어시스트 사운드
+            soundManager.PlayAudioOverlap("AssistSound", 1.0f, false, false, "EffectSound");
             StartCoroutine(DisableUI("killText", killActiveTime));
         }
     }

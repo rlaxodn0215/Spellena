@@ -665,12 +665,22 @@ namespace Player
             {
                 if (hp <= dataHp)
                 {
-                    hp -= damage;
+                    if(damgePart == "head")
+                    {
+                        hp -= (int)(damage * headShotRatio);
+                        Debug.Log("Player HEADSHOT Damaged !! : " + damage + " EnemyName: " + enemy);
+                    }
+
+                    else
+                    {
+                        hp -= damage;
+                        Debug.Log("Player Damaged !! : " + damage + " EnemyName: " + enemy);
+                    }
+
                     if(GetComponent<Cultist>() != null)
                     {
                         UI.GetComponent<ScreenEffectManager>().PlayDamageEffect(damage);
                     }
-                    Debug.Log("Player Damaged !! : " + damage + " EnemyName: " + enemy);
                 }
 
                 // 마스터 클라이언트이기 때문에 동기화 안되도 게임센터의 값과 같다. 
@@ -715,10 +725,20 @@ namespace Player
 
                     }
 
-                    int temp = (int)killer.CustomProperties["TotalDamage"];
-                    killer.CustomProperties["ParameterName"] = "TotalDamage";
-                    killer.CustomProperties["PlayerAssistViewID"] = photonView.ViewID.ToString();
-                    GameCenterTest.ChangePlayerCustomProperties(killer, "TotalDamage", temp + damage);
+                    else
+                    {
+                        int temp = (int)killer.CustomProperties["TotalDamage"];
+                        killer.CustomProperties["ParameterName"] = "TotalDamage";
+
+                        killer.CustomProperties["DamagePart"] = damgePart;
+                        killer.CustomProperties["DamageDirection"] = direction;
+                        killer.CustomProperties["DamageForce"] = force;
+
+                        killer.CustomProperties["PlayerAssistViewID"] = photonView.ViewID.ToString();
+                        GameCenterTest.ChangePlayerCustomProperties(killer, "TotalDamage", temp + damage);
+                        Debug.Log("Player Damage ChangePlayerCustomProperties : " + (string)killer.CustomProperties["Name"]);
+                    }
+
                 }
             }
 
@@ -787,7 +807,6 @@ namespace Player
 
             camera.GetComponent<MouseControl>().enabled = false;
             camera.GetComponent<DeadCamera>().enabled = true;
-
         }
 
         [PunRPC]

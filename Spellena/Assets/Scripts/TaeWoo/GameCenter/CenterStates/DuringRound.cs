@@ -78,7 +78,8 @@ public class DuringRound : CenterState
             {
                  case "TotalDamage":
                      if (gameCenter.inGameUIView == null) break;
-                    gameCenter.inGameUIView.RPC("ShowDamageUI", targetPlayer);
+                    gameCenter.inGameUIView.RPC("ShowDamageUI", targetPlayer,(string)targetPlayer.CustomProperties["DamagePart"]);
+                    Debug.Log((string)targetPlayer.CustomProperties["Name"]);
                     // 해당 플레이어에 대한 어시스트 타이머 연결
                     string victimViewID = (string)targetPlayer.CustomProperties["PlayerAssistViewID"];
                     if (victimViewID == null) break;
@@ -101,6 +102,7 @@ public class DuringRound : CenterState
                  case "KillCount":
                      if (gameCenter.inGameUIView == null) break;
                     gameCenter.inGameUIView.RPC("ShowKillUI", targetPlayer, gameCenter.tempVictim);
+
                     gameCenter.inGameUIView.RPC("ShowKillLog", RpcTarget.All, targetPlayer.CustomProperties["Name"],
                          gameCenter.tempVictim, ((string)targetPlayer.CustomProperties["Team"] == "A"), targetPlayer.ActorNumber);
                     
@@ -114,17 +116,16 @@ public class DuringRound : CenterState
                     ShowTeamMateDead((string)targetPlayer.CustomProperties["Team"], (string)targetPlayer.CustomProperties["Name"]);
 
                     view.RPC("PlayerDeadForAll", RpcTarget.AllBuffered, (string)targetPlayer.CustomProperties["DamagePart"],
-                         (Vector3)targetPlayer.CustomProperties["DamageDirection"], (float)targetPlayer.CustomProperties["DamageForce"]);
+                     (Vector3)targetPlayer.CustomProperties["DamageDirection"], (float)targetPlayer.CustomProperties["DamageForce"]);
 
-                     view.RPC("PlayerDeadPersonal", targetPlayer);
-                     gameCenter.deathUIView.RPC("ShowKillerData", targetPlayer, (string)targetPlayer.CustomProperties["KillerName"]);
+                    view.RPC("PlayerDeadPersonal", targetPlayer);
+                    gameCenter.deathUIView.RPC("ShowKillerData", targetPlayer, (string)targetPlayer.CustomProperties["KillerName"]);                 
 
                     CheckPlayerDealAssist(targetPlayer,(string)targetPlayer.CustomProperties["KillerName"]);
 
                     if((string)targetPlayer.CustomProperties["KillerName"] == "World")
                     {
-                        //Debug.Log("World Kill");
-                        gameCenter.inGameUIView.RPC("ShowKillLog", RpcTarget.AllBuffered, "World",
+                            gameCenter.inGameUIView.RPC("ShowKillLog", RpcTarget.AllBuffered, "World",
                             (string)targetPlayer.CustomProperties["Name"], ((string)targetPlayer.CustomProperties["Team"] == "A"), -1);
                     }
 

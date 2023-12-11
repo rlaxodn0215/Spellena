@@ -59668,7 +59668,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 2231
+    m_Bits: 10423
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -92247,6 +92247,7 @@ MonoBehaviour:
   soundManager: {fileID: 0}
   soundManagerView: {fileID: 0}
   moveVec: {x: 0, y: 0, z: 0}
+  canInteraction: 0
   elementalOrderData: {fileID: 11400000, guid: f59593c682ebc2b41896b199699b9e9c, type: 2}
   avatarForOther: {fileID: 7247650923076210811}
   overlayCamera: {fileID: 1383647651555367359}
