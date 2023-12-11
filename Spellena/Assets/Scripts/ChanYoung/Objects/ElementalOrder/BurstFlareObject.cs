@@ -18,6 +18,9 @@ public class BurstFlareObject : SpawnObject
 
     public ParticleSystem shootParticle;
     public ParticleSystem explodeParticle;
+
+    AudioSource[] audioSources;
+
     void Start()
     {
         Init();
@@ -76,6 +79,13 @@ public class BurstFlareObject : SpawnObject
 
     void Init()
     {
+        audioSources = GetComponents<AudioSource>();
+
+        for(int i = 0; i < audioSources.Length; i++)
+        {
+            audioSources[i].volume = SettingManager.Instance.effectVal * SettingManager.Instance.soundVal * 0.8f;
+        }
+
         lifeTime = elementalOrderData.burstFlareLifeTime;
 
         if (data != null)
@@ -119,11 +129,19 @@ public class BurstFlareObject : SpawnObject
     }
 
     [PunRPC]
-    void RunExplode(Vector3 pos)
+    public void RunExplode(Vector3 pos)
     {
         shootParticle.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
         explodeParticle.transform.position = pos;
         explodeParticle.Play(true);
+        for(int i = 0; i < audioSources.Length; i++)
+        {
+            if (audioSources[i].clip.name == "EO-FIRECRASH")
+            {
+                audioSources[i].volume = SettingManager.Instance.effectVal * SettingManager.Instance.soundVal;
+                audioSources[i].Play();
+            }
+        }
     }
     
 }

@@ -126,6 +126,8 @@ public class EterialStormObject : SpawnObject,IPunObservable
             ActiveCollider();
         else if ((string)data[0] == "RequestDestroy")
             RequestDestroy();
+        else if ((string)data[0] == "PlayForceSound")
+            PlayForceSound();
     }
 
     void UpdateData(object[] data)
@@ -206,6 +208,7 @@ public class EterialStormObject : SpawnObject,IPunObservable
                 {
                     _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBuffered,
                          playerName, (int)(elementalOrderData.eterialStormDamage / 8), other.name, _outsideVector, 20f);
+                    RequestRPC("PlayForceSound");
                 }
             }
         }
@@ -218,8 +221,15 @@ public class EterialStormObject : SpawnObject,IPunObservable
             {
                 _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBuffered,
                          playerName, (int)(elementalOrderData.eterialStormDamage / 8), other.name, _outsideVector, 20f);
+                RequestRPC("PlayForceSound");
             }
         }
+    }
+
+    void PlayForceSound()
+    {
+        hitCollider.GetComponent<AudioSource>().volume = SettingManager.Instance.effectVal * SettingManager.Instance.soundVal;
+        hitCollider.GetComponent<AudioSource>().PlayOneShot(hitCollider.GetComponent<AudioSource>().clip);
     }
 
 }
