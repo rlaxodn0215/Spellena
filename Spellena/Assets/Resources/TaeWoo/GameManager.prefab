@@ -16,7 +16,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 16
+  m_StaticEditorFlags: 24
   m_IsActive: 1
 --- !u!4 &5679968165107491380
 Transform:
@@ -50,6 +50,10 @@ MonoBehaviour:
   bgmManagerObj: {fileID: 0}
   characterSelectObj: {fileID: 0}
   inGameUIObj: {fileID: 0}
+  deathUIObj: {fileID: 0}
+  gameResultObj: {fileID: 0}
+  playerStatObj: {fileID: 0}
+  gameCenterTestData: {fileID: 11400000, guid: 70ddbf71ebae740419d48eb2a1f03f77, type: 2}
   characterSelectView: {fileID: 0}
   characterSelect: {fileID: 0}
   inGameUIView: {fileID: 0}
@@ -58,16 +62,16 @@ MonoBehaviour:
   bgmManagerView: {fileID: 0}
   betweenBGMObj: {fileID: 0}
   betweenBGMSource: {fileID: 0}
+  deathUI: {fileID: 0}
+  deathUIView: {fileID: 0}
+  playerStat: {fileID: 0}
   playerSpawnA: []
   playerSpawnB: []
   currentGameState: 0
   currentCenterState: {fileID: 0}
   tempVictim: 
-  roundA: 0
-  roundB: 0
   teamAOccupying: 0
   teamBOccupying: 0
-  globalTimer: 0
   globalDesiredTimer: 0
   occupyingReturnTimer: 0
   roundEndTimer: 0
@@ -75,17 +79,17 @@ MonoBehaviour:
   loadingTime: 1
   characterSelectTime: 10
   readyTime: 2
-  playerRespawnTime: 6
+  playerRespawnTime: 8
   assistTime: 10
   angelStatueCoolTime: 30
   angelStatueHpPerTime: 10
   angelStatueContinueTime: 10
-  occupyingGaugeRate: 100
+  occupyingGaugeRate: 200
   occupyingReturnTime: 3
-  occupyingRate: 2
+  occupyingRate: 10
   occupyingComplete: 99
   roundEndTime: 5
-  roundEndResultTime: 6
+  roundEndResultTime: 3
   teamA: A
   teamB: B
 --- !u!114 &-404882153769451898

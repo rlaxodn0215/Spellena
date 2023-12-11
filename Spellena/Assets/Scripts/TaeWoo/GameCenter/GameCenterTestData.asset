@@ -12,17 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d03e4fc4ae18e94bba7205f4e2a181f, type: 3}
   m_Name: GameCenterTestData
   m_EditorClassIdentifier: 
-  loadingTime: 0
-  characterSelectTime: 0
-  readyTime: 0
-  playerRespawnTime: 0
-  assistTime: 0
-  angelStatueCoolTime: 0
-  angelStatueHpPerTime: 0
-  angelStatueContinueTime: 0
-  occupyingGaugeRate: 0
-  occupyingReturnTime: 0
-  occupyingRate: 0
-  occupyingComplete: 0
-  roundEndTime: 0
-  roundEndResultTime: 0
+  loadingTime: 1
+  characterSelectTime: 10
+  readyTime: 1
+  playerRespawnTime: 7
+  assistTime: 10
+  angelStatueCoolTime: 30
+  angelStatueHpPerTime: 10
+  angelStatueContinueTime: 10
+  occupyingGaugeRate: 14.285714
+  occupyingReturnTime: 3
+  occupyingRate: 0.5555556
+  occupyingComplete: 99
+  roundEndTime: 5
+  roundEndResultTime: 4

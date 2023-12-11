@@ -43,7 +43,8 @@ public class GoogleSheetManager : EditorWindow
         if (GUILayout.Button("데이터 불러오고 저장하기"))
         {
             InitData();
-            Debug.Log("데이터 불러옴");
+
+            Debug.Log("데이터 불러오고 저장 성공!");
         }
 
     }
@@ -69,7 +70,7 @@ public class GoogleSheetManager : EditorWindow
             }
 
             string Data = www.downloadHandler.text;
-            Debug.Log("데이터 가져오기 성공");
+            Debug.Log(googleSheetData.name + " 데이터 가져오기 성공");
 
             //SaveToText(Data, i);
             DividText(Data);
@@ -197,22 +198,24 @@ public class GoogleSheetManager : EditorWindow
 
     void GiveGameCenterTestData()
     {
-        //gameCenterTestData.loadingTime;
-        //gameCenterTestData.characterSelectTime;
-        //gameCenterTestData.readyTime;
-        //gameCenterTestData.playerRespawnTime;
-        //gameCenterTestData.assistTime;
+        gameCenterTestData.loadingTime = 1;
+        gameCenterTestData.characterSelectTime  = 10;
+        gameCenterTestData.readyTime = 1;
+        gameCenterTestData.playerRespawnTime = float.Parse(dividData[1, 7]);
+        gameCenterTestData.assistTime  = 10;
 
-        //gameCenterTestData.angelStatueCoolTime;
-        //gameCenterTestData.angelStatueHpPerTime;
-        //gameCenterTestData.angelStatueContinueTime;
+        gameCenterTestData.angelStatueCoolTime = float.Parse(dividData[18, 0]);
+        gameCenterTestData.angelStatueHpPerTime = int.Parse(dividData[16, 0]);
+        gameCenterTestData.angelStatueContinueTime = int.Parse(dividData[17, 0]);
 
-        //gameCenterTestData.occupyingGaugeRate;
-        //gameCenterTestData.occupyingReturnTime;
-        //gameCenterTestData.occupyingRate;
-        //gameCenterTestData.occupyingComplete;
-        //gameCenterTestData.roundEndTime;
-        //gameCenterTestData.roundEndResultTime;
+        gameCenterTestData.occupyingGaugeRate = 100.0f / (float.Parse(dividData[0, 0]) / float.Parse(dividData[2, 0]));
+        gameCenterTestData.occupyingReturnTime  = 3;
+        gameCenterTestData.occupyingRate = 100.0f / (float.Parse(dividData[5, 0]) / float.Parse(dividData[7, 0]));
+        gameCenterTestData.occupyingComplete = 99;
+        gameCenterTestData.roundEndTime = int.Parse(dividData[8, 0]);
+        gameCenterTestData.roundEndResultTime = 4;
+
+        EditorUtility.SetDirty(gameCenterTestData);
     }
 
     void GiveAeternaData()

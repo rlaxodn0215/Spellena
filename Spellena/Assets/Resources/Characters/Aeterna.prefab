@@ -6263,6 +6263,7 @@ MonoBehaviour:
   soundManager: {fileID: 0}
   soundManagerView: {fileID: 0}
   moveVec: {x: 0, y: 0, z: 0}
+  canInteraction: 0
   aeternaData: {fileID: 11400000, guid: 3ab088a29565a8742af0c359ef4214cd, type: 2}
   aeternaUI: {fileID: 338266740}
   DimensionSword: {fileID: 15989410850866278}
@@ -10431,7 +10432,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 234a9532985c88147beab9ab91d87f4a, type: 3}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 0
@@ -14614,6 +14615,10 @@ PrefabInstance:
     - target: {fileID: 2579179625124296693, guid: 739d8be056c6b0345ae6b08a908b47bd, type: 3}
       propertyPath: m_Name
       value: AeternaSoundManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 2579179625124296693, guid: 739d8be056c6b0345ae6b08a908b47bd, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2579179625124296695, guid: 739d8be056c6b0345ae6b08a908b47bd, type: 3}
       propertyPath: m_RootOrder

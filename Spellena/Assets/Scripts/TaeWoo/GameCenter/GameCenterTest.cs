@@ -208,7 +208,7 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
         playerRespawnTime = gameCenterTestData.playerRespawnTime;
         assistTime = gameCenterTestData.assistTime;
 
-        angelStatueCoolTime = gameCenterTestData.angelStatueCoolTime;
+        angleStatue.GetComponent<AngelStatue>().angelStatueCoolTime = angelStatueCoolTime = gameCenterTestData.angelStatueCoolTime;
         angelStatueHpPerTime = gameCenterTestData.angelStatueHpPerTime;
         angelStatueContinueTime = gameCenterTestData.angelStatueContinueTime;
 

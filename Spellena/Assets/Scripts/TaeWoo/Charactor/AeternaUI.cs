@@ -136,10 +136,11 @@ namespace Player
                 else
                 {
                     skillCooltimes[i].text = "";
-                    UIObjects["skill_" + (i + 1) + "_Lock"].SetActive(false);
+                    UIObjects["skill_" + (i + 1) + "_Lock"].SetActive(false);                   
                 }
             }
         }
+
 
         void ShowChargeBar()
         {

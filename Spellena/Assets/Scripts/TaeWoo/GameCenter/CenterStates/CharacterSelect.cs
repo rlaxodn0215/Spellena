@@ -23,7 +23,6 @@ public class CharacterSelect : CenterState
             ConnectCharacterSelect();
         }
 
-
         GameCenterTest.globalTimer += Time.deltaTime;
 
         gameCenter.characterSelectView.RPC("ReceiveTimerCount", RpcTarget.AllBuffered, gameCenter.globalDesiredTimer - GameCenterTest.globalTimer);
@@ -108,6 +107,7 @@ public class CharacterSelect : CenterState
                 else
                 {
                     playerCharacter.GetComponent<PhotonView>().RPC("SetTag", RpcTarget.All, "TeamA");
+                    gameCenter.inGameUIView.RPC("DisActiveCrosshair", player);
                 }
 
                 playerCharacter.GetComponent<PhotonView>().RPC("ChangeName", RpcTarget.All, (string)player.CustomProperties["Name"]);
@@ -140,6 +140,7 @@ public class CharacterSelect : CenterState
                 else
                 {
                     playerCharacter.GetComponent<PhotonView>().RPC("SetTag", RpcTarget.All, "TeamB");
+                    gameCenter.inGameUIView.RPC("DisActiveCrosshair", player);
                 }
 
                 playerCharacter.GetComponent<PhotonView>().RPC("ChangeName", RpcTarget.All, (string)player.CustomProperties["Name"]);

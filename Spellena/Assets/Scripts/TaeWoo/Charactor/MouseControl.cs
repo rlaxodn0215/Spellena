@@ -22,9 +22,14 @@ namespace Player
         private Vector2 smoothMouse;
 
         private Vector2 mouseDelta;
+        private AngelStatue angelStatue;
+        private bool isRayOnce = true;
 
         [HideInInspector]
         public bool scoped;
+
+        Ray ray;
+        RaycastHit hit;
 
         void Start()
         {
@@ -43,6 +48,9 @@ namespace Player
             // 커서 고정
             if (eraseCursor)
                 EraseCursor();
+
+            angelStatue = GameObject.Find("AngelStatue").GetComponent<AngelStatue>();
+            if (angelStatue == null) Debug.LogError("AngelStatue를 찾을 수 없습니다");
         }
 
         void Update()
@@ -56,6 +64,7 @@ namespace Player
             else
             {
                 Control();
+                CheckAngelTimerSee();
                 EraseCursor();
             }
         }
@@ -121,6 +130,32 @@ namespace Player
             {
                 var yRotation = Quaternion.AngleAxis(mouseAbsolute.x, transform.InverseTransformDirection(Vector3.up));
                 transform.localRotation *= yRotation;
+            }
+        }
+
+        void CheckAngelTimerSee()
+        {
+            ray = new Ray(transform.position, transform.forward);
+
+            if (Physics.Raycast(ray,out hit, 1.5f) && hit.transform.name == "AngelStatue" && hit.transform.tag == tag)
+            {
+                if (isRayOnce)
+                {
+                    characterBody.GetComponent<Character>().canInteraction = true;
+                    isRayOnce = !isRayOnce;
+                }
+
+                angelStatue.RequestAngelTimerUI(tag,true);
+            }
+
+            else
+            {
+                if (!isRayOnce)
+                {
+                    characterBody.GetComponent<Character>().canInteraction = false;
+                    angelStatue.RequestAngelTimerUI(tag,false);
+                    isRayOnce = !isRayOnce;
+                }
             }
         }
 

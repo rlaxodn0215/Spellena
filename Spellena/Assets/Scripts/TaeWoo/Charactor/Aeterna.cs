@@ -83,9 +83,10 @@ namespace Player
 
             if(photonView.IsMine)
             {
-                //CheckOverlayAnimator();
+                //CheckSkillCoolTimeEnd();
             }
         }
+
 
         protected override void FixedUpdate()
         {
@@ -520,6 +521,7 @@ namespace Player
             if (playerActionDatas[(int)PlayerActionState.Skill4].isExecuting == false)
             {
                 ultimateCount -= doUltimateNum;
+                GameCenterTest.ChangePlayerCustomProperties(PhotonNetwork.LocalPlayer, "UltimateCount", ultimateCount);
                 skillTimer[4] = aeternaData.skill4DurationTime;
                 StartCoroutine(SkillTimer(4));
                 playerActionDatas[(int)PlayerActionState.Skill4].isExecuting = true;

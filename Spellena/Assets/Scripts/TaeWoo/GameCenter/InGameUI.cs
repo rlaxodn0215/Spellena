@@ -20,6 +20,8 @@ public class InGameUI : MonoBehaviourPunCallbacks,IPunObservable
     Text killText;
     Text roundWinText;
     Text roundLooseText;
+    Image redAngelTimerImage;
+    Image blueAngelTimerImage;
 
     List<Text> murderNames = new List<Text>();
     List<Text> victimNames = new List<Text>();
@@ -96,6 +98,7 @@ public class InGameUI : MonoBehaviourPunCallbacks,IPunObservable
 
     void ConnectUI()
     {
+        UIObjects["crossHair"] = GameCenterTest.FindObject(gameObject, "CrossHair");
         UIObjects["unContested"] = GameCenterTest.FindObject(gameObject, "UnContested");
         UIObjects["captured_Red"] = GameCenterTest.FindObject(gameObject, "RedCapture");
         UIObjects["captured_Blue"] = GameCenterTest.FindObject(gameObject, "BlueCapture");
@@ -123,6 +126,11 @@ public class InGameUI : MonoBehaviourPunCallbacks,IPunObservable
         UIObjects["damage"] = GameCenterTest.FindObject(gameObject, "Damage");
         UIObjects["killText"] = GameCenterTest.FindObject(gameObject, "KillText");
 
+        UIObjects["angelTimer"] = GameCenterTest.FindObject(gameObject, "AngelTimer");
+        UIObjects["redAngelTimer"] = GameCenterTest.FindObject(gameObject, "RedAngelTimer");
+        UIObjects["blueAngelTimer"] = GameCenterTest.FindObject(gameObject, "BlueAngelTimer");
+        UIObjects["useAngel"] = GameCenterTest.FindObject(gameObject, "UseAngel");
+
         ConnectKillLogs();
         ConnectMyTeamStatus();
         ConnectOutcome();
@@ -137,6 +145,8 @@ public class InGameUI : MonoBehaviourPunCallbacks,IPunObservable
         redCTFImage = UIObjects["redCTF"].GetComponent<Image>();
         blueCTFImage = UIObjects["blueCTF"].GetComponent<Image>();
         killText = UIObjects["killText"].GetComponent<Text>();
+        redAngelTimerImage = UIObjects["redAngelTimer"].GetComponent<Image>();
+        blueAngelTimerImage = UIObjects["blueAngelTimer"].GetComponent<Image>();
     }
 
     void ConnectKillLogs()
@@ -211,6 +221,15 @@ public class InGameUI : MonoBehaviourPunCallbacks,IPunObservable
     }
 
     [PunRPC]
+    public void DisActiveCrosshair()
+    {
+        if(UIObjects["crossHair"] !=null)
+        {
+            UIObjects["crossHair"].SetActive(false);
+        }
+    }
+
+    [PunRPC]
     public void ActiveInGameUIObj(string uiName, bool isActive)
     {
         if (!UIObjects.ContainsKey(uiName)) return;
@@ -248,9 +267,22 @@ public class InGameUI : MonoBehaviourPunCallbacks,IPunObservable
         {
             UIObjects["killText"].SetActive(true);
             killText.text = string.Format("<color=red>" + victim + "</color>" + " 처치");
+            // 킬 사운드
             StartCoroutine(DisableUI("killText", killActiveTime));
         }
    
+    }
+
+    [PunRPC]
+    public void ShowAssistUI(string victim)
+    {
+        if (UIObjects["killText"])
+        {
+            UIObjects["killText"].SetActive(true);
+            killText.text = string.Format("<color=red>" + victim + "</color>" + " 처치 기여");
+            // 어시스트 사운드
+            StartCoroutine(DisableUI("killText", killActiveTime));
+        }
     }
 
     [PunRPC]
@@ -273,6 +305,60 @@ public class InGameUI : MonoBehaviourPunCallbacks,IPunObservable
             {
                 UIObjects["playerDead_" + (i + 1)].SetActive(isDead);
                 break;
+            }
+        }
+    }
+
+    public void ShowAngelTimerUI(float angelStatueCoolTime, string team ,bool isActive)
+    {
+        if(UIObjects.ContainsKey("angelTimer"))
+        {
+            UIObjects["angelTimer"].SetActive(isActive);
+
+            if(team == "TeamA")
+            {
+                if (UIObjects.ContainsKey("redAngelTimer"))
+                {
+                    UIObjects["redAngelTimer"].SetActive(isActive);
+
+                    if(isActive)
+                    {
+                        redAngelTimerImage.fillAmount = 1.0f + (GameCenterTest.globalTimer - (float)PhotonNetwork.LocalPlayer.CustomProperties["AngelStatueCoolTime"]) / angelStatueCoolTime;
+
+                        if(redAngelTimerImage.fillAmount >=0.99f)
+                        {
+                            UIObjects["useAngel"].SetActive(true);
+                        }
+
+                        else
+                        {
+                            UIObjects["useAngel"].SetActive(false);
+                        }
+                    }
+                }
+            }
+
+            else if(team == "TeamB")
+            {
+                if (UIObjects.ContainsKey("blueAngelTimer"))
+                {
+                    UIObjects["blueAngelTimer"].SetActive(isActive);
+
+                    if (isActive)
+                    {
+                        blueAngelTimerImage.fillAmount = 1.0f + (GameCenterTest.globalTimer - (float)PhotonNetwork.LocalPlayer.CustomProperties["AngelStatueCoolTime"]) / angelStatueCoolTime;
+
+                        if (blueAngelTimerImage.fillAmount >= 0.99f)
+                        {
+                            UIObjects["useAngel"].SetActive(true);
+                        }
+
+                        else
+                        {
+                            UIObjects["useAngel"].SetActive(false);
+                        }
+                    }
+                }
             }
         }
     }
@@ -391,7 +477,6 @@ public class InGameUI : MonoBehaviourPunCallbacks,IPunObservable
             occupyingBUI.rate = (float)stream.ReceiveNext();
             occupyingTeamUI.name = (string)stream.ReceiveNext();
             occupyingTeamUI.rate = (float)stream.ReceiveNext();
-
             endKillLogIndex = (int)stream.ReceiveNext();
             maxKillLogIndex = (int)stream.ReceiveNext();
         }

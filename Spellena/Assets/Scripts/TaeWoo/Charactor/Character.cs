@@ -100,19 +100,15 @@ namespace Player
         [HideInInspector]
         public Rigidbody rigidbody;
         [HideInInspector]
-        public Ray lookRay;
-        [HideInInspector]
-        public RaycastHit lookHit;
-        [HideInInspector]
         public SoundManager soundManager;
         [HideInInspector]
         public PhotonView soundManagerView;
 
         // 임시 사용 데이터
         public Vector3 moveVec;
+        public bool canInteraction = false;
 
         private bool isGrounded = false;
-        private bool canInteraction = false;
         private Transform avatarForOther;
         private Transform avatarForMe;
         private RaycastHit slopeHit;
@@ -201,28 +197,6 @@ namespace Player
                     }
                 }
 
-                lookRay = camera.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
-
-                if (Physics.Raycast(lookRay, out lookHit, 1.5f))
-                {
-                    if (lookHit.collider.name == "AngelStatue" && CompareTag(lookHit.collider.tag))
-                    {
-                        canInteraction = true;
-                        // 상태 UI 보이기
-                    }
-
-                    else
-                    {
-                        canInteraction = false;
-                    }
-                }
-
-                else
-                {
-                    canInteraction = false;
-                }
-
-
                 animator.SetBool("Grounded", isGrounded);
 
                 if (isGrounded == true)
@@ -279,9 +253,9 @@ namespace Player
                     {
                         animator.SetLayerWeight(3, 1);
                     }
-
-                    // MakeSound();
                 }
+
+                CheckPlayerLowHP(0.15f);
             }
 
 
@@ -539,17 +513,6 @@ namespace Player
             }
         }
 
-        private void OnCollisionEnter(Collision collision)
-        {
-            /*if (photonView.IsMine)
-            {
-                if (collision.gameObject.layer == LayerMask.NameToLayer("Map"))
-                {
-                    soundManagerView.RPC("PlayAudio", RpcTarget.All, "LandSound", 1.0f, false);
-                }
-            }*/
-        }
-
         private void OnCollisionStay(Collision collision)
         {
             if (photonView.IsMine)
@@ -776,7 +739,19 @@ namespace Player
 
             }
 
+        }
 
+        void CheckPlayerLowHP(float ratio)
+        {
+            if (hp <= dataHp * ratio)
+            {
+                soundManager.PlayAudio("Heartbeat", 1.0f, true, false, "EffectSound");
+            }
+
+            else
+            {
+                soundManager.StopAudio("Heartbeat");
+            }
         }
 
         [PunRPC]
@@ -885,7 +860,7 @@ namespace Player
         {
             if (hp < dataHp)
             {
-                hp += addHp;
+                hp += hp * (addHp/100);
             }
         }
 

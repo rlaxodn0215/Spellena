@@ -29,15 +29,15 @@ MonoBehaviour:
   DimenstionSlash_0_Healing: 200
   skill1Time: 5
   skill1DoorCoolTime: 20
-  skill1DoorSpawnMaxRange: 8
-  skill1DoorRange: 3
+  skill1DoorSpawnMaxRange: 10
+  skill1DoorRange: 10
   skill1InnerForce: 1.5
-  skill2DurationTime: 10
+  skill2DurationTime: 5
   skill2HoldTime: 10
   skill2CoolTime: 15
-  skill3DurationTime: 10
+  skill3DurationTime: 5
   skill3CoolTime: 25
-  skill4Cost: 0
+  skill4Cost: 5
   skill4DurationTime: 12
   skill4Phase1Time: 0
   DimenstionSlash_1_lifeTime: 5
