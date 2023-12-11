@@ -187,6 +187,8 @@ MonoBehaviour:
   - PlayRandomAudio
   - PlayRandomAudioOverlap
   - StopLocalAudio
+  - CallRPCDracosonMasterClient
+  - CallRPCDracosonToAll
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
