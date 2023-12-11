@@ -15,7 +15,7 @@ namespace Player
 {
     public enum SkillStateDracoson
     {
-        None,
+        None, DragonSightReady,
         DragonSightHolding, DragonSightAttack,
         Skill1Ready, Skill1Casting, Skill1Channeling,
         Skill2Ready, Skill2Casting, Skill2Channeling,
@@ -49,6 +49,7 @@ namespace Player
         private GameObject currentObjectForOther;
         private int previouseChargeCount = 0;
 
+        int ownerNum;
         Vector3 defaultCameraLocalVec;
 
         float dragonSightHoldingTime;
@@ -115,6 +116,7 @@ namespace Player
         {
             base.Start();
             Init();
+            dracosonMetamorphose.SetActive(false);
             if (dracosonMetamorphose.activeSelf && dracosonMetamorphose != null)
             {
                 animator = dracosonMetamorphose.GetComponent<Animator>();
@@ -159,19 +161,21 @@ namespace Player
             base.IsLocalPlayer();
             overlaycamera.SetActive(true);
             minimapCamera.SetActive(true);
-            ChangeLayerRecursively(overlayRightHand.transform);
-            Transform avatarForOtherRoot = transform.GetChild(0).GetChild(0).GetChild(1);//다른 사람들이 보는 자신의 아바타
+            ChangeLayerRecursively(overlayRightHand.transform, 8);
+            Transform avatarForOtherRoot = transform.GetChild(0).GetChild(0).GetChild(1);
             avatarForOtherRoot.GetComponentInChildren<MeshRenderer>().transform.gameObject.layer = 6;
             //avatarForOtherRoot.GetComponentInChildren<MeshRenderer>().enabled = false;
+            Transform dracosonMetamorphose = transform.GetChild(0).GetChild(2);
+            ChangeLayerRecursively(dracosonMetamorphose, 6);
         }
 
-        void ChangeLayerRecursively(Transform targetTransform)
+        void ChangeLayerRecursively(Transform targetTransform, int layerNum)
         {
-            targetTransform.gameObject.layer = 8;
+            targetTransform.gameObject.layer = layerNum;
 
             foreach (Transform child in targetTransform)
             {
-                ChangeLayerRecursively(child);
+                ChangeLayerRecursively(child, layerNum);
             }
         }
 
@@ -187,8 +191,8 @@ namespace Player
             if (photonView.IsMine)
             {
                 CheckOnLocalClient();
-                /*CheckAnimationSpeed();
-                CheckAnimatorExtra();*/
+                CheckAnimationSpeed();
+                CheckAnimatorExtra();
             }
         }
 
@@ -261,13 +265,30 @@ namespace Player
             }*/
         }
 
+        //마스터 클라이언트에서만 작동
         void CheckOnMasterClient()
         {
             if(skillState == SkillStateDracoson.DragonSightHolding)
             {
+                if(normalCastingTime[0] <= 0f && normalCastingCheck[0])
+                {
+                    normalCastingCheck[0] = false;
+                }
+            }
+            else if (skillState == SkillStateDracoson.DragonSightAttack)
+            {
                 if(normalCastingTime[1] <= 0f && normalCastingCheck[1])
                 {
-
+                    normalCastingCheck[1] = false;
+                    skillState = SkillStateDracoson.None;
+                    if(chargeCount == 1)
+                        CallRPCEvent("InstantiateObject", "Response", "DragonicFlame", 1);
+                    else if(chargeCount == 2)
+                        CallRPCEvent("InstantiateObject", "Response", "DragonicFlame", 2);
+                    else if(chargeCount == 3)
+                        CallRPCEvent("InstantiateObject", "Response", "DragonicFlame", 3);
+                    CallRPCEvent("ResetAnimation", "Response");
+                    CallRPCEvent("UpdateData", "Response", skillState, "OnlySkillState", 0, 0f, false);
                 }
             }
         }
@@ -277,98 +298,297 @@ namespace Player
         void OnSkill1()
         {
             if (photonView.IsMine)
-                CallSkill(1);
+                CallRPCEvent("SetSkill", "Request", 1);
         }
 
         void OnSkill2()
         {
             if (photonView.IsMine)
-                CallSkill(2);
+                CallRPCEvent("SetSkill", "Request", 2);
+
         }
 
         void OnSkill3()
         {
             if (photonView.IsMine)
-                CallSkill(3);
+                CallRPCEvent("SetSkill", "Request", 3);
+
         }
 
         void OnSkill4()
         {
             if (photonView.IsMine)
-                CallSkill(4);
+                CallRPCEvent("SetSkill", "Request", 4);
+
         }
 
-        void CallSkill(int num)
+        void OnMouseButton()
         {
-            object[] _tempObject = new object[2];
-            _tempObject[0] = "SetSkill";
-            _tempObject[1] = num;
-            RequestRPCCall(_tempObject);
+            if (photonView.IsMine)
+            {
+                if (!isClicked[0])
+                    CallRPCEvent("ClickMouse", "Request", 0);
+                else
+                    CallRPCEvent("CancelHolding", "Request");
+                isClicked[0] = !isClicked[0];
+            }
+        }
+
+        void OnMouseButton2()
+        {
+            if (photonView.IsMine)
+            {
+                if (!isClicked[1])
+                    CallRPCEvent("ClickMouse", "Request", 1);
+                isClicked[1] = !isClicked[1];
+            }
         }
 
         void OnButtonCancel()
         {
             if (photonView.IsMine)
-            {
-                object[] _tempData = new object[2];
-                _tempData[0] = "CancelSkill";
-                RequestRPCCall(_tempData);
-            }
+                CallRPCEvent("CancelSkill", "Request", 0);
         }
 
-        void OnMouseButton()
-        {
-           
-        }
-
-        //마스터 클라이언트로 요청
         void RequestRPCCall(object[] data)
         {
-            photonView.RPC("CallRPCCultistMasterClient", RpcTarget.MasterClient, data);
-            Debug.Log("RPC 쏘는중");
+            photonView.RPC("CallRPCDracosonMasterClient", RpcTarget.MasterClient, data);
         }
 
         [PunRPC]
-        public void CallRPCCultistMasterClient(object[] data)
+        public void CallRPCDracosonMasterClient(object[] data)
         {
             if ((string)data[0] == "SetSkill")
                 SetSkill(data);
+            else if ((string)data[0] == "ClickMouse")
+                ClickMouse(data);
             else if ((string)data[0] == "CancelSkill")
                 CancelSkill();
-            else if ((string)data[0] == "ClickMouse")
-                ClickMouse();
             else if ((string)data[0] == "CancelHolding")
                 CancelHolding();
             else if ((string)data[0] == "SetChargeCount")
-                SetChargeCount(data);
+                SetChargePhase(data);
+            else if ((string)data[0] == "SetOwnerNum")
+                ResponseRPCCall(data);
+            /*else if ((string)data[0] == "ProgressSkillLogic")
+                ProgressSkillLogic(data);*/
+        }
+
+        void ResponseRPCCall(object[] data)
+        {
+            photonView.RPC("CallRPCDracosonToAll", RpcTarget.AllBuffered, data);
+        }
+
+        [PunRPC]
+        public void CallRPCDracosonToAll(object[] data)
+        {
+            if ((string)data[0] == "UpdateData")
+                UpdateData(data);
+            if ((string)data[0] == "SetAnimation")
+                SetAnimation(data);
+            else if ((string)data[0] == "SetOwnerNum")
+                SetOwnerNum(data);
+            else if ((string)data[0] == "SetChargePhase")
+                SetChargePhase(data);
+            else if ((string)data[0] == "ResetAnimation")
+                ResetAnimation();
+            else if ((string)data[0] == "InstantiateObject")
+                InstantiateObject(data);
+            else if ((string)data[0] == "SetCoolDownTime")
+                SetCoolDownTime(data);
+            else if ((string)data[0] == "UseSkill")
+                UseSkill(data);
+            else if ((string)data[0] == "EndSkill")
+                EndSkill();
+        }
+
+        //RPC 요청
+        void CallRPCEvent(string command, string type, params object[] parameters)
+        {
+            object[] _sendData;
+            if (parameters.Length >= 1)
+            {
+                _sendData = new object[parameters.Length + 1];
+                for (int i = 0; i < parameters.Length; i++)
+                {
+                    _sendData[i + 1] = parameters[i];
+                }
+            }
+            else
+                _sendData = new object[2];
+            _sendData[0] = command;
+
+            if (type == "Request")
+                RequestRPCCall(_sendData);
+            else if (type == "Response")
+                ResponseRPCCall(_sendData);
         }
 
         void SetSkill(object[] data)
         {
-           
+            int _skillNum = (int)data[1];
+
+            if (skillCoolDownTime[_skillNum - 1] <= 0f)
+            {
+                if(skillState == SkillStateDracoson.Skill1Ready ||
+                   skillState == SkillStateDracoson.Skill2Ready ||
+                   skillState == SkillStateDracoson.Skill3Ready ||
+                   skillState == SkillStateDracoson.Skill4Ready ||
+                   skillState == SkillStateDracoson.None ||
+                   (skillState == SkillStateDracoson.DragonSightReady && normalCastingTime[0] <= 0f))
+                {
+                    if (_skillNum == 1)
+                        skillState = SkillStateDracoson.Skill1Ready;
+                    else if(_skillNum == 2)
+                        skillState = SkillStateDracoson.Skill2Ready;
+                    else if (_skillNum == 3)
+                        skillState = SkillStateDracoson.Skill3Ready;
+                    else if (_skillNum == 4)
+                        if(ultimateCount >= -1000)
+                        skillState = SkillStateDracoson.Skill4Ready;
+                }
+            }
+        }
+
+        void ClickMouse(object[] data)
+        {
+            // 0은 왼쪽 1은 오른쪽
+            int mouseCode = (int)data[1];
+            if(mouseCode == 0)
+            {
+                if (skillState == SkillStateDracoson.None)
+                {
+                    skillState = SkillStateDracoson.DragonSightHolding;
+                    CallRPCEvent("SetAnimation", "Response", "isDragonSightHolding", true);
+                    CallRPCEvent("UpdateData", "Response", skillState, "normalCastingTime", 1, dragonSightHoldingTime, true);
+                    CallRPCEvent("SetChargePhase", "Response", true);
+                }
+                else if (skillState == SkillStateDracoson.Skill1Ready)
+                {
+                    skillState = SkillStateDracoson.Skill1Casting;
+                    CallRPCEvent("SetAnimation", "Response", "isSkill1", true);
+                    CallRPCEvent("UpdateData", "Response", skillState, "skillCastingTime", 0, skill1CastingTime, true);
+                }
+            }
         }
 
         void CancelSkill()
         {
-            skillState = SkillStateDracoson.None;
+            if (skillState == SkillStateDracoson.Skill1Ready || skillState == SkillStateDracoson.Skill2Ready ||
+                skillState == SkillStateDracoson.Skill3Ready || skillState == SkillStateDracoson.Skill4Ready ||
+               (skillState == SkillStateDracoson.DragonSightReady && normalCastingTime[0] <= 0f))
+            {
+                skillState = SkillStateDracoson.None;
+                CallRPCEvent("UpdateData", "Response", skillState, "OnlySkillState", 0, 0f, true);
+            }
         }
 
-        void InstantiateObject(int chargePhase)
+        void UpdateData(object[] data)
         {
+            skillState = (SkillStateDracoson)data[2];
 
-            Ray _tempRay = camera.GetComponent<Camera>().ScreenPointToRay(aim.transform.position);
-            Quaternion _tempQ = Quaternion.LookRotation(_tempRay.direction);
+            string _timeType = (string)data[2];
+            int _index = (int)data[3];
+            float _newTime = (float)data[4];
+            bool _onceChecker = (bool)data[5];
 
-            if (chargePhase != 0)
+            if (_timeType == "normalCastingTime")
             {
-                Debug.Log("투사체 발사");
-                PhotonNetwork.Instantiate("SiHyun/Prefabs/Dracoson/Dragonic Flame Projectile " + chargePhase,
-                _tempRay.origin + _tempRay.direction * 0.5f, _tempQ, data: null);
+                normalCastingTime[_index] = _newTime;
+                normalCastingCheck[_index] = _onceChecker;
             }
-            else
+            else if (_timeType == "skillCastingTime")
             {
-                PhotonNetwork.Instantiate("SiHyun/Prefabs/Dracoson/Dragonic Flame Projectile " + projectile,
-                _tempRay.origin + _tempRay.direction * 0.5f, _tempQ, data: null);
+                skillCastingTime[_index] = _newTime;
+                skillCastingCheck[_index] = _onceChecker;
+            }
+            else if (_timeType == "skillChannelingTime")
+            {
+                skillChannelingTime[_index] = _newTime;
+                skillCastingCheck[_index] = false;
+                skillChannelingCheck[_index] = _onceChecker;
+            }
+            else if (_timeType == "OnlySkillState")
+            {
+                for (int i = 0; i < normalCastingCheck.Length; i++)
+                    normalCastingCheck[i] = false;
+                for (int i = 0; i < skillCastingCheck.Length; i++)
+                    skillCastingCheck[i] = false;
+                for (int i = 0; i < skillChannelingCheck.Length; i++)
+                    skillChannelingCheck[i] = false;
+            }
+        }
+
+        void SetCoolDownTime(object[] data)
+        {
+            int _index = (int)data[1];
+
+            if (_index == 0)
+                skillCoolDownTime[_index] = skill1CoolDownTime;
+            else if (_index == 1)
+                skillCoolDownTime[_index] = skill2CoolDownTime;
+            else if (_index == 2)
+                skillCoolDownTime[_index] = skill3CoolDownTime;
+            else if (_index == 3)
+                skillCoolDownTime[_index] = skill4CoolDownTime;
+        }
+
+        void EndSkill()
+        {
+            if(photonView.IsMine)
+            {
+                if(localState == LocalStateDracoson.Skill2)
+                {
+                    localState = LocalStateDracoson.None;
+                    dracosonMetamorphose.SetActive(false);
+                }
+            }
+        }
+        void UseSkill(object[] data)
+        {
+            if (photonView.IsMine)
+            {
+                /*int _index = (int)data[1];
+                if (_index == 0)//스킬 1 사용
+                    UseSkill1();
+                else if (_index == 1)
+                    UseSkill2();*/
+            }
+        }
+
+        void SetAnimation(object[] data)
+        {
+            if (photonView.IsMine)
+            {
+                animator.SetBool((string)data[1], (bool)data[2]);
+                overlayAnimator.SetBool((string)data[1], (bool)data[2]);
+            }
+        }
+
+        void SetOwnerNum(object[] data)
+        {
+            ownerNum = (int)data[1];
+        }
+
+        void InstantiateObject(object[] data)
+        {
+            if (photonView.IsMine)
+            {
+                if ((string)data[1] == "DragonicFlame")
+                {
+                    Ray _tempRay = camera.GetComponent<Camera>().ScreenPointToRay(aim.transform.position);
+                    Quaternion _tempQ = Quaternion.LookRotation(_tempRay.direction);
+
+                    object[] _data = new object[3];
+                    _data[0] = name;
+                    _data[1] = tag;
+                    _data[2] = "DragonicFlame";
+
+                    PhotonNetwork.Instantiate("SiHyun/Prefabs/Dracoson/Dragonic Flame Projectile " + data[2],
+                        _tempRay.origin + _tempRay.direction * 0.5f, _tempQ, data: _data);
+
+                    chargeCount = 0;
+                }
             }
         }
 
@@ -386,16 +606,17 @@ namespace Player
                 }
 
                 Quaternion _staffRotationForMe = Quaternion.LookRotation(staffTopForMe.forward);
-                currentObjectForMe = PhotonNetwork.Instantiate("SiHyun/Prefabs/Dracoson/Dracoson Charge Effect " + chargePhase,
-                    staffTopForMe.position, _staffRotationForMe);
 
+                GameObject _effectPrefab =
+                    Resources.Load<GameObject>("SiHyun/Prefabs/Dracoson/Dracoson Charge Effect " + chargePhase);
+
+                currentObjectForMe = Instantiate(_effectPrefab, staffTopForMe.position, _staffRotationForMe);
                 currentObjectForMe.transform.parent = staffTopForMe.transform;
                 currentObjectForMe.layer = 8;
 
                 Quaternion _staffRotationForOther = Quaternion.LookRotation(staffTopForOther.forward);
                 currentObjectForOther = PhotonNetwork.Instantiate("SiHyun/Prefabs/Dracoson/Dracoson Charge Effect " + chargePhase,
                     staffTopForOther.position, _staffRotationForOther);
-
                 currentObjectForOther.transform.parent = staffTopForOther.transform;
                 currentObjectForOther.layer = 6;
             }
@@ -404,17 +625,18 @@ namespace Player
         void CancelHolding()
         {
             //홀딩 캔슬
+            if(skillState == SkillStateDracoson.DragonSightHolding)
+            {
+                skillState = SkillStateDracoson.DragonSightAttack;
+                CallRPCEvent("SetAnimation", "Response", "isDragonSightHolding", false);
+                CallRPCEvent("SetAnimation", "Response", "isDragonSightAttack", true);
+                // 캐스팅 시간 0으로 만들기
+            }
         }
 
-        void ClickMouse()
+        void SetChargePhase(object[] data)
         {
-            
-        }
 
-        void SetChargeCount(object[] data)
-        {
-            photonView.RPC("SetChargeCount", RpcTarget.AllBuffered, (int)data[1]);
-            photonView.RPC("SetChargePhase", RpcTarget.AllBuffered, data);
         }
 
         void CallSetAnimation(string parameter, bool isParameter)
@@ -426,64 +648,78 @@ namespace Player
             ResponseRPCCall(_tempData);
         }
 
-        //마스터 클라이언트가 모든 클라이언트에게
-        void ResponseRPCCall(object[] data)
-        {
-            photonView.RPC("CallRPCCulTistToAll", RpcTarget.AllBuffered, data);
-            Debug.Log("RPC를 모두에게 쏘는중");
-        }
-
-        [PunRPC]
-        public void SetChargeCount(int chargePhase)
-        {
-            chargeCount = chargePhase;
-        }
-
-        [PunRPC]
-        public void SetChargePhase(object[] data)
-        {
-            overlayAnimator.SetBool("ChargePhase1", (bool)data[2]);
-            overlayAnimator.SetBool("ChargePhase2", (bool)data[3]);
-            overlayAnimator.SetBool("ChargePhase3", (bool)data[4]);
-            overlayAnimator.SetBool("ChargePhaseOver", (bool)data[5]);
-        }
-
-
-        [PunRPC]
-        public void CallRPCCulTistToAll(object[] data)
-        {
-            if ((string)data[0] == "UpdateData")
-                UpdateDataByMasterClient(data);
-            else if ((string)data[0] == "SetAnimation")
-                SetAnimation(data);
-        }
-
-        void SetAnimation(object[] data)
+        void ResetAnimation()
         {
             if (photonView.IsMine)
             {
-                animator.SetBool((string)data[1], (bool)data[2]);
-                overlayAnimator.SetBool((string)data[1], (bool)data[2]);
-            }
-        }
-
-        void UpdateDataByMasterClient(object[] data)
-        {
-            skillState = (SkillStateDracoson)data[2];
-        }
-
-        void CheckAnimator()
-        {
-            if (animator.GetCurrentAnimatorStateInfo(0).IsName("Invocation"))
-            {
-                animator.SetBool("isInvocation", false);
-            }
-            else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Throw"))
-            {
+                animator.SetBool("isSkill1", false);
+                animator.SetBool("isSkill2", false);
+                animator.SetBool("isSkill3", false);
+                animator.SetBool("isSkill4", false);
+                animator.SetBool("isLungeHolding", false);
+                animator.SetBool("isLungeAttack", false);
                 animator.SetBool("isThrow", false);
+                animator.SetBool("isInvocation", false);
+
+                overlayAnimator.SetBool("isSkill1", false);
+                overlayAnimator.SetBool("isSkill2", false);
+                overlayAnimator.SetBool("isSkill3", false);
+                overlayAnimator.SetBool("isSkill4", false);
+                overlayAnimator.SetBool("isLungeHolding", false);
+                overlayAnimator.SetBool("isLungeAttack", false);
+                overlayAnimator.SetBool("isThrow", false);
+                overlayAnimator.SetBool("isInvocation", false);
             }
         }
 
+        void CheckAnimationSpeed()
+        {
+            if (animator.GetCurrentAnimatorStateInfo(0).IsName("DragonSightHolding"))
+                SetAnimationSpeed("DragonSightHoldingSpeed", dragonSightHoldingTime);
+            else if (animator.GetCurrentAnimatorStateInfo(0).IsName("DragonSightAttack"))
+                SetAnimationSpeed("DragonSightAttackSpeed", dragonSightAttackTime);
+            else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Skill1Casting"))
+                SetAnimationSpeed("Skill1CastingSpeed", skill1CastingTime);
+            else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Skill1"))
+                SetAnimationSpeed("Skill1Speed", skill1ChannelingTime);
+            else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Skill2"))
+                SetAnimationSpeed("Skill2CastingSpeed", skill2CastingTime);
+            else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Skill3Casting"))
+                SetAnimationSpeed("Skill3CastingSpeed", skill3CastingTime);
+            else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Skill3"))
+                SetAnimationSpeed("Skill3Speed", skill3ChannelingTime);
+
+            if (animator.GetCurrentAnimatorStateInfo(4).IsName("Skill4"))
+                SetAnimationSpeedExtra("Skill4CastingSpeed", skill4CastingTime);
+        }
+
+
+        void SetAnimationSpeed(string state, float animationTime)
+        {
+            float _beforeSpeed = animator.GetCurrentAnimatorStateInfo(0).speed;
+            float _animationLength = animator.GetCurrentAnimatorStateInfo(0).length;
+            float _normalizedSpeed = _animationLength / animationTime;
+            if (_normalizedSpeed != 1 && _normalizedSpeed != _beforeSpeed)
+            {
+                animator.SetFloat(state, _normalizedSpeed);
+                overlayAnimator.SetFloat(state, _normalizedSpeed);
+            }
+        }
+        void SetAnimationSpeedExtra(string state, float animationTime)
+        {
+            float _beforeSpeed = animator.GetCurrentAnimatorStateInfo(4).speed;
+            float _animationLength = animator.GetCurrentAnimatorStateInfo(4).length;
+            float _normalizedSpeed = _animationLength / animationTime;
+            if (_normalizedSpeed != 1 && _normalizedSpeed != _beforeSpeed)
+            {
+                animator.SetFloat(state, _normalizedSpeed);
+                overlayAnimator.SetFloat(state, _normalizedSpeed);
+            }
+        }
+
+        void CheckAnimatorExtra()
+        {
+        }
         protected override void OnAnimatorIK()
         {
             base.OnAnimatorIK();

@@ -10,6 +10,7 @@ using UnityEditor;
 using System.Security.Cryptography;
 using UnityEngine.InputSystem;
 using System.ComponentModel;
+using System;
 
 namespace Player
 {
@@ -327,6 +328,8 @@ namespace Player
                     CallRPCEvent("SetAnimation", "Response", "isLungeAttack", true);
                     CallRPCEvent("SetLungeCollider", "Response", true);
                     CallRPCEvent("UpdateData", "Response", skillState, "normalCastingTime", 2, lungeAttackTime, true);
+                    soundManager.GetComponent<PhotonView>().RPC("PlayAudio", RpcTarget.All, "LungeSound2", 0.8f,
+                      false, false, "EffectSound");
                 }
             }
             else if (skillState == SkillStateCultist.LungeAttack)
@@ -696,6 +699,12 @@ namespace Player
                     CallRPCEvent("SetInvocationEffect", "Response", true);
                     CallRPCEvent("SetAnimation", "Response", "isInvocation", true);
                     CallRPCEvent("UpdateData", "Response", skillState, "normalCastingTime", 0, invocationCastingTime, true);
+                    int _temp = UnityEngine.Random.Range(1, 4);
+                    soundManager.GetComponent<PhotonView>().RPC("StopLocalAudio", RpcTarget.All,
+                            "SkillSound");
+                    soundManager.GetComponent<PhotonView>().RPC("PlayAudio", RpcTarget.All, "InvocationSound" + _temp, 1.0f,
+                           false, false, "EffectSound");
+
                 }
                 else if (skillState == SkillStateCultist.Invocation)
                 {
@@ -705,6 +714,11 @@ namespace Player
                         CallRPCEvent("SetAnimation", "Response", "isLungeHolding", true);
                         CallRPCEvent("UpdateData", "Response", skillState, "normalCastingTime", 1, lungeHoldingTime, true);
                         CallRPCEvent("RunLungeEffect", "Response");
+
+                        soundManager.GetComponent<PhotonView>().RPC("StopLocalAudio", RpcTarget.All,
+                     "SkillSound");
+                        soundManager.GetComponent<PhotonView>().RPC("PlayAudio", RpcTarget.All, "LungeSound1", 1.0f,
+                     false, false, "EffectSound");
                     }
                 }
                 else if (skillState == SkillStateCultist.Skill1Ready)
@@ -713,6 +727,9 @@ namespace Player
                     CallRPCEvent("SetAnimation", "Response", "isSkill1", true);
                     CallRPCEvent("UpdateData", "Response", skillState, "skillCastingTime", 0, skill1CastingTime, true);
                     CallRPCEvent("SetDagger", "Response", false);
+                    int _temp = UnityEngine.Random.Range(1, 4);
+                    soundManager.GetComponent<PhotonView>().RPC("PlayAudio", RpcTarget.All, "InvocationSound" + _temp, 1.0f,
+                           false, false, "EffectSound");
                 }
                 else if (skillState == SkillStateCultist.Skill2Ready)
                 {
@@ -745,9 +762,15 @@ namespace Player
                         {
                             CallRPCEvent("PlayRitualEffect", "Response");
                             buffDebuffChecker.SpreadBuffDebuff("UniteAndOmen", transform.position + new Vector3(0, 1, 0));
+                            soundManager.GetComponent<PhotonView>().RPC("PlayAudio", RpcTarget.All, "Skill4Sound1", 1.0f,
+                       false, false, "EffectSound");
                         }
                         else
+                        {
                             ChaseAllAlivePlayer();
+                            soundManager.GetComponent<PhotonView>().RPC("PlayAudio", RpcTarget.All, "Skill4Sound2", 1.0f,
+                        false, false, "EffectSound");
+                        }
 
                         photonView.RPC("AddUltimatePoint", RpcTarget.All, ultimateCount - 3);
                     }
@@ -801,6 +824,9 @@ namespace Player
                 CallRPCEvent("SetLungeCollider", "Response", true);
                 CallRPCEvent("UpdateData", "Response", skillState, "normalCastingTime", 1, 0f, true);
                 CallRPCEvent("UpdateData", "Response", skillState, "normalCastingTime", 2, lungeAttackTime, true);
+
+                soundManager.GetComponent<PhotonView>().RPC("PlayAudio", RpcTarget.All, "LungeSound2", 0.8f,
+                     false, false, "EffectSound");
             }
         }
 

@@ -35,6 +35,8 @@ public class RagnaEdgeObject : SpawnObject
     List<string> hitFloorObjects = new List<string>();
     List<string> hitCylinderObjects = new List<string>();
 
+    AudioSource[] audioSources;
+
     void Start()
     {
         Init();
@@ -102,6 +104,13 @@ public class RagnaEdgeObject : SpawnObject
 
     void Init()
     {
+        audioSources = GetComponents<AudioSource>();
+
+        for(int i = 0; i < audioSources.Length; i++)
+        {
+            audioSources[i].volume = SettingManager.Instance.effectVal * SettingManager.Instance.soundVal;
+        }
+
         floorDamage = elementalOrderData.ragnaEdgeFloorDamage;
         cylinderDamage = elementalOrderData.ragnaEdgeCylinderDamage;
         castingTime = elementalOrderData.ragnaEdgeCastingTime;
@@ -240,6 +249,18 @@ public class RagnaEdgeObject : SpawnObject
         isCylinderColliderOn = true;
         cylinder.SetActive(true);
         isFloorColliderOn = false;
+
+        for(int i = 0; i < audioSources.Length; i++)
+        {
+            if (audioSources[i].clip.name == "EO-EDGE")
+            {
+                audioSources[i].volume = SettingManager.Instance.effectVal * SettingManager.Instance.soundVal;
+                audioSources[i].Play();
+            }
+        }
+
+        
+
     }
     
     void ActiveFloor()
@@ -249,6 +270,16 @@ public class RagnaEdgeObject : SpawnObject
         {
             floor.transform.GetChild(i).GetComponent<ParticleSystem>().Play();
         }
+
+        for (int i = 0; i < audioSources.Length; i++)
+        {
+            if (audioSources[i].clip.name == "EO-RAGNA2")
+            {
+                audioSources[i].volume = SettingManager.Instance.effectVal * SettingManager.Instance.soundVal;
+                audioSources[i].Play();
+            }
+        }
+
     }
     
     void UpdateData(object[] data)

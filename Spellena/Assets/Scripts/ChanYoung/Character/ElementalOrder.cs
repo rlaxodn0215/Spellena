@@ -360,7 +360,20 @@ namespace Player
 
 
             if (commands.Count < 2)
+            {
                 commands.Add(command);
+                soundManager.GetComponent<PhotonView>().RPC("StopLocalAudio", RpcTarget.All,
+                     "SkillSound");
+                if (command == 1)
+                    soundManager.GetComponent<PhotonView>().RPC("PlayAudio", RpcTarget.All, "FireSound", 1.0f,
+                 false, false, "EffectSound");
+                else if(command == 2)
+                    soundManager.GetComponent<PhotonView>().RPC("PlayAudio", RpcTarget.All, "EarthSound", 1.0f,
+                 false, false, "EffectSound");
+                else if (command == 3)
+                    soundManager.GetComponent<PhotonView>().RPC("PlayAudio", RpcTarget.All, "StormSound", 1.0f,
+                 false, false, "EffectSound");
+            }
 
             if (commands.Count >= 2)
                 isReadyToUseSkill = true;

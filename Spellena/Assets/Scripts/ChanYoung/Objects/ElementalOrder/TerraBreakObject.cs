@@ -82,6 +82,7 @@ public class TerraBreakObject : SpawnObject
 
     void Init()
     {
+        GetComponent<AudioSource>().volume = SettingManager.Instance.effectVal * SettingManager.Instance.soundVal;
         castingTime = elementalOrderData.terraBreakCastingTime;
         //2.5 + 0.5 √— 3√ 
         lifeTime = elementalOrderData.terraBreakLifeTime + elementalOrderData.terraBreakLifeTimeFirst;

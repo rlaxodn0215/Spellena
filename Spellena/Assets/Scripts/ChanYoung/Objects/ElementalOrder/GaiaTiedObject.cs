@@ -215,6 +215,8 @@ public class GaiaTiedObject : SpawnObject
     void ActiveCollider(object[] data)
     {
         cylinders[(int)data[1]].GetComponent<Collider>().enabled = true;
+        cylinders[(int)data[1]].GetComponent<AudioSource>().volume = SettingManager.Instance.effectVal * SettingManager.Instance.soundVal;
+        cylinders[(int)data[1]].GetComponent<AudioSource>().Play();
     }
 
     void InactiveCollider(object[] data)

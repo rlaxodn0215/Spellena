@@ -21,6 +21,8 @@ public class MeteorStrikeObject : SpawnObject
     List<string> hitObjects = new List<string>();
 
     bool isColliderOn = false;
+
+    AudioSource[] audioSources;
     void Start()
     {
         Init();
@@ -52,6 +54,13 @@ public class MeteorStrikeObject : SpawnObject
 
     void Init()
     {
+        audioSources = GetComponents<AudioSource>();
+
+        for(int i = 0; i < audioSources.Length; i++)
+        {
+            audioSources[i].volume = SettingManager.Instance.effectVal * SettingManager.Instance.soundVal;
+        }
+
         castingTime = elementalOrderData.meteorStrikeCastingTime;
         lifeTime = elementalOrderData.meteorStrikeLifeTime * 3;
         hitCollider.GetComponent<TriggerEventer>().hitTriggerEvent += TriggerEvent;
@@ -141,6 +150,16 @@ public class MeteorStrikeObject : SpawnObject
     {
         isColliderOn = true;
         hitEffect.SetActive(true);
+
+        for(int i = 0; i < audioSources.Length; i++)
+        {
+
+            if(audioSources[i].clip.name == "EO-METEORA")
+            {
+                audioSources[i].volume = SettingManager.Instance.effectVal * SettingManager.Instance.soundVal;
+                audioSources[i].PlayDelayed(0.7f);
+            }
+        }
     }
     
     void RequestDestroy()

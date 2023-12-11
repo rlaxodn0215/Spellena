@@ -3191,72 +3191,75 @@ MonoBehaviour:
   - Type: 4
     SynchronizeType: 2
     Name: Grounded
-  - Type: 9
-    SynchronizeType: 0
-    Name: BasicAttack
   - Type: 4
     SynchronizeType: 2
     Name: Run
   - Type: 4
     SynchronizeType: 2
-    Name: Mirror
-  - Type: 4
-    SynchronizeType: 2
     Name: Sit
   - Type: 4
     SynchronizeType: 2
-    Name: Spell1
-  - Type: 4
-    SynchronizeType: 2
-    Name: Spell2
-  - Type: 4
-    SynchronizeType: 2
-    Name: Spell3
-  - Type: 4
-    SynchronizeType: 2
-    Name: Spell4
-  - Type: 1
-    SynchronizeType: 0
-    Name: Spell1Speed
-  - Type: 1
-    SynchronizeType: 0
-    Name: Spell2Speed
-  - Type: 1
-    SynchronizeType: 0
-    Name: Spell3Speed
-  - Type: 1
-    SynchronizeType: 0
-    Name: Spell4Speed
-  - Type: 4
-    SynchronizeType: 2
-    Name: isHolding
-  - Type: 4
-    SynchronizeType: 2
-    Name: Breathe
-  - Type: 4
-    SynchronizeType: 2
-    Name: Flying
-  - Type: 4
-    SynchronizeType: 2
     Name: HoldingCancel
-  - Type: 9
-    SynchronizeType: 2
-    Name: Skill1
   - Type: 4
     SynchronizeType: 2
     Name: Skill1Ready
   - Type: 4
     SynchronizeType: 2
-    Name: Skill2
-  - Type: 4
-    SynchronizeType: 2
     Name: Skill2Ready
   - Type: 4
     SynchronizeType: 0
-    Name: Skill3
+    Name: Skill3Ready
   - Type: 4
     SynchronizeType: 0
-    Name: Skill3Ready
+    Name: isDragonSightHolding
+  - Type: 4
+    SynchronizeType: 0
+    Name: isDragonSightAttack
+  - Type: 4
+    SynchronizeType: 0
+    Name: isSkill1
+  - Type: 4
+    SynchronizeType: 0
+    Name: isSkill2
+  - Type: 4
+    SynchronizeType: 0
+    Name: isSkill3
+  - Type: 4
+    SynchronizeType: 0
+    Name: Skill4Ready
+  - Type: 4
+    SynchronizeType: 0
+    Name: isSkill4
+  - Type: 1
+    SynchronizeType: 0
+    Name: DragonSightHoldingSpeed
+  - Type: 1
+    SynchronizeType: 0
+    Name: DragonSightAttackSpeed
+  - Type: 1
+    SynchronizeType: 0
+    Name: SkillCastingSpeed
+  - Type: 1
+    SynchronizeType: 0
+    Name: Skill1Speed
+  - Type: 1
+    SynchronizeType: 0
+    Name: Skill2CastingSpeed
+  - Type: 1
+    SynchronizeType: 0
+    Name: Skill2Speed
+  - Type: 1
+    SynchronizeType: 0
+    Name: Skill3CastingSpeed
+  - Type: 1
+    SynchronizeType: 0
+    Name: Skill3Speed
+  - Type: 1
+    SynchronizeType: 0
+    Name: Skill4CastingSpeed
+  - Type: 1
+    SynchronizeType: 0
+    Name: Skill4Speed
   m_SynchronizeLayers:
   - SynchronizeType: 2
     LayerIndex: 0
@@ -3313,6 +3316,7 @@ MonoBehaviour:
   dataHeadShotRatio: 0
   animator: {fileID: 0}
   rigidbody: {fileID: 0}
+  soundManager: {fileID: 0}
   soundManagerView: {fileID: 0}
   moveVec: {x: 0, y: 0, z: 0}
   dracosonData: {fileID: 11400000, guid: 18959a79b679a2848b1ac0728854c54b, type: 2}
@@ -8274,6 +8278,7 @@ MonoBehaviour:
   clampInDegrees: {x: 360, y: 120}
   eraseCursor: 1
   Sensitivity: {x: 6, y: 6}
+  isOpposite: 0
   characterBody: {fileID: 1037026452117830316}
   scoped: 0
 --- !u!1 &3298051395947006206
