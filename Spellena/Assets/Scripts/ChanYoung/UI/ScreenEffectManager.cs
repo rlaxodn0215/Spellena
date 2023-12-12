@@ -1,3 +1,4 @@
+using Player;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,14 +15,21 @@ public class ScreenEffectManager : MonoBehaviour
     List<ScreenEffect> screenEffects = new List<ScreenEffect>();
 
     public GameObject screenEffect;
+    public BuffDebuffChecker buffDebuffChecker;
 
     Image hitEffect;
     Image healEffect;
+    Image horrorEffect;
+    Image phlegmHorrorEffect;
+    Image backgroundEffect;
 
     private void Start()
     {
         hitEffect = screenEffect.transform.Find("HitEffect").GetComponent<Image>();
         healEffect = screenEffect.transform.Find("HealEffect").GetComponent<Image>();
+        horrorEffect = screenEffect.transform.Find("HorrorEffect").GetComponent<Image>();
+        phlegmHorrorEffect = screenEffect.transform.Find("PhlegmHorrorEffect").GetComponent<Image>();
+        backgroundEffect = phlegmHorrorEffect.transform.GetChild(0).GetComponent<Image>();
     }
 
     private void FixedUpdate()
@@ -80,7 +88,51 @@ public class ScreenEffectManager : MonoBehaviour
 
         hitEffect.color = _hitColor;
         healEffect.color = _healColor;
+        CheckHorror();
+        CheckPhlegmHorror();
 
+    }
+
+    void CheckPhlegmHorror()
+    {
+        if(transform.root.GetComponent<Cultist>() != null)
+        {
+            Color _phlegmHorrorColor = phlegmHorrorEffect.color;
+            Color _backgroundColor = backgroundEffect.color;
+            if (transform.root.GetComponent<Cultist>().skillState == SkillStateCultist.Skill2Channeling)
+            {
+                if (_phlegmHorrorColor.a < 1f)
+                    _phlegmHorrorColor.a += 0.1f;
+                if(_backgroundColor.a < 0.04f)
+                    _backgroundColor.a += 0.004f;
+            }
+            else
+            {
+                if (_phlegmHorrorColor.a > 0f)
+                    _phlegmHorrorColor.a -= 0.1f;
+                if (_backgroundColor.a > 0f)
+                    _backgroundColor.a -= 0.004f;
+            }
+
+            phlegmHorrorEffect.color = _phlegmHorrorColor;
+            backgroundEffect.color = _backgroundColor;
+        }
+    }
+
+    void CheckHorror()
+    {
+        Color _horrorColor = horrorEffect.color;
+        if(buffDebuffChecker.FindBuffDebuff("Horror"))
+        {
+            if (_horrorColor.a < 1f)
+                _horrorColor.a += 0.2f;
+        }
+        else
+        {
+            if (_horrorColor.a > 0f)
+                _horrorColor.a -= 0.2f;
+        }
+        horrorEffect.color = _horrorColor;
     }
 
     public void PlayDamageEffect(int damage)

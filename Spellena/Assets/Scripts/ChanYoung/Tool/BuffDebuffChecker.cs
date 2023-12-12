@@ -487,4 +487,14 @@ public class BuffDebuffChecker : MonoBehaviourPunCallbacks
         ritualStacks += stacks;
     }
 
+    public bool FindBuffDebuff(string buffDebuff)
+    {
+        for(int i = 0; i < buffsAndDebuffs.Count; i++)
+        {
+            if (buffsAndDebuffs[i] == buffDebuff)
+                return true;
+        }
+        return false;
+    }
+
 }
