@@ -186,6 +186,7 @@ namespace Player
             if (PhotonNetwork.IsMasterClient)
             {
                 CheckOnMasterClient();
+                Debug.Log(skillState);
             }
 
             if (photonView.IsMine)
@@ -291,6 +292,28 @@ namespace Player
                     CallRPCEvent("UpdateData", "Response", skillState, "OnlySkillState", 0, 0f, false);
                 }
             }
+            else if(skillState == SkillStateDracoson.Skill1Casting)
+            {
+                if (skillCastingTime[0] <= 0f && skillCastingCheck[0])
+                {
+                    skillCastingCheck[0] = false;
+                    skillState = SkillStateDracoson.Skill1Channeling;
+                    CallRPCEvent("UpdateData", "Response", skillState, "skillChannelingTime", 0, skill1ChannelingTime, true);
+                    CallRPCEvent("ResetAnmation", "Response");
+                }
+            }
+
+            else if(skillState == SkillStateDracoson.Skill1Channeling)
+            {
+                if(skillChannelingTime[0] <= 0f && skillChannelingCheck[0])
+                {
+                    skillState = SkillStateDracoson.None;
+                    CallRPCEvent("InstantiateObject", "Response", "DragonSpin");
+                    CallRPCEvent("ResetAnmation", "Response");
+                    CallRPCEvent("UpdateData", "Response", skillState, "OnlySkillState", 0, 0f, false);
+                    CallRPCEvent("SetCoolDownTime", "Response", 0);
+                }
+            }
         }
         
 
@@ -298,27 +321,37 @@ namespace Player
         void OnSkill1()
         {
             if (photonView.IsMine)
+            {
                 CallRPCEvent("SetSkill", "Request", 1);
+                CallRPCEvent("SetAnimation", "Response", "Skill1Ready", true);
+            }
         }
 
         void OnSkill2()
         {
             if (photonView.IsMine)
+            {
                 CallRPCEvent("SetSkill", "Request", 2);
-
+                CallRPCEvent("SetAnimation", "Response", "Skill2Ready", true);
+            }
         }
 
         void OnSkill3()
         {
             if (photonView.IsMine)
+            {
                 CallRPCEvent("SetSkill", "Request", 3);
-
+                CallRPCEvent("SetAnimation", "Response", "Skill3Ready", true);
+            }
         }
 
         void OnSkill4()
         {
             if (photonView.IsMine)
+            {
                 CallRPCEvent("SetSkill", "Request", 4);
+                CallRPCEvent("SetAnimation", "Response", "Skill4Ready", true);
+            }
 
         }
 
@@ -438,14 +471,23 @@ namespace Player
                    (skillState == SkillStateDracoson.DragonSightReady && normalCastingTime[0] <= 0f))
                 {
                     if (_skillNum == 1)
+                    {
                         skillState = SkillStateDracoson.Skill1Ready;
-                    else if(_skillNum == 2)
+                    }
+                    else if (_skillNum == 2)
+                    {
                         skillState = SkillStateDracoson.Skill2Ready;
+                    }
                     else if (_skillNum == 3)
+                    {
                         skillState = SkillStateDracoson.Skill3Ready;
+
+                    }
                     else if (_skillNum == 4)
-                        if(ultimateCount >= -1000)
-                        skillState = SkillStateDracoson.Skill4Ready;
+                        if (ultimateCount >= -1000)
+                        {
+                            skillState = SkillStateDracoson.Skill4Ready;
+                        }
                 }
             }
         }
@@ -458,14 +500,16 @@ namespace Player
             {
                 if (skillState == SkillStateDracoson.None)
                 {
-                    skillState = SkillStateDracoson.DragonSightHolding;
+                    /*skillState = SkillStateDracoson.DragonSightHolding;
                     CallRPCEvent("SetAnimation", "Response", "isDragonSightHolding", true);
                     CallRPCEvent("UpdateData", "Response", skillState, "normalCastingTime", 1, dragonSightHoldingTime, true);
-                    CallRPCEvent("SetChargePhase", "Response", true);
+                    CallRPCEvent("SetChargePhase", "Response", true);*/
                 }
                 else if (skillState == SkillStateDracoson.Skill1Ready)
                 {
+                    Debug.Log("스킬 1 시전");
                     skillState = SkillStateDracoson.Skill1Casting;
+                    CallRPCEvent("SetAnimation", "Response", "Skill1Ready", false);
                     CallRPCEvent("SetAnimation", "Response", "isSkill1", true);
                     CallRPCEvent("UpdateData", "Response", skillState, "skillCastingTime", 0, skill1CastingTime, true);
                 }
@@ -485,7 +529,7 @@ namespace Player
 
         void UpdateData(object[] data)
         {
-            skillState = (SkillStateDracoson)data[2];
+            skillState = (SkillStateDracoson)data[1];
 
             string _timeType = (string)data[2];
             int _index = (int)data[3];
@@ -589,6 +633,21 @@ namespace Player
 
                     chargeCount = 0;
                 }
+                else if((string)data[1] == "DragonSpin")
+                {
+                    Ray _tempRay = camera.GetComponent<Camera>().ScreenPointToRay(aim.transform.position);
+                    Quaternion _tempQ = Quaternion.LookRotation(_tempRay.direction);
+
+                    object[] _data = new object[3];
+                    _data[0] = name;
+                    _data[1] = tag;
+                    _data[2] = "DragonicFlame";
+                    GameObject _dragonSpin = PhotonNetwork.Instantiate("SiHyun/Prefabs/Dracoson/DragonSpin",
+                        this.transform.position + _tempRay.direction * 0.5f, Quaternion.identity, data: _data);
+                    _dragonSpin.transform.SetParent(transform);
+                    
+
+                }
             }
         }
 
@@ -625,12 +684,13 @@ namespace Player
         void CancelHolding()
         {
             //홀딩 캔슬
+            Debug.Log("홀딩 캔슬");
             if(skillState == SkillStateDracoson.DragonSightHolding)
             {
-                skillState = SkillStateDracoson.DragonSightAttack;
+                /*skillState = SkillStateDracoson.DragonSightAttack;
                 CallRPCEvent("SetAnimation", "Response", "isDragonSightHolding", false);
                 CallRPCEvent("SetAnimation", "Response", "isDragonSightAttack", true);
-                // 캐스팅 시간 0으로 만들기
+                CallRPCEvent("UpdateData", "Response", skillState, "OnlySkillState", 0, 0f, true);*/
             }
         }
 

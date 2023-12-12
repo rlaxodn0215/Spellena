@@ -57,6 +57,8 @@ public class SoundManager : MonoBehaviourPunCallbacks
 
         }
 
+        if (vol == null) vol = 1.0f;
+
         return vol;
     }
 
