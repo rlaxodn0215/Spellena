@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4962770713573204}
   - component: {fileID: 198567003494177912}
   - component: {fileID: 199578076193363088}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: Wave
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4898,7 +4898,7 @@ GameObject:
   - component: {fileID: 356966875716950030}
   - component: {fileID: 1469132079877409836}
   - component: {fileID: 696291996170049215}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: DimensionSlash_0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5015,7 +5015,7 @@ GameObject:
   - component: {fileID: 4979491467855992}
   - component: {fileID: 198881368166144872}
   - component: {fileID: 199210508579337498}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: WaveColor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9897,7 +9897,7 @@ GameObject:
   - component: {fileID: 4173976257961348}
   - component: {fileID: 108016781480383392}
   - component: {fileID: 114331565406632062}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: Point light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10069,7 +10069,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3392138662303009043}
   - component: {fileID: 2948893232966807073}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: Sound
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10198,7 +10198,7 @@ GameObject:
   - component: {fileID: 6013454567284949033}
   - component: {fileID: 8851251924521266697}
   - component: {fileID: 5312691579293171905}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: WaveColor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15081,7 +15081,7 @@ GameObject:
   - component: {fileID: 4744677133403647085}
   - component: {fileID: 1183552184041967907}
   - component: {fileID: 5546833309239427191}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: WallHitCollider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15157,7 +15157,7 @@ GameObject:
   - component: {fileID: 8916035105362126203}
   - component: {fileID: 6241016216251824506}
   - component: {fileID: 3816444100804734504}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: AttackCollider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15233,7 +15233,7 @@ GameObject:
   - component: {fileID: 7242831736720126274}
   - component: {fileID: 4088410431228862766}
   - component: {fileID: 4663407152306164653}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: Wave (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}

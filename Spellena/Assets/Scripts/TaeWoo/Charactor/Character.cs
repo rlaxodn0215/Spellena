@@ -713,15 +713,13 @@ namespace Player
                         SetUltimatePoint(killer.ActorNumber);
                         PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["KillerName"] = killer.CustomProperties["Name"];
 
-                        Debug.Log("Player Character Dead");
-                        GameCenterTest.ChangePlayerCustomProperties
-                            (PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr], "DeadCount", temp1 + 1);
-                        Debug.Log("DeadCount");
-
                         int temp2 = (int)killer.CustomProperties["KillCount"];
                         killer.CustomProperties["ParameterName"] = "KillCount";
 
                         GameCenterTest.ChangePlayerCustomProperties(killer, "KillCount", temp2 + 1);
+
+                        GameCenterTest.ChangePlayerCustomProperties
+                            (PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr], "DeadCount", temp1 + 1);
 
                     }
 

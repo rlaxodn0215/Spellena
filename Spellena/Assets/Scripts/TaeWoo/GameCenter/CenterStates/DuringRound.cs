@@ -125,8 +125,8 @@ public class DuringRound : CenterState
 
                     if((string)targetPlayer.CustomProperties["KillerName"] == "World")
                     {
-                            gameCenter.inGameUIView.RPC("ShowKillLog", RpcTarget.AllBuffered, "World",
-                            (string)targetPlayer.CustomProperties["Name"], ((string)targetPlayer.CustomProperties["Team"] == "A"), -1);
+                        gameCenter.inGameUIView.RPC("ShowKillLog", RpcTarget.AllBuffered, "World",
+                         (string)targetPlayer.CustomProperties["Name"], ((string)targetPlayer.CustomProperties["Team"] == "A"), -1);
                     }
 
                     break;

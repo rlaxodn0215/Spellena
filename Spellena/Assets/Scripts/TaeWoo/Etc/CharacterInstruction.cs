@@ -13,6 +13,7 @@ public class CharacterInstruction : MonoBehaviour
         UIObjects["ElementalOrder"] = GameCenterTest.FindObject(gameObject, "ElementalOrder");
         UIObjects["Dracoson"] = GameCenterTest.FindObject(gameObject, "Dracoson");
         UIObjects["Cultist"] = GameCenterTest.FindObject(gameObject, "Cultist");
+        UIObjects["KeySettings"] = GameCenterTest.FindObject(gameObject, "KeySettings");
     }
 
     void Update()
@@ -25,6 +26,16 @@ public class CharacterInstruction : MonoBehaviour
         if(Input.GetKeyUp(KeyCode.F1))
         {
             ActiveInstruction((string)PhotonNetwork.LocalPlayer.CustomProperties["Character"], false);
+        }
+
+        if (Input.GetKeyDown(KeyCode.F2))
+        {
+            ActiveInstruction("KeySettings", true);
+        }
+
+        if (Input.GetKeyUp(KeyCode.F2))
+        {
+            ActiveInstruction("KeySettings", false);
         }
     }
 
