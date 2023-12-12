@@ -32,6 +32,7 @@ namespace Player
 
         void Start()
         {
+            if(photonView.IsMine)
             Init();
         }
 
@@ -68,17 +69,20 @@ namespace Player
 
         void Update()
         {
-            if (settingManager.SettingPanel.activeSelf)
+            if (photonView.IsMine)
             {
-                SetData();
-                ShowCursor();
-            }
+                if (settingManager.SettingPanel.activeSelf)
+                {
+                    SetData();
+                    ShowCursor();
+                }
 
-            else
-            {
-                SightControl();
-                MoveControl();
-                EraseCursor();
+                else
+                {
+                    SightControl();
+                    MoveControl();
+                    EraseCursor();
+                }
             }
         }
 

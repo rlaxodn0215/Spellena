@@ -20,9 +20,9 @@ MonoBehaviour:
   angelStatueCoolTime: 30
   angelStatueHpPerTime: 10
   angelStatueContinueTime: 10
-  occupyingGaugeRate: 14.285714
+  occupyingGaugeRate: 200
   occupyingReturnTime: 3
-  occupyingRate: 0.5555556
+  occupyingRate: 10
   occupyingComplete: 99
   roundEndTime: 5
   roundEndResultTime: 4
