@@ -195,6 +195,13 @@ namespace Player
         {
             this.tag = team;
         }
+
+        [PunRPC]
+        public void ActiveObserver()
+        {
+            GetComponent<Camera>().enabled = true;
+            GetComponent<AudioListener>().enabled = true;
+        }
     }
 
 }

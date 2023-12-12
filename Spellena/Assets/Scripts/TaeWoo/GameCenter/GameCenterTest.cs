@@ -232,10 +232,6 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
 
         betweenBGMSource = betweenBGMObj.GetComponent<AudioSource>();
     }
-    void Update()
-    {
-        //ChangePlayerCustomProperties(PhotonNetwork.LocalPlayer, "Ping", PhotonNetwork.GetPing());
-    }
 
     private void FixedUpdate()
     {
@@ -248,6 +244,34 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
 
             if (inGameUI != null)
                 GiveDataToUI();
+        }
+
+        if (currentGameState == GameState.CharacterSelect)
+        {
+            BGMVolControl();
+        }
+    }
+
+    float soundDecreaseTime = 5;
+    float soundDecreaseSpeed = 1.5f;
+
+    void BGMVolControl()
+    {
+        // 일정 시간이 지나면 소리가 점차 감소됨
+        if (globalDesiredTimer - globalTimer <= soundDecreaseTime)
+        {
+            if (betweenBGMSource != null)
+            {
+                BetweenBGMVolumControl(soundDecreaseSpeed * Time.deltaTime / 10, false);
+            }
+        }
+
+        else
+        {
+            if (betweenBGMSource != null)
+            {
+                betweenBGMSource.volume = 1.0f * SettingManager.Instance.bgmVal * SettingManager.Instance.soundVal;
+            }
         }
     }
 

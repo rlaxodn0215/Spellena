@@ -8,14 +8,16 @@ public class OccupyingSystem : MonoBehaviourPunCallbacks
 {
     private void OnTriggerStay(Collider other)
     {
-        if(other.gameObject.layer == 15)
-            other.GetComponent<Character>().isOccupying = true;
+        if(other.transform.root.gameObject.layer == LayerMask.NameToLayer("Player")
+            && other.transform.root.gameObject.GetComponent<Character>().isAlive)
+            other.transform.root.gameObject.GetComponent<Character>().isOccupying = true;
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.layer == 15)
-            other.GetComponent<Character>().isOccupying = false;
+        if (other.transform.root.gameObject.layer == LayerMask.NameToLayer("Player")
+            && other.transform.root.gameObject.GetComponent<Character>().isAlive)
+            other.transform.root.gameObject.GetComponent<Character>().isOccupying = false;
     }
 
 }

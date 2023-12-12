@@ -241,7 +241,7 @@ public class InGameUI : MonoBehaviourPunCallbacks,IPunObservable
     [PunRPC]
     public void ActiveInGameUIObj(string uiName, bool isActive)
     {
-        if (!UIObjects.ContainsKey(uiName)) return;
+        if (!UIObjects.ContainsKey(uiName) && UIObjects[uiName].activeSelf == isActive) return;
         UIObjects[uiName].SetActive(isActive);
     }
 

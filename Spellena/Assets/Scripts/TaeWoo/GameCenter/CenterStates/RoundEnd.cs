@@ -64,11 +64,12 @@ public class RoundEnd : CenterState
         gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "redExtraObj", false);
         gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "blueExtraUI", true);
         gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "blueExtraObj", false);
-        gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "etcUI", true);
 
         // 플레이어 초기화
         foreach (var player in PhotonNetwork.CurrentRoom.Players.Values)
         {
+            if ((string)player.CustomProperties["Character"] == "Observer") continue;
+
             PhotonView view = PhotonView.Find((int)player.CustomProperties["CharacterViewID"]);
             if (view == null) continue;
             GameCenterTest.ChangePlayerCustomProperties(player, "IsAlive", true);

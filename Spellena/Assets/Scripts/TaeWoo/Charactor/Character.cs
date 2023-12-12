@@ -691,32 +691,37 @@ namespace Player
                     // 사망시
                     if (hp <= 0)
                     {
-                        isAlive = false;
-                        int temp1 = (int)PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["DeadCount"];
-                        PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["ParameterName"] = "DeadCount";
-
-                        PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["DamagePart"] = damgePart;
-                        PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["DamageDirection"] = direction;
-                        PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["DamageForce"] = force;
+                        isAlive = false;      
 
                         if (killer == null)
                         {
+                            int temp = (int)PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["DeadCount"];
+                            PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["ParameterName"] = "DeadCount";
+
                             if (!(bool)PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["IsAlive"]) return;
 
                             PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["KillerName"] = enemy;
 
                             GameCenterTest.ChangePlayerCustomProperties
-                                (PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr], "DeadCount", temp1 + 1);
+                                (PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr], "DeadCount", temp + 1);
                             return;
                         }
 
                         SetUltimatePoint(killer.ActorNumber);
+
                         PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["KillerName"] = killer.CustomProperties["Name"];
 
                         int temp2 = (int)killer.CustomProperties["KillCount"];
                         killer.CustomProperties["ParameterName"] = "KillCount";
 
                         GameCenterTest.ChangePlayerCustomProperties(killer, "KillCount", temp2 + 1);
+
+                        int temp1 = (int)PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["DeadCount"];
+                        PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["ParameterName"] = "DeadCount";
+
+                        PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["DamagePart"] = damgePart;
+                        PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["DamageDirection"] = direction;
+                        PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["DamageForce"] = force;
 
                         GameCenterTest.ChangePlayerCustomProperties
                             (PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr], "DeadCount", temp1 + 1);
@@ -877,7 +882,8 @@ namespace Player
         {
             if (hp < dataHp)
             {
-                hp += hp * (addHp/100);
+                hp += (dataHp * addHp) / 100;
+                Debug.Log((dataHp * addHp) / 100 + " 만큼 체력 회복 / addHp = " + addHp);
             }
         }
 

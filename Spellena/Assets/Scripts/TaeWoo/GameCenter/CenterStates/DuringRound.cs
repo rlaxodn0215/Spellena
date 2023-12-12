@@ -8,8 +8,9 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 public class DuringRound : CenterState
 {
     bool isOnce = true;
-    //bool checkRoundEndOnce = true;
     bool OccupyBarCountOnce = true;
+    bool isFighting = false;
+    int teamAlmostWin = 1; // 1 : A , 2 : B
 
     public override void StateExecution()
     {
@@ -23,9 +24,7 @@ public class DuringRound : CenterState
 
         OccupyBarCount();
         OccupyAreaCounts();
-
         CheckPlayerReSpawn();
-
         CheckRoundEnd();
     }
 
@@ -38,7 +37,6 @@ public class DuringRound : CenterState
 
             if(OccupyBarCountOnce)
             {
-                //Debug.Log("A OccupyBarCount");
                 gameCenter.bgmManagerView.RPC("PlayAudio", RpcTarget.All, "Occupying", 0.7f, false,true,"BGM");
                 OccupyBarCountOnce = false;
             }
@@ -170,9 +168,9 @@ public class DuringRound : CenterState
         for (int i = 0; i < gameCenter.playersA.Count; i++)
         {
             temp = GameCenterTest.FindObjectWithViewID((int)gameCenter.playersA[i].CustomProperties["CharacterViewID"]);
-            if (temp == null) return;
+            if (temp == null) continue;
 
-            if (temp.GetComponent<Character>() == null) return;
+            if (temp.GetComponent<Character>() == null) continue;
             if (temp.GetComponent<Character>().isOccupying == true)
             {
                 gameCenter.teamAOccupying++;
@@ -182,9 +180,9 @@ public class DuringRound : CenterState
         for (int i = 0; i < gameCenter.playersB.Count; i++)
         {
             temp = GameCenterTest.FindObjectWithViewID((int)gameCenter.playersB[i].CustomProperties["CharacterViewID"]);
-            if (temp == null) return;
+            if (temp == null) continue;
 
-            if (temp.GetComponent<Character>() == null) return;
+            if (temp.GetComponent<Character>() == null) continue;
             if (temp.GetComponent<Character>().isOccupying == true)
             {
                 gameCenter.teamBOccupying++;
@@ -195,25 +193,42 @@ public class DuringRound : CenterState
         {
             //서로 교전 중이라는 것을 알림
             gameCenter.occupyingReturnTimer = 0f;
-            //gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "fighting", true);
+            if (!isFighting)
+            {
+                gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "fighting", true);
+                gameCenter.roundEndTimer = gameCenter.roundEndTime;
+                isFighting = !isFighting;
+            }
         }
+
         else if (gameCenter.teamAOccupying > 0)//A팀 점령
         {
             ChangeOccupyingRate(gameCenter.teamAOccupying, gameCenter.teamA);
             gameCenter.occupyingReturnTimer = 0f;
-            
-            //gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "fighting", false);
+            if (isFighting)
+            {
+                gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "fighting", false);
+                isFighting = !isFighting;
+            }
         }
         else if (gameCenter.teamBOccupying > 0)//B팀 점령
         {
             ChangeOccupyingRate(gameCenter.teamBOccupying, gameCenter.teamB);
             gameCenter.occupyingReturnTimer = 0f;
-            //gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "fighting", false);
+            if (isFighting)
+            {
+                gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "fighting", false);
+                isFighting = !isFighting;
+            }
         }
         else
         {
             gameCenter.occupyingReturnTimer += Time.deltaTime;
-            //gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "fighting", false);
+            if (isFighting)
+            {
+                gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "fighting", false);
+                isFighting = !isFighting;
+            }
         }
 
         if (gameCenter.occupyingReturnTimer >= gameCenter.occupyingReturnTime)
@@ -468,23 +483,41 @@ public class DuringRound : CenterState
     void CheckRoundEnd()
     {
         if (gameCenter.occupyingA.rate >= gameCenter.occupyingComplete && 
-            gameCenter.currentOccupationTeam == gameCenter.teamA && gameCenter.teamBOccupying <= 0)
+            gameCenter.currentOccupationTeam == gameCenter.teamA)
         {
             gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "extraObj", true);
             gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "redExtraUI", false);
             gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "redExtraObj", true);
             gameCenter.bgmManagerView.RPC("PlayAudio", RpcTarget.All, "RoundAlmostEnd", 1.0f, true, true,"BGM");
-            gameCenter.roundEndTimer -= Time.deltaTime;
+
+            if(teamAlmostWin == 2)
+            {
+                gameCenter.roundEndTimer = gameCenter.roundEndTime;
+                teamAlmostWin = 1;
+                Debug.Log("Change Almost End With Red");
+            }
+
+            if(gameCenter.teamBOccupying <= 0)
+                gameCenter.roundEndTimer -= Time.deltaTime;
         }
 
         else if (gameCenter.occupyingB.rate >= gameCenter.occupyingComplete &&
-            gameCenter.currentOccupationTeam == gameCenter.teamB && gameCenter.teamAOccupying <= 0)
+            gameCenter.currentOccupationTeam == gameCenter.teamB)
         {
             gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "extraObj", true);
             gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "blueExtraUI", false);
             gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "blueExtraObj", true);
             gameCenter.bgmManagerView.RPC("PlayAudio", RpcTarget.All, "RoundAlmostEnd", 1.0f, true, true,"BGM");
-            gameCenter.roundEndTimer -= Time.deltaTime;
+
+            if (teamAlmostWin == 1)
+            {
+                gameCenter.roundEndTimer = gameCenter.roundEndTime;
+                teamAlmostWin = 2;
+                Debug.Log("Change Almost End With Blue");
+            }
+
+            if (gameCenter.teamAOccupying <= 0)
+                gameCenter.roundEndTimer -= Time.deltaTime;
         }
 
         else
@@ -494,7 +527,7 @@ public class DuringRound : CenterState
 
         if (gameCenter.roundEndTimer <= 0.0f)
         {
-            Debug.Log("라운드 승패 결정");
+            Debug.Log("라운드 승패 결정!!!!!!!!!!");
 
             if (gameCenter.currentOccupationTeam == gameCenter.teamA)
             {

@@ -13,7 +13,7 @@ namespace Player
         public GameObject aeternaUI;
         public GameObject DimensionSword;
         public GameObject DimensionSwordForMe;
-        public GameObject DimensionSlash;
+        //public GameObject DimensionSlash;
         public GameObject DimensionDoor;
         public GameObject DimensionDoorGUI;
         public GameObject teleportPoints;
@@ -197,6 +197,7 @@ namespace Player
 
         protected override void OnAnimatorIK()
         {
+            base.OnAnimatorIK();
             SetLookAtMeObj();
         }
 

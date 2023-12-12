@@ -10,9 +10,6 @@ public class CharacterSelect : CenterState
     bool isCheckTimer = false;
     float tempTimer = 0.0f;
 
-    float soundDecreaseTime = 5;
-    float soundDecreaseSpeed = 1.5f;
-
     public override void StateExecution()
     {
         if (!isCheckTimer)
@@ -26,23 +23,6 @@ public class CharacterSelect : CenterState
         GameCenterTest.globalTimer += Time.deltaTime;
 
         gameCenter.characterSelectView.RPC("ReceiveTimerCount", RpcTarget.AllBuffered, gameCenter.globalDesiredTimer - GameCenterTest.globalTimer);
-        
-        // 일정 시간이 지나면 소리가 점차 감소됨
-        if (gameCenter.globalDesiredTimer - GameCenterTest.globalTimer <= soundDecreaseTime)
-        {
-            if (gameCenter.bgmManagerView != null)
-            {
-                gameCenter.BetweenBGMVolumControl(soundDecreaseSpeed * Time.deltaTime / 10, false);
-            }
-        }
-
-        else
-        {
-            if (gameCenter.bgmManagerView != null)
-            {
-                gameCenter.betweenBGMSource.volume = 1.0f * SettingManager.Instance.bgmVal * SettingManager.Instance.soundVal;
-            }
-        }
 
         if (GameCenterTest.globalTimer >= gameCenter.globalDesiredTimer && isOnce)
         {
@@ -108,6 +88,7 @@ public class CharacterSelect : CenterState
                 {
                     playerCharacter.GetComponent<PhotonView>().RPC("SetTag", RpcTarget.All, "TeamA");
                     gameCenter.inGameUIView.RPC("DisActiveCrosshair", player);
+                    playerCharacter.GetComponent<PhotonView>().RPC("ActiveObserver", player);
                 }
 
                 playerCharacter.GetComponent<PhotonView>().RPC("ChangeName", RpcTarget.All, (string)player.CustomProperties["Name"]);
@@ -141,6 +122,7 @@ public class CharacterSelect : CenterState
                 {
                     playerCharacter.GetComponent<PhotonView>().RPC("SetTag", RpcTarget.All, "TeamB");
                     gameCenter.inGameUIView.RPC("DisActiveCrosshair", player);
+                    playerCharacter.GetComponent<PhotonView>().RPC("ActiveObserver", player);
                 }
 
                 playerCharacter.GetComponent<PhotonView>().RPC("ChangeName", RpcTarget.All, (string)player.CustomProperties["Name"]);
