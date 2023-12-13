@@ -106,6 +106,7 @@ public class BuffDebuffChecker : MonoBehaviourPunCallbacks
                         currentHorrorDamageTime -= Time.deltaTime;
                         if (currentHorrorDamageTime < 0f)
                         {
+                            Debug.Log("¿¡ÀÕ");
                             currentHorrorDamageTime = horrorDamageTime;
                             GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.All, horrorPlayer, 10, "",
                                Vector3.zero, 0f);
