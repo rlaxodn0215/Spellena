@@ -23,6 +23,9 @@ public class ScreenEffectManager : MonoBehaviour
     Image phlegmHorrorEffect;
     Image backgroundEffect;
 
+    Image lungeEffect;
+    Image blessingCastingEffect;
+
     private void Start()
     {
         hitEffect = screenEffect.transform.Find("HitEffect").GetComponent<Image>();
@@ -30,6 +33,11 @@ public class ScreenEffectManager : MonoBehaviour
         horrorEffect = screenEffect.transform.Find("HorrorEffect").GetComponent<Image>();
         phlegmHorrorEffect = screenEffect.transform.Find("PhlegmHorrorEffect").GetComponent<Image>();
         backgroundEffect = phlegmHorrorEffect.transform.GetChild(0).GetComponent<Image>();
+        if(transform.root.GetComponent<Cultist>() != null)
+        {
+            lungeEffect = screenEffect.transform.Find("LungeEffect").GetComponent<Image>();
+            blessingCastingEffect = screenEffect.transform.Find("BlessingCastingEffect").GetComponent<Image>();
+        }
     }
 
     private void FixedUpdate()
@@ -89,7 +97,53 @@ public class ScreenEffectManager : MonoBehaviour
         //Debug.Log(_hitColor);
         CheckHorror();
         CheckPhlegmHorror();
+        CheckCultist();
 
+    }
+
+    void CheckCultist()
+    {
+        if (transform.root.GetComponent<Cultist>() != null)
+        {
+            CheckLunge();
+            CheckBlessing();
+        }
+    }
+
+    void CheckBlessing()
+    {
+        Cultist _tempCultist = transform.root.GetComponent<Cultist>();
+        Color _blessingColor = blessingCastingEffect.color;
+        if(buffDebuffChecker.FindBuffDebuff("BlessingCast"))
+        {
+            if (_blessingColor.a < 1f)
+                _blessingColor.a += 0.1f;
+        }
+        else
+        {
+            if (_blessingColor.a > 0f)
+                _blessingColor.a -= 0.1f;
+        }
+
+        blessingCastingEffect.color = _blessingColor;
+    }
+
+    void CheckLunge()
+    {
+        Cultist _tempCultist = transform.root.GetComponent<Cultist>();
+        Color _lungeColor = lungeEffect.color;
+        if (_tempCultist.skillState == SkillStateCultist.LungeHolding)
+        {
+            if (_lungeColor.a < 1f)
+                _lungeColor.a += 0.1f;
+        }
+        else
+        {
+            if (_lungeColor.a > 0f)
+                _lungeColor.a -= 0.1f;
+        }
+
+        lungeEffect.color = _lungeColor;
     }
 
     void CheckPhlegmHorror()

@@ -293,7 +293,7 @@ namespace Player
                     {
                         Ray _tempRay = minimapCamera.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
                         RaycastHit _tempHit;
-                        int _tempLayerMask = ~(1 << LayerMask.NameToLayer("Minimap"));
+                        LayerMask _tempLayerMask = LayerMask.GetMask("Map");
                         if (Physics.Raycast(_tempRay, out _tempHit, Mathf.Infinity, _tempLayerMask))
                         {
                             pointStrike = new Vector3(_tempHit.point.x, _tempHit.point.y, _tempHit.point.z);
@@ -805,6 +805,21 @@ namespace Player
                     camera.GetComponent<MouseControl>().enabled = false;
                     Cursor.visible = true;
                     Cursor.lockState = CursorLockMode.None;
+                    rigidbody.velocity = Vector3.zero;
+                    rigidbody.angularVelocity = Vector3.zero;
+                }
+            }
+            else if (skillState == SkillState.EterialStorm)
+            {
+                if (isEterialStorm)
+                {
+                    minimapCamera.GetComponent<Camera>().targetTexture = null;
+                    minimapCamera.GetComponent<Camera>().clearFlags = CameraClearFlags.Nothing;
+                    camera.GetComponent<MouseControl>().enabled = false;
+                    Cursor.visible = true;
+                    Cursor.lockState = CursorLockMode.None;
+                    rigidbody.velocity = Vector3.zero;
+                    rigidbody.angularVelocity = Vector3.zero;
                 }
             }
             else if (skillState == SkillState.GaiaTied || skillState == SkillState.MeteorStrike
@@ -908,17 +923,6 @@ namespace Player
                             rangePointStrikeArea.SetActive(false);
                         }
                     }
-                }
-            }
-            else if (skillState == SkillState.EterialStorm)
-            {
-                if (isEterialStorm)
-                {
-                    minimapCamera.GetComponent<Camera>().targetTexture = null;
-                    minimapCamera.GetComponent<Camera>().clearFlags = CameraClearFlags.Nothing;
-                    camera.GetComponent<MouseControl>().enabled = false;
-                    Cursor.visible = true;
-                    Cursor.lockState = CursorLockMode.None;
                 }
             }
 

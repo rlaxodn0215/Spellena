@@ -40,7 +40,7 @@ public class CultistLungeAttack : MonoBehaviourPunCallbacks
                             if (_rootObject.name == hitObjects[i])
                                 return;
                         }
-                        _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.MasterClient,
+                        _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.All,
                          playerName, (int)(cultistData.lungeAttackDamage), hitObject.name, transform.forward, 20f);
 
                         hitObjects.Add(_rootObject.name);
