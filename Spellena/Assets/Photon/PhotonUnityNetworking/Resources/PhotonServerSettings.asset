@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: PhotonServerSettings
   m_EditorClassIdentifier: 
   AppSettings:
-    AppIdRealtime: b40bc1c7-5808-4300-bd70-dbabca776df7
+    AppIdRealtime: c96511c6-9ddc-406c-9dd3-3beb7adde172
     AppIdFusion: 
     AppIdChat: 
     AppIdVoice: 
@@ -193,17 +193,7 @@ MonoBehaviour:
   - ShowAssistUI
   - CallRPCTunnelDracosonDragonSpin
   - ActiveObserver
-  - DisableAllKillLog
-  - SetGlobalDesiredTimer
-  - MakeOtherSwordTrigger
-  - OnSkill
-  - SkillExecution
-  - OnButtonCancelServer
-  - OnMouseButtonServer
-  - OnSkill1Server
-  - OnSkill2Server
-  - OnSkill3Server
-  - OnSkill4Server
+  - CallRPCTunnelCultistChaser
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
