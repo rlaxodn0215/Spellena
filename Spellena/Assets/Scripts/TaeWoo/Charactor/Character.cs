@@ -591,6 +591,7 @@ namespace Player
                 {
                     avatarForMe.GetChild(i).gameObject.layer = LayerMask.NameToLayer("OverlayCameraForMe");
                 }
+
                 UI.SetActive(true);
             }
         }
@@ -680,7 +681,7 @@ namespace Player
                 }
 
                 // 마스터 클라이언트이기 때문에 동기화 안되도 게임센터의 값과 같다. 
-                if (PhotonNetwork.IsMasterClient)
+                //if (PhotonNetwork.IsMasterClient)
                 {
                     var killer = GameCenterTest.FindPlayerWithCustomProperty("Name", enemy);
 
@@ -698,8 +699,9 @@ namespace Player
 
                             PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["KillerName"] = enemy;
 
-                            GameCenterTest.ChangePlayerCustomProperties
-                                (PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr], "DeadCount", temp + 1);
+                            if (PhotonNetwork.IsMasterClient)
+                                GameCenterTest.ChangePlayerCustomProperties(PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr], "DeadCount", temp + 1);
+                            
                             return;
                         }
 
@@ -710,7 +712,8 @@ namespace Player
                         int temp2 = (int)killer.CustomProperties["KillCount"];
                         killer.CustomProperties["ParameterName"] = "KillCount";
 
-                        GameCenterTest.ChangePlayerCustomProperties(killer, "KillCount", temp2 + 1);
+                        if (PhotonNetwork.IsMasterClient)
+                            GameCenterTest.ChangePlayerCustomProperties(killer, "KillCount", temp2 + 1);
 
                         int temp1 = (int)PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["DeadCount"];
                         PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["ParameterName"] = "DeadCount";
@@ -719,8 +722,8 @@ namespace Player
                         PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["DamageDirection"] = direction;
                         PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["DamageForce"] = force;
 
-                        GameCenterTest.ChangePlayerCustomProperties
-                            (PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr], "DeadCount", temp1 + 1);
+                        if (PhotonNetwork.IsMasterClient)
+                            GameCenterTest.ChangePlayerCustomProperties(PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr], "DeadCount", temp1 + 1);
 
                     }
 
@@ -734,8 +737,9 @@ namespace Player
                         killer.CustomProperties["DamageForce"] = force;
 
                         killer.CustomProperties["PlayerAssistViewID"] = photonView.ViewID.ToString();
-                        GameCenterTest.ChangePlayerCustomProperties(killer, "TotalDamage", temp + damage);
-                        Debug.Log("Player Damage ChangePlayerCustomProperties : " + (string)killer.CustomProperties["Name"]);
+
+                        if (PhotonNetwork.IsMasterClient)
+                            GameCenterTest.ChangePlayerCustomProperties(killer, "TotalDamage", temp + damage);
                     }
 
                 }
@@ -752,7 +756,8 @@ namespace Player
                     int temp = (int)healer.CustomProperties["TotalHeal"];
                     healer.CustomProperties["ParameterName"] = "TotalHeal";
                     healer.CustomProperties["PlayerAssistViewID"] = photonView.ViewID.ToString();
-                    GameCenterTest.ChangePlayerCustomProperties(healer, "TotalHeal", temp + (-damage));
+                    if (PhotonNetwork.IsMasterClient)
+                        GameCenterTest.ChangePlayerCustomProperties(healer, "TotalHeal", temp + (-damage));
                 }
 
 

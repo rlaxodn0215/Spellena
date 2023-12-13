@@ -10,6 +10,7 @@ namespace Player
         private Aeterna Player;
         private Animator animator;
         private GameObject sword;
+        private GameObject swordTrigger;
 
         [HideInInspector]
         public SpawnObjectType enemyProjectileType;
@@ -22,6 +23,7 @@ namespace Player
             Player = (Aeterna)player;
             animator = Player.GetComponent<Animator>();
             sword = Player.DimensionSword;
+            swordTrigger = Player.swordTrigger;
         }
 
         public override void IsDisActive()
@@ -50,19 +52,25 @@ namespace Player
         private void OnDuration()
         {
             Player.GetComponent<PhotonView>().RPC("BasicAttackTrigger", RpcTarget.AllBufferedViaServer);
-            sword.GetComponent<BoxCollider>().enabled = true;
+            StartCoroutine(ActiveTirgger());
             StartCoroutine(EndAttack());
+        }
+
+        IEnumerator ActiveTirgger()
+        {
+            yield return new WaitForSeconds(0.5f);
+            swordTrigger.GetComponent<BoxCollider>().enabled = true;
         }
 
         IEnumerator EndAttack()
         {
             yield return new WaitForSeconds(animator.GetCurrentAnimatorClipInfo(1).Length);
-            sword.GetComponent<BoxCollider>().enabled = false;
+            swordTrigger.GetComponent<BoxCollider>().enabled = false;
         }
 
         public void CheckHold()
         {
-            sword.GetComponent<BoxCollider>().enabled = false;
+            swordTrigger.GetComponent<BoxCollider>().enabled = false;
 
             sword.GetComponent<PhotonView>().RPC("ActivateParticle", RpcTarget.AllBuffered, 2, false);
             Player.dimensionSwordForMe[2].SetActive(false);

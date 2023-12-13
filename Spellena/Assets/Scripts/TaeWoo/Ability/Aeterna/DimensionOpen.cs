@@ -32,8 +32,11 @@ namespace Player
 
             else
             {
-                layerMask = 1 << LayerMask.NameToLayer("Me");
+                layerMask =1 << LayerMask.NameToLayer("Me");
             }
+
+            int temp = 1 << LayerMask.NameToLayer("OccupationArea");
+            layerMask |= temp;
 
             layerMask = ~layerMask;
 
@@ -138,6 +141,7 @@ namespace Player
                 if (Physics.Raycast(ray, out hit, Player.aeternaData.skill1DoorSpawnMaxRange, layerMask))
                 {
                     spawnPoint = hit.point;
+                    Debug.Log("name : " + hit.collider.name + "Layer : " + LayerMask.LayerToName(hit.collider.gameObject.layer));
                 }
 
                 else

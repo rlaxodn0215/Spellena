@@ -16,7 +16,7 @@ public class CharacterSelect : CenterState
         {
             isCheckTimer = !isCheckTimer;
             tempTimer = GameCenterTest.globalTimer;
-            gameCenter.globalDesiredTimer = tempTimer + gameCenter.characterSelectTime;
+            gameCenter.photonView.RPC("SetGlobalDesiredTimer", RpcTarget.All, tempTimer + gameCenter.characterSelectTime);
             ConnectCharacterSelect();
         }
 

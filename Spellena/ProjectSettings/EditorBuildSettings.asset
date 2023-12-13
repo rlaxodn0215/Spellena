@@ -26,7 +26,7 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/ChanYoungScene/OccupyingSystem Test.unity
     guid: 89a4b448b88e0dc42a4dcea97e9f72ac
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/SiHyunScene/SiHyun Dracoson Test.unity
     guid: c5e911b13cc818c469dd9bef3d9ccc91
   m_configObjects: {}

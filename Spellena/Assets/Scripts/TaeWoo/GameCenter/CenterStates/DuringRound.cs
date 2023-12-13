@@ -121,6 +121,8 @@ public class DuringRound : CenterState
                     view.RPC("PlayerDeadForAll", RpcTarget.AllBuffered, (string)targetPlayer.CustomProperties["DamagePart"],
                      (Vector3)targetPlayer.CustomProperties["DamageDirection"], (float)targetPlayer.CustomProperties["DamageForce"]);
 
+                    Debug.Log((Vector3)targetPlayer.CustomProperties["DamageDirection"]);
+
                     view.RPC("PlayerDeadPersonal", targetPlayer);
                     gameCenter.deathUIView.RPC("ShowKillerData", targetPlayer, (string)targetPlayer.CustomProperties["KillerName"]);                 
 

@@ -54,8 +54,8 @@ public class InGameUI : MonoBehaviourPunCallbacks,IPunObservable
     [HideInInspector]
     public string gameStateString;
     // 전체 타이머
-    [HideInInspector]
-    public float globalTimerUI;
+    //[HideInInspector]
+    //public float globalTimerUI;
     // 추가시간 타이머
     [HideInInspector]
     public float roundEndTimerUI;
@@ -412,7 +412,7 @@ public class InGameUI : MonoBehaviourPunCallbacks,IPunObservable
             playerKillLogDatas[0].isMe = false;
         }
 
-        playerKillLogDatas[0].killLogTimer = globalTimerUI + killLogActiveTime;
+        playerKillLogDatas[0].killLogTimer = GameCenterTest.globalTimer + killLogActiveTime;
 
         UIObjects["killLog_" + 1 + "_BackImage_Red"].SetActive(_isRed);
         UIObjects["killLog_" + 1 + "_BackImage_Blue"].SetActive(!_isRed);
@@ -469,7 +469,7 @@ public class InGameUI : MonoBehaviourPunCallbacks,IPunObservable
     {
         if (endKillLogIndex < 1) return;
 
-        if(globalTimerUI >= playerKillLogDatas[endKillLogIndex-1].killLogTimer)
+        if(GameCenterTest.globalTimer >= playerKillLogDatas[endKillLogIndex-1].killLogTimer)
         {
             UIObjects["killLog_" + endKillLogIndex].SetActive(false);
             endKillLogIndex--;
@@ -499,7 +499,6 @@ public class InGameUI : MonoBehaviourPunCallbacks,IPunObservable
         if (stream.IsWriting)
         {
             stream.SendNext(gameStateString);
-            stream.SendNext(globalTimerUI);
             stream.SendNext(roundEndTimerUI);
             stream.SendNext(occupyingAUI.rate);
             stream.SendNext(occupyingBUI.rate);
@@ -511,7 +510,6 @@ public class InGameUI : MonoBehaviourPunCallbacks,IPunObservable
         else
         {
             gameStateString = (string)stream.ReceiveNext();
-            globalTimerUI = (float)stream.ReceiveNext();
             roundEndTimerUI = (float)stream.ReceiveNext();
             occupyingAUI.rate = (float)stream.ReceiveNext();
             occupyingBUI.rate = (float)stream.ReceiveNext();

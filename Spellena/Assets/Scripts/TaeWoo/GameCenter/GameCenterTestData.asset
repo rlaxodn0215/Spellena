@@ -13,16 +13,16 @@ MonoBehaviour:
   m_Name: GameCenterTestData
   m_EditorClassIdentifier: 
   loadingTime: 1
-  characterSelectTime: 10
+  characterSelectTime: 15
   readyTime: 1
   playerRespawnTime: 7
   assistTime: 10
   angelStatueCoolTime: 30
   angelStatueHpPerTime: 10
   angelStatueContinueTime: 10
-  occupyingGaugeRate: 200
+  occupyingGaugeRate: 14.285714
   occupyingReturnTime: 3
-  occupyingRate: 10
+  occupyingRate: 0.5555556
   occupyingComplete: 99
   roundEndTime: 5
   roundEndResultTime: 4

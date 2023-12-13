@@ -11,12 +11,14 @@ namespace Player
         private Aeterna Player;
         private Animator animator;
         private GameObject Sword;
+        private GameObject swordTrigger;
 
         public override void AddPlayer(Character player)
         {
             Player = (Aeterna)player;
             animator = player.GetComponent<Animator>();
             Sword = Player.DimensionSword;
+            swordTrigger = Player.swordTrigger;
 
             for(int i = 0; i < Player.teleportPoints.transform.childCount; i++)
             {
@@ -27,8 +29,14 @@ namespace Player
         public override void Execution()
         {
             Player.GetComponent<PhotonView>().RPC("BasicAttackTrigger", RpcTarget.AllBufferedViaServer);
-            Sword.GetComponent<BoxCollider>().enabled = true;
+            StartCoroutine(ActiveTirgger());
             StartCoroutine(EndAttack());
+        }
+
+        IEnumerator ActiveTirgger()
+        {
+            yield return new WaitForSeconds(0.5f);
+            swordTrigger.GetComponent<BoxCollider>().enabled = true;
         }
 
         public override void IsDisActive()
@@ -44,7 +52,7 @@ namespace Player
         IEnumerator EndAttack()
         {
             yield return new WaitForSeconds(animator.GetCurrentAnimatorClipInfo(1).Length);
-            Sword.GetComponent<BoxCollider>().enabled = false;
+            swordTrigger.GetComponent<BoxCollider>().enabled = false;
         }
 
         public void Transport(GameObject enemy)
@@ -56,7 +64,7 @@ namespace Player
             Player.teleportManager.GetComponent<PhotonView>().RPC("UseTeleportManager",RpcTarget.AllBuffered, enemy.transform.position ,trasportPoints[randomIndex].position, enemy.GetComponent<PhotonView>().OwnerActorNr);
             enemy.GetComponent<PhotonView>().RPC("PlayerTeleport", RpcTarget.AllBuffered, trasportPoints[randomIndex].position);
 
-            Sword.GetComponent<BoxCollider>().enabled = false;
+            swordTrigger.GetComponent<BoxCollider>().enabled = false;
 
             Player.skillTimer[3] = Player.aeternaData.skill3CoolTime;
             Player.skill3Phase = 2;

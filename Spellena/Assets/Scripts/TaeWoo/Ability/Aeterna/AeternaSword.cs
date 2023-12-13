@@ -23,7 +23,7 @@ namespace Player
         public GameObject[] skill4OverChargeParticles;
 
         public int damage;
-        private string enemyTag;
+        public string enemyTag;
 
         private void Start()
         {
@@ -35,7 +35,7 @@ namespace Player
         {
             if (CompareTag("TeamA"))
             {
-                enemyTag = "TeamB";  
+                enemyTag = "TeamB";
             }
 
             else if (CompareTag("TeamB"))
@@ -47,33 +47,33 @@ namespace Player
         [PunRPC]
         public void ActivateParticle(int skillNum, bool isActive)
         {
-           if (skillNum == 2)
-           {
-               skill2BuffParticle.SetActive(isActive);
+            if (skillNum == 2)
+            {
+                skill2BuffParticle.SetActive(isActive);
 
-               if (contactObjectData != null)
-                   skill2HitParticle.SetActive(!isActive);
-           }
+                if (contactObjectData != null)
+                    skill2HitParticle.SetActive(!isActive);
+            }
 
-           else if (skillNum == 3)
-           {
-               skill3BuffParticle.SetActive(isActive);
-           }
+            else if (skillNum == 3)
+            {
+                skill3BuffParticle.SetActive(isActive);
+            }
 
-           else if (skillNum == 4)
-           {
-               for (int i = 0; i < 3; i++)
-               {
-                   skill4OverChargeParticles[i].SetActive(isActive);
-               }
-           }
+            else if (skillNum == 4)
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    skill4OverChargeParticles[i].SetActive(isActive);
+                }
+            }
 
-           else
-           {
-               Debug.LogError("No SkillNum");
-               return;
-           }
-            
+            else
+            {
+                Debug.LogError("No SkillNum");
+                return;
+            }
+
         }
 
         [PunRPC]
@@ -106,55 +106,9 @@ namespace Player
         [PunRPC]
         public void DisActivateSkill4Sword()
         {
-           normalSword.SetActive(true);
-           skill4HealingSword.SetActive(false);
-           skill4AttackSword.SetActive(false);
-          
-        }
-
-        public void OnTriggerEnter(Collider other)
-        {
-            Debug.Log("Hit Collider");
-
-            if (other.transform.root.CompareTag(enemyTag))
-            {
-                Debug.Log("Hit Enemy");
-
-                if (player.playerActionDatas[(int)PlayerActionState.Skill2].isExecuting && player.skill2Phase == 1)
-                {
-                    if (other.transform.root.GetComponent<SpawnObject>())
-                    {
-                        Debug.Log("Hit SpawnObject");
-
-                        if (other.transform.root.GetComponent<SpawnObject>().type == SpawnObjectType.Projectile)
-                        {
-                            Debug.Log("Hit Projectile");
-                            contactObjectData = other.transform.root.GetComponent<SpawnObject>().data;
-                            player.dimensionIO.CheckHold();
-                        }
-
-                        other.transform.root.GetComponent<PhotonView>().RPC("DestoryObject", RpcTarget.AllBuffered);
-                    }
-
-                }
-
-                else if (player.playerActionDatas[(int)PlayerActionState.Skill3].isExecuting && player.skill3Phase == 1)
-                {
-                    //Debug.Log("When skill3");
-
-                    if (other.transform.root.GetComponent<Character>())
-                    {
-                        //Debug.Log("Do Skill3");
-                        player.dimensionTransport.Transport(other.transform.root.gameObject);
-                    }
-                }
-
-                else
-                {
-                    if (other.transform.root.GetComponent<Character>())
-                        other.transform.root.GetComponent<Character>().PlayerDamaged(player.playerName, damage,null,new Vector3(0,0,0),0.0f);
-                }
-            }
+            normalSword.SetActive(true);
+            skill4HealingSword.SetActive(false);
+            skill4AttackSword.SetActive(false);
 
         }
     }

@@ -86,7 +86,7 @@ public class ScreenEffectManager : MonoBehaviour
 
         hitEffect.color = _hitColor;
         healEffect.color = _healColor;
-        Debug.Log(_hitColor);
+        //Debug.Log(_hitColor);
         CheckHorror();
         CheckPhlegmHorror();
 

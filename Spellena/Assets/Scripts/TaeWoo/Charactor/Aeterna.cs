@@ -12,6 +12,7 @@ namespace Player
 
         public GameObject aeternaUI;
         public GameObject DimensionSword;
+        public GameObject swordTrigger;
         public GameObject DimensionSwordForMe;
         //public GameObject DimensionSlash;
         public GameObject DimensionDoor;
@@ -23,6 +24,7 @@ namespace Player
         public GameObject overlayCamera;
         //public GameObject overlaySight;
         public Animator overlayAnimator;
+
 
         [HideInInspector]
         public DimensionSword dimensionSword;

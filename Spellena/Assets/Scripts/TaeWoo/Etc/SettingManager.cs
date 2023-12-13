@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 using Player;
+using Photon.Pun;
 
 public class SettingManager : SingletonTemplate<SettingManager>
 { 
@@ -122,6 +123,13 @@ public class SettingManager : SingletonTemplate<SettingManager>
         foreach(Character character in characters)
         {
             character.GetComponent<PlayerInput>().enabled = isActive;
+
+            if(character.name == (string)PhotonNetwork.LocalPlayer.CustomProperties["Name"])
+            {
+                character.gameObject.GetComponent<Rigidbody>().velocity = Vector3.zero;
+                character.gameObject.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+            }
+
         }
     }
 

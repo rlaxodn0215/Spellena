@@ -199,7 +199,7 @@ public class GoogleSheetManager : EditorWindow
     void GiveGameCenterTestData()
     {
         gameCenterTestData.loadingTime = 1;
-        gameCenterTestData.characterSelectTime  = 10;
+        gameCenterTestData.characterSelectTime  = 15;
         gameCenterTestData.readyTime = 1;
         gameCenterTestData.playerRespawnTime = float.Parse(dividData[1, 7]);
         gameCenterTestData.assistTime  = 10;

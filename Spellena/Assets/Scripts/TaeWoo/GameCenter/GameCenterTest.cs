@@ -255,6 +255,12 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
     float soundDecreaseTime = 5;
     float soundDecreaseSpeed = 1.5f;
 
+    [PunRPC]
+    public void SetGlobalDesiredTimer(float time)
+    {
+        globalDesiredTimer = time;
+    }
+
     void BGMVolControl()
     {
         // 일정 시간이 지나면 소리가 점차 감소됨
@@ -492,7 +498,6 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
     {
         if (inGameUI == null) return;
 
-        inGameUI.globalTimerUI = globalTimer;
         inGameUI.roundEndTimerUI = roundEndTimer;
         inGameUI.roundEndTimeUI = roundEndTime;
         inGameUI.occupyingAUI.rate = occupyingA.rate;

@@ -11,19 +11,22 @@ namespace Player
         private Aeterna Player;
         private Animator animator;
         private GameObject Sword;
+        private GameObject swordTrigger;
+
         //private GameObject dimensionSlash;
         public override void AddPlayer(Character player)
         {
             Player = (Aeterna)player;
             animator = player.GetComponent<Animator>();
             Sword = Player.DimensionSword;
+            swordTrigger = Player.swordTrigger;
             //dimensionSlash = Player.DimensionSlash;
         }
 
         public override void Execution()
         {
             Player.GetComponent<PhotonView>().RPC("BasicAttackTrigger", RpcTarget.AllBufferedViaServer);
-            Sword.GetComponent<BoxCollider>().enabled = true;
+            swordTrigger.GetComponent<BoxCollider>().enabled = true;
             StartCoroutine(EndAttack());
             StartCoroutine(ShootSlash());
         }
@@ -61,7 +64,7 @@ namespace Player
         IEnumerator EndAttack()
         {
             yield return new WaitForSeconds(animator.GetCurrentAnimatorClipInfo(1).Length);
-            Sword.GetComponent<BoxCollider>().enabled = false;
+            swordTrigger.GetComponent<BoxCollider>().enabled = false;
         }
     }
 }
