@@ -108,7 +108,7 @@ namespace Player
         public Vector3 moveVec;
         public bool canInteraction = false;
 
-        private bool isGrounded = false;
+        protected bool isGrounded = false;
         private Transform avatarForOther;
         private Transform avatarForMe;
         private RaycastHit slopeHit;
@@ -765,7 +765,7 @@ namespace Player
 
         }
 
-        void CheckPlayerLowHP(float ratio)
+        protected void CheckPlayerLowHP(float ratio)
         {
             if (hp <= dataHp * ratio)
             {

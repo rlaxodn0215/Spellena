@@ -167,24 +167,38 @@ namespace Player
         {
             base.IsLocalPlayer();
 
-            overlayCamera.SetActive(true);
-            minimapCamera.SetActive(true);
-
-            Transform[] transforms = DimensionSword.GetComponentsInChildren<Transform>(true);
-
-            foreach(var tran in transforms)
+            if (photonView.IsMine)
             {
-                if(tran.GetComponent<MeshRenderer>())
+                overlayCamera.SetActive(true);
+                minimapCamera.SetActive(true);
+
+                Transform[] transforms = DimensionSword.GetComponentsInChildren<Transform>(true);
+
+                foreach (var tran in transforms)
                 {
-                    tran.GetComponent<MeshRenderer>().enabled = false;
+                    if (tran.GetComponent<MeshRenderer>())
+                    {
+                        tran.GetComponent<MeshRenderer>().enabled = false;
+                    }
+
+                    else if (tran.GetComponent<SkinnedMeshRenderer>())
+                    {
+                        tran.GetComponent<SkinnedMeshRenderer>().enabled = false;
+                    }
                 }
 
-                else if (tran.GetComponent<SkinnedMeshRenderer>())
-                {
-                    tran.GetComponent<SkinnedMeshRenderer>().enabled = false;
-                }
+                photonView.RPC("MakeOtherSwordTrigger", RpcTarget.Others);
             }
-            
+        }
+
+        [PunRPC]
+        public void MakeOtherSwordTrigger()
+        {
+            camera.SetActive(true);
+            camera.GetComponent<Camera>().enabled = false;
+            camera.GetComponent<MouseControl>().enabled = false;
+            camera.GetComponent<DeadCamera>().enabled = false;
+            camera.GetComponent<AudioListener>().enabled = false;
         }
 
         [PunRPC]

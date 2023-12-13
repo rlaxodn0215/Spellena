@@ -85,6 +85,7 @@ public class DuringRound : CenterState
 
                     Dictionary<string, float> temp = (Dictionary<string, float>)targetPlayer.CustomProperties["DealAssist"];
 
+                    Debug.Log(victimViewID);
                     temp["AssistTime_" + victimViewID] = GameCenterTest.globalTimer + gameCenter.assistTime;
                     GameCenterTest.ChangePlayerCustomProperties(targetPlayer, "DealAssist", temp);
                     break;

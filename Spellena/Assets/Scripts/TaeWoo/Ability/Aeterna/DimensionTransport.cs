@@ -35,7 +35,7 @@ namespace Player
 
         IEnumerator ActiveTirgger()
         {
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.8f);
             swordTrigger.GetComponent<BoxCollider>().enabled = true;
         }
 

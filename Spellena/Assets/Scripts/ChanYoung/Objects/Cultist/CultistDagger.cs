@@ -18,7 +18,8 @@ public class CultistDagger : SpawnObject
     private void Start()
     {
         daggerRigidbody = GetComponent<Rigidbody>();
-        GetComponent<AudioSource>().volume = SettingManager.Instance.effectVal * SettingManager.Instance.soundVal;
+        if(GetComponent<AudioSource>())
+            GetComponent<AudioSource>().volume = SettingManager.Instance.effectVal * SettingManager.Instance.soundVal;
         Init();
     }
     private void Update()
@@ -70,6 +71,8 @@ public class CultistDagger : SpawnObject
     {
         if (PhotonNetwork.IsMasterClient)
         {
+            Debug.Log(hitObject.name);
+
             if (hitObject.gameObject.layer == 11 || hitObject.tag == "Wall")
                 CallRPCTunnel("RequestDestroy");
             if (hitObject.transform.root.gameObject.name != hitObject.name)

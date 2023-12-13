@@ -51,14 +51,15 @@ namespace Player
 
         private void OnDuration()
         {
-            Player.GetComponent<PhotonView>().RPC("BasicAttackTrigger", RpcTarget.AllBufferedViaServer);
+            Player.BasicAttackTrigger();
+            //Player.GetComponent<PhotonView>().RPC("BasicAttackTrigger", RpcTarget.AllBufferedViaServer);
             StartCoroutine(ActiveTirgger());
             StartCoroutine(EndAttack());
         }
 
         IEnumerator ActiveTirgger()
         {
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.2f);
             swordTrigger.GetComponent<BoxCollider>().enabled = true;
         }
 
