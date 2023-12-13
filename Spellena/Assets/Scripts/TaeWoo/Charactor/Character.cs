@@ -676,11 +676,7 @@ namespace Player
                         hp -= damage;
                         Debug.Log("Player Damaged !! : " + damage + " EnemyName: " + enemy);
                     }
-
-                    if(GetComponent<Cultist>() != null)
-                    {
-                        UI.GetComponent<ScreenEffectManager>().PlayDamageEffect(damage);
-                    }
+                    UI.GetComponent<ScreenEffectManager>().PlayDamageEffect(damage);
                 }
 
                 // 마스터 클라이언트이기 때문에 동기화 안되도 게임센터의 값과 같다. 
