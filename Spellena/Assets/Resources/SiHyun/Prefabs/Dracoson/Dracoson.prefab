@@ -3237,58 +3237,58 @@ MonoBehaviour:
     SynchronizeType: 2
     Name: Skill2Ready
   - Type: 4
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: Skill3Ready
   - Type: 4
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: isDragonSightHolding
   - Type: 4
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: isDragonSightAttack
   - Type: 4
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: isSkill1
   - Type: 4
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: isSkill2
   - Type: 4
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: isSkill3
   - Type: 4
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: Skill4Ready
   - Type: 4
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: isSkill4
   - Type: 1
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: DragonSightHoldingSpeed
   - Type: 1
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: DragonSightAttackSpeed
   - Type: 1
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: SkillCastingSpeed
   - Type: 1
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: Skill1Speed
   - Type: 1
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: Skill2CastingSpeed
   - Type: 1
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: Skill2Speed
   - Type: 1
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: Skill3CastingSpeed
   - Type: 1
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: Skill3Speed
   - Type: 1
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: Skill4CastingSpeed
   - Type: 1
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: Skill4Speed
   m_SynchronizeLayers:
   - SynchronizeType: 2
@@ -3361,7 +3361,7 @@ MonoBehaviour:
   staffTopForOther: {fileID: 2917594863632224344}
   dracosonMetamorphose: {fileID: 5938366848256581336}
   projectile: 1
-  weight: 0.5
+  weight: 0.01
   skillState: 0
   skillCoolDownTime:
   - 0
@@ -26408,7 +26408,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 368911042085577571, guid: 1527758bd1c4a2345b7606f5a773ebd7, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1032857102521645529, guid: 1527758bd1c4a2345b7606f5a773ebd7, type: 3}
       propertyPath: m_RootOrder

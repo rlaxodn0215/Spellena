@@ -412,7 +412,7 @@ namespace Player
                 }
             }
         }
-        void OnJump()
+        protected virtual void OnJump()
         {
             if (playerActionDatas[(int)PlayerActionState.Jump].isExecuting) return;
 
@@ -654,6 +654,12 @@ namespace Player
         public void PlayerTeleport(Vector3 pos)
         {
             transform.position = pos;
+        }
+
+        [PunRPC]
+        public void PlayerKnockBack(Vector3 direction, float knockbackForce)
+        {
+            transform.GetComponent<Rigidbody>().AddForce(direction * knockbackForce, ForceMode.Impulse);
         }
 
         [PunRPC]

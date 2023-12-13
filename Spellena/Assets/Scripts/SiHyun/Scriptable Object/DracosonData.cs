@@ -28,6 +28,7 @@ public class DracosonData : ScriptableObject
     public float skill3ChannelingTime;
     public float skill3ShieldGage;
     public float skill4CastingTime;
+    public float skill4DurationTime;
 
     public float dragonSightCoolDownTime;
     public float skill1CoolDownTime;
