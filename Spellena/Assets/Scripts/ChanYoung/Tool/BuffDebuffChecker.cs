@@ -70,17 +70,6 @@ public class BuffDebuffChecker : MonoBehaviourPunCallbacks
         }
     }
 
-    private void Update()
-    {
-        if(agent.enabled == true)
-            agent.baseOffset = Mathf.Lerp(agent.baseOffset, -0.5f, Time.deltaTime * 3f);
-        else
-            agent.baseOffset = Mathf.Lerp(agent.baseOffset, 0f, Time.deltaTime * 3f);
-
-    }
-
-
-
     private void FixedUpdate()
     {
         //버프 디버프 시간 처리
@@ -127,7 +116,6 @@ public class BuffDebuffChecker : MonoBehaviourPunCallbacks
                 }
                 else if (buffsAndDebuffs[i] == "BlessingCast")
                 {
-                    Debug.Log(blessingTargets.Count);
                     for(int j = 0; j < blessingTargets.Count; j++)
                     {
                         if (blessingTargets[j] == gameObject)
@@ -380,7 +368,7 @@ public class BuffDebuffChecker : MonoBehaviourPunCallbacks
         //몸에 붙어 있는 촉수 갱신
         UpdateTentacle();
 
-        if (tentacles[3].isActive == true)
+        if (tentacles[0].isActive == true)
         {
             if(photonView.IsMine)
                 ChaseNearEnemy();
@@ -389,7 +377,37 @@ public class BuffDebuffChecker : MonoBehaviourPunCallbacks
 
     void ChaseNearEnemy()
     {
-        
+        //모든 플레이어를 찾아서 발동되는 것으로 변경
+
+        PhotonView[] photonViews = PhotonNetwork.PhotonViews;
+        List<PhotonView> _tempPhotonList = new List<PhotonView>();
+
+        for(int i = 0; i < photonViews.Length; i++)
+        {
+            if (photonViews[i].GetComponent<Character>() != null)
+                _tempPhotonList.Add(photonViews[i]);
+        }
+        Debug.Log(_tempPhotonList);
+
+        _tempPhotonList.Sort((a, b) =>
+        {
+            float distanceToA = Vector3.Distance(transform.position, a.transform.position);
+            float distanceToB = Vector3.Distance(transform.position, b.transform.position);
+            return distanceToA.CompareTo(distanceToB);
+        });
+
+        for(int i = 0; i < _tempPhotonList.Count; i++)
+        {
+            if(tag != _tempPhotonList[i].gameObject.tag)
+            {
+                agent.enabled = true;
+                target = _tempPhotonList[i].gameObject;
+                chasingTimer = 4f;
+                break;
+            }
+        }
+
+        /*
         Collider[] colliders = Physics.OverlapSphere(transform.position, 10f);
         List<Collider> _tempList = colliders.ToList();
 
@@ -415,6 +433,7 @@ public class BuffDebuffChecker : MonoBehaviourPunCallbacks
         }
 
         Debug.Log(colliders.Length);
+        */
         
     }
 
