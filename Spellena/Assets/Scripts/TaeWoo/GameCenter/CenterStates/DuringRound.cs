@@ -101,8 +101,8 @@ public class DuringRound : CenterState
                      if (gameCenter.inGameUIView == null) break;
                     gameCenter.inGameUIView.RPC("ShowKillUI", targetPlayer, gameCenter.tempVictim);
 
-                    gameCenter.inGameUIView.RPC("ShowKillLog", RpcTarget.All, targetPlayer.CustomProperties["Name"],
-                         gameCenter.tempVictim, ((string)targetPlayer.CustomProperties["Team"] == "A"), targetPlayer.ActorNumber);
+                    //gameCenter.inGameUIView.RPC("ShowKillLog", RpcTarget.All, targetPlayer.CustomProperties["Name"],
+                    //     gameCenter.tempVictim, ((string)targetPlayer.CustomProperties["Team"] == "A"), targetPlayer.ActorNumber);
                     
                     CheckPlayerHealAssist(targetPlayer);
                     break;
@@ -111,6 +111,11 @@ public class DuringRound : CenterState
                     GameCenterTest.ChangePlayerCustomProperties (targetPlayer, "IsAlive", false);
 
                     gameCenter.tempVictim = (string)targetPlayer.CustomProperties["Name"];
+
+                    gameCenter.inGameUIView.RPC("ShowKillLog", RpcTarget.All, (string)targetPlayer.CustomProperties["KillerName"],
+                        targetPlayer.CustomProperties["Name"], ((string)targetPlayer.CustomProperties["Team"] == "A"),
+                        GameCenterTest.FindPlayerWithCustomProperty("Name", (string)targetPlayer.CustomProperties["KillerName"]).ActorNumber);
+
                     ShowTeamMateDead((string)targetPlayer.CustomProperties["Team"], (string)targetPlayer.CustomProperties["Name"]);
 
                     view.RPC("PlayerDeadForAll", RpcTarget.AllBuffered, (string)targetPlayer.CustomProperties["DamagePart"],
@@ -490,13 +495,6 @@ public class DuringRound : CenterState
             gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "redExtraObj", true);
             gameCenter.bgmManagerView.RPC("PlayAudio", RpcTarget.All, "RoundAlmostEnd", 1.0f, true, true,"BGM");
 
-            if(teamAlmostWin == 2)
-            {
-                gameCenter.roundEndTimer = gameCenter.roundEndTime;
-                teamAlmostWin = 1;
-                Debug.Log("Change Almost End With Red");
-            }
-
             if(gameCenter.teamBOccupying <= 0)
                 gameCenter.roundEndTimer -= Time.deltaTime;
         }
@@ -508,13 +506,6 @@ public class DuringRound : CenterState
             gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "blueExtraUI", false);
             gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "blueExtraObj", true);
             gameCenter.bgmManagerView.RPC("PlayAudio", RpcTarget.All, "RoundAlmostEnd", 1.0f, true, true,"BGM");
-
-            if (teamAlmostWin == 1)
-            {
-                gameCenter.roundEndTimer = gameCenter.roundEndTime;
-                teamAlmostWin = 2;
-                Debug.Log("Change Almost End With Blue");
-            }
 
             if (gameCenter.teamAOccupying <= 0)
                 gameCenter.roundEndTimer -= Time.deltaTime;
@@ -576,7 +567,6 @@ public class DuringRound : CenterState
             else if (gameCenter.currentOccupationTeam == gameCenter.teamB)
             {
                 gameCenter.occupyingB.rate = 100;
-                GameCenterTest.roundB++;
 
                 if (GameCenterTest.roundB == 0)
                 {

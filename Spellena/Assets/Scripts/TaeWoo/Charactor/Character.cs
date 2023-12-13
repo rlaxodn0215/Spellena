@@ -674,7 +674,7 @@ namespace Player
                     else
                     {
                         hp -= damage;
-                        Debug.Log("Player Damaged !! : " + damage + " EnemyName: " + enemy);
+                        //Debug.Log("Player Damaged !! : " + damage + " EnemyName: " + enemy);
                     }
 
                     if(GetComponent<Cultist>() != null)
@@ -883,7 +883,7 @@ namespace Player
             if (hp < dataHp)
             {
                 hp += (dataHp * addHp) / 100;
-                Debug.Log((dataHp * addHp) / 100 + " 만큼 체력 회복 / addHp = " + addHp);
+                if(hp > dataHp) hp = dataHp;
             }
         }
 

@@ -65,6 +65,8 @@ public class RoundEnd : CenterState
         gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "blueExtraUI", true);
         gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "blueExtraObj", false);
 
+        gameCenter.inGameUIView.RPC("DisableAllKillLog", RpcTarget.All);
+
         // 플레이어 초기화
         foreach (var player in PhotonNetwork.CurrentRoom.Players.Values)
         {

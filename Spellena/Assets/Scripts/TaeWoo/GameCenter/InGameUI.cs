@@ -204,7 +204,7 @@ public class InGameUI : MonoBehaviourPunCallbacks,IPunObservable
         UIObjects["defeat"] = GameCenterTest.FindObject(gameObject, "Defeat");
     }
 
-    void Update()
+    void FixedUpdate()
     {
         redPayloadImage.fillAmount = occupyingAUI.rate * 0.01f;
         bluePayloadImage.fillAmount = occupyingBUI.rate * 0.01f;
@@ -474,6 +474,18 @@ public class InGameUI : MonoBehaviourPunCallbacks,IPunObservable
             UIObjects["killLog_" + endKillLogIndex].SetActive(false);
             endKillLogIndex--;
         }
+    }
+
+    [PunRPC]
+    public void DisableAllKillLog()
+    {
+        for (int i = 0; i < endKillLogIndex; i++)
+        {
+            playerKillLogDatas[i].killLogTimer = 0.0f;
+            UIObjects["killLog_" + endKillLogIndex].SetActive(false);
+        }
+
+        endKillLogIndex = 0;
     }
 
     IEnumerator DisableUI(string name, float time)
