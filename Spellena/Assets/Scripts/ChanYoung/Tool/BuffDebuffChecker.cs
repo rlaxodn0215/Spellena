@@ -146,7 +146,7 @@ public class BuffDebuffChecker : MonoBehaviourPunCallbacks
                             _tempRay.direction = _normalizedDirection;
                             _tempRay.origin = _cameraPos;
                             //맵이 있는지 확인 후 없으면 카메라를 밑으로 내려버린다
-                            LayerMask _layerMask = LayerMask.GetMask("Map");
+                            LayerMask _layerMask = LayerMask.GetMask("Map") | LayerMask.GetMask("Wall");
                             RaycastHit _tempHit;
                             if ((Physics.Raycast(_tempRay, out _tempHit, _distance, _layerMask)))
                                 Debug.Log("벽에 막힘");

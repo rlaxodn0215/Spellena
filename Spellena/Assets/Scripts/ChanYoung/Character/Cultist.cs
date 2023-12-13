@@ -752,13 +752,13 @@ namespace Player
                 }
                 else if (skillState == SkillStateCultist.Skill4Ready)
                 {
-                    if (ultimateCount >= 3)
+                    if (ultimateCount >= -1000)
                     {
                         skillState = SkillStateCultist.Skill4Casting;
                         CallRPCEvent("SetAnimation", "Response", "isSkill4", true);
                         CallRPCEvent("UpdateData", "Response", skillState, "skillCastingTime", 3, skill4CastingTime, true);
                         CallRPCEvent("SetDagger", "Response", false);
-                        if (buffDebuffChecker.ritualStacks < 8)
+                        if (buffDebuffChecker.ritualStacks < -1)
                         {
                             CallRPCEvent("PlayRitualEffect", "Response");
                             buffDebuffChecker.SpreadBuffDebuff("UniteAndOmen", transform.position + new Vector3(0, 1, 0));
