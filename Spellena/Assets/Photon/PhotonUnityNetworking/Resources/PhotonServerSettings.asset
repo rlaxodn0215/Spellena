@@ -192,8 +192,7 @@ MonoBehaviour:
   - DisActiveCrosshair
   - ShowAssistUI
   - CallRPCTunnelDracosonDragonSpin
-  - ActiveObserver
-  - CallRPCTunnelCultistChaser
+  - PlayerKnockBack
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

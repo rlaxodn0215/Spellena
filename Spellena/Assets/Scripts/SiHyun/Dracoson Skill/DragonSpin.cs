@@ -16,11 +16,13 @@ public class DragonSpin : SpawnObject
 
     public float distance = 2.5f;
     public float rotationSpeed = 360.0f;
-    public float knockbackForce = 10f;
+    public float knockbackForce = 2f;
 
     private float totalRotation = 0.0f;
+    private float checkTimer = 0f;
+    private float resetTimer = 1.0f;
 
-    
+    List<string> hitObjects = new List<string>();
 
     private void Start()
     {
@@ -29,16 +31,21 @@ public class DragonSpin : SpawnObject
         SetDragonPositionAndRotation(greenDragon, 180);
         centerObject.GetComponent<SphereCollider>().radius = distance;
         Init();
+        checkTimer = resetTimer;
     }
 
     void Update()
     {
-        /*SetDragonPositionAndRotation(redDragon, 60);
-        SetDragonPositionAndRotation(blueDragon, -60);
-        SetDragonPositionAndRotation(greenDragon, 180);*/
+        checkTimer -= Time.deltaTime;
+        if (checkTimer <= 0f)
+        {
+            hitObjects.Clear();
+            checkTimer = resetTimer;
+        }
+
         totalRotation += rotationSpeed * Time.deltaTime;
 
-        if (totalRotation < 1080.0f)
+        if (totalRotation < 880.0f)
         {
             float rotationAmount = rotationSpeed * Time.deltaTime;
             transform.Rotate(Vector3.down, rotationAmount);
@@ -95,21 +102,22 @@ public class DragonSpin : SpawnObject
             if (hitObject.transform.root.gameObject.name != hitObject.name)
             {
                 GameObject _rootObject = hitObject.transform.root.gameObject;
-                if(_rootObject.GetComponent<Character>() != null)
+                if (!hitObjects.Contains(_rootObject.name))
                 {
-                    float _xPos = hitObject.transform.position.x - transform.position.x;
-                    float _zPos = hitObject.transform.position.z - transform.position.z;
-                    float _distance = _xPos * _xPos + _zPos * _zPos;
-                    Vector3 _outsideVector = new Vector3(_xPos, 0, _zPos).normalized;
-                    //if(_rootObject.tag != tag)
+                    hitObjects.Add(_rootObject.name);
+                    if (_rootObject.GetComponent<Character>() != null)
                     {
-                        Vector3 _knockbackDirection =
-                            (_rootObject.transform.position - transform.position).normalized;
-                        //_rootObject.GetComponent<Rigidbody>().AddForce(_knockbackDirection * knockbackForce, ForceMode.Impulse);
-                        _rootObject.GetComponent<Rigidbody>().AddForce(_outsideVector * knockbackForce, ForceMode.Impulse);
+                        //if(_rootObject.tag != tag)
+                        {
+                            Vector3 _knockbackDirection =
+                                     (_rootObject.transform.position - transform.position).normalized;
+                            Debug.Log(_knockbackDirection);
+                            _rootObject.GetComponent<PhotonView>().RPC("PlayerKnockBack", RpcTarget.AllBuffered,
+                                _knockbackDirection, knockbackForce);
 
-                        _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBuffered,
-                        playerName, (int)(dracosonData.skill1Damage), hitObject.name, transform.forward, 20f);
+                            _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBuffered,
+                                playerName, (int)(dracosonData.skill1Damage), hitObject.name, transform.forward, 20f);
+                        }
                     }
                 }
             }

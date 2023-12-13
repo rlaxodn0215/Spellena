@@ -62,7 +62,7 @@ MonoBehaviour:
   greenDragon: {fileID: 3775357358714510586}
   distance: 2.5
   rotationSpeed: 200
-  knockbackForce: 500
+  knockbackForce: 10
 --- !u!114 &3775357358386065698
 MonoBehaviour:
   m_ObjectHideFlags: 0
