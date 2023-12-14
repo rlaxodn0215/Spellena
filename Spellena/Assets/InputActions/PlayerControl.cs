@@ -134,6 +134,15 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Fly"",
+                    ""type"": ""Value"",
+                    ""id"": ""749cf095-5f8b-4187-84e8-fe44d0a84e3d"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -312,6 +321,17 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
                     ""action"": ""MouseButton2"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""aaab07d6-b65b-46de-bef8-2070533076fd"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""PC"",
+                    ""action"": ""Fly"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -349,6 +369,7 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
         m_PlayerActions_Skill2 = m_PlayerActions.FindAction("Skill2", throwIfNotFound: true);
         m_PlayerActions_Skill3 = m_PlayerActions.FindAction("Skill3", throwIfNotFound: true);
         m_PlayerActions_Skill4 = m_PlayerActions.FindAction("Skill4", throwIfNotFound: true);
+        m_PlayerActions_Fly = m_PlayerActions.FindAction("Fly", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -422,6 +443,7 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerActions_Skill2;
     private readonly InputAction m_PlayerActions_Skill3;
     private readonly InputAction m_PlayerActions_Skill4;
+    private readonly InputAction m_PlayerActions_Fly;
     public struct PlayerActionsActions
     {
         private @PlayerControl m_Wrapper;
@@ -438,6 +460,7 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
         public InputAction @Skill2 => m_Wrapper.m_PlayerActions_Skill2;
         public InputAction @Skill3 => m_Wrapper.m_PlayerActions_Skill3;
         public InputAction @Skill4 => m_Wrapper.m_PlayerActions_Skill4;
+        public InputAction @Fly => m_Wrapper.m_PlayerActions_Fly;
         public InputActionMap Get() { return m_Wrapper.m_PlayerActions; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -483,6 +506,9 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
             @Skill4.started += instance.OnSkill4;
             @Skill4.performed += instance.OnSkill4;
             @Skill4.canceled += instance.OnSkill4;
+            @Fly.started += instance.OnFly;
+            @Fly.performed += instance.OnFly;
+            @Fly.canceled += instance.OnFly;
         }
 
         private void UnregisterCallbacks(IPlayerActionsActions instance)
@@ -523,6 +549,9 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
             @Skill4.started -= instance.OnSkill4;
             @Skill4.performed -= instance.OnSkill4;
             @Skill4.canceled -= instance.OnSkill4;
+            @Fly.started -= instance.OnFly;
+            @Fly.performed -= instance.OnFly;
+            @Fly.canceled -= instance.OnFly;
         }
 
         public void RemoveCallbacks(IPlayerActionsActions instance)
@@ -563,5 +592,6 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
         void OnSkill2(InputAction.CallbackContext context);
         void OnSkill3(InputAction.CallbackContext context);
         void OnSkill4(InputAction.CallbackContext context);
+        void OnFly(InputAction.CallbackContext context);
     }
 }

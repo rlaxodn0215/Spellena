@@ -20,7 +20,8 @@ namespace Player
         Skill1Ready, Skill1Casting, Skill1Channeling,
         Skill2Ready, Skill2Casting, Skill2Channeling,
         Skill3Ready, Skill3Casting, Skill3Channeling,
-        Skill4Ready, Skill4Casting, Metamorphose,
+        Skill4Ready, Skill4Casting, 
+        Breathe,
         DragonicBreath
     }
 
@@ -72,7 +73,7 @@ namespace Player
 
         public enum LocalStateDracoson
         {
-            None, Skill2
+            None, Metamorphose
         }
 
         public SkillStateDracoson skillState = SkillStateDracoson.None;
@@ -91,6 +92,8 @@ namespace Player
 
         //0 : 왼쪽 마우스, 1 : 오른쪽 마우스
         bool[] isClicked = new bool[2];
+
+        bool isFly = false;
 
         Vector3 aimPos;
         Vector3 aimDirection;
@@ -204,6 +207,14 @@ namespace Player
                 CheckChanneling();
             }
             CheckCoolDownTimeForAll();
+                
+            if(isFly)
+            {
+                float _currentHeight = transform.position.y;
+                float _maxHeight = 15f;
+                if(_currentHeight < _maxHeight)
+                    rigidbody.AddForce(Vector3.up * 17f, ForceMode.Acceleration);
+            }
         }
 
         void CheckChanneling()
@@ -268,30 +279,30 @@ namespace Player
         void CheckOnMasterClient()
         {
             Debug.Log(skillChannelingTime[0]);
-            if(skillState == SkillStateDracoson.DragonSightHolding)
+            if (skillState == SkillStateDracoson.DragonSightHolding)
             {
-                if(normalCastingTime[0] <= 0f && normalCastingCheck[0])
+                if (normalCastingTime[0] <= 0f && normalCastingCheck[0])
                 {
                     normalCastingCheck[0] = false;
                 }
             }
             else if (skillState == SkillStateDracoson.DragonSightAttack)
             {
-                if(normalCastingTime[1] <= 0f && normalCastingCheck[1])
+                if (normalCastingTime[1] <= 0f && normalCastingCheck[1])
                 {
                     normalCastingCheck[1] = false;
                     skillState = SkillStateDracoson.None;
-                    if(chargeCount == 1)
+                    if (chargeCount == 1)
                         CallRPCEvent("InstantiateObject", "Response", "DragonicFlame", 1);
-                    else if(chargeCount == 2)
+                    else if (chargeCount == 2)
                         CallRPCEvent("InstantiateObject", "Response", "DragonicFlame", 2);
-                    else if(chargeCount == 3)
+                    else if (chargeCount == 3)
                         CallRPCEvent("InstantiateObject", "Response", "DragonicFlame", 3);
                     CallRPCEvent("ResetAnimation", "Response");
                     CallRPCEvent("UpdateData", "Response", skillState, "OnlySkillState", 0, 0f, false);
                 }
             }
-            else if(skillState == SkillStateDracoson.Skill1Casting)
+            else if (skillState == SkillStateDracoson.Skill1Casting)
             {
                 if (skillCastingTime[0] <= 0f && skillCastingCheck[0])
                 {
@@ -301,9 +312,9 @@ namespace Player
                     CallRPCEvent("UpdateData", "Response", skillState, "skillChannelingTime", 0, skill1ChannelingTime, true);
                 }
             }
-            else if(skillState == SkillStateDracoson.Skill1Channeling)
+            else if (skillState == SkillStateDracoson.Skill1Channeling)
             {
-                if(skillChannelingTime[0] <= 0f && skillChannelingCheck[0])
+                if (skillChannelingTime[0] <= 0f && skillChannelingCheck[0])
                 {
                     Debug.Log("채널링 끝남");
                     skillState = SkillStateDracoson.None;
@@ -312,11 +323,12 @@ namespace Player
                     CallRPCEvent("SetCoolDownTime", "Response", 0);
                 }
             }
-            else if(skillState == SkillStateDracoson.Skill4Casting)
+            else if (skillState == SkillStateDracoson.Skill4Casting)
             {
-                if(skillCastingTime[3] <= 0f && skillCastingCheck[3])
+                if (skillCastingTime[3] <= 0f && skillCastingCheck[3])
                 {
-                    skillState = SkillStateDracoson.Metamorphose;
+                    skillState = SkillStateDracoson.None;
+                    localState = LocalStateDracoson.Metamorphose;
                     CallRPCEvent("UpdateData", "Response", skillState, "skillChannelingTime", 3, skill4DurationTime, true);
                     dracosonMetamorphose.SetActive(true);
                     CallRPCEvent("ResetAnimation", "Response");
@@ -329,27 +341,42 @@ namespace Player
                     animator = dracosonMetamorphose.GetComponent<Animator>();
                 }
             }
-            else if(skillState == SkillStateDracoson.Metamorphose)
+            else if (localState == LocalStateDracoson.Metamorphose)
             {
                 if (skillChannelingTime[3] <= 0f && skillChannelingCheck[3])
                 {
-                    skillState = SkillStateDracoson.None;
+                    localState = LocalStateDracoson.None;
                     dracosonMetamorphose.SetActive(false);
                     CallRPCEvent("SetAvatar", "Response", "Metamorphose", false);
                     CallRPCEvent("SetAvatar", "Response", "AvatarForMe", true);
                     CallRPCEvent("SetAvatar", "Response", "AvatarForOhter", true);
                     animator = GetComponent<Animator>();
+                    isFly = false;
                 }
+            }
+            else if (skillState == SkillStateDracoson.Breathe)
+            {
+
             }
         }
 
         protected override void OnJump()
         {
-            base.OnJump();
-            if(skillState == SkillStateDracoson.Metamorphose)
+            if (localState != LocalStateDracoson.Metamorphose)
             {
-                rigidbody.AddForce(Vector3.up * jumpHeight, ForceMode.Acceleration);
+                base.OnJump();
+            }
+        }
 
+        void OnFly()
+        {
+            if (localState == LocalStateDracoson.Metamorphose)
+            {
+                if (!isFly)
+                    Debug.Log("점프키 누름");
+                else
+                    Debug.Log("점프키 뗌");
+                isFly = !isFly;
             }
         }
 
@@ -563,6 +590,10 @@ namespace Player
                     camera.GetComponent<MouseControl>().enabled = false;
                     GetComponent<PlayerInput>().enabled = false;
                 }
+                else if(localState == LocalStateDracoson.Metamorphose)
+                {
+                    Debug.Log("브레스 피해욧!!");
+                }
             }
         }
 
@@ -643,11 +674,11 @@ namespace Player
         {
             if(photonView.IsMine)
             {
-                if(localState == LocalStateDracoson.Skill2)
+                /*if(localState == LocalStateDracoson.Breathe)
                 {
                     localState = LocalStateDracoson.None;
                     dracosonMetamorphose.SetActive(false);
-                }
+                }*/
             }
         }
         void UseSkill(object[] data)
