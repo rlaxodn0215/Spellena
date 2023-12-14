@@ -109,6 +109,12 @@ public class RoundEnd : CenterState
                 }
             }
 
+            PhotonView _tempView = PhotonNetwork.GetPhotonView((int)player.CustomProperties["CharacterViewID"]);
+            if(_tempView.GetComponent<BuffDebuffChecker>() != null)
+            {
+                _tempView.GetComponent<BuffDebuffChecker>().ritualStacks = 0;
+            }
+
         }
 
     }

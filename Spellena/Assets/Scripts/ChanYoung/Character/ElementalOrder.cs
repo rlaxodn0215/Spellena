@@ -12,6 +12,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
+using static UnityEditor.Progress;
 
 namespace Player
 {
@@ -388,6 +389,7 @@ namespace Player
                 burstFlareCoolDownTime = elementalOrderData.burstFlareCoolDownTime;
                 burstFlare.SetReady(false);
             }
+            isPointStrike = false;  
             skillState = SkillState.None;
             commands.Clear();
             UpdateData();
@@ -457,6 +459,12 @@ namespace Player
 
         void ResetSkillResponse()
         {
+            ragnaEdge.EndSkill();
+            burstFlare.EndSkill();
+            gaiaTied.EndSkill();
+            meteorStrike.EndSkill();
+            terraBreak.EndSkill();
+
             object[] _tempData = new object[2];
             _tempData[0] = "ResetSkillResponse";
             ResponseRPCCall((_tempData));
@@ -588,6 +596,7 @@ namespace Player
                     ragnaEdge.EndSkill();
 
                     skillState = SkillState.None;
+                    PlayAttackSound();
                 }
             }
             else if (skillState == SkillState.BurstFlare)
@@ -647,6 +656,7 @@ namespace Player
                     photonView.RPC("SetCoolTime", RpcTarget.AllBuffered, "gaiaTiedCoolDownTime", elementalOrderData.gaiaTiedCoolDownTime);
                     gaiaTied.EndSkill();
                     skillState = SkillState.None;
+                    PlayAttackSound();
                 }
             }
             else if(skillState == SkillState.MeteorStrike)
@@ -676,6 +686,7 @@ namespace Player
                         photonView.RPC("SetCoolTime", RpcTarget.AllBuffered, "meteorStrikeCoolDownTime", elementalOrderData.meteorStrikeCoolDownTime);
                         meteorStrike.EndSkill();
                         skillState = SkillState.None;
+                        PlayAttackSound();
                     }
                 }
             }
@@ -703,6 +714,7 @@ namespace Player
                     photonView.RPC("SetCoolTime", RpcTarget.AllBuffered, "terraBreakCoolDownTime", terraBreak.GetSkillCoolDownTime());
                     terraBreak.EndSkill();
                     skillState = SkillState.None;
+                    PlayAttackSound();
                 }
             }
             else if (skillState == SkillState.EterialStorm)
@@ -723,6 +735,7 @@ namespace Player
                     isPointStrike = false;
                     photonView.RPC("SetCoolTime", RpcTarget.AllBuffered, "eterialStormCoolDownTime", elementalOrderData.eterialStormCoolDownTime);
                     skillState = SkillState.None;
+                    PlayAttackSound();
                 }
             }
         }
@@ -1197,6 +1210,18 @@ namespace Player
         {
             screenRay = camera.GetComponent<Camera>().ScreenPointToRay(Aim.transform.position);
             handPoint = screenRay.origin + screenRay.direction;
+        }
+
+        void PlayAttackSound()
+        {
+            int _play = UnityEngine.Random.Range(1, 3);
+            Debug.Log(_play);
+            if (_play == 1)
+            {
+                int _temp = UnityEngine.Random.Range(1, 5);
+                soundManager.GetComponent<PhotonView>().RPC("PlayAudio", RpcTarget.All, "AttackSound" + _temp, 1.0f,
+                               false, false, "VoiceSound");
+            }
         }
     }
 }

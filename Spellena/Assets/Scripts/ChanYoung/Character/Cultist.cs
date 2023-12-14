@@ -699,11 +699,11 @@ namespace Player
                     CallRPCEvent("SetInvocationEffect", "Response", true);
                     CallRPCEvent("SetAnimation", "Response", "isInvocation", true);
                     CallRPCEvent("UpdateData", "Response", skillState, "normalCastingTime", 0, invocationCastingTime, true);
-                    int _temp = UnityEngine.Random.Range(1, 4);
+                    int _temp = UnityEngine.Random.Range(1, 5);
                     soundManager.GetComponent<PhotonView>().RPC("StopLocalAudio", RpcTarget.All,
                             "SkillSound");
                     soundManager.GetComponent<PhotonView>().RPC("PlayAudio", RpcTarget.All, "InvocationSound" + _temp, 1.0f,
-                           false, false, "EffectSound");
+                           false, false, "VoiceSound");
 
                 }
                 else if (skillState == SkillStateCultist.Invocation)
@@ -727,9 +727,11 @@ namespace Player
                     CallRPCEvent("SetAnimation", "Response", "isSkill1", true);
                     CallRPCEvent("UpdateData", "Response", skillState, "skillCastingTime", 0, skill1CastingTime, true);
                     CallRPCEvent("SetDagger", "Response", false);
-                    int _temp = UnityEngine.Random.Range(1, 4);
+                    int _temp = UnityEngine.Random.Range(1, 5);
+                    soundManager.GetComponent<PhotonView>().RPC("StopLocalAudio", RpcTarget.All,
+                     "SkillSound");
                     soundManager.GetComponent<PhotonView>().RPC("PlayAudio", RpcTarget.All, "InvocationSound" + _temp, 1.0f,
-                           false, false, "EffectSound");
+                           false, false, "VoiceSound");
                 }
                 else if (skillState == SkillStateCultist.Skill2Ready)
                 {

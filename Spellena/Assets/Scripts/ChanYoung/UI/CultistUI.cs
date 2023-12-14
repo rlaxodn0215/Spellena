@@ -14,6 +14,7 @@ namespace Player
         public Text skill1CoolDownText;
         public Text skill2CoolDownText;
         public Text skill3CoolDownText;
+        public Text skill4RitualStackText;
 
         public GameObject skill1Lock;
         public GameObject skill2Lock;
@@ -30,13 +31,14 @@ namespace Player
 
         public Image chargeBar;
 
-        void Update()
+        void FixedUpdate()
         {
             hpImage.fillAmount = (float)cultist.hp / cultist.dataHp;
             hpText.text = cultist.hp + " / " + cultist.dataHp;
             skill1CoolDownText.text = string.Format("{0:F1}", cultist.skillCoolDownTime[0]);
             skill2CoolDownText.text = string.Format("{0:F1}", cultist.skillCoolDownTime[1]);
             skill3CoolDownText.text = string.Format("{0:F1}", cultist.skillCoolDownTime[2]);
+            skill4RitualStackText.text = (cultist.buffDebuffChecker.ritualStacks).ToString();
 
             if (cultist.skillCoolDownTime[0] <= 0f)
                 skill1Lock.SetActive(false);
