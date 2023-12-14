@@ -23,12 +23,20 @@ public class DeadCamera : MonoBehaviour
     private Vector2 smoothMouse;
 
     private Vector2 mouseDelta;
-    private bool showSettings = false;
+
+    private int layerMask;
+    //private bool showSettings = false;
 
     List<Character> players = new List<Character>();
     private void Start()
     {
         deathCamUI = GameObject.Find("DeathUI").GetComponent<DeathCamUI>();
+
+        layerMask = 1 << LayerMask.NameToLayer("Other");
+        int temp = 1 << LayerMask.NameToLayer("OccupationArea");
+        layerMask |= temp;
+
+        layerMask = ~layerMask;
     }
 
     // 활성화 될 때 현재 같은 팀에있는 플레이어의 리스트를 받는다 -> 중간 탈주 고려
@@ -143,17 +151,9 @@ public class DeadCamera : MonoBehaviour
         Ray ray = new Ray(targetPlayer.transform.position + offset, rayDirection);
         RaycastHit hit;
 
-        if(Physics.Raycast(ray,out hit,distance))
+        if(Physics.Raycast(ray,out hit,distance,layerMask))
         {
-            if (hit.collider.tag == "Ground")
-            {
-                transform.position = hit.point;
-            }
-
-            else
-            {
-                transform.position = ray.GetPoint(distance);
-            }
+            transform.position = hit.point;
         }
 
         else

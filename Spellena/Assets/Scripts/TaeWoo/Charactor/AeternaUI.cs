@@ -93,40 +93,47 @@ namespace Player
             {
                  if (aeterna.skillButton == i)
                  {
-                        UIObjects["skill_" + i + "_Active"].SetActive(true);
-                        if(i == 4) UIObjects["skill_4_Lock"].SetActive(true);
-                        skillNum = i;
+                     UIObjects["skill_" + i + "_Active"].SetActive(true);
+                     skillNum = i;
                  }
 
                  else
                  {
-                        UIObjects["skill_" + i + "_Active"].SetActive(false);
-                        skillNum = 0;
+                     UIObjects["skill_" + i + "_Active"].SetActive(false);
+                     skillNum = 0;
                  }
+            }
+
+            if(ultimateCount >= aeterna.doUltimateNum)
+            {
+                UIObjects["skill_4_Lock"].SetActive(false);
+            }
+
+            else
+            {
+                UIObjects["skill_4_Lock"].SetActive(true);
             }
 
             if (aeterna.skillButton == 4)
             {
-                UIObjects["skill_4_Lock"].SetActive(false);
-                Debug.Log("aeterna.skillButton == 4");
+               if (!aeterna.dimensionCut.isHealingSword)
+               {
+                   UIObjects["skill_4_White"].SetActive(true);
+                   UIObjects["skill_4_Dark"].SetActive(false);
+               }
 
-                if (!aeterna.dimensionCut.isHealingSword)
-                {
-                    UIObjects["skill_4_White"].SetActive(true);
-                    UIObjects["skill_4_Dark"].SetActive(false);
-                }
-
-                else
-                {
-                    UIObjects["skill_4_White"].SetActive(false);
-                    UIObjects["skill_4_Dark"].SetActive(true);
-                }
+               else
+               {
+                   UIObjects["skill_4_White"].SetActive(false);
+                   UIObjects["skill_4_Dark"].SetActive(true);
+               }
+               
             }
         }
 
         void ShowCoolTime()
         {
-            for (int i = 0; i <= 3; i++)
+            for (int i = 0; i <= 2; i++)
             {
                 if (aeterna.skillTimer[i + 1] >= 0.0f)
                 {
@@ -137,23 +144,20 @@ namespace Player
                 else
                 {
                     skillCooltimes[i].text = "";
-
-                    if(i == 3)
-                    {
-                        if(ultimateCount>=aeterna.doUltimateNum)
-                        {
-                            UIObjects["skill_" + (i + 1) + "_Lock"].SetActive(true);
-                        }
-                    }
-
-                    else
-                    {
-                        UIObjects["skill_" + (i + 1) + "_Lock"].SetActive(false);                   
-                    }
+                    UIObjects["skill_" + (i + 1) + "_Lock"].SetActive(false);
                 }
             }
-        }
 
+            if (aeterna.skillTimer[4] >= 0.0f)
+            {
+                skillCooltimes[3].text = string.Format("{0:F1}", aeterna.skillTimer[4]);
+            }
+
+            else
+            {
+                skillCooltimes[3].text = "";
+            }
+        }
 
         void ShowChargeBar()
         {

@@ -32,7 +32,7 @@ namespace Player
 
             else
             {
-                layerMask =1 << LayerMask.NameToLayer("Me");
+                layerMask = 1 << LayerMask.NameToLayer("Me");
             }
 
             int temp = 1 << LayerMask.NameToLayer("OccupationArea");

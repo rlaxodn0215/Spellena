@@ -535,7 +535,8 @@ namespace Player
 
         private void Skill4Execute()
         {
-            if (playerActionDatas[(int)PlayerActionState.Skill4].isExecuting == false)
+            if (playerActionDatas[(int)PlayerActionState.Skill4].isExecuting == false 
+                && ultimateCount >= doUltimateNum)
             {
                 ultimateCount -= doUltimateNum;
                 GameCenterTest.ChangePlayerCustomProperties(PhotonNetwork.LocalPlayer, "UltimateCount", ultimateCount);
@@ -580,6 +581,12 @@ namespace Player
                 for (int i = 7; i < 10; i++)
                 {
                     dimensionSwordForMe[i].SetActive(false);
+                }
+
+                if(skillTimer[4] <= 0.0f)
+                {
+                    skillButton = 0;
+                    Skills["Skill4"].IsDisActive();
                 }
             }
             

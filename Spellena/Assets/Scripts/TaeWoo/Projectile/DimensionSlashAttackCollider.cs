@@ -7,7 +7,13 @@ public class DimensionSlashAttackCollider : MonoBehaviourPunCallbacks
     public DimensionSlash dimensionSlash;
     public bool isTransparent;
 
+    private string hitPlayerName;
     private int index = 1;
+
+    private void OnEnable()
+    {
+        hitPlayerName = "";
+    }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -23,10 +29,14 @@ public class DimensionSlashAttackCollider : MonoBehaviourPunCallbacks
                 {
                     if (other.transform.root.GetComponent<Character>() && other.gameObject.layer == LayerMask.NameToLayer("Other"))
                     {
-                        other.transform.root.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBufferedViaServer, dimensionSlash.playerName,
+                        if (other.transform.root.gameObject.name != hitPlayerName)
+                        {
+                            hitPlayerName = other.transform.root.gameObject.name;
+                            other.transform.root.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBufferedViaServer, dimensionSlash.playerName,
                             -dimensionSlash.healing, null, Vector3.zero, 0.0f);
-                        dimensionSlash.DestorySpawnObject(other.ClosestPointOnBounds(transform.position), index,isTransparent);
-                        dimensionSlash.DestorySpawnObject(other.ClosestPointOnBounds(transform.position), index+1, isTransparent);
+                            dimensionSlash.DestorySpawnObject(other.ClosestPointOnBounds(transform.position), index, isTransparent);
+                            dimensionSlash.DestorySpawnObject(other.ClosestPointOnBounds(transform.position), index + 1, isTransparent);
+                        }
                     }
                 }
             }
@@ -40,9 +50,13 @@ public class DimensionSlashAttackCollider : MonoBehaviourPunCallbacks
                     {
                         if (other.name == "SwordTrigger") return;
 
-                        other.transform.root.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBufferedViaServer, dimensionSlash.playerName,
+                        if (other.transform.root.gameObject.name != hitPlayerName)
+                        {
+                            hitPlayerName = other.transform.root.gameObject.name;
+                            other.transform.root.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBufferedViaServer, dimensionSlash.playerName,
                             dimensionSlash.damage, other.name, transform.TransformDirection(Vector3.forward), 20.0f);
-                        dimensionSlash.DestorySpawnObject(other.ClosestPointOnBounds(transform.position), index-1, isTransparent);
+                            dimensionSlash.DestorySpawnObject(other.ClosestPointOnBounds(transform.position), index - 1, isTransparent);
+                        }
                     }
                 }
             }
