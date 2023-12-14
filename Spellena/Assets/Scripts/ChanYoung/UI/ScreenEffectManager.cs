@@ -26,6 +26,9 @@ public class ScreenEffectManager : MonoBehaviour
     Image lungeEffect;
     Image blessingCastingEffect;
 
+    Image cameraDownEffect;
+    int cameraDownFrame = 0;
+
     private void Start()
     {
         hitEffect = screenEffect.transform.Find("HitEffect").GetComponent<Image>();
@@ -37,6 +40,7 @@ public class ScreenEffectManager : MonoBehaviour
         {
             lungeEffect = screenEffect.transform.Find("LungeEffect").GetComponent<Image>();
             blessingCastingEffect = screenEffect.transform.Find("BlessingCastingEffect").GetComponent<Image>();
+            cameraDownEffect = screenEffect.transform.Find("CameraDownEffect").GetComponent<Image>();
         }
     }
 
@@ -198,6 +202,11 @@ public class ScreenEffectManager : MonoBehaviour
         else if (damage < 0)
             _tempEffect.type = "Heal";
         screenEffects.Add(_tempEffect);
+    }
+
+    public void PlayCameraDownEffect()
+    {
+
     }
 
 }

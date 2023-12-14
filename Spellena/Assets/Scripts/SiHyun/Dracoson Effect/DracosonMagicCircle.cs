@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class DracosonMagicCircle : SpawnObject
 {
+
     private float deleteTime = 3.0f;
     // Start is called before the first frame update
     void Start()

@@ -106,7 +106,6 @@ public class BuffDebuffChecker : MonoBehaviourPunCallbacks
                         currentHorrorDamageTime -= Time.deltaTime;
                         if (currentHorrorDamageTime < 0f)
                         {
-                            Debug.Log("¿¡ÀÕ");
                             currentHorrorDamageTime = horrorDamageTime;
                             GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.All, horrorPlayer, 10, "",
                                Vector3.zero, 0f);
@@ -188,10 +187,11 @@ public class BuffDebuffChecker : MonoBehaviourPunCallbacks
         object[] _tempData;
         if (tunnelCommand == "UpdateData")
         {
-            _tempData = new object[3];
+            _tempData = new object[4];
             _tempData[0] = tunnelCommand;
             _tempData[1] = buffsAndDebuffs.ToArray();
             _tempData[2] = leftTime.ToArray();
+            _tempData[3] = ritualStacks;
         }
         else if (tunnelCommand == "AddTentacle" || tunnelCommand == "SetHorrorViewID")
         {
@@ -236,6 +236,7 @@ public class BuffDebuffChecker : MonoBehaviourPunCallbacks
             Vector3 _tempEuler = transform.localEulerAngles;
             _tempEulerCamera.x += 1f;
             _mouseControl.ApplyPos(_tempEuler.y ,_tempEulerCamera.x);
+            GetComponent<Character>().UI.GetComponent<ScreenEffectManager>().PlayCameraDownEffect();
         }
     }
 
@@ -279,8 +280,7 @@ public class BuffDebuffChecker : MonoBehaviourPunCallbacks
     {
         buffsAndDebuffs = ((string[])data[1]).ToList();
         leftTime = ((float[])data[2]).ToList();
-        //Debug.Log(transform.root.gameObject.name + buffsAndDebuffs.Count);
-        //Debug.Log(transform.root.gameObject.name + leftTime.Count);
+        ritualStacks = (int)data[3];
     }
     public void SetNewBuffDebuff(string buffDebuff, params object[] data)
     {

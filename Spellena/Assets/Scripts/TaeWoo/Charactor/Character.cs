@@ -179,7 +179,6 @@ namespace Player
 
 
 
-
         protected virtual void Update()
         {
             if (photonView.IsMine)
