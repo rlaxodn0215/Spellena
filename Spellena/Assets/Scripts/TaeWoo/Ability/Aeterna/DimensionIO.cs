@@ -81,7 +81,7 @@ namespace Player
 
             Player.aeternaUI.GetComponent<AeternaUI>().UIObjects["skill_2_Image_Hashold"].SetActive(true);
             Player.aeternaUI.GetComponent<AeternaUI>().UIObjects["skill_2_Image_Nohold"].SetActive(false);
-
+            
             Player.skill2Phase = 2;
             Player.playerActionDatas[(int)PlayerActionState.Skill2].isExecuting = false;
 
@@ -98,12 +98,12 @@ namespace Player
 
             if (PhotonNetwork.IsMasterClient)
             {
-                ShootProjectile(enemyObjectData);
+                ShootProjectile(enemyObjectData,Player.camera.transform.localRotation, Player.camera.transform.rotation);
             }
 
             else
             {
-                photonView.RPC("ShootProjectile", RpcTarget.MasterClient, enemyObjectData);
+                photonView.RPC("ShootProjectile", RpcTarget.MasterClient, enemyObjectData, Player.camera.transform.localRotation, Player.camera.transform.rotation);
             }
 
             Player.skill2Phase = 3;
@@ -111,7 +111,7 @@ namespace Player
         }
 
         [PunRPC]
-        public void ShootProjectile(object[] enemyData)
+        public void ShootProjectile(object[] enemyData, Quaternion rot, Quaternion rot1)
         {
             object[] data = enemyData;
             data[0] = Player.playerName;
@@ -120,13 +120,19 @@ namespace Player
             if((string)data[2] == "BurstFlare")
             {
                 data[3] = Player.camera.transform.position;
-                data[4] = Player.camera.transform.localRotation * Vector3.forward;
+                data[4] = rot1 * Vector3.forward;
                 PhotonNetwork.Instantiate("Projectiles/" + (string)data[2], Vector3.zero, Quaternion.identity, 0, data);
             }
 
             else if((string)data[2] == "Dagger")
             {
-                PhotonNetwork.Instantiate("Projectiles/" + (string)data[2], Player.camera.transform.position, Player.camera.transform.rotation, 0, data);
+                PhotonNetwork.Instantiate("Projectiles/" + (string)data[2], Player.camera.transform.position, rot1, 0, data);
+            }
+
+            else
+            {
+                data[3] = rot;
+                PhotonNetwork.Instantiate("Projectiles/" + (string)data[2], Player.camera.transform.position, Player.transform.localRotation, 0, data);
             }
 
         }

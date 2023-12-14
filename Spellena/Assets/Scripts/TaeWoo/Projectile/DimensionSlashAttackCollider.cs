@@ -38,6 +38,8 @@ public class DimensionSlashAttackCollider : MonoBehaviourPunCallbacks
                 {
                     if (other.transform.root.GetComponent<Character>())
                     {
+                        if (other.name == "SwordTrigger") return;
+
                         other.transform.root.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBufferedViaServer, dimensionSlash.playerName,
                             dimensionSlash.damage, other.name, transform.TransformDirection(Vector3.forward), 20.0f);
                         dimensionSlash.DestorySpawnObject(other.ClosestPointOnBounds(transform.position), index-1, isTransparent);

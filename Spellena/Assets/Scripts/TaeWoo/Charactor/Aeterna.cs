@@ -129,7 +129,7 @@ namespace Player
 
             for(int i = 0; i <= Skills.Count;i++)
             {
-                skillTimer[i] = -0.01f;
+                skillTimer[i] = -1.01f;
             }
 
             skill2Phase = 1;
