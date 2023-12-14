@@ -34,7 +34,8 @@ MonoBehaviour:
   skill3ChannelingTime: 0
   skill3ShieldGage: 0
   skill4CastingTime: 3
-  skill4DurationTime: 100
+  skill4DurationTime: 20
+  dragonicBreatheHoldingTime: 5
   dragonSightCoolDownTime: 0
   skill1CoolDownTime: 0
   skill2CoolDownTime: 0

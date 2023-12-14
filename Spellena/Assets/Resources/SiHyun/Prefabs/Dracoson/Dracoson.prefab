@@ -3111,6 +3111,7 @@ MonoBehaviour:
   - {fileID: 7921392919010493915}
   - {fileID: 8879132484317611705}
   - {fileID: -2602113066211621233}
+  - {fileID: 2686312917236275043}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -3360,6 +3361,7 @@ MonoBehaviour:
   staffTopForMe: {fileID: 8765695025057911529}
   staffTopForOther: {fileID: 2917594863632224344}
   dracosonMetamorphose: {fileID: 5938366848256581336}
+  breathePoint: {fileID: 8703736745656590617}
   projectile: 1
   weight: 0.01
   skillState: 0
@@ -26465,11 +26467,86 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 368911042085577571, guid: 1527758bd1c4a2345b7606f5a773ebd7, type: 3}
   m_PrefabInstance: {fileID: 6302773990065765819}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2686312917236275043
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5938366848256581336}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b8c4a61274f60b4ea5fb4299cfdbf14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowLayerWeightsInspector: 1
+  ShowParameterInspector: 1
+  m_SynchronizeParameters:
+  - Type: 3
+    SynchronizeType: 2
+    Name: VerticalSpeed
+  - Type: 3
+    SynchronizeType: 2
+    Name: HorizontalSpeed
+  - Type: 4
+    SynchronizeType: 2
+    Name: Grounded
+  - Type: 9
+    SynchronizeType: 2
+    Name: BasicAttack
+  - Type: 4
+    SynchronizeType: 2
+    Name: Run
+  - Type: 4
+    SynchronizeType: 2
+    Name: Mirror
+  - Type: 4
+    SynchronizeType: 2
+    Name: Sit
+  - Type: 4
+    SynchronizeType: 2
+    Name: Breathe
+  m_SynchronizeLayers:
+  - SynchronizeType: 2
+    LayerIndex: 0
+  - SynchronizeType: 2
+    LayerIndex: 1
+  - SynchronizeType: 0
+    LayerIndex: 2
+  - SynchronizeType: 2
+    LayerIndex: 3
 --- !u!4 &6422838418542838882 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1032857102521645529, guid: 1527758bd1c4a2345b7606f5a773ebd7, type: 3}
   m_PrefabInstance: {fileID: 6302773990065765819}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &8703736745656590617 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3440206923382709410, guid: 1527758bd1c4a2345b7606f5a773ebd7, type: 3}
+  m_PrefabInstance: {fileID: 6302773990065765819}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &428354134067449736
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8703736745656590617}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1001 &6443043914681336794
 PrefabInstance:
   m_ObjectHideFlags: 0
