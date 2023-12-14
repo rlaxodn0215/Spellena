@@ -675,7 +675,7 @@ namespace Player
                     if(damgePart == "head")
                     {
                         hp -= (int)(damage * headShotRatio);
-                        Debug.Log("Player HEADSHOT Damaged !! : " + damage + " EnemyName: " + enemy);
+                        Debug.Log("Player HEADSHOT Damaged !! //// Current Hp: " + hp);
                     }
 
                     else
@@ -701,6 +701,10 @@ namespace Player
                             int temp = (int)PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["DeadCount"];
                             PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["ParameterName"] = "DeadCount";
 
+                            PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["DamagePart"] = damgePart;
+                            PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["DamageDirection"] = direction;
+                            PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["DamageForce"] = force;
+
                             if (!(bool)PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["IsAlive"]) return;
 
                             PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["KillerName"] = enemy;
@@ -719,7 +723,10 @@ namespace Player
                         killer.CustomProperties["ParameterName"] = "KillCount";
 
                         if (PhotonNetwork.IsMasterClient)
+                        {
                             GameCenterTest.ChangePlayerCustomProperties(killer, "KillCount", temp2 + 1);
+                            //Debug.Log("Kill Count ///// killer : " + (string)killer.CustomProperties["Name"] + "KillCount : " + (temp2 + 1));
+                        }
 
                         int temp1 = (int)PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["DeadCount"];
                         PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["ParameterName"] = "DeadCount";
@@ -796,6 +803,7 @@ namespace Player
 
             Rigidbody[] bodyParts = Dead.GetComponentsInChildren<Rigidbody>();
 
+            Debug.Log("Force Direction : " + direction);
             foreach (Rigidbody rb in bodyParts)
             {
                 if (rb.gameObject.name == damgePart)

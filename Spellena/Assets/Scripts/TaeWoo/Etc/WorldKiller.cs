@@ -12,7 +12,7 @@ public class WorldKiller : MonoBehaviourPunCallbacks
         {
             if (collision.transform.root.gameObject.GetComponent<Character>())
             {
-                collision.transform.root.gameObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBuffered, "World", 100000000, null, null, 0.0f);
+                collision.transform.root.gameObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBuffered, "World", 100000000, "world", Vector3.zero, 0.0f);
             }
         } 
     }

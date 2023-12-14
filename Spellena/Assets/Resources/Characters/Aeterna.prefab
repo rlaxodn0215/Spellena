@@ -16169,7 +16169,7 @@ MonoBehaviour:
   - {fileID: 748577191692418898}
   - {fileID: 1831676115146888250}
   - {fileID: 7100003963076884223}
-  damage: 10
+  damage: 0
   enemyTag: 
 --- !u!4 &825037122604850908 stripped
 Transform:

@@ -94,7 +94,7 @@ namespace Player
                  if (aeterna.skillButton == i)
                  {
                         UIObjects["skill_" + i + "_Active"].SetActive(true);
-                        UIObjects["skill_4_Lock"].SetActive(true);
+                        if(i == 4) UIObjects["skill_4_Lock"].SetActive(true);
                         skillNum = i;
                  }
 
@@ -108,6 +108,7 @@ namespace Player
             if (aeterna.skillButton == 4)
             {
                 UIObjects["skill_4_Lock"].SetActive(false);
+                Debug.Log("aeterna.skillButton == 4");
 
                 if (!aeterna.dimensionCut.isHealingSword)
                 {
@@ -136,7 +137,19 @@ namespace Player
                 else
                 {
                     skillCooltimes[i].text = "";
-                    UIObjects["skill_" + (i + 1) + "_Lock"].SetActive(false);                   
+
+                    if(i == 3)
+                    {
+                        if(ultimateCount>=aeterna.doUltimateNum)
+                        {
+                            UIObjects["skill_" + (i + 1) + "_Lock"].SetActive(true);
+                        }
+                    }
+
+                    else
+                    {
+                        UIObjects["skill_" + (i + 1) + "_Lock"].SetActive(false);                   
+                    }
                 }
             }
         }
