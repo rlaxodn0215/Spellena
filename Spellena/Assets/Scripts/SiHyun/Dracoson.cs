@@ -37,6 +37,7 @@ namespace Player
         public Transform staffTopForMe;
         public Transform staffTopForOther;
         public GameObject dracosonMetamorphose;
+        public GameObject breathePoint;
 
         float rightHandWeight = 0.04f;
 
@@ -46,6 +47,7 @@ namespace Player
         [Range(0, 1)]
         public float weight = 0.01f;
 
+        private GameObject breatheObject;
         private GameObject currentObjectForMe;
         private GameObject currentObjectForOther;
         private int previouseChargeCount = 0;
@@ -63,6 +65,7 @@ namespace Player
         float skill3ChannelingTime;
         float skill4CastingTime;
         float skill4DurationTime;
+        float dragonicBreatheHoldingTime;
 
         float dragonSightCollDownTime;
         float skill1CoolDownTime;
@@ -148,6 +151,7 @@ namespace Player
             skill3ChannelingTime = dracosonData.skill3ChannelingTime;
             skill4CastingTime = dracosonData.skill4CastingTime;
             skill4DurationTime = dracosonData.skill4DurationTime;
+            dragonicBreatheHoldingTime = dracosonData.dragonicBreatheHoldingTime;
 
             dragonSightCollDownTime = dracosonData.dragonSightCoolDownTime;
             skill1CoolDownTime = dracosonData.skill1CoolDownTime;
@@ -188,6 +192,7 @@ namespace Player
             {
                 CheckOnMasterClient();
                 Debug.Log(skillState);
+                Debug.Log(localState);
             }
 
             if (photonView.IsMine)
@@ -279,6 +284,21 @@ namespace Player
         void CheckOnMasterClient()
         {
             Debug.Log(skillChannelingTime[0]);
+
+            if (localState == LocalStateDracoson.Metamorphose)
+            {
+                if (skillChannelingTime[3] <= 0f && skillChannelingCheck[3])
+                {
+                    localState = LocalStateDracoson.None;
+                    dracosonMetamorphose.SetActive(false);
+                    CallRPCEvent("SetAvatar", "Response", "Metamorphose", false);
+                    CallRPCEvent("SetAvatar", "Response", "AvatarForMe", true);
+                    CallRPCEvent("SetAvatar", "Response", "AvatarForOhter", true);
+                    CallRPCEvent("SetAnimator", "Response", "Dracoson");
+                    isFly = false;
+                }
+            }
+
             if (skillState == SkillStateDracoson.DragonSightHolding)
             {
                 if (normalCastingTime[0] <= 0f && normalCastingCheck[0])
@@ -323,6 +343,7 @@ namespace Player
                     CallRPCEvent("SetCoolDownTime", "Response", 0);
                 }
             }
+            //용가리 변신
             else if (skillState == SkillStateDracoson.Skill4Casting)
             {
                 if (skillCastingTime[3] <= 0f && skillCastingCheck[3])
@@ -336,27 +357,23 @@ namespace Player
                     CallRPCEvent("SetAvatar", "Response", "AvatarForMe", false);
                     CallRPCEvent("SetAvatar", "Response", "AvatarForOhter", false);
                     CallRPCEvent("InstantiateObject", "Response", "MetamorphoseEffect");
-                    camera.GetComponent<MouseControl>().enabled = true;
-                    GetComponent<PlayerInput>().enabled = true;
-                    animator = dracosonMetamorphose.GetComponent<Animator>();
-                }
-            }
-            else if (localState == LocalStateDracoson.Metamorphose)
-            {
-                if (skillChannelingTime[3] <= 0f && skillChannelingCheck[3])
-                {
-                    localState = LocalStateDracoson.None;
-                    dracosonMetamorphose.SetActive(false);
-                    CallRPCEvent("SetAvatar", "Response", "Metamorphose", false);
-                    CallRPCEvent("SetAvatar", "Response", "AvatarForMe", true);
-                    CallRPCEvent("SetAvatar", "Response", "AvatarForOhter", true);
-                    animator = GetComponent<Animator>();
-                    isFly = false;
+                    CallRPCEvent("SetAnimator", "Response", "Metamorphose");
+                    CallRPCEvent("PauseControl", "Response", false);
+                    
                 }
             }
             else if (skillState == SkillStateDracoson.Breathe)
             {
-
+                if(normalCastingTime[2] <= 0f && normalCastingCheck[2])
+                {
+                    Debug.Log("브레스 끝남 휴");
+                    normalCastingCheck[2] = false;
+                    skillState = SkillStateDracoson.None;
+                    CallRPCEvent("ResetAnimation", "Response");
+                    CallRPCEvent("UpdateData", "Response", skillState, "OnlySkillState", 0, 0f, false);
+                    if(breatheObject.GetPhotonView() != null)
+                        PhotonNetwork.Destroy(breatheObject);
+                }
             }
         }
 
@@ -499,6 +516,10 @@ namespace Player
                 UseSkill(data);
             else if ((string)data[0] == "EndSkill")
                 EndSkill();
+            else if ((string)data[0] == "SetAnimator")
+                SetAnimator(data);
+            else if ((string)data[0] == "PauseControl")
+                PauseControl(data);
         }
 
         //RPC 요청
@@ -521,6 +542,21 @@ namespace Player
                 RequestRPCCall(_sendData);
             else if (type == "Response")
                 ResponseRPCCall(_sendData);
+        }
+
+        void PauseControl(object[] data)
+        {
+            camera.GetComponent<MouseControl>().enabled = !(bool)data[1];
+            GetComponent<PlayerInput>().enabled = !(bool)data[1];
+        }
+
+        void SetAnimator(object[] data)
+        {
+            if((string)data[1] == "Metamorphose")
+                animator = dracosonMetamorphose.GetComponent<Animator>();
+            else if((string)data[1] == "Dracoson")
+                animator = GetComponent<Animator>();
+
         }
 
         void SetSkill(object[] data)
@@ -570,6 +606,14 @@ namespace Player
                     CallRPCEvent("SetAnimation", "Response", "isDragonSightHolding", true);
                     CallRPCEvent("UpdateData", "Response", skillState, "normalCastingTime", 1, dragonSightHoldingTime, true);
                     CallRPCEvent("SetChargePhase", "Response", true);*/
+                    if (localState == LocalStateDracoson.Metamorphose)
+                    {
+                        Debug.Log("브레스 피해욧!!");
+                        skillState = SkillStateDracoson.Breathe;
+                        CallRPCEvent("SetAnimation", "Response", "Breathe", true);
+                        CallRPCEvent("UpdateData", "Response", skillState, "normalCastingTime", 2, dragonicBreatheHoldingTime, true);
+                        CallRPCEvent("InstantiateObject", "Response", "DragonicBreathe");
+                    }
                 }
                 else if (skillState == SkillStateDracoson.Skill1Ready)
                 {
@@ -587,12 +631,7 @@ namespace Player
                     CallRPCEvent("SetAnimation", "Response", "isSkill4", true);
                     CallRPCEvent("UpdateData", "Response", skillState, "skillCastingTime", 3, skill4CastingTime, true);
                     CallRPCEvent("InstantiateObject", "Response", "MagicCircle");
-                    camera.GetComponent<MouseControl>().enabled = false;
-                    GetComponent<PlayerInput>().enabled = false;
-                }
-                else if(localState == LocalStateDracoson.Metamorphose)
-                {
-                    Debug.Log("브레스 피해욧!!");
+                    CallRPCEvent("PauseControl", "Response", true);
                 }
             }
         }
@@ -772,6 +811,24 @@ namespace Player
                     PhotonNetwork.Instantiate("SiHyun/Prefabs/Dracoson/Metamorphose Effect",
                         transform.position, Quaternion.identity, data: _data);
                 }
+                else if((string)data[1] == "DragonicBreathe")
+                {
+                    Ray _tempRay = camera.GetComponent<Camera>().ScreenPointToRay(aim.transform.position);
+                    Quaternion _tempQ = Quaternion.LookRotation(_tempRay.direction);
+
+                    object[] _data = new object[3];
+                    _data[0] = name;
+                    _data[1] = tag;
+                    _data[2] = "DragonicBreathe";
+
+                    breatheObject = PhotonNetwork.Instantiate("SiHyun/Prefabs/Dracoson/Dragonic Breathe",
+                        breathePoint.transform.position + _tempRay.direction * 0.5f,
+                        _tempQ, data: _data);
+
+                    int _breathePoint = breathePoint.GetPhotonView().ViewID;
+                    int _breathe = breatheObject.GetPhotonView().ViewID;
+                    CallRPCEvent("SetParent", "Response", _breathe, _breathePoint);
+                }
             }
         }
 
@@ -816,6 +873,17 @@ namespace Player
                 CallRPCEvent("SetAnimation", "Response", "isDragonSightAttack", true);
                 CallRPCEvent("UpdateData", "Response", skillState, "OnlySkillState", 0, 0f, true);*/
             }
+            if(skillState == SkillStateDracoson.Breathe)
+            {
+                skillState = SkillStateDracoson.None;
+                Debug.Log("브레스 끝남 휴");
+                normalCastingCheck[2] = false;
+                skillState = SkillStateDracoson.None;
+                CallRPCEvent("ResetAnimation", "Response");
+                CallRPCEvent("UpdateData", "Response", skillState, "OnlySkillState", 0, 0f, false);
+                if (breatheObject.GetPhotonView() != null)
+                    PhotonNetwork.Destroy(breatheObject);
+            }
         }
 
         void SetChargePhase(object[] data)
@@ -846,8 +914,7 @@ namespace Player
                 animator.SetBool("Skill4Ready", false);
                 animator.SetBool("isDragonSightHolding", false);
                 animator.SetBool("isDragonSightAttack", false);
-                animator.SetBool("isInvocation", false);
-
+                animator.SetBool("Breathe", false);
 
                 overlayAnimator.SetBool("isSkill1", false);
                 overlayAnimator.SetBool("Skill1Ready", false);
@@ -859,7 +926,6 @@ namespace Player
                 overlayAnimator.SetBool("Skill4Ready", false);
                 overlayAnimator.SetBool("isDragonSightHolding", false);
                 overlayAnimator.SetBool("isDragonSightAttack", false);
-                overlayAnimator.SetBool("isInvocation", false);
                 
 
             }
