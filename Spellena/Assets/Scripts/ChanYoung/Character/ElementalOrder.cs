@@ -12,7 +12,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
-using static UnityEditor.Progress;
+//using static UnityEditor.Progress;
 
 namespace Player
 {

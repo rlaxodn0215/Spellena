@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 199982541912562440}
   - component: {fileID: 2507463885967374146}
   - component: {fileID: 4109300234218272032}
-  - component: {fileID: 4109534298816436326}
+  - component: {fileID: -2898458329772975616}
   m_Layer: 0
   m_Name: Dragonic Breathe
   m_TagString: Untagged
@@ -4858,6 +4858,7 @@ MonoBehaviour:
   observableSearch: 2
   ObservedComponents:
   - {fileID: 4109300234218272032}
+  - {fileID: -2898458329772975616}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -4878,7 +4879,7 @@ MonoBehaviour:
   objectName: 
   hitParticles: []
   dracosonData: {fileID: 11400000, guid: 18959a79b679a2848b1ac0728854c54b, type: 2}
---- !u!114 &4109534298816436326
+--- !u!114 &-2898458329772975616
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4887,9 +4888,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 1634767862067424}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c27186e3d952af74494d2ce0917f74f2, type: 3}
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 0
+  m_UseLocal: 1
 --- !u!1 &1685911702664702
 GameObject:
   m_ObjectHideFlags: 0

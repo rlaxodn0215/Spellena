@@ -3064,6 +3064,7 @@ GameObject:
   - component: {fileID: 7740467404657155948}
   - component: {fileID: 2494393179736758323}
   - component: {fileID: 3429428855915775281}
+  - component: {fileID: 8322564414901366028}
   m_Layer: 0
   m_Name: Dracoson
   m_TagString: TeamA
@@ -3111,7 +3112,9 @@ MonoBehaviour:
   - {fileID: 7921392919010493915}
   - {fileID: 8879132484317611705}
   - {fileID: -2602113066211621233}
+  - {fileID: 8322564414901366028}
   - {fileID: 2686312917236275043}
+  - {fileID: 4392796267243157193}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -3422,6 +3425,22 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &8322564414901366028
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1037026452117830316}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 0
+  m_UseLocal: 1
 --- !u!1 &1038324556277827510
 GameObject:
   m_ObjectHideFlags: 0
@@ -26417,6 +26436,18 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1032857102521645529, guid: 1527758bd1c4a2345b7606f5a773ebd7, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 1032857102521645529, guid: 1527758bd1c4a2345b7606f5a773ebd7, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 1032857102521645529, guid: 1527758bd1c4a2345b7606f5a773ebd7, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 1032857102521645529, guid: 1527758bd1c4a2345b7606f5a773ebd7, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -26455,6 +26486,10 @@ PrefabInstance:
     - target: {fileID: 1032857102521645529, guid: 1527758bd1c4a2345b7606f5a773ebd7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1032857102521645529, guid: 1527758bd1c4a2345b7606f5a773ebd7, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6392119542943277987, guid: 1527758bd1c4a2345b7606f5a773ebd7, type: 3}
       propertyPath: m_Controller
@@ -26511,10 +26546,26 @@ MonoBehaviour:
     LayerIndex: 0
   - SynchronizeType: 2
     LayerIndex: 1
-  - SynchronizeType: 0
+  - SynchronizeType: 2
     LayerIndex: 2
   - SynchronizeType: 2
     LayerIndex: 3
+--- !u!114 &4392796267243157193
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5938366848256581336}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 0
+  m_UseLocal: 1
 --- !u!4 &6422838418542838882 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1032857102521645529, guid: 1527758bd1c4a2345b7606f5a773ebd7, type: 3}
@@ -26543,10 +26594,27 @@ MonoBehaviour:
   Synchronization: 3
   OwnershipTransfer: 0
   observableSearch: 2
-  ObservedComponents: []
+  ObservedComponents:
+  - {fileID: 4901807520802883789}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
+--- !u!114 &4901807520802883789
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8703736745656590617}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 0
+  m_UseLocal: 1
 --- !u!1001 &6443043914681336794
 PrefabInstance:
   m_ObjectHideFlags: 0
