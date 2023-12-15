@@ -19,7 +19,7 @@ public class DimensionSlashAttackCollider : MonoBehaviourPunCallbacks
     {
        if(PhotonNetwork.IsMasterClient)
        {
-            if (other.GetComponent<AeternaSword>()) return;
+            if (other.GetComponent<AeternaSword>() || other.GetComponent<AeternaSwordTrigger>()) return;
             if (other.name == dimensionSlash.playerName) return;
 
             if (dimensionSlash.CompareTag("TeamA") && other.transform.root.CompareTag("TeamA") ||
@@ -27,7 +27,7 @@ public class DimensionSlashAttackCollider : MonoBehaviourPunCallbacks
             {
                 if (dimensionSlash.isHealingSword)
                 {
-                    if (other.transform.root.GetComponent<Character>() && other.gameObject.layer == LayerMask.NameToLayer("Other"))
+                    if (other.transform.root.GetComponent<Character>())// && other.gameObject.layer == LayerMask.NameToLayer("Other"))
                     {
                         if (other.transform.root.gameObject.name != hitPlayerName)
                         {

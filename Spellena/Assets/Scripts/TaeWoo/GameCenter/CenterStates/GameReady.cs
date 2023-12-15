@@ -24,9 +24,11 @@ public class GameReady : CenterState
         {
             if(GameCenterTest.roundA == 0 && GameCenterTest.roundB == 0)
             {
+                // 코루틴을 사용하여 데이터 손실 줄이기
                 foreach (var player in PhotonNetwork.CurrentRoom.Players.Values)
                 {
                     MakeEnemyShader(player);
+                    // (어시스트)
                     SetAssistTimer(player);
                 }
             }

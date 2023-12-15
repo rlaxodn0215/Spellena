@@ -91,7 +91,7 @@ namespace Player
         }
 
         public void OnTriggerEnter(Collider other)
-        {
+        {   
             if(PhotonNetwork.IsMasterClient)
             {
                 if (other.transform.root.CompareTag(enemyTag))

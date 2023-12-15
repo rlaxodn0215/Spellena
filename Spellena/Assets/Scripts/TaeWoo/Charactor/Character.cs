@@ -270,6 +270,7 @@ namespace Player
             if (PhotonNetwork.IsMasterClient)
             {
                 isOccupying = false;
+                //Debug.Log(hp);
             }
         }
 
@@ -592,6 +593,8 @@ namespace Player
                 }
 
                 UI.SetActive(true);
+
+                
             }
         }
 
@@ -612,6 +615,10 @@ namespace Player
                     {
                         outline.enabled = true;
                     }
+
+                    GameObject miniMapSign = GameCenterTest.FindObject(character.gameObject, "Cylinder");
+                    if (miniMapSign == null) continue;
+                    miniMapSign.SetActive(false);
                 }
 
                 if(character.gameObject.GetComponent<Aeterna>())
@@ -663,7 +670,7 @@ namespace Player
         }
 
         [PunRPC]
-        public void PlayerDamaged(string enemy, int damage, string damgePart, Vector3 direction, float force)
+        public void PlayerDamaged(string enemy, int damage, string damagePart, Vector3 direction, float force)
         {
             if (isAlive == false) return;
 
@@ -671,10 +678,10 @@ namespace Player
             {
                 if (hp <= dataHp)
                 {
-                    if(damgePart == "head")
+                    if(damagePart == "head")
                     {
                         hp -= (int)(damage * headShotRatio);
-                        Debug.Log("Player HEADSHOT Damaged !! //// Current Hp: " + hp);
+                        Debug.Log("Player HEADSHOT Damaged !!");
                     }
 
                     else
@@ -682,6 +689,7 @@ namespace Player
                         hp -= damage;
                         //Debug.Log("Player Damaged !! : " + damage + " EnemyName: " + enemy);
                     }
+
                     UI.GetComponent<ScreenEffectManager>().PlayDamageEffect(damage);
                 }
 
@@ -689,70 +697,42 @@ namespace Player
                 //if (PhotonNetwork.IsMasterClient)
                 {
                     var killer = GameCenterTest.FindPlayerWithCustomProperty("Name", enemy);
-
-                    // 사망시
-                    if (hp <= 0)
+                    if (killer == null)
                     {
-                        isAlive = false;      
-
-                        if (killer == null)
-                        {
-                            int temp = (int)PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["DeadCount"];
-                            PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["ParameterName"] = "DeadCount";
-
-                            PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["DamagePart"] = damgePart;
-                            PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["DamageDirection"] = direction;
-                            PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["DamageForce"] = force;
-
-                            if (!(bool)PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["IsAlive"]) return;
-
-                            PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["KillerName"] = enemy;
-
-                            if (PhotonNetwork.IsMasterClient)
-                                GameCenterTest.ChangePlayerCustomProperties(PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr], "DeadCount", temp + 1);
-                            
-                            return;
-                        }
-
-                        SetUltimatePoint(killer.ActorNumber);
-
-                        PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["KillerName"] = killer.CustomProperties["Name"];
-
-                        int temp2 = (int)killer.CustomProperties["KillCount"];
-                        killer.CustomProperties["ParameterName"] = "KillCount";
-
-                        if (PhotonNetwork.IsMasterClient)
-                        {
-                            GameCenterTest.ChangePlayerCustomProperties(killer, "KillCount", temp2 + 1);
-                            //Debug.Log("Kill Count ///// killer : " + (string)killer.CustomProperties["Name"] + "KillCount : " + (temp2 + 1));
-                        }
-
-                        int temp1 = (int)PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["DeadCount"];
+                        int temp = (int)PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["DeadCount"];
                         PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["ParameterName"] = "DeadCount";
 
-                        PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["DamagePart"] = damgePart;
+                        PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["DamagePart"] = damagePart;
                         PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["DamageDirection"] = direction;
                         PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["DamageForce"] = force;
 
-                        if (PhotonNetwork.IsMasterClient)
-                            GameCenterTest.ChangePlayerCustomProperties(PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr], "DeadCount", temp1 + 1);
+                        if (!(bool)PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["IsAlive"]) return;
 
-                    }
-
-                    else
-                    {
-                        int temp = (int)killer.CustomProperties["TotalDamage"];
-                        killer.CustomProperties["ParameterName"] = "TotalDamage";
-
-                        killer.CustomProperties["DamagePart"] = damgePart;
-                        killer.CustomProperties["DamageDirection"] = direction;
-                        killer.CustomProperties["DamageForce"] = force;
-
-                        killer.CustomProperties["PlayerAssistViewID"] = photonView.ViewID.ToString();
+                        PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["KillerName"] = enemy;
 
                         if (PhotonNetwork.IsMasterClient)
-                            GameCenterTest.ChangePlayerCustomProperties(killer, "TotalDamage", temp + damage);
+                            GameCenterTest.ChangePlayerCustomProperties(PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr], "DeadCount", temp + 1);
+
+                        return;
                     }
+
+                    // 사망시
+                    if (hp <= 0)
+                    {   
+                        StartCoroutine(PlayerDead(0.3f, killer,damagePart,direction,force));
+                    }
+
+                    int temp0 = (int)killer.CustomProperties["TotalDamage"];
+                    killer.CustomProperties["ParameterName"] = "TotalDamage";
+
+                    killer.CustomProperties["DamagePart"] = damagePart;
+                    killer.CustomProperties["DamageDirection"] = direction;
+                    killer.CustomProperties["DamageForce"] = force;
+
+                    killer.CustomProperties["PlayerAssistViewID"] = photonView.ViewID.ToString();
+
+                    if (PhotonNetwork.IsMasterClient)
+                        GameCenterTest.ChangePlayerCustomProperties(killer, "TotalDamage", temp0 + damage);
 
                 }
             }
@@ -765,6 +745,7 @@ namespace Player
                     if (hp > dataHp) hp = dataHp;
 
                     var healer = GameCenterTest.FindPlayerWithCustomProperty("CharacterViewID", enemy);
+                    if (healer == null) return;
                     int temp = (int)healer.CustomProperties["TotalHeal"];
                     healer.CustomProperties["ParameterName"] = "TotalHeal";
                     healer.CustomProperties["PlayerAssistViewID"] = photonView.ViewID.ToString();
@@ -775,6 +756,47 @@ namespace Player
 
             }
 
+        }
+
+        IEnumerator<string> PlayerDead(float time, Photon.Realtime.Player killer, string damgePart, Vector3 direction, float force)
+        {
+            isAlive = false;
+
+            SetUltimatePoint(killer.ActorNumber);
+
+            int temp1 = (int)PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["DeadCount"];
+            PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["ParameterName"] = "DeadCount";
+
+            PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["DamagePart"] = damgePart;
+            PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["DamageDirection"] = direction;
+            PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["DamageForce"] = force;
+
+            float t = 0.0f;
+            while (t <= time)
+            {
+                t += Time.deltaTime;
+            }
+            t = 0.0f;
+
+            if (PhotonNetwork.IsMasterClient)
+                GameCenterTest.ChangePlayerCustomProperties(PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr], "DeadCount", temp1 + 1);
+
+            PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["KillerName"] = killer.CustomProperties["Name"];
+
+            while(t <= time)
+            {
+                t += Time.deltaTime;
+            }
+            t = 0.0f;
+
+            int temp2 = (int)killer.CustomProperties["KillCount"];
+            killer.CustomProperties["ParameterName"] = "KillCount";
+
+            if (PhotonNetwork.IsMasterClient)
+                GameCenterTest.ChangePlayerCustomProperties(killer, "KillCount", temp2 + 1);
+
+
+            yield return "Finish";
         }
 
         protected void CheckPlayerLowHP(float ratio)
@@ -802,12 +824,12 @@ namespace Player
 
             Rigidbody[] bodyParts = Dead.GetComponentsInChildren<Rigidbody>();
 
-            Debug.Log("Force Direction : " + direction);
             foreach (Rigidbody rb in bodyParts)
             {
                 if (rb.gameObject.name == damgePart)
                 {
                     rb.AddForce(direction.normalized * force, ForceMode.Impulse);
+                    Debug.LogWarning("DamagePart : "+ damgePart +"// Force Direction : " + direction);
                     return;
                 }
             }

@@ -11,7 +11,7 @@ namespace Player
         public AeternaData aeternaData;
         public int chargeNum;
 
-        [HideInInspector]
+        //[HideInInspector]
         public int damage;
         [HideInInspector]
         public float lifeTime;

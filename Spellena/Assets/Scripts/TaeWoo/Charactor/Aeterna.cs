@@ -72,7 +72,7 @@ namespace Player
         protected override void Start() 
         {
             base.Start();
-            if (photonView.IsMine)
+            //if (photonView.IsMine)
             {
                 Initialize();
                 overlayCurrentSight = sight.transform.position;
@@ -213,6 +213,7 @@ namespace Player
 
         protected override void OnAnimatorIK()
         {
+            if (overlayAnimator == null) return;
             base.OnAnimatorIK();
             SetLookAtMeObj();
         }

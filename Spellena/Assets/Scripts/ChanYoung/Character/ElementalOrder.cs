@@ -12,7 +12,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
-using static UnityEditor.Progress;
+//using static UnityEditor.Progress;
 
 namespace Player
 {
@@ -173,6 +173,7 @@ namespace Player
             backSpeed = elementalOrderData.backSpeed;
             jumpHeight = elementalOrderData.jumpHeight;
             runSpeedRatio = elementalOrderData.runSpeedRatio;
+            headShotRatio = elementalOrderData.headShotRatio;
             minimapRenderTexture = minimapCamera.GetComponent<Camera>().targetTexture;
         }
 
@@ -1142,6 +1143,7 @@ namespace Player
 
         protected override void OnAnimatorIK()
         {
+            if (animatorForOther == null) return;
             base.OnAnimatorIK();
             if (photonView.IsMine)
             {
@@ -1150,7 +1152,7 @@ namespace Player
                     leftCurrentWeight = Mathf.Lerp(leftCurrentWeight, 0.2f, Time.deltaTime * 8f);
                     rightCurrentWeight = Mathf.Lerp(rightCurrentWeight, 0.22f, Time.deltaTime * 8f);
                 }
-                else if(overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Spell1"))
+                else if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Spell1"))
                 {
                     rightCurrentWeight = Mathf.Lerp(rightCurrentWeight, targetWeight, Time.deltaTime * 8f);
                     leftCurrentWeight = Mathf.Lerp(leftCurrentWeight, targetWeight, Time.deltaTime * 8f);
@@ -1180,7 +1182,7 @@ namespace Player
 
                 if (commands.Count <= 0)
                     SetHandEffectPositionIK(0, 0);
-                else if(commands.Count == 1)
+                else if (commands.Count == 1)
                     SetHandEffectPositionIK(commands[0], 0);
                 else
                     SetHandEffectPositionIK(commands[0], commands[1]);
@@ -1189,7 +1191,9 @@ namespace Player
                 animatorForOther.SetIKPosition(AvatarIKGoal.RightHand, handPoint);
                 animatorForOther.SetIKPositionWeight(AvatarIKGoal.LeftHand, leftCurrentWeight);
                 animatorForOther.SetIKPositionWeight(AvatarIKGoal.RightHand, rightCurrentWeight);
+                
             }
+
             else
             {
                 Vector3 _tempHandPoint = Vector3.Lerp(currentHandPoint, networkHandPoint, Time.deltaTime * 5);

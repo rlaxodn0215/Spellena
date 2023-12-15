@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: PhotonServerSettings
   m_EditorClassIdentifier: 
   AppSettings:
-    AppIdRealtime: b98ffc61-e6f6-4314-ae29-3f7c8d00fdbb
+    AppIdRealtime: b40bc1c7-5808-4300-bd70-dbabca776df7
     AppIdFusion: 
     AppIdChat: 
     AppIdVoice: 
@@ -198,6 +198,7 @@ MonoBehaviour:
   - DisableAllKillLog
   - MakeOtherSwordTrigger
   - SetGlobalDesiredTimer
+  - SetCoroutine
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

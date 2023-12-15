@@ -37,7 +37,7 @@ MonoBehaviour:
   skill2CoolTime: 15
   skill3DurationTime: 5
   skill3CoolTime: 25
-  skill4Cost: 1
+  skill4Cost: 5
   skill4DurationTime: 12
   skill4Phase1Time: 0
   DimenstionSlash_1_lifeTime: 5

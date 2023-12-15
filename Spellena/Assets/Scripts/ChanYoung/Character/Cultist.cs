@@ -1177,6 +1177,7 @@ namespace Player
         //손동작 애니메이션에 따른 IK적용
         protected override void OnAnimatorIK()
         {
+            if (animator == null) return;
             base.OnAnimatorIK();
             if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Idle"))
                 LerpWeightOverlay(0.5f);

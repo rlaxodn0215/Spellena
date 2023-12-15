@@ -63,11 +63,18 @@ public class DeathCamUI : MonoBehaviourPunCallbacks
     [PunRPC]
     public void ShowKillerData(string killerID)
     {
+        StartCoroutine(ShowData(killerID));
+    }
+
+    IEnumerator ShowData(string killerID)
+    {
+        yield return new WaitForSeconds(0.8f);
+
         if (killerID == "World")
         {
             ShowCharacterIcon(killerID);
 
-            killerCharacter.text = "처치자 : World" ;
+            killerCharacter.text = "처치자 : World";
             killerCharacter1.text = "내 영웅 처치 : World";
             killerName.text = killerName1.text = killerID;
             killerStat.text = "";
@@ -91,6 +98,7 @@ public class DeathCamUI : MonoBehaviourPunCallbacks
             }
         }
         showKillerData.SetActive(true);
+
     }
 
     [PunRPC]

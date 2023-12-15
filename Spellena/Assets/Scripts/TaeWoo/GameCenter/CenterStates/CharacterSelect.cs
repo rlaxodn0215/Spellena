@@ -29,13 +29,8 @@ public class CharacterSelect : CenterState
             isOnce = !isOnce;
             MakeSpawnPoint();
             ConnectInGameUI();
-            MakeCharacter();
-            MakeTeamStateUI();
 
-            gameCenter.photonView.RPC("BetweenBGMPlay", RpcTarget.AllBuffered, false);
-            gameCenter.photonView.RPC("BetweenBGMVolumControl", RpcTarget.AllBuffered, 1.0f, true);
-
-            gameCenter.currentGameState = GameCenterTest.GameState.GameReady;
+            StartCoroutine(MakeCharacter());
         }
     }
 
@@ -48,13 +43,16 @@ public class CharacterSelect : CenterState
         }
     }
 
-    void MakeCharacter()
+    IEnumerator MakeCharacter()
     {
         int aTeamIndex = 1;
         int bTeamIndex = 1;
 
         foreach (var player in PhotonNetwork.CurrentRoom.Players.Values)
         {
+            yield return new WaitForSeconds(0.1f);
+            gameCenter.photonView.RPC("ActiveObject", player, "inGameUIObj", true);
+            gameCenter.photonView.RPC("ActiveObject", player, "characterSelectObj", false);
             //string choseCharacter = "Aeterna";
             // 캐릭터 프리팹 한 파일로 통일
             string choseCharacter = (string)player.CustomProperties["Character"];
@@ -133,12 +131,12 @@ public class CharacterSelect : CenterState
                 gameCenter.playersB.Add(player);
             }
         }
-    }
-
-    void MakeTeamStateUI()
-    {
+  
+        //  MakeTeamStateUI
         foreach (var player in PhotonNetwork.CurrentRoom.Players.Values)
         {
+            yield return new WaitForSeconds(0.1f);
+
             if ((string)player.CustomProperties["Team"] == "A")
             {
                 foreach (var playerA in gameCenter.playersA)
@@ -155,14 +153,20 @@ public class CharacterSelect : CenterState
                 }
             }
         }
+
+        gameCenter.photonView.RPC("BetweenBGMPlay", RpcTarget.AllBuffered, false);
+        gameCenter.photonView.RPC("BetweenBGMVolumControl", RpcTarget.AllBuffered, 1.0f, true);
+
+        gameCenter.currentGameState = GameCenterTest.GameState.GameReady;
     }
+
 
     void ConnectInGameUI()
     {
         if (gameCenter.inGameUIObj != null)
         {
-            gameCenter.photonView.RPC("ActiveObject", RpcTarget.All, "inGameUIObj", true);
-            gameCenter.photonView.RPC("ActiveObject", RpcTarget.All, "characterSelectObj", false);
+            //gameCenter.photonView.RPC("ActiveObject", RpcTarget.All, "inGameUIObj", true);
+            //gameCenter.photonView.RPC("ActiveObject", RpcTarget.All, "characterSelectObj", false);
 
             gameCenter.inGameUI = gameCenter.inGameUIObj.GetComponent<InGameUI>();
             gameCenter.inGameUIView = gameCenter.inGameUIObj.GetComponent<PhotonView>();

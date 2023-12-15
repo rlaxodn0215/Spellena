@@ -21,7 +21,7 @@ MonoBehaviour:
   sitSideSpeed: 5
   sitBackSpeed: 5
   jumpHeight: 5
-  headShotRatio: 1
+  headShotRatio: 1.5
   invocationCastingTime: 1
   lungeHoldingTime: 1.5
   lungeAttackTime: 1
