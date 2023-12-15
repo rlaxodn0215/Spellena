@@ -12,6 +12,9 @@ public class DragonicBreathe : SpawnObject
     List<string> hitObjects = new List<string>();
     private float checkTimer = 0f;
     private float resetTimer = 0.4f;
+
+    Transform sightDirection;
+
     private void Start()
     {
         Init();
@@ -28,13 +31,14 @@ public class DragonicBreathe : SpawnObject
             checkTimer = resetTimer;
         }
 
-        if (deleteTime <= 0f)
+        if (deleteTime <= 1.5f)
+            transform.GetComponent<ParticleSystem>().Stop();
+        else if (deleteTime <= 0f)
             CallRPCTunnel("RequestDestroy");
     }
-
     void Init()
     {
-        deleteTime = 5f;
+        deleteTime = 6.5f;
     }
 
     void CallRPCTunnel(string tunnelCommand)
@@ -44,6 +48,11 @@ public class DragonicBreathe : SpawnObject
         _tempData[0] = tunnelCommand;
 
         photonView.RPC("CallRPCTunnelDracosonDragonSpin", RpcTarget.AllBuffered, _tempData);
+    }
+
+    public void SetInfo(Transform sight)
+    {
+        sightDirection = sight;
     }
 
     [PunRPC]
@@ -63,7 +72,6 @@ public class DragonicBreathe : SpawnObject
     {
         if (PhotonNetwork.IsMasterClient)
         {
-            Debug.Log(other.name);
             if (!hitObjects.Contains(other.name))
             {
                 hitObjects.Add(other.name);
@@ -74,6 +82,7 @@ public class DragonicBreathe : SpawnObject
                     {
                         other.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBuffered,
                                 playerName, (int)(dracosonData.skill1Damage), other.name, transform.forward, 20f);
+                        Debug.Log(other + "µ•πÃ¡ˆ ¡·¥Ÿ ≥≠ ∏Ù∂Û" );
 
                         object[] _data = new object[3];
                         _data[0] = name;
