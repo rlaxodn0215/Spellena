@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &6496857956769993346
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5570220277605648179}
+  m_Layer: 0
+  m_Name: Center
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5570220277605648179
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6496857956769993346}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7343642687886469510}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7343642687886469511
 GameObject:
   m_ObjectHideFlags: 0
@@ -9,6 +40,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7343642687886469510}
+  - component: {fileID: 7633852896448361676}
+  - component: {fileID: 9023947030602228953}
+  - component: {fileID: 5781482934290019446}
+  - component: {fileID: 7365289037280457289}
   m_Layer: 0
   m_Name: Dragonic Shield
   m_TagString: Untagged
@@ -24,15 +59,83 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7343642687886469511}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 4.65, z: -8.42}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1.7, y: 1.7, z: 1.7}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 7347758182217188624}
   - {fileID: 7342610782444927246}
+  - {fileID: 5570220277605648179}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7633852896448361676
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7343642687886469511}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: 0
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents:
+  - {fileID: 7365289037280457289}
+  sceneViewId: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
+--- !u!135 &9023947030602228953
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7343642687886469511}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 2.5
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &5781482934290019446
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7343642687886469511}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c27186e3d952af74494d2ce0917f74f2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &7365289037280457289
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7343642687886469511}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6773593b7da60954e942bf1651261de5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerName: 
+  type: 0
+  objectName: 
+  hitParticles: []
+  triggerEventer: {fileID: 5781482934290019446}
+  dracosonData: {fileID: 11400000, guid: 18959a79b679a2848b1ac0728854c54b, type: 2}
+  center: {fileID: 5570220277605648179}
 --- !u!1001 &7343642687144911936
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -43,6 +146,10 @@ PrefabInstance:
     - target: {fileID: 1341365785022538, guid: b2925dba3004e6c4e9c0a22b400fc6be, type: 3}
       propertyPath: m_Name
       value: Dragonic Shield Effet
+      objectReference: {fileID: 0}
+    - target: {fileID: 1341365785022538, guid: b2925dba3004e6c4e9c0a22b400fc6be, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4968965343043920, guid: b2925dba3004e6c4e9c0a22b400fc6be, type: 3}
       propertyPath: m_RootOrder
@@ -104,61 +211,125 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 108161224408531360, guid: b2925dba3004e6c4e9c0a22b400fc6be, type: 3}
+      propertyPath: m_BoundingSphereOverride.y
+      value: 42
+      objectReference: {fileID: 0}
+    - target: {fileID: 108161224408531360, guid: b2925dba3004e6c4e9c0a22b400fc6be, type: 3}
+      propertyPath: m_BoundingSphereOverride.z
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 198091098892618072, guid: b2925dba3004e6c4e9c0a22b400fc6be, type: 3}
+      propertyPath: looping
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 198091098892618072, guid: b2925dba3004e6c4e9c0a22b400fc6be, type: 3}
       propertyPath: InitialModule.startLifetime.scalar
-      value: 50
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 198220708286080314, guid: b2925dba3004e6c4e9c0a22b400fc6be, type: 3}
+      propertyPath: looping
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 198220708286080314, guid: b2925dba3004e6c4e9c0a22b400fc6be, type: 3}
       propertyPath: InitialModule.startLifetime.scalar
-      value: 50
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 198259813364728008, guid: b2925dba3004e6c4e9c0a22b400fc6be, type: 3}
+      propertyPath: looping
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 198259813364728008, guid: b2925dba3004e6c4e9c0a22b400fc6be, type: 3}
       propertyPath: InitialModule.startLifetime.scalar
-      value: 50
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 198416804179813220, guid: b2925dba3004e6c4e9c0a22b400fc6be, type: 3}
+      propertyPath: looping
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 198416804179813220, guid: b2925dba3004e6c4e9c0a22b400fc6be, type: 3}
       propertyPath: InitialModule.startLifetime.scalar
-      value: 50
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 198496132462913510, guid: b2925dba3004e6c4e9c0a22b400fc6be, type: 3}
+      propertyPath: looping
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 198496132462913510, guid: b2925dba3004e6c4e9c0a22b400fc6be, type: 3}
       propertyPath: InitialModule.startLifetime.scalar
-      value: 50
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 198545320602860624, guid: b2925dba3004e6c4e9c0a22b400fc6be, type: 3}
+      propertyPath: looping
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 198545320602860624, guid: b2925dba3004e6c4e9c0a22b400fc6be, type: 3}
       propertyPath: InitialModule.startLifetime.scalar
-      value: 50
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 198642185171127790, guid: b2925dba3004e6c4e9c0a22b400fc6be, type: 3}
+      propertyPath: looping
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 198642185171127790, guid: b2925dba3004e6c4e9c0a22b400fc6be, type: 3}
       propertyPath: InitialModule.startLifetime.scalar
-      value: 50
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 198700036830344950, guid: b2925dba3004e6c4e9c0a22b400fc6be, type: 3}
+      propertyPath: looping
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 198700036830344950, guid: b2925dba3004e6c4e9c0a22b400fc6be, type: 3}
       propertyPath: InitialModule.startLifetime.scalar
-      value: 50
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 198774107075436754, guid: b2925dba3004e6c4e9c0a22b400fc6be, type: 3}
+      propertyPath: looping
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 198774107075436754, guid: b2925dba3004e6c4e9c0a22b400fc6be, type: 3}
       propertyPath: InitialModule.startLifetime.scalar
-      value: 50
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 198808166900336170, guid: b2925dba3004e6c4e9c0a22b400fc6be, type: 3}
+      propertyPath: looping
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 198808166900336170, guid: b2925dba3004e6c4e9c0a22b400fc6be, type: 3}
       propertyPath: InitialModule.startLifetime.scalar
-      value: 50
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 198865115682146428, guid: b2925dba3004e6c4e9c0a22b400fc6be, type: 3}
+      propertyPath: looping
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 198865115682146428, guid: b2925dba3004e6c4e9c0a22b400fc6be, type: 3}
       propertyPath: InitialModule.startLifetime.scalar
-      value: 50
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 198872731079388404, guid: b2925dba3004e6c4e9c0a22b400fc6be, type: 3}
+      propertyPath: looping
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 198872731079388404, guid: b2925dba3004e6c4e9c0a22b400fc6be, type: 3}
       propertyPath: InitialModule.startLifetime.scalar
-      value: 50
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 198919004880459912, guid: b2925dba3004e6c4e9c0a22b400fc6be, type: 3}
+      propertyPath: looping
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 198919004880459912, guid: b2925dba3004e6c4e9c0a22b400fc6be, type: 3}
       propertyPath: InitialModule.startLifetime.scalar
-      value: 50
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 198978161760447732, guid: b2925dba3004e6c4e9c0a22b400fc6be, type: 3}
+      propertyPath: looping
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 198978161760447732, guid: b2925dba3004e6c4e9c0a22b400fc6be, type: 3}
       propertyPath: InitialModule.startLifetime.scalar
-      value: 50
+      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b2925dba3004e6c4e9c0a22b400fc6be, type: 3}
@@ -238,9 +409,57 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 198185949857883416, guid: 1b7d012408d2698409eb139ff9a0150d, type: 3}
+      propertyPath: looping
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 198185949857883416, guid: 1b7d012408d2698409eb139ff9a0150d, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 198191772205988414, guid: 1b7d012408d2698409eb139ff9a0150d, type: 3}
+      propertyPath: looping
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 198191772205988414, guid: 1b7d012408d2698409eb139ff9a0150d, type: 3}
       propertyPath: InitialModule.startLifetime.scalar
-      value: 50
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 198651331469830050, guid: 1b7d012408d2698409eb139ff9a0150d, type: 3}
+      propertyPath: looping
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 198651331469830050, guid: 1b7d012408d2698409eb139ff9a0150d, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 198736814389756184, guid: 1b7d012408d2698409eb139ff9a0150d, type: 3}
+      propertyPath: looping
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 198736814389756184, guid: 1b7d012408d2698409eb139ff9a0150d, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 198797992754264818, guid: 1b7d012408d2698409eb139ff9a0150d, type: 3}
+      propertyPath: looping
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 198797992754264818, guid: 1b7d012408d2698409eb139ff9a0150d, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 198861586687141524, guid: 1b7d012408d2698409eb139ff9a0150d, type: 3}
+      propertyPath: looping
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 198867581539132316, guid: 1b7d012408d2698409eb139ff9a0150d, type: 3}
+      propertyPath: looping
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 198867581539132316, guid: 1b7d012408d2698409eb139ff9a0150d, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1b7d012408d2698409eb139ff9a0150d, type: 3}

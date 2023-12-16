@@ -8,8 +8,8 @@ public class DragonicBreathe : SpawnObject
 {
     public DracosonData dracosonData;
 
-    private float deleteTime;
     List<string> hitObjects = new List<string>();
+    private float deleteTime;
     private float checkTimer = 0f;
     private float resetTimer = 0.4f;
 

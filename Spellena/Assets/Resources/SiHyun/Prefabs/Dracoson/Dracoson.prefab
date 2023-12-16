@@ -3367,6 +3367,8 @@ MonoBehaviour:
   breathePoint: {fileID: 8703736745656590617}
   projectile: 1
   weight: 0.01
+  breatheObject: {fileID: 4109300234218272032, guid: abcf623c1076fb54faaddb70cc2427b3, type: 3}
+  dragonShield: {fileID: 7343642687886469511, guid: 3fbc79aa69226c64196372a80163c3c6, type: 3}
   skillState: 0
   skillCoolDownTime:
   - 0
@@ -13621,6 +13623,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2917594863632224344}
+  - component: {fileID: 1498377740471729642}
   m_Layer: 0
   m_Name: Staff_Top_For_Other
   m_TagString: Untagged
@@ -13643,6 +13646,28 @@ Transform:
   m_Father: {fileID: 6836731625060934705}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1498377740471729642
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5661884149258025670}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1 &5695350247142239755
 GameObject:
   m_ObjectHideFlags: 0
