@@ -57,6 +57,7 @@ public class PlayerItem : MonoBehaviourPunCallbacks
 
     private void Update()
     {
+        GetComponent<RectTransform>().localScale = new Vector3(1f, 1f, 1f);
         playerName.text = photonView.Owner.NickName;
         if (photonView.IsMine && !photonView.Owner.IsMasterClient && !wasSetSibiling)
         {
