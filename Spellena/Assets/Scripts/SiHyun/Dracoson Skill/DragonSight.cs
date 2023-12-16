@@ -4,56 +4,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DragonSpin : SpawnObject
+public class DragonSight : SpawnObject
 {
     public TriggerEventer triggerEventer;
     public DracosonData dracosonData;
-
-    public GameObject centerObject;
-    public GameObject redDragon;
-    public GameObject blueDragon;
-    public GameObject greenDragon;
-
-    public float distance = 2.5f;
-    public float rotationSpeed = 360.0f;
-    public float knockbackForce = 2f;
-
-    private float totalRotation = 0.0f;
-    private float checkTimer = 0f;
-    private float resetTimer = 1.0f;
 
     List<string> hitObjects = new List<string>();
 
     private void Start()
     {
-        SetDragonPositionAndRotation(redDragon, 60);
-        SetDragonPositionAndRotation(blueDragon, -60);
-        SetDragonPositionAndRotation(greenDragon, 180);
-        centerObject.GetComponent<SphereCollider>().radius = distance;
         Init();
-        checkTimer = resetTimer;
     }
 
     void Update()
     {
-        checkTimer -= Time.deltaTime;
-        if (checkTimer <= 0f)
-        {
-            hitObjects.Clear();
-            checkTimer = resetTimer;
-        }
-
-        totalRotation += rotationSpeed * Time.deltaTime;
-
-        if (totalRotation < 880.0f)
-        {
-            float rotationAmount = rotationSpeed * Time.deltaTime;
-            transform.Rotate(Vector3.down, rotationAmount);
-        }
-        else
-        {
-            CallRPCTunnel("RequestDestroy");
-        }
     }
 
     void Init()
@@ -62,12 +26,6 @@ public class DragonSpin : SpawnObject
     }
 
 
-
-    void SetDragonPositionAndRotation(GameObject dragon, float angle)
-    {
-        dragon.transform.localPosition = Quaternion.Euler(0, angle, 0) * Vector3.forward * distance;
-        dragon.transform.localRotation = Quaternion.Euler(0, angle - 90, 0);
-    }
 
     void CallRPCTunnel(string tunnelCommand)
     {
@@ -93,12 +51,8 @@ public class DragonSpin : SpawnObject
 
     void TriggerEvent(GameObject hitObject)
     {
-        if(PhotonNetwork.IsMasterClient)
+        if (PhotonNetwork.IsMasterClient)
         {
-            if (hitObject.gameObject.layer == 16)
-            {
-                photonView.RPC("DestoryObject", RpcTarget.AllBuffered, hitObject);
-            }
             if (hitObject.transform.root.gameObject.name != hitObject.name)
             {
                 GameObject _rootObject = hitObject.transform.root.gameObject;
@@ -109,12 +63,6 @@ public class DragonSpin : SpawnObject
                     {
                         //if(_rootObject.tag != tag)
                         {
-                            Vector3 _knockbackDirection =
-                                     (_rootObject.transform.position - transform.position).normalized;
-                            Debug.Log(_knockbackDirection);
-                            _rootObject.GetComponent<PhotonView>().RPC("PlayerKnockBack", RpcTarget.AllBuffered,
-                                _knockbackDirection, knockbackForce);
-
                             _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBuffered,
                                 playerName, (int)(dracosonData.skill1Damage), hitObject.name, transform.forward, 20f);
                         }
@@ -134,5 +82,7 @@ public class DragonSpin : SpawnObject
             PhotonNetwork.Destroy(hitObject);
         }
     }
-    
+
 }
+
+

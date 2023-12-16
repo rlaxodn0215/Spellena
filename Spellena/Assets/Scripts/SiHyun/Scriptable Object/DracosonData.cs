@@ -16,7 +16,10 @@ public class DracosonData : ScriptableObject
     public float jumpHeight;
     public float headShotRatio;
 
-    public float dragonSightHoldingTime;
+    public float dragonicSightHoldingTime0;
+    public float dragonicSightHoldingTime1;
+    public float dragonicSightHoldingTime2;
+    public float dragonicSightHoldingTime3;
     public float dragonSightAttackTime;
     public float skill1CastingTime;
     public float skill1ChannelingTime;
@@ -25,7 +28,7 @@ public class DracosonData : ScriptableObject
     public float skill2ChannelingTime;
     public float skill2Damage;
     public float skill3CastingTime;
-    public float skill3ChannelingTime;
+    public float skill3HoldingTime;
     public float skill3ShieldGage;
     public float skill4CastingTime;
     public float skill4DurationTime;
