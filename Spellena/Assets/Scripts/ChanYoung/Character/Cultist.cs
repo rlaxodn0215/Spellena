@@ -107,21 +107,11 @@ namespace Player
         //0 : 왼쪽 마우스, 1 : 오른쪽 마우스
         bool[] isClicked = new bool[2];
 
-        Vector3 aimPos;
-        Vector3 aimDirection;
-
         protected override void Awake()
         {
             base.Awake();
             if (photonView.IsMine)
             {
-                ////테스트 정보
-                //HashTable _tempTable = new HashTable();
-                //_tempTable.Add("CharacterViewID", photonView.ViewID);
-                //_tempTable.Add("IsAlive", true);
-                //PhotonNetwork.LocalPlayer.SetCustomProperties(_tempTable);
-
-
                 object[] _tempData = new object[2];
                 _tempData[0] = "SetOwnerNum";
                 _tempData[1] = photonView.OwnerActorNr;
