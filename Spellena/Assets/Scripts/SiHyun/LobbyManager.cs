@@ -64,7 +64,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     {
         if(Time.time >=nextUpdateTime)
         {
-            Debug.Log("¹æ ¸ñ·Ï ¾÷µ¥ÀÌÆ®");
+            Debug.Log("ë°© ëª©ë¡ ì—…ë°ì´íŠ¸");
             UpdateRoomList(roomList);
             nextUpdateTime = Time.time + timeBetweenUpdates;
         }
@@ -140,24 +140,27 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         {
             GameObject _playerItemObj = 
                 PhotonNetwork.Instantiate("SiHyun/Prefabs/PlayerItem", Vector3.zero, Quaternion.identity);
-            PlayerItem _playerItem = _playerItemObj.GetComponent<PlayerItem>();
-            _playerItem.transform.SetParent(playerItemParentA);
-            if(_playerItem.photonView.IsMine)
+            _playerItemObj.transform.SetParent(playerItemParentA);
+
+            /*
+            if (_playerItem.photonView.IsMine)
             {
                 _playerItem.SetPlayerInfo(_localPlayer, PunTeams.Team.red);
             }
+            */
 
+            /*
             CanvasScaler canvasScaler = playerItemParentA.GetComponentInParent<CanvasScaler>();
             if (canvasScaler != null)
             {
                 float referenceWidth = canvasScaler.referenceResolution.x;
                 float referenceHeight = canvasScaler.referenceResolution.y;
 
-                // ±âÁØ ÇØ»óµµ¿¡¼­ÀÇ cellSize ¹× spacing
+                // ê¸°ì¤€ í•´ìƒë„ì—ì„œì˜ cellSize ë° spacing
                 Vector2 baseCellSize = new Vector2(427f, 93f);
                 Vector2 baseSpacing = new Vector2(0f, 3f);
 
-                // È­¸é Å©±â¿¡ µû¶ó Á¶ÀıµÈ cellSize ¹× spacing °è»ê
+                // í™”ë©´ í¬ê¸°ì— ë”°ë¼ ì¡°ì ˆëœ cellSize ë° spacing ê³„ì‚°
                 float scaleFactorX = canvasScaler.referenceResolution.x / Screen.width;
                 float scaleFactorY = canvasScaler.referenceResolution.y / Screen.height;
 
@@ -180,6 +183,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
                         _gridLayout.constraintCount, verticalSpacing, horizontalSpacing);
                 }
             }
+            */
         }
     }
 
@@ -191,23 +195,26 @@ public class LobbyManager : MonoBehaviourPunCallbacks
                 PhotonNetwork.Instantiate("SiHyun/Prefabs/PlayerItem", Vector3.zero, Quaternion.identity);
             PlayerItem _playerItem = _playerItemObj.GetComponent<PlayerItem>();
             _playerItem.transform.SetParent(playerItemParentA);
+
             if(_playerItem.photonView.IsMine)
             {
                 //_playerItem.SetPlayerInfo(_newPlayer.UserId, _newPlayer.NickName);
                 _playerItem.SetPlayerInfo(_newPlayer, PunTeams.Team.red);
             }
 
+
+            /*
             CanvasScaler canvasScaler = playerItemParentA.GetComponentInParent<CanvasScaler>();
             if (canvasScaler != null)
             {
                 float referenceWidth = canvasScaler.referenceResolution.x;
                 float referenceHeight = canvasScaler.referenceResolution.y;
 
-                // ±âÁØ ÇØ»óµµ¿¡¼­ÀÇ cellSize ¹× spacing
+                // ê¸°ì¤€ í•´ìƒë„ì—ì„œì˜ cellSize ë° spacing
                 Vector2 baseCellSize = new Vector2(427f, 93f);
                 Vector2 baseSpacing = new Vector2(0f, 3f);
 
-                // È­¸é Å©±â¿¡ µû¶ó Á¶ÀıµÈ cellSize ¹× spacing °è»ê
+                // í™”ë©´ í¬ê¸°ì— ë”°ë¼ ì¡°ì ˆëœ cellSize ë° spacing ê³„ì‚°
                 float scaleFactorX = canvasScaler.referenceResolution.x / Screen.width;
                 float scaleFactorY = canvasScaler.referenceResolution.y / Screen.height;
 
@@ -229,23 +236,24 @@ public class LobbyManager : MonoBehaviourPunCallbacks
                         _gridLayout.constraintCount,verticalSpacing , horizontalSpacing);
                 }
             }
+            */
         }
     }
 
     void AdjustChildObjectSizesAndPositions(GameObject parentObject, Vector2 cellSize,
         int constraintCount, float verticalSpacing, float horizontalSpacing)
     {
-        // ÀÚ½Ä ¿ÀºêÁ§Æ®µéÀÇ Å©±â Á¶Àı
+        // ìì‹ ì˜¤ë¸Œì íŠ¸ë“¤ì˜ í¬ê¸° ì¡°ì ˆ
         foreach (Transform child in parentObject.transform)
         {
             RectTransform childRectTransform = child.GetComponent<RectTransform>();
 
-            // ÀÚ½Ä ¿ÀºêÁ§Æ®ÀÇ Å©±â¸¦ ºÎ¸ğÀÇ ¼¿ Å©±â¿¡ ¸Â°Ô ¼³Á¤
+            // ìì‹ ì˜¤ë¸Œì íŠ¸ì˜ í¬ê¸°ë¥¼ ë¶€ëª¨ì˜ ì…€ í¬ê¸°ì— ë§ê²Œ ì„¤ì •
             if (childRectTransform != null)
             {
                 childRectTransform.sizeDelta = new Vector2(cellSize.x, cellSize.y);
 
-                // ÀÚ½Ä ¿ÀºêÁ§Æ®ÀÇ À§Ä¡ °è»ê
+                // ìì‹ ì˜¤ë¸Œì íŠ¸ì˜ ìœ„ì¹˜ ê³„ì‚°
                 int index = child.GetSiblingIndex();
                 int row = index / constraintCount;
                 int col = index % constraintCount;
