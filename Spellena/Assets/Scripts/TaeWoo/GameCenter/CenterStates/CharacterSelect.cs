@@ -20,16 +20,18 @@ public class CharacterSelect : CenterState
             ConnectCharacterSelect();
         }
 
-        GameCenterTest.globalTimer += Time.deltaTime;
-
-        gameCenter.characterSelectView.RPC("ReceiveTimerCount", RpcTarget.AllBuffered, gameCenter.globalDesiredTimer - GameCenterTest.globalTimer);
+        if (isOnce)
+        {
+            GameCenterTest.globalTimer += Time.deltaTime;
+            gameCenter.characterSelectView.RPC("ReceiveTimerCount", RpcTarget.AllBuffered, gameCenter.globalDesiredTimer - GameCenterTest.globalTimer);
+        }
 
         if (GameCenterTest.globalTimer >= gameCenter.globalDesiredTimer && isOnce)
         {
-            isOnce = !isOnce;
+            isOnce = false;
+
             MakeSpawnPoint();
             ConnectInGameUI();
-
             StartCoroutine(MakeCharacter());
         }
     }
@@ -43,6 +45,21 @@ public class CharacterSelect : CenterState
         }
     }
 
+    void ConnectInGameUI()
+    {
+        if (gameCenter.inGameUIObj != null)
+        {
+            gameCenter.inGameUI = gameCenter.inGameUIObj.GetComponent<InGameUI>();
+            gameCenter.inGameUIView = gameCenter.inGameUIObj.GetComponent<PhotonView>();
+        }
+    }
+
+    void MakeSpawnPoint()
+    {
+        gameCenter.playerSpawnA = GameCenterTest.FindObject(gameCenter.playerSpawnPoints, "TeamA").GetComponentsInChildren<Transform>(true);
+        gameCenter.playerSpawnB = GameCenterTest.FindObject(gameCenter.playerSpawnPoints, "TeamB").GetComponentsInChildren<Transform>(true);
+    }
+
     IEnumerator MakeCharacter()
     {
         int aTeamIndex = 1;
@@ -50,11 +67,10 @@ public class CharacterSelect : CenterState
 
         foreach (var player in PhotonNetwork.CurrentRoom.Players.Values)
         {
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(0.2f);
             gameCenter.photonView.RPC("ActiveObject", player, "inGameUIObj", true);
             gameCenter.photonView.RPC("ActiveObject", player, "characterSelectObj", false);
-            //string choseCharacter = "Aeterna";
-            // 캐릭터 프리팹 한 파일로 통일
+
             string choseCharacter = (string)player.CustomProperties["Character"];
             if (choseCharacter == null)
             {
@@ -131,12 +147,11 @@ public class CharacterSelect : CenterState
                 gameCenter.playersB.Add(player);
             }
         }
-  
-        //  MakeTeamStateUI
+
+        // MakeTeamStateUI
         foreach (var player in PhotonNetwork.CurrentRoom.Players.Values)
         {
-            yield return new WaitForSeconds(0.1f);
-
+            yield return new WaitForSeconds(0.2f);
             if ((string)player.CustomProperties["Team"] == "A")
             {
                 foreach (var playerA in gameCenter.playersA)
@@ -158,26 +173,7 @@ public class CharacterSelect : CenterState
         gameCenter.photonView.RPC("BetweenBGMVolumControl", RpcTarget.AllBuffered, 1.0f, true);
 
         gameCenter.currentGameState = GameCenterTest.GameState.GameReady;
+        Debug.Log("GameReady in CharacterSelect");
     }
-
-
-    void ConnectInGameUI()
-    {
-        if (gameCenter.inGameUIObj != null)
-        {
-            //gameCenter.photonView.RPC("ActiveObject", RpcTarget.All, "inGameUIObj", true);
-            //gameCenter.photonView.RPC("ActiveObject", RpcTarget.All, "characterSelectObj", false);
-
-            gameCenter.inGameUI = gameCenter.inGameUIObj.GetComponent<InGameUI>();
-            gameCenter.inGameUIView = gameCenter.inGameUIObj.GetComponent<PhotonView>();
-        }
-    }
-
-    void MakeSpawnPoint()
-    {
-        gameCenter.playerSpawnA = GameCenterTest.FindObject(gameCenter.playerSpawnPoints, "TeamA").GetComponentsInChildren<Transform>(true);
-        gameCenter.playerSpawnB = GameCenterTest.FindObject(gameCenter.playerSpawnPoints, "TeamB").GetComponentsInChildren<Transform>(true);
-    }
-
 
 }

@@ -13,17 +13,19 @@ public class DuringRound : CenterState
 
     public override void StateExecution()
     {
-        if(isOnce)
+        //Debug.Log("<color=blue>" + "DuringRound" + "</color>");
+        if (isOnce)
         {
+            //Debug.Log("<color=green>" + "DuringRound ONCE" + "</color>");
             isOnce = !isOnce;
             gameCenter.playerStat.GetComponent<PhotonView>().RPC("IsGameReady",RpcTarget.All,true);
-            StartCoroutine(CheckPlayerReSpawn());
         }
 
         GameCenterTest.globalTimer += Time.deltaTime;
 
         OccupyBarCount();
         OccupyAreaCounts();
+        CheckPlayerReSpawn();
         CheckRoundEnd();
     }
 
@@ -34,12 +36,23 @@ public class DuringRound : CenterState
         {
             if (gameCenter.teamBOccupying > 0)
             {
-                gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "fighting", true);
+                if (!isFighting && gameCenter.teamAOccupying > 0)
+                {
+                    gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "fighting", true);
+                    Debug.Log("<color=blue>" + "Active fighting" + "</color>");
+                    isFighting = !isFighting;
+                }
             }
             else
             {
+
                 gameCenter.occupyingA.rate += Time.deltaTime * gameCenter.occupyingRate;//약 1.8초당 1씩 오름
-                gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "fighting", false);
+                if (isFighting)
+                {
+                    gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "fighting", false);
+                    Debug.Log("<color=blue>" + "DisActive fighting" + "</color>");
+                    isFighting = !isFighting;
+                }
             }
 
             if (OccupyBarCountOnce)
@@ -57,12 +70,23 @@ public class DuringRound : CenterState
 
             if (gameCenter.teamAOccupying > 0)
             {
-                gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "fighting", true);
+                if (!isFighting && gameCenter.teamBOccupying > 0)
+                {
+                    gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "fighting", true);
+                    Debug.Log("<color=blue>" + "Active fighting" + "</color>");
+                    isFighting = !isFighting;
+                }
             }
             else
             {
                 gameCenter.occupyingB.rate += Time.deltaTime * gameCenter.occupyingRate;//약 1.8초당 1씩 오름
-                gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "fighting", false);
+
+                if (isFighting)
+                {
+                    gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "fighting", false);
+                    Debug.Log("<color=blue>" + "DisActive fighting" + "</color>");
+                    isFighting = !isFighting;
+                }
             }
 
             if (OccupyBarCountOnce)
@@ -131,7 +155,7 @@ public class DuringRound : CenterState
 
                     else
                     {
-                       gameCenter.inGameUIView.RPC("ShowKillLog", RpcTarget.All, (string)targetPlayer.CustomProperties["KillerName"],
+                       gameCenter.inGameUIView.RPC("ShowKillLog", RpcTarget.AllBuffered, (string)targetPlayer.CustomProperties["KillerName"],
                             targetPlayer.CustomProperties["Name"], ((string)targetPlayer.CustomProperties["Team"] == "A"),
                             GameCenterTest.FindPlayerWithCustomProperty("Name", (string)targetPlayer.CustomProperties["KillerName"]).ActorNumber);
                     }
@@ -184,6 +208,8 @@ public class DuringRound : CenterState
 
         GameObject temp;
 
+        //Debug.Log("<color=green>" + "TeamAOccupying : " + gameCenter.teamAOccupying + "TeamBOccupying : " + gameCenter.teamBOccupying + "</color>");
+
         for (int i = 0; i < gameCenter.playersA.Count; i++)
         {
             temp = GameCenterTest.FindObjectWithViewID((int)gameCenter.playersA[i].CustomProperties["CharacterViewID"]);
@@ -208,6 +234,8 @@ public class DuringRound : CenterState
             }
         }
 
+        Debug.Log("<color=green>" + "TeamAOccupying : " + gameCenter.teamAOccupying + "TeamBOccupying : " + gameCenter.teamBOccupying + "</color>");
+
         if (gameCenter.teamAOccupying > 0 && gameCenter.teamBOccupying > 0)
         {
             //서로 교전 중이라는 것을 알림
@@ -215,6 +243,7 @@ public class DuringRound : CenterState
             if (!isFighting)
             {
                 gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "fighting", true);
+                Debug.Log("<color=blue>" + "Active fighting" + "</color>");
                 gameCenter.roundEndTimer = gameCenter.roundEndTime;
                 isFighting = !isFighting;
             }
@@ -227,6 +256,7 @@ public class DuringRound : CenterState
             if (isFighting)
             {
                 gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "fighting", false);
+                Debug.Log("<color=blue>" + "DisActive fighting" + "</color>");
                 isFighting = !isFighting;
             }
         }
@@ -237,6 +267,7 @@ public class DuringRound : CenterState
             if (isFighting)
             {
                 gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "fighting", false);
+                Debug.Log("<color=blue>" + "DisActive fighting" + "</color>");
                 isFighting = !isFighting;
             }
         }
@@ -246,6 +277,7 @@ public class DuringRound : CenterState
             if (isFighting)
             {
                 gameCenter.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "fighting", false);
+                Debug.Log("<color=blue>" + "DisActive fighting" + "</color>");
                 isFighting = !isFighting;
             }
         }
@@ -267,56 +299,52 @@ public class DuringRound : CenterState
 
     }
 
-    IEnumerator CheckPlayerReSpawn()
+    void CheckPlayerReSpawn()
     {
-        while (gameCenter.currentGameState == GameCenterTest.GameState.DuringRound)
-        {
-            yield return new WaitForSeconds(0.2f);
+       foreach (var player in PhotonNetwork.CurrentRoom.Players.Values)
+       {
+           if ((bool)player.CustomProperties["IsAlive"] && (bool)player.CustomProperties["IsAlive"] == true) continue;
+           if ((float)player.CustomProperties["ReSpawnTime"] <= GameCenterTest.globalTimer)
+           {
+               Debug.Log("부활");
+               PhotonView view = PhotonView.Find((int)player.CustomProperties["CharacterViewID"]);
+               GameCenterTest.ChangePlayerCustomProperties(player, "IsAlive", true);
+               GameCenterTest.ChangePlayerCustomProperties(player, "ReSpawnTime", 100000000.0f);
 
-            foreach (var player in PhotonNetwork.CurrentRoom.Players.Values)
-            {
-                if ((bool)player.CustomProperties["IsAlive"] && (bool)player.CustomProperties["IsAlive"] == true) continue;
-                if ((float)player.CustomProperties["ReSpawnTime"] <= GameCenterTest.globalTimer)
-                {
-                    Debug.Log("부활");
-                    PhotonView view = PhotonView.Find((int)player.CustomProperties["CharacterViewID"]);
-                    GameCenterTest.ChangePlayerCustomProperties(player, "IsAlive", true);
-                    GameCenterTest.ChangePlayerCustomProperties(player, "ReSpawnTime", 100000000.0f);
+               if ((string)player.CustomProperties["Team"] == "A")
+               {
+                   view.RPC("PlayerReBornForAll", RpcTarget.All, (Vector3)player.CustomProperties["SpawnPoint"]);
+               }
 
-                    if ((string)player.CustomProperties["Team"] == "A")
-                    {
-                        view.RPC("PlayerReBornForAll", RpcTarget.All, (Vector3)player.CustomProperties["SpawnPoint"]);
-                    }
+               else if ((string)player.CustomProperties["Team"] == "B")
+               {
+                   view.RPC("PlayerReBornForAll", RpcTarget.All, (Vector3)player.CustomProperties["SpawnPoint"]);
+               }
 
-                    else if ((string)player.CustomProperties["Team"] == "B")
-                    {
-                        view.RPC("PlayerReBornForAll", RpcTarget.All, (Vector3)player.CustomProperties["SpawnPoint"]);
-                    }
+               view.RPC("PlayerReBornPersonal", player);
+               gameCenter.deathUIView.RPC("DisableDeathCamUI", player);
 
-                    view.RPC("PlayerReBornPersonal", player);
-                    gameCenter.deathUIView.RPC("DisableDeathCamUI", player);
+               // 팀원 부활 알리기
 
-                    // 팀원 부활 알리기
+               if ((string)player.CustomProperties["Team"] == "A")
+               {
+                   foreach (var playerA in gameCenter.playersA)
+                   {
+                       gameCenter.inGameUIView.RPC("ShowTeamLifeDead", playerA, (string)player.CustomProperties["Name"], false);
+                   }
+               }
 
-                    if ((string)player.CustomProperties["Team"] == "A")
-                    {
-                        foreach (var playerA in gameCenter.playersA)
-                        {
-                            gameCenter.inGameUIView.RPC("ShowTeamLifeDead", playerA, (string)player.CustomProperties["Name"], false);
-                        }
-                    }
+               else if ((string)player.CustomProperties["Team"] == "B")
+               {
+                   foreach (var playerB in gameCenter.playersB)
+                   {
+                       gameCenter.inGameUIView.RPC("ShowTeamLifeDead", playerB, (string)player.CustomProperties["Name"], false);
+                   }
+               }
+           }
+       }
 
-                    else if ((string)player.CustomProperties["Team"] == "B")
-                    {
-                        foreach (var playerB in gameCenter.playersB)
-                        {
-                            gameCenter.inGameUIView.RPC("ShowTeamLifeDead", playerB, (string)player.CustomProperties["Name"], false);
-                        }
-                    }
-                }
-            }
-
-        }
+        
     }
 
     void CheckPlayerDealAssist(Photon.Realtime.Player player, string killerName)
@@ -333,7 +361,7 @@ public class DuringRound : CenterState
                     continue;
                 }
 
-                //if ((Dictionary<string, float>)teamPlayer.CustomProperties["DealAssist"] == null) continue;
+                if ((Dictionary<string, float>)teamPlayer.CustomProperties["DealAssist"] == null) continue;
                 foreach (var assist in (Dictionary<string, float>)teamPlayer.CustomProperties["DealAssist"])
                 {
                     if (assist.Value >= GameCenterTest.globalTimer)
@@ -361,7 +389,7 @@ public class DuringRound : CenterState
                     continue;
                 }
 
-                //if ((Dictionary<string, float>)teamPlayer.CustomProperties["DealAssist"] == null) continue;
+                if ((Dictionary<string, float>)teamPlayer.CustomProperties["DealAssist"] == null) continue;
                 foreach (var assist in (Dictionary<string, float>)teamPlayer.CustomProperties["DealAssist"])
                 {
                     if (assist.Value >= GameCenterTest.globalTimer)
@@ -386,7 +414,7 @@ public class DuringRound : CenterState
         {
             foreach (var teamPlayer in gameCenter.playersA)
             {
-                //if ((Dictionary<string, float>)teamPlayer.CustomProperties["HealAssist"] == null) continue;
+                if ((Dictionary<string, float>)teamPlayer.CustomProperties["HealAssist"] == null) continue;
                 foreach (var assist in (Dictionary<string, float>)teamPlayer.CustomProperties["HealAssist"])
                 {
                     if (assist.Value >= GameCenterTest.globalTimer)
@@ -408,7 +436,7 @@ public class DuringRound : CenterState
             foreach (var teamPlayer in gameCenter.playersB)
             {
                 // null 문제
-                //if ((Dictionary<string, float>)teamPlayer.CustomProperties["HealAssist"] == null) continue;
+                if ((Dictionary<string, float>)teamPlayer.CustomProperties["HealAssist"] == null) continue;
                 foreach (var assist in (Dictionary<string, float>)teamPlayer.CustomProperties["HealAssist"])
                 {
                     if (assist.Value >= GameCenterTest.globalTimer)

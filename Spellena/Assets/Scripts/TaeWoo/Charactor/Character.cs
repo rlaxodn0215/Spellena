@@ -594,7 +594,7 @@ namespace Player
 
                 UI.SetActive(true);
 
-                
+                //Debug.LogError("IsLocalPlayer!!");
             }
         }
 
@@ -718,7 +718,8 @@ namespace Player
 
                     // 사망시
                     if (hp <= 0)
-                    {   
+                    {
+                        isAlive = false;
                         StartCoroutine(PlayerDead(0.3f, killer,damagePart,direction,force));
                     }
 
@@ -758,11 +759,11 @@ namespace Player
 
         }
 
-        IEnumerator<string> PlayerDead(float time, Photon.Realtime.Player killer, string damgePart, Vector3 direction, float force)
+        IEnumerator<WaitForSeconds> PlayerDead(float time, Photon.Realtime.Player killer, string damgePart, Vector3 direction, float force)
         {
-            isAlive = false;
-
             SetUltimatePoint(killer.ActorNumber);
+
+            yield return new WaitForSeconds(0.2f);
 
             int temp1 = (int)PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["DeadCount"];
             PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["ParameterName"] = "DeadCount";
@@ -771,32 +772,16 @@ namespace Player
             PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["DamageDirection"] = direction;
             PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["DamageForce"] = force;
 
-            float t = 0.0f;
-            while (t <= time)
-            {
-                t += Time.deltaTime;
-            }
-            t = 0.0f;
-
             if (PhotonNetwork.IsMasterClient)
                 GameCenterTest.ChangePlayerCustomProperties(PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr], "DeadCount", temp1 + 1);
 
             PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["KillerName"] = killer.CustomProperties["Name"];
-
-            while(t <= time)
-            {
-                t += Time.deltaTime;
-            }
-            t = 0.0f;
 
             int temp2 = (int)killer.CustomProperties["KillCount"];
             killer.CustomProperties["ParameterName"] = "KillCount";
 
             if (PhotonNetwork.IsMasterClient)
                 GameCenterTest.ChangePlayerCustomProperties(killer, "KillCount", temp2 + 1);
-
-
-            yield return "Finish";
         }
 
         protected void CheckPlayerLowHP(float ratio)

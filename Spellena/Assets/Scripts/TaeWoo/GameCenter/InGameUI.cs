@@ -472,6 +472,7 @@ public class InGameUI : MonoBehaviourPunCallbacks,IPunObservable
         if(GameCenterTest.globalTimer >= playerKillLogDatas[endKillLogIndex-1].killLogTimer)
         {
             UIObjects["killLog_" + endKillLogIndex].SetActive(false);
+            Debug.Log("<color=yellow>" + "DisableKillLog index : " + endKillLogIndex + "</color>");
             endKillLogIndex--;
         }
     }
@@ -504,7 +505,7 @@ public class InGameUI : MonoBehaviourPunCallbacks,IPunObservable
             stream.SendNext(occupyingBUI.rate);
             stream.SendNext(occupyingTeamUI.name);
             stream.SendNext(occupyingTeamUI.rate);
-            stream.SendNext(endKillLogIndex);
+            //stream.SendNext(endKillLogIndex);
             stream.SendNext(maxKillLogIndex);
         }
         else
@@ -515,7 +516,7 @@ public class InGameUI : MonoBehaviourPunCallbacks,IPunObservable
             occupyingBUI.rate = (float)stream.ReceiveNext();
             occupyingTeamUI.name = (string)stream.ReceiveNext();
             occupyingTeamUI.rate = (float)stream.ReceiveNext();
-            endKillLogIndex = (int)stream.ReceiveNext();
+            //endKillLogIndex = (int)stream.ReceiveNext();
             maxKillLogIndex = (int)stream.ReceiveNext();
         }
     }
