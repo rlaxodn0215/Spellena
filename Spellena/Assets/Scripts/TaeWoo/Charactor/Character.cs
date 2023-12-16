@@ -681,7 +681,7 @@ namespace Player
                     if(damagePart == "head")
                     {
                         hp -= (int)(damage * headShotRatio);
-                        Debug.Log("Player HEADSHOT Damaged !!");
+                        //Debug.Log("Player HEADSHOT Damaged !!");
                     }
 
                     else
@@ -690,13 +690,16 @@ namespace Player
                         //Debug.Log("Player Damaged !! : " + damage + " EnemyName: " + enemy);
                     }
 
+
                     UI.GetComponent<ScreenEffectManager>().PlayDamageEffect(damage);
                 }
 
-                // 마스터 클라이언트이기 때문에 동기화 안되도 게임센터의 값과 같다. 
-                //if (PhotonNetwork.IsMasterClient)
-                {
-                    var killer = GameCenterTest.FindPlayerWithCustomProperty("Name", enemy);
+                 var killer = GameCenterTest.FindPlayerWithCustomProperty("Name", enemy);
+
+                 // 사망시
+                 if (hp <= 0)
+                 {
+                    isAlive = false;
                     if (killer == null)
                     {
                         int temp = (int)PhotonNetwork.CurrentRoom.Players[photonView.OwnerActorNr].CustomProperties["DeadCount"];
@@ -716,26 +719,22 @@ namespace Player
                         return;
                     }
 
-                    // 사망시
-                    if (hp <= 0)
-                    {
-                        isAlive = false;
-                        StartCoroutine(PlayerDead(0.3f, killer,damagePart,direction,force));
-                    }
+                     StartCoroutine(PlayerDead(0.2f, killer,damagePart,direction,force));
+                 }
+                  
+                 int temp0 = (int)killer.CustomProperties["TotalDamage"];
+                 killer.CustomProperties["ParameterName"] = "TotalDamage";
+                  
+                 killer.CustomProperties["DamagePart"] = damagePart;
+                 killer.CustomProperties["DamageDirection"] = direction;
+                 killer.CustomProperties["DamageForce"] = force;
 
-                    int temp0 = (int)killer.CustomProperties["TotalDamage"];
-                    killer.CustomProperties["ParameterName"] = "TotalDamage";
+                 killer.CustomProperties["PlayerAssistViewID"] = photonView.ViewID.ToString();
 
-                    killer.CustomProperties["DamagePart"] = damagePart;
-                    killer.CustomProperties["DamageDirection"] = direction;
-                    killer.CustomProperties["DamageForce"] = force;
+                //Debug.Log("<color=purple>" + "DamagePart : " + damagePart +"</color>");
 
-                    killer.CustomProperties["PlayerAssistViewID"] = photonView.ViewID.ToString();
-
-                    if (PhotonNetwork.IsMasterClient)
-                        GameCenterTest.ChangePlayerCustomProperties(killer, "TotalDamage", temp0 + damage);
-
-                }
+                 if (PhotonNetwork.IsMasterClient)
+                        GameCenterTest.ChangePlayerCustomProperties(killer, "TotalDamage", temp0 + damage);              
             }
 
             else

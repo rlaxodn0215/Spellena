@@ -292,7 +292,7 @@ public class InGameUI : MonoBehaviourPunCallbacks,IPunObservable
         if (UIObjects["killText"])
         {
             UIObjects["killText"].SetActive(true);
-            killText.text = string.Format("<color=red>" + victim + "</color>" + " 처치");
+            killText.text = string.Format("<color=red>" + victim + "</color>" + " 처치 테스트");
             // 킬 사운드
             soundManager.PlayAudioOverlap("KillSound", 1.0f, false, false, "EffectSound");
             StartCoroutine(DisableUI("killText", killActiveTime));
@@ -307,6 +307,7 @@ public class InGameUI : MonoBehaviourPunCallbacks,IPunObservable
         {
             UIObjects["killText"].SetActive(true);
             killText.text = string.Format("<color=red>" + victim + "</color>" + " 처치 기여");
+
             // 어시스트 사운드
             soundManager.PlayAudioOverlap("AssistSound", 1.0f, false, false, "EffectSound");
             StartCoroutine(DisableUI("killText", killActiveTime));
@@ -472,7 +473,7 @@ public class InGameUI : MonoBehaviourPunCallbacks,IPunObservable
         if(GameCenterTest.globalTimer >= playerKillLogDatas[endKillLogIndex-1].killLogTimer)
         {
             UIObjects["killLog_" + endKillLogIndex].SetActive(false);
-            Debug.Log("<color=yellow>" + "DisableKillLog index : " + endKillLogIndex + "</color>");
+            //Debug.Log("<color=yellow>" + "DisableKillLog index : " + endKillLogIndex + "</color>");
             endKillLogIndex--;
         }
     }

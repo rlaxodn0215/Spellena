@@ -27,7 +27,7 @@ public class ScreenEffectManager : MonoBehaviour
     Image blessingCastingEffect;
 
     Image cameraDownEffect;
-    int cameraDownFrame = 0;
+    //int cameraDownFrame = 0;
 
     private void Start()
     {
