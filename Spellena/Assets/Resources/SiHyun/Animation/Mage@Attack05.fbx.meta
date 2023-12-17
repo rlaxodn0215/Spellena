@@ -686,16 +686,16 @@ ModelImporter:
       name: Mage@Attack05_B
       takeName: Mage@Attack05_B
       internalID: 0
-      firstFrame: 0
-      lastFrame: 42
+      firstFrame: 22
+      lastFrame: 23
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 0
-      loopBlend: 0
+      loopTime: 1
+      loopBlend: 1
       loopBlendOrientation: 1
       loopBlendPositionY: 1
       loopBlendPositionXZ: 1

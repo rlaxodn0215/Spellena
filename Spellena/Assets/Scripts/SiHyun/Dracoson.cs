@@ -10,6 +10,7 @@ using UnityEditor;
 using System.Security.Cryptography;
 using UnityEngine.InputSystem;
 using System.ComponentModel;
+using Unity.VisualScripting;
 
 namespace Player
 {
@@ -28,6 +29,7 @@ namespace Player
     public class Dracoson : Character
     {
         public DracosonData dracosonData;
+        public GameObject thirdCamera;
         public GameObject overlaycamera;
         public GameObject minimapCamera;
         public GameObject aim;
@@ -51,6 +53,7 @@ namespace Player
         public GameObject dragonShield;
         private GameObject currentObjectForMe;
         private GameObject currentObjectForOther;
+        public GameObject rangeMark;
         private int previouseChargeCount = 0;
 
         int shieldId;
@@ -368,6 +371,30 @@ namespace Player
                     CallRPCEvent("SetCoolDownTime", "Response", 0);
                 }
             }
+            else if(skillState == SkillStateDracoson.Skill2Casting)
+            {
+                if (skillCastingTime[1] <= 0f && skillCastingCheck[1])
+                {
+                    skillCastingCheck[1] = false;
+                    skillState = SkillStateDracoson.Skill2Channeling;
+                    CallRPCEvent("SetAnimation", "Response", "isSkill2", true);
+                    CallRPCEvent("SetAnimation", "Response", "Skill2Ready", false);
+                    CallRPCEvent("UpdateData", "Response", skillState, "skillChannelingTime", 1, skill2ChannelingTime, true);
+                    CallRPCEvent("MarkingSkillRange", "Response", "Skill2Range", false);
+                }
+            }
+            else if(skillState == SkillStateDracoson.Skill2Channeling)
+            {
+                if (skillChannelingTime[1] <= 0f && skillChannelingCheck[1])
+                {
+                    skillState = SkillStateDracoson.None;
+                    CallRPCEvent("InstantiateObject", "Response", "DragonPunch");
+                    CallRPCEvent("ResetAnimation", "Response");
+                    CallRPCEvent("UpdateData", "Response", skillState, "OnlySkillState", 0, 0f, false);
+                    CallRPCEvent("SetCoolDownTime", "Response", 0);
+                    CallRPCEvent("PauseControl", "Response", "All", false);
+                }
+            }
             else if (skillState == SkillStateDracoson.Skill3Casting)
             {
                 if (skillCastingTime[2] <= 0f && skillCastingCheck[2])
@@ -386,6 +413,8 @@ namespace Player
                     skillChannelingCheck[2] = false;
                     skillState = SkillStateDracoson.None;
                     CallRPCEvent("ResetAnimation", "Response");
+                    CallRPCEvent("PauseControl", "Response", "OnlyMove", false);
+                    CallRPCEvent("SetCamera", "Response", "Default");
                     CallRPCEvent("UpdateData", "Response", skillState, "OnlySkillState", 0, 0f, false);
                     CallRPCEvent("StopEffect", "Response", "DragonShield", shieldId);
                 }
@@ -406,7 +435,7 @@ namespace Player
                     CallRPCEvent("SetAvatar", "Response", "AvatarForMe", false);
                     CallRPCEvent("SetAvatar", "Response", "AvatarForOhter", false);
                     CallRPCEvent("SetAnimator", "Response", "Metamorphose");
-                    CallRPCEvent("PauseControl", "Response", false);
+                    CallRPCEvent("PauseControl", "Response", "All", false);
                     CallRPCEvent("SetCameraPosition", "Response", "Change");
                 }
             }
@@ -506,7 +535,10 @@ namespace Player
         void OnButtonCancel()
         {
             if (photonView.IsMine)
+            {
                 CallRPCEvent("CancelSkill", "Request", 0);
+                CallRPCEvent("MarkingSkillRange", "Response", "Skill2Range", false);
+            }
         }
 
         void RequestRPCCall(object[] data)
@@ -583,6 +615,10 @@ namespace Player
                 DestroyEffect(data);
             else if ((string)data[0] == "SetShieldID")
                 SetShieldID(data);
+            else if ((string)data[0] == "SetCamera")
+                SetCamera(data);
+            else if ((string)data[0] == "MarkingSkillRange")
+                MarkingSkillRange(data);
         }
 
         //RPC 요청
@@ -605,6 +641,17 @@ namespace Player
                 RequestRPCCall(_sendData);
             else if (type == "Response")
                 ResponseRPCCall(_sendData);
+        }
+
+        void MarkingSkillRange(object[] data)
+        {
+            if(photonView.IsMine)
+            {
+                if ((string)data[1] == "Skill2Range")
+                {
+                    rangeMark.SetActive((bool)data[2]);
+                }
+            }
         }
 
         void DestroyEffect(object[] data)
@@ -668,8 +715,9 @@ namespace Player
                 GameObject _gameObject = PhotonView.Find((int)data[2])?.gameObject;
                 GameObject _daw1 = _gameObject.transform.GetChild(0).gameObject;
                 GameObject _daw2 = _gameObject.transform.GetChild(1).gameObject;
-
-                foreach (Transform child in _daw1.transform)
+                _daw1.SetActive(false);
+                _daw2.SetActive(false);
+                /*foreach (Transform child in _daw1.transform)
                 {
                     ParticleSystem _particleSystem = 
                     child.GetComponent<ParticleSystem>();
@@ -688,6 +736,25 @@ namespace Player
                     {
                         _particleSystem.Stop();
                     }
+                }*/
+            }
+        }
+
+        void SetCamera(object[] data)
+        {
+            if (photonView.IsMine)
+            {
+                if ((string)data[1] == "Skill3")
+                {
+                    thirdCamera.SetActive(true);
+                    camera.SetActive(false);
+                    overlaycamera.SetActive(false);
+                }
+                else if ((string)data[1] == "Default")
+                {
+                    thirdCamera.SetActive(false);
+                    camera.SetActive(true);
+                    overlaycamera.SetActive(true);
                 }
             }
         }
@@ -706,8 +773,25 @@ namespace Player
 
         void PauseControl(object[] data)
         {
-            camera.GetComponent<MouseControl>().enabled = !(bool)data[1];
-            GetComponent<PlayerInput>().enabled = !(bool)data[1];
+            if ((string)data[1] == "OnlyMove")
+            {
+                if ((bool)data[2])
+                {
+                    Rigidbody _rigidbody = gameObject.GetComponent<Rigidbody>();
+                    _rigidbody.constraints = RigidbodyConstraints.FreezePosition;
+                }
+                else if (!(bool)data[2])
+                {
+                    Rigidbody _rigidbody = gameObject.GetComponent<Rigidbody>();
+                    _rigidbody.constraints = RigidbodyConstraints.None;
+                    _rigidbody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+                }
+            }
+            else if ((string)data[1] == "All")
+            {
+                camera.GetComponent<MouseControl>().enabled = !(bool)data[2];
+                GetComponent<PlayerInput>().enabled = !(bool)data[2];
+            }
         }
 
         void SetAnimator(object[] data)
@@ -741,6 +825,7 @@ namespace Player
                     else if (_skillNum == 2)
                     {
                         skillState = SkillStateDracoson.Skill2Ready;
+                        CallRPCEvent("MarkingSkillRange", "Response", "Skill2Range", true);
                     }
                     else if (_skillNum == 3)
                     {
@@ -790,6 +875,13 @@ namespace Player
                     CallRPCEvent("SetAnimation", "Response", "isSkill1", true);
                     CallRPCEvent("UpdateData", "Response", skillState, "skillCastingTime", 0, skill1CastingTime, true);
                 }
+                else if(skillState == SkillStateDracoson.Skill2Ready)
+                {
+                    Debug.Log("스킬 2 시전");
+                    skillState = SkillStateDracoson.Skill2Casting;
+                    CallRPCEvent("UpdateData", "Response", skillState, "skillCastingTime", 1, skill1CastingTime, true);
+                    CallRPCEvent("PauseControl", "Response", "All", true);
+                }
                 else if(skillState == SkillStateDracoson.Skill3Ready)
                 {
                     Debug.Log("스킬 3 시전");
@@ -797,6 +889,8 @@ namespace Player
                     CallRPCEvent("SetAnimation", "Response", "Skill3Ready", false);
                     CallRPCEvent("SetAnimation", "Response", "isSkill3", true);
                     CallRPCEvent("UpdateData", "Response", skillState, "skillCastingTime", 2, skill3CastingTime, true);
+                    CallRPCEvent("SetCamera", "Response", "Skill3");
+                    CallRPCEvent("PauseControl", "Response", "OnlyMove", true);
                 }
                 else if(skillState == SkillStateDracoson.Skill4Ready)
                 {
@@ -806,12 +900,14 @@ namespace Player
                     CallRPCEvent("SetAnimation", "Response", "isSkill4", true);
                     CallRPCEvent("UpdateData", "Response", skillState, "skillCastingTime", 3, skill4CastingTime, true);
                     CallRPCEvent("InstantiateObject", "Response", "MagicCircle");
-                    CallRPCEvent("PauseControl", "Response", true);
+                    CallRPCEvent("PauseControl", "Response", "All", true);
                 }
             }
         }
+
         void CancelHolding()
         {
+            Debug.Log("홀딩 캔슬");
             if (skillState == SkillStateDracoson.DragonSightHolding)
             {
                 if (localState == LocalStateDracoson.ChargePhase0)
@@ -854,6 +950,8 @@ namespace Player
                 skillState = SkillStateDracoson.None;
                 skillChannelingCheck[2] = false;
                 int _shieldViewID = dragonShield.GetPhotonView().ViewID;
+                CallRPCEvent("PauseControl", "Response", "OnlyMove", false);
+                CallRPCEvent("SetCamera", "Response", "Default");
                 CallRPCEvent("StopEffect", "Response", "DragonShield", _shieldViewID);
                 CallRPCEvent("ResetAnimation", "Response");
                 CallRPCEvent("UpdateData", "Response", skillState, "OnlySkillState", 0, 0f, false);
@@ -1026,6 +1124,19 @@ namespace Player
                     int _parentViewID = gameObject.GetPhotonView().ViewID;
                     int _dragonSpinViewID = _dragonSpin.GetPhotonView().ViewID;
                     CallRPCEvent("SetParent", "Response", _dragonSpinViewID, _parentViewID);
+                }
+                else if ((string)data[1] == "DragonPunch")
+                {
+                    Ray _tempRay = camera.GetComponent<Camera>().ScreenPointToRay(aim.transform.position);
+                    Quaternion _tempQ = Quaternion.LookRotation(_tempRay.direction);
+
+                    object[] _data = new object[3];
+                    _data[0] = name;
+                    _data[1] = tag;
+                    _data[2] = "DragonPunch";
+
+                    PhotonNetwork.Instantiate("SiHyun/Prefabs/Dracoson/Dragon Punch",
+                        _tempRay.origin + _tempRay.direction * 3.5f, _tempQ, data: _data);
                 }
                 else if ((string)data[1] == "DragonShield")
                 {
@@ -1225,6 +1336,8 @@ namespace Player
                 LerpWeight(weight);
             else if (overlayAnimator.GetCurrentAnimatorStateInfo(0).IsName("isHolding"))
                 LerpWeight(weight);
+            else if(overlayAnimator.GetCurrentAnimatorStateInfo(0).IsName("isKill2"))
+                LerpWeight(0);
 
             overlayAnimator.SetIKPosition(AvatarIKGoal.RightHand, overlaySight.position);
             overlayAnimator.SetIKPositionWeight(AvatarIKGoal.RightHand, rightHandWeight);

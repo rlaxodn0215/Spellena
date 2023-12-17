@@ -31,7 +31,7 @@ MonoBehaviour:
   skill1ChannelingTime: 4
   skill1Damage: 0
   skill2CastingTime: 0
-  skill2ChannelingTime: 0
+  skill2ChannelingTime: 1.3
   skill2Damage: 0
   skill3CastingTime: 0.6
   skill3HoldingTime: 5

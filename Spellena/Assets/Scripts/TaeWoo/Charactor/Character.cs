@@ -664,6 +664,18 @@ namespace Player
         }
 
         [PunRPC]
+        public void MovePlayerWithDuration(Vector3 direction, float distance, float speed)
+        {
+            float elapsedTime = 0f;
+
+            while (elapsedTime < distance / speed)
+            {
+                transform.position += direction * speed * Time.deltaTime;
+                elapsedTime += Time.deltaTime;
+            }
+        }
+
+        [PunRPC]
         public void PlayerKnockBack(Vector3 direction, float knockbackForce)
         {
             transform.GetComponent<Rigidbody>().AddForce(direction * knockbackForce, ForceMode.Impulse);
