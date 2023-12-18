@@ -81,7 +81,7 @@ public class DragonicBreathe : SpawnObject
                     //if(_rootObject.tag != tag)
                     {
                         other.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBuffered,
-                                playerName, (int)(dracosonData.skill1Damage), other.name, transform.forward, 20f);
+                                playerName, (int)(dracosonData.dragonicBreatheDamage), other.name, transform.forward, 20f);
                         Debug.Log(other + "µ•πÃ¡ˆ ¡·¥Ÿ ≥≠ ∏Ù∂Û" );
 
                         object[] _data = new object[3];

@@ -4875,7 +4875,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerName: 
-  type: 0
+  type: 1
   objectName: 
   hitParticles: []
   dracosonData: {fileID: 11400000, guid: 18959a79b679a2848b1ac0728854c54b, type: 2}

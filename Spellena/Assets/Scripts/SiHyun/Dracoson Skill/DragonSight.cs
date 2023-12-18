@@ -64,7 +64,7 @@ public class DragonSight : SpawnObject
                         //if(_rootObject.tag != tag)
                         {
                             _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBuffered,
-                                playerName, (int)(dracosonData.skill1Damage), hitObject.name, transform.forward, 20f);
+                                playerName, (int)(dracosonData.dragonSightDamage), hitObject.name, transform.forward, 20f);
                         }
                     }
                 }
