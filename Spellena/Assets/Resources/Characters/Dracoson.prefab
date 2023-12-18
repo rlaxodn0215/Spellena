@@ -3179,7 +3179,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1037026452117830316}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
   m_Name: 
@@ -3316,7 +3316,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5bd81cdf621bc3946ac1979ac280bd6c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  charactor: 0
+  charactor: 2
   sight: {fileID: 7267348054410182224}
   camera: {fileID: 3262650437543207638}
   UI: {fileID: 3602122834190627366}
@@ -3420,6 +3420,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tentacleObject: {fileID: 6732772786770581920, guid: 6211b2131d0b3a04f8ec0708c603b574, type: 3}
   buffDebuffTunnel: {fileID: 3348846147557690}
+  cultistData: {fileID: 0}
   ritualStacks: 0
   horrorViewID: -1
 --- !u!195 &3429428855915775281

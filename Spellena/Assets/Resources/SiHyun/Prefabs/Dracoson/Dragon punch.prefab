@@ -63687,6 +63687,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dragon punch projectile
       objectReference: {fileID: 0}
+    - target: {fileID: 1407900849536826276, guid: 3ce09c40c1db244468aad5abd05c1943, type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3ce09c40c1db244468aad5abd05c1943, type: 3}
 --- !u!1 &4514646652158368826 stripped
