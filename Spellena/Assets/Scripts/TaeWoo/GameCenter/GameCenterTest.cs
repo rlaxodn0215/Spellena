@@ -240,7 +240,7 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
             currentCenterState.StateExecution();
             currentCenterState = centerStates[currentGameState];
 
-            photonView.RPC("SerializeGameCenterDatas", RpcTarget.AllBufferedViaServer, ToDoSerlize());
+            photonView.RPC("SerializeGameCenterDatas", RpcTarget.OthersBuffered, ToDoSerlize());
 
             if (inGameUI != null)
                 GiveDataToUI();

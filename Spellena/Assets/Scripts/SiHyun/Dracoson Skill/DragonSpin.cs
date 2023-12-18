@@ -134,6 +134,5 @@ public class DragonSpin : SpawnObject
             PhotonNetwork.Destroy(hitObject);
         }
     }
-
     
 }

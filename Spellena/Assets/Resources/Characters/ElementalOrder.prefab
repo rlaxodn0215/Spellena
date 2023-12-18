@@ -97872,9 +97872,9 @@ CapsuleCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.3
-  m_Height: 1.3494909
+  m_Height: 1.109135
   m_Direction: 1
-  m_Center: {x: 0, y: 0.62497985, z: 0}
+  m_Center: {x: 0, y: 0.5048019, z: 0}
 --- !u!136 &3890624061537040770
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -97886,9 +97886,9 @@ CapsuleCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   m_Radius: 0.3
-  m_Height: 1.3494909
+  m_Height: 1.1155609
   m_Direction: 1
-  m_Center: {x: 0, y: 0.62497985, z: 0}
+  m_Center: {x: 0, y: 0.50801486, z: 0}
 --- !u!65 &4211280850647434729
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -110787,7 +110787,7 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.13
+  m_Radius: 0.12
   m_Center: {x: -0.05, y: 0, z: 0}
 --- !u!1 &9016540806729379850
 GameObject:

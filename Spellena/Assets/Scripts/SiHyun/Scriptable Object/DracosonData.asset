@@ -22,17 +22,20 @@ MonoBehaviour:
   sitBackSpeed: 1
   jumpHeight: 5
   headShotRatio: 0
-  dragonSightHoldingTime: 0
-  dragonSightAttackTime: 0
+  dragonicSightHoldingTime0: 2
+  dragonicSightHoldingTime1: 2
+  dragonicSightHoldingTime2: 2
+  dragonicSightHoldingTime3: 2
+  dragonSightAttackTime: 0.5
   skill1CastingTime: 0.6
   skill1ChannelingTime: 4
   skill1Damage: 0
   skill2CastingTime: 0
-  skill2ChannelingTime: 0
+  skill2ChannelingTime: 1.3
   skill2Damage: 0
-  skill3CastingTime: 0
-  skill3ChannelingTime: 0
-  skill3ShieldGage: 0
+  skill3CastingTime: 0.6
+  skill3HoldingTime: 5
+  skill3ShieldGage: 500
   skill4CastingTime: 3
   skill4DurationTime: 20
   dragonicBreatheHoldingTime: 5
