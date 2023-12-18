@@ -1053,7 +1053,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 80a0e10fa0741b94f9d3bb0f4a305e48, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 03293bcc17e8ce9459a55899b4137713, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1803,7 +1803,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 80a0e10fa0741b94f9d3bb0f4a305e48, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 75e4f665762dc054b963ebd0e379629d, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -7938,7 +7938,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 80a0e10fa0741b94f9d3bb0f4a305e48, type: 3}
+  m_Sprite: {fileID: 21300000, guid: d4b83cf006d36e042836795c8a6c629b, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -8928,13 +8928,14 @@ GameObject:
   - component: {fileID: 3602122834190627370}
   - component: {fileID: 3602122834190627365}
   - component: {fileID: 3602122834190627364}
+  - component: {fileID: 5390595538541360485}
   m_Layer: 5
-  m_Name: ElementalIOrderUI
+  m_Name: DracosonUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &3602122834190627367
 RectTransform:
   m_ObjectHideFlags: 0
@@ -9020,6 +9021,55 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &5390595538541360485
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3602122834190627366}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b32e4b50dcd7383409242d9a0ebce6b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dracoson: {fileID: -2602113066211621233}
+  hpImage: {fileID: 4297168206684691556}
+  hpText: {fileID: 6928272577074624454}
+  skill1CoolDownText: {fileID: 3786590386449959863}
+  skill2CoolDownText: {fileID: 6434507217031620760}
+  skill3CoolDownText: {fileID: 1891574668869842140}
+  skill1Lock: {fileID: 5381950974828674690}
+  skill2Lock: {fileID: 2870546688111158700}
+  skill3Lock: {fileID: 8857565591507900591}
+  skill4Lock: {fileID: 1544752650837839149}
+  skill1Active: {fileID: 5695350247142239755}
+  skill2Active: {fileID: 5517098822565434619}
+  skill3Active: {fileID: 3605535543541601686}
+  skill4Active: {fileID: 994671193785305494}
+  circleEmpty:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  circleFilled:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  chargeBar: {fileID: 5394788343741062436}
 --- !u!1 &3605535543541601686
 GameObject:
   m_ObjectHideFlags: 0
@@ -9267,7 +9317,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 80a0e10fa0741b94f9d3bb0f4a305e48, type: 3}
+  m_Sprite: {fileID: 21300000, guid: f34337e77514bf34bafd736e164c8aff, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
