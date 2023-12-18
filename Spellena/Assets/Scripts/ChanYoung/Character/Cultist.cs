@@ -635,7 +635,7 @@ namespace Player
                 if (_check == 0)
                 {
                     GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.All,
-                                playerName, -(int)(cultistData.skill1Damage), "", Vector3.zero, 0f);
+                                playerName, (int)(cultistData.skill1Damage), "", Vector3.zero, 0f);
                     //체크부분
                     buffDebuffChecker.SetNewBuffDebuff("TerribleTentacles", 2);
 
