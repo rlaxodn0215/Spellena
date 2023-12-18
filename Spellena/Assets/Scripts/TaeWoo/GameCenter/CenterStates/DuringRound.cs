@@ -117,7 +117,7 @@ public class DuringRound : CenterState
                  case "TotalDamage":
                      if (gameCenter.inGameUIView == null) break;
                     gameCenter.inGameUIView.RPC("ShowDamageUI", targetPlayer,(string)targetPlayer.CustomProperties["DamagePart"]);
-                    // 해당 플레이어에 대한 어시스트 타이머 연결
+
                     string victimViewID = (string)targetPlayer.CustomProperties["PlayerAssistViewID"];
                     if (victimViewID == null) break;
                     targetPlayer.CustomProperties["PlayerAssistViewID"] = "";
@@ -125,7 +125,8 @@ public class DuringRound : CenterState
                     Dictionary<string, float> temp = (Dictionary<string, float>)targetPlayer.CustomProperties["DealAssist"];
 
                     temp["AssistTime_" + victimViewID] = GameCenterTest.globalTimer + gameCenter.assistTime;
-                    GameCenterTest.ChangePlayerCustomProperties(targetPlayer, "DealAssist", temp);
+
+                     GameCenterTest.ChangePlayerCustomProperties(targetPlayer, "DealAssist", temp);
                     break;
                 case "TotalHeal":
                     string healedViewID = (string)targetPlayer.CustomProperties["PlayerAssistViewID"];
@@ -134,7 +135,8 @@ public class DuringRound : CenterState
 
                     Dictionary<string, float> temp1 = (Dictionary<string, float>)targetPlayer.CustomProperties["HealAssist"];
                     temp1["AssistTime_" + healedViewID] = GameCenterTest.globalTimer + gameCenter.assistTime;
-                    GameCenterTest.ChangePlayerCustomProperties(targetPlayer, "HealAssist", temp1);
+
+                     GameCenterTest.ChangePlayerCustomProperties(targetPlayer, "HealAssist", temp1);
                     break;
                  case "KillCount":
                      if (gameCenter.inGameUIView == null) break;
@@ -367,7 +369,7 @@ public class DuringRound : CenterState
                 {
                     if (assist.Value >= GameCenterTest.globalTimer)
                     {
-                        Debug.LogError("Deal Assist!!");
+                        //Debug.LogError("Deal Assist!!");
                         PhotonView view = PhotonView.Find((int)teamPlayer.CustomProperties["CharacterViewID"]);
                         if (view == null) continue;
                         view.RPC("SetChargePoint", teamPlayer,teamPlayer.ActorNumber);
@@ -388,7 +390,7 @@ public class DuringRound : CenterState
                 // 살인자 제외
                 if ((string)teamPlayer.CustomProperties["Name"] == killerName)
                 {
-                    //Debug.LogError("killerName");
+                    Debug.LogError("Same With Killer Name : " + killerName);
                     continue;
                 }
 
@@ -397,10 +399,11 @@ public class DuringRound : CenterState
                 {
                     if (assist.Value >= GameCenterTest.globalTimer)
                     {
-                        Debug.LogError("Deal Assist!!");
+                        Debug.Log(assist.Value + " : " + GameCenterTest.globalTimer);
+                        Debug.Log("<color=blue>" + "DEAL ASSIST " + "</color>" + " Name : " + "<color=red>" + (string)teamPlayer.CustomProperties["Name"] + "</color>" + "  KillerName : " + killerName);
                         PhotonView view = PhotonView.Find((int)teamPlayer.CustomProperties["CharacterViewID"]);
                         if (view == null) continue;
-                        view.RPC("SetChargePoint", teamPlayer,teamPlayer.ActorNumber);
+                        view.RPC("SetChargePoint", RpcTarget.AllBuffered,teamPlayer.ActorNumber);
                         gameCenter.inGameUIView.RPC("ShowAssistUI", teamPlayer, (string)player.CustomProperties["Name"]);
                         yield return new WaitForSeconds(0.2f);
                         int temp = (int)teamPlayer.CustomProperties["AsisstCount"];

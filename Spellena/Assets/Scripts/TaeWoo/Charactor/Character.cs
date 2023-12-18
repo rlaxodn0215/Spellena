@@ -882,6 +882,7 @@ namespace Player
         [PunRPC]
         public void SetChargePoint(int actorNumber)
         {
+            Debug.Log("SetChargePoint to " + "<color=yellow>" + (string)PhotonNetwork.LocalPlayer.CustomProperties["Name"]);
             chargeCount++;
             if (chargeCount >= 4)
             {
