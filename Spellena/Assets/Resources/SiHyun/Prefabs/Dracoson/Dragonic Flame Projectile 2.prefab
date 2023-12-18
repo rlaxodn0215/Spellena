@@ -19621,7 +19621,7 @@ MonoBehaviour:
   UseFirePointRotation: 0
   rotationOffset: {x: 0, y: 0, z: 0}
   hit: {fileID: 1339124478685776, guid: 910782ce98cb28e4087a0be073f534a9, type: 3}
-  flash: {fileID: 1738175644799202, guid: 660f4f60d49e77847a45ca4e9f937c95, type: 3}
+  flash: {fileID: 1738175644799202, guid: ef2ea00d5aa068b4dbce49e8e5c7b429, type: 3}
   Detached: []
 --- !u!1 &1450556779679700
 GameObject:

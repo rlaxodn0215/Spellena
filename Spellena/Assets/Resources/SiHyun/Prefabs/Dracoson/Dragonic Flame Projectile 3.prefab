@@ -14565,7 +14565,7 @@ GameObject:
   - component: {fileID: -7235087771448378761}
   - component: {fileID: 1127867557692187485}
   - component: {fileID: 5179592012910235591}
-  - component: {fileID: 3937660113673034878}
+  - component: {fileID: 4245360263514265570}
   m_Layer: 0
   m_Name: Dragonic Flame Projectile 3
   m_TagString: Untagged
@@ -19604,7 +19604,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c27186e3d952af74494d2ce0917f74f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &3937660113673034878
+--- !u!114 &4245360263514265570
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
