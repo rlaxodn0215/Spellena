@@ -292,8 +292,8 @@ public class InGameUI : MonoBehaviourPunCallbacks,IPunObservable
         if (UIObjects["killText"])
         {
             UIObjects["killText"].SetActive(true);
-            //killText.text = string.Format("<color=red>" + victim + "</color>" + " 처치");
-            killText.text = string.Format("처치 테스트");
+            killText.text = string.Format("<color=red>" + victim + "</color>" + " 처치");
+            //killText.text = string.Format("처치 테스트");
             // 킬 사운드
             soundManager.PlayAudioOverlap("KillSound", 1.0f, false, false, "EffectSound");
             StartCoroutine(DisableUI("killText", killActiveTime));
@@ -307,8 +307,8 @@ public class InGameUI : MonoBehaviourPunCallbacks,IPunObservable
         if (UIObjects["killText"])
         {
             UIObjects["killText"].SetActive(true);
-            //killText.text = string.Format("<color=red>" + victim + "</color>" + " 처치 기여");
-            killText.text = string.Format("어시스트 테스트");
+            killText.text = string.Format("<color=red>" + victim + "</color>" + " 처치 기여");
+            //killText.text = string.Format("어시스트 테스트");
             // 어시스트 사운드
             soundManager.PlayAudioOverlap("AssistSound", 1.0f, false, false, "EffectSound");
             StartCoroutine(DisableUI("killText", killActiveTime));
