@@ -7,8 +7,7 @@ using UnityEngine;
 
 public class DragonPunch : SpawnObject
 {
-    public Trigger triggerEventer;
-    public TriggerEventer triggerEventerPushOut;
+    public TriggerEventer triggerEventer;
     public DracosonData dracosonData;
     public GameObject projectile;
 
@@ -39,7 +38,6 @@ public class DragonPunch : SpawnObject
     void Init()
     {
         triggerEventer.hitTriggerEvent += TriggerEvent;
-        triggerEventerPushOut.hitTriggerEvent += TriggerEventPushOut;
     }
 
 
@@ -83,9 +81,14 @@ public class DragonPunch : SpawnObject
                             _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBuffered,
                                 playerName, (int)(dracosonData.skill2Damage), hitObject.name, transform.forward, 20f);
 
-                            Debug.Log("²ø·Á°¡´Â ÇÔ¼ö ÀÛµ¿ ÇØÁà Á¦¹ß ½´¹ß");
+                            Vector3 _knockbackDirection =
+                                     (_rootObject.transform.position - transform.position).normalized;
+                            Debug.Log(_knockbackDirection);
+                            _rootObject.GetComponent<PhotonView>().RPC("PlayerKnockBack", RpcTarget.AllBuffered,
+                                _knockbackDirection, knockbackForce);
+                            /*Debug.Log("²ø·Á°¡´Â ÇÔ¼ö ÀÛµ¿ ÇØÁà Á¦¹ß ½´¹ß");
                             _rootObject.GetComponent<PhotonView>().RPC("MovePlayerWithDuration", RpcTarget.AllBuffered,
-                                projectileDirection, moveDistance, moveSpeed);
+                                projectileDirection, moveDistance, moveSpeed);*/
                         }
                     }
                 }
