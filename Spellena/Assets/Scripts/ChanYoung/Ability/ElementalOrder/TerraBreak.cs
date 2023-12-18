@@ -8,6 +8,12 @@ public class TerraBreak
     float skillCoolDownTime = 19f;
 
     bool isReady = false;
+
+    public TerraBreak(ElementalOrderData elementalOrderData)
+    {
+        maxDistance = elementalOrderData.terraBreakMaxDistance;
+    }
+
     public float GetSkillCoolDownTime()
     {
         return skillCoolDownTime;

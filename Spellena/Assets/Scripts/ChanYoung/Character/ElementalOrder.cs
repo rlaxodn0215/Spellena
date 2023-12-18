@@ -77,9 +77,9 @@ namespace Player
 
         RagnaEdge ragnaEdge = new RagnaEdge();
         BurstFlare burstFlare = new BurstFlare();
-        GaiaTied gaiaTied = new GaiaTied();
-        MeteorStrike meteorStrike = new MeteorStrike();
-        TerraBreak terraBreak = new TerraBreak();
+        GaiaTied gaiaTied;
+        MeteorStrike meteorStrike;
+        TerraBreak terraBreak;
         EterialStorm eterialStorm = new EterialStorm();
 
         float spell1DefaultAnimationLength;
@@ -116,6 +116,8 @@ namespace Player
             base.Awake();
             CheckPoint();
             currentHandPoint = handPoint;
+            InitAwake();
+            
 
             //if (photonView.IsMine)
             //{
@@ -140,6 +142,13 @@ namespace Player
             dataHp = elementalOrderData.hp;
             topAnimator = animator;
             animator = animatorForOther = avatarForOther.GetComponent<Animator>();
+        }
+
+        void InitAwake()
+        {
+            gaiaTied = new GaiaTied(elementalOrderData);
+            meteorStrike = new MeteorStrike(elementalOrderData);
+            terraBreak = new TerraBreak(elementalOrderData);
         }
         protected override void Update()
         {
@@ -848,19 +857,19 @@ namespace Player
                     float _maxDistace;
                     if (skillState == SkillState.MeteorStrike)
                     {
-                        MeteorStrike _localMeteorStrike = new MeteorStrike();
+                        MeteorStrike _localMeteorStrike = new MeteorStrike(elementalOrderData);
                         _maxDistace = _localMeteorStrike.maxDistance;
                         rangePointStrikeArea.transform.localScale = new Vector3(1.25f, 1.25f, 1.25f);
                     }
                     else if (skillState == SkillState.TerraBreak)
                     {
-                        TerraBreak _localTerraBreak = new TerraBreak();
+                        TerraBreak _localTerraBreak = new TerraBreak(elementalOrderData);
                         _maxDistace = _localTerraBreak.maxDistance;
                         rangePointStrikeArea.transform.localScale = new Vector3(2f, 2f, 2f);
                     }
                     else
                     {
-                        GaiaTied _localGaiaTied = new GaiaTied();
+                        GaiaTied _localGaiaTied = new GaiaTied(elementalOrderData);
                         _maxDistace = _localGaiaTied.maxDistance;
                     }
 
@@ -1215,6 +1224,7 @@ namespace Player
             screenRay = camera.GetComponent<Camera>().ScreenPointToRay(Aim.transform.position);
             handPoint = screenRay.origin + screenRay.direction;
         }
+
 
         void PlayAttackSound()
         {
