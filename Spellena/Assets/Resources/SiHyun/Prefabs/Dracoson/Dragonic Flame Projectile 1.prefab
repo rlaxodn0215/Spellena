@@ -14565,6 +14565,7 @@ GameObject:
   - component: {fileID: 2573039653378211817}
   - component: {fileID: 4497255320809645016}
   - component: {fileID: 5263235548042045269}
+  - component: {fileID: -8028392541766046872}
   m_Layer: 0
   m_Name: Dragonic Flame Projectile 1
   m_TagString: Untagged
@@ -19569,7 +19570,6 @@ MonoBehaviour:
   OwnershipTransfer: 0
   observableSearch: 2
   ObservedComponents:
-  - {fileID: 0}
   - {fileID: 4497255320809645016}
   sceneViewId: 0
   InstantiationId: 0
@@ -19587,7 +19587,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerName: 
-  type: 0
+  type: 1
   objectName: 
   hitParticles: []
   triggerEventer: {fileID: 5263235548042045269}
@@ -19604,6 +19604,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c27186e3d952af74494d2ce0917f74f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &-8028392541766046872
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1449260960837898}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 605a456cfc02f6b499a64717539a27e8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 25
+  hitOffset: 0.1
+  UseFirePointRotation: 0
+  rotationOffset: {x: 0, y: 0, z: 0}
+  hit: {fileID: 1339124478685776, guid: 3685c58569ee95e418f01404fc3a95e1, type: 3}
+  flash: {fileID: 1738175644799202, guid: 1762609d5d444a3408804ea6963dbeb4, type: 3}
+  Detached: []
 --- !u!1 &1450556779679700
 GameObject:
   m_ObjectHideFlags: 0
