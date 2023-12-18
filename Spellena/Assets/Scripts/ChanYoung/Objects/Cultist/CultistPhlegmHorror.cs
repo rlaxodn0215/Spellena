@@ -47,6 +47,11 @@ public class CultistPhlegmHorror : SpawnObject
                             //이벤트 발생
                             photonViews[i].RPC("TeleportToPoint", RpcTarget.All, _rootObject.transform.position, _rootObject.transform.forward);
                             photonViews[i].RPC("CancelSkill2", RpcTarget.MasterClient, _rootObject.transform.position + _rootObject.transform.forward * 2);
+
+
+                            _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.All,
+                               playerName, 150, other.name, transform.forward, 10f);
+
                             isCheck = true;
                             break;
                         }
