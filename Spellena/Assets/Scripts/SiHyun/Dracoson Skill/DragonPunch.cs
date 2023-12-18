@@ -81,7 +81,7 @@ public class DragonPunch : SpawnObject
                         //if(_rootObject.tag != tag)
                         {
                             _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBuffered,
-                                playerName, (int)(dracosonData.skill1Damage), hitObject.name, transform.forward, 20f);
+                                playerName, (int)(dracosonData.skill2Damage), hitObject.name, transform.forward, 20f);
 
                             Debug.Log("끌려가는 함수 작동 해줘 제발 슈발");
                             _rootObject.GetComponent<PhotonView>().RPC("MovePlayerWithDuration", RpcTarget.AllBuffered,
@@ -107,6 +107,9 @@ public class DragonPunch : SpawnObject
                     {
                         //if(_rootObject.tag != tag)
                         {
+                            _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBuffered,
+                                playerName, (int)(dracosonData.skill2Damage), hitObject.name, transform.forward, 20f);
+
                             Debug.Log("나중에 추가한 트리거만 발동되는듯?");
                             Vector3 _knockbackDirection =
                                      (_rootObject.transform.position - transform.position).normalized;
