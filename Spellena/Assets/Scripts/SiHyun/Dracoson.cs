@@ -26,6 +26,12 @@ namespace Player
         DragonicBreath
     }
 
+    public enum MetamorphoseState
+    {
+
+    }
+
+
     public class Dracoson : Character
     {
         public DracosonData dracosonData;
@@ -49,13 +55,14 @@ namespace Player
         [Range(0, 1)]
         public float weight = 0.01f;
 
+        private Transform avatarForOther;
         public DragonicBreathe breatheObject;
         public GameObject dragonShield;
         private GameObject currentObjectForMe;
         private GameObject currentObjectForOther;
         public GameObject rangeMark;
         private int previouseChargeCount = 0;
-
+        private float maxHeight = 21.0f;
         int shieldId;
 
         int ownerNum;
@@ -107,6 +114,7 @@ namespace Player
         bool[] isClicked = new bool[2];
 
         bool isFly = false;
+        bool isMeta = false;
 
         Vector3 aimPos;
         Vector3 aimDirection;
@@ -182,7 +190,7 @@ namespace Player
             ChangeLayerRecursively(overlayRightHand.transform, 8);
             Transform avatarForOtherRoot = transform.GetChild(0).GetChild(0).GetChild(1);
             avatarForOtherRoot.GetComponentInChildren<MeshRenderer>().transform.gameObject.layer = 6;
-            //avatarForOtherRoot.GetComponentInChildren<MeshRenderer>().enabled = false;
+            avatarForOtherRoot.GetComponentInChildren<MeshRenderer>().enabled = false;
             Transform dracosonMetamorphose = transform.GetChild(0).GetChild(2);
             ChangeLayerRecursively(dracosonMetamorphose, 6);
         }
@@ -233,9 +241,9 @@ namespace Player
             if (isFly)
             {
                 float _currentHeight = transform.position.y;
-                float _maxHeight = 15f;
+                float _maxHeight = maxHeight;
                 if(_currentHeight < _maxHeight)
-                    rigidbody.AddForce(Vector3.up * 17f, ForceMode.Acceleration);
+                    rigidbody.AddForce(Vector3.up * 17f, ForceMode.Force);
             }
         }
 
@@ -455,7 +463,7 @@ namespace Player
 
         protected override void OnJump()
         {
-            if (localState != LocalStateDracoson.Metamorphose)
+            if (!isMeta)
             {
                 base.OnJump();
             }
@@ -463,7 +471,7 @@ namespace Player
 
         void OnFly()
         {
-            if (localState == LocalStateDracoson.Metamorphose)
+            if (isMeta)
             {
                 if (!isFly)
                     Debug.Log("점프키 누름");
@@ -675,7 +683,7 @@ namespace Player
                 }
             }
         }
-            void SetEffectID(object[] data)
+        void SetEffectID(object[] data)
         {
             currentObjectForOther = PhotonView.Find((int)data[1])?.gameObject;
             currentObjectForOther.layer = 7;
@@ -749,12 +757,28 @@ namespace Player
                     thirdCamera.SetActive(true);
                     camera.SetActive(false);
                     overlaycamera.SetActive(false);
+
+                    avatarForOther = transform.GetChild(0).GetChild(0).GetChild(0);
+                    for (int i = 0; i < avatarForOther.childCount; i++)
+                    {
+                        avatarForOther.GetChild(i).gameObject.GetComponent<SkinnedMeshRenderer>().enabled = true;
+                    }
+                    Transform avatarForOtherRoot = transform.GetChild(0).GetChild(0).GetChild(1);
+                    avatarForOtherRoot.GetComponentInChildren<MeshRenderer>().enabled = true;
                 }
                 else if ((string)data[1] == "Default")
                 {
                     thirdCamera.SetActive(false);
                     camera.SetActive(true);
                     overlaycamera.SetActive(true);
+
+                    avatarForOther = transform.GetChild(0).GetChild(0).GetChild(0);
+                    for (int i = 0; i < avatarForOther.childCount; i++)
+                    {
+                        avatarForOther.GetChild(i).gameObject.GetComponent<SkinnedMeshRenderer>().enabled = false;
+                    }
+                    Transform avatarForOtherRoot = transform.GetChild(0).GetChild(0).GetChild(1);
+                    avatarForOtherRoot.GetComponentInChildren<MeshRenderer>().enabled = false;
                 }
             }
         }
@@ -765,9 +789,9 @@ namespace Player
             {
                 Debug.Log("카메라 위치 조정");
                 if ((string)data[1] == "Change")
-                    camera.transform.position = new Vector3(camera.transform.position.x, 3.5f, camera.transform.position.z);
+                    camera.transform.localPosition = new Vector3(camera.transform.localPosition.x, 3.5f, camera.transform.localPosition.z);
                 else if ((string)data[1] == "Default")
-                    camera.transform.position = new Vector3(transform.position.x, 1.74f, transform.position.z);
+                    camera.transform.localPosition = new Vector3(transform.localPosition.x, 1.74f, transform.localPosition.z);
             }
         }
 
@@ -799,9 +823,15 @@ namespace Player
             //if (photonView.IsMine)
             {
                 if ((string)data[1] == "Metamorphose")
+                {
                     animator = dracosonMetamorphose.GetComponent<Animator>();
+                    isMeta = true;
+                }
                 else if ((string)data[1] == "Dracoson")
+                {
                     animator = GetComponent<Animator>();
+                    isMeta = false;
+                }
             }
         }
 
