@@ -12,6 +12,8 @@ public class BuffDebuffChecker : MonoBehaviourPunCallbacks
 {
     public GameObject tentacleObject;
     public BuffDebuffTunnel buffDebuffTunnel;
+    public CultistData cultistData;
+
     NavMeshAgent agent;
     GameObject target;
 
@@ -104,12 +106,13 @@ public class BuffDebuffChecker : MonoBehaviourPunCallbacks
                     if (currentHorrorDamageTime > 0f)
                     {
                         currentHorrorDamageTime -= Time.deltaTime;
-                        if (currentHorrorDamageTime < 0f)
+                        if (currentHorrorDamageTime <= 0f)
                         {
                             currentHorrorDamageTime = horrorDamageTime;
                             GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.All, horrorPlayer, 10, "",
                                Vector3.zero, 0f);
 
+                            Debug.Log("공포");
                             //공포 디버프 데미지
                         }
                     }
@@ -311,7 +314,7 @@ public class BuffDebuffChecker : MonoBehaviourPunCallbacks
         else if(buffDebuff == "Horror")
         {
             buffsAndDebuffs.Add(buffDebuff);
-            leftTime.Add(0.8f);
+            leftTime.Add(2f);
             CallRPCTunnel("SetHorrorViewID", (int)data[0]);
         }
         else if(buffDebuff == "BlessingCast")

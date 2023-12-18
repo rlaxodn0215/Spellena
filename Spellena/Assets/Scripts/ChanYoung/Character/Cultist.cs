@@ -617,7 +617,7 @@ namespace Player
                         {
                             //È¸º¹
                             _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.All,
-                                playerName, -(int)(cultistData.skill1Damage), _tempObject.name, Vector3.zero, 0f);
+                                playerName, (int)(cultistData.skill1Damage), _tempObject.name, Vector3.zero, 0f);
                             GameObject _transferObject = PhotonNetwork.Instantiate("ChanYoung/Prefabs/Cultist/CultistHealEffect",
                                 _rootObject.transform.position + new Vector3(0, 1, 0), Quaternion.identity);
 

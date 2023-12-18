@@ -25,5 +25,9 @@ MonoBehaviour:
     address: https://docs.google.com/spreadsheets/d/1K4TGXe3SSfbxL0s2vpzVl1ETSarZHiA0G8YuX8W0qIA/
     range_1: D6
     range_2: BH23
+  - name: "\uCEEC\uD2F0\uC2A4\uD2B8"
+    address: https://docs.google.com/spreadsheets/d/1wmXTm_dA1Qj8HNxdXwVumipc1xK-182SUQjjv3DKrfA/
+    range_1: E8
+    range_2: AN36
   exportFormattsv: export?format=tsv
   andRange: '&range='

@@ -83,7 +83,7 @@ public class CultistDagger : SpawnObject
                     if (_rootObject.tag != tag)
                     {
                         _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBuffered,
-                         playerName, (int)(cultistData.skill1Damage), hitObject.name, transform.forward, 20f);
+                         playerName, (int)(cultistData.throwDamage), hitObject.name, transform.forward, 20f);
                         photonView.RPC("DestoryObject", RpcTarget.AllBuffered);
                         //CallRPCTunnel("RequestDestroy");
                     }
