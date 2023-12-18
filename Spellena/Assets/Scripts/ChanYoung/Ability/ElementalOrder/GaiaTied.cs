@@ -9,6 +9,11 @@ public class GaiaTied
 
     bool isReady = false;
 
+    public GaiaTied(ElementalOrderData elementalOrderData)
+    {
+        maxDistance = elementalOrderData.gaiaTiedMaxDistace;
+    }
+
     public float GetSkillCoolDownTime()
     {
         return skillCoolDownTime;

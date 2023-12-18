@@ -13,29 +13,30 @@ MonoBehaviour:
   m_Name: CultistData
   m_EditorClassIdentifier: 
   hp: 500
-  moveSpeed: 5
-  backSpeed: 5
-  sideSpeed: 5
-  runSpeedRatio: 1.5
-  sitSpeed: 5
+  moveSpeed: 10
+  backSpeed: 8
+  sideSpeed: 9
+  runSpeedRatio: 1.2
+  sitSpeed: 6
   sitSideSpeed: 5
-  sitBackSpeed: 5
+  sitBackSpeed: 4
   jumpHeight: 5
   headShotRatio: 1.5
   invocationCastingTime: 1
   lungeHoldingTime: 1.5
   lungeAttackTime: 1
-  lungeAttackDamage: 100
+  lungeAttackDamage: 200
   throwTime: 1
+  throwDamage: 200
   skill1CastingTime: 1.5
   skill1Time: 1
-  skill1Damage: 100
-  skill1CoolDownTime: 5
+  skill1Damage: -900
+  skill1CoolDownTime: 3
   skill2CastingTime: 2
-  skill2ChannelingTime: 5
-  skill2CoolDownTime: 5
-  skill3CastingTime: 1.5
-  skill3ChannelingTime: 5
-  skill3CoolDownTime: 5
+  skill2ChannelingTime: 8
+  skill2CoolDownTime: 12
+  skill3CastingTime: 2
+  skill3ChannelingTime: 4
+  skill3CoolDownTime: 20
   skill4CastingTime: 3
-  skill4CoolDownTime: 5
+  skill4CoolDownTime: 0

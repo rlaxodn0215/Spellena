@@ -23,6 +23,8 @@ public class CultistData : ScriptableObject
     public float lungeAttackDamage;
 
     public float throwTime;
+    public float throwDamage;
+
     public float skill1CastingTime;
     public float skill1Time;
     public float skill1Damage;

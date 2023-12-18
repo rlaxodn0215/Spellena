@@ -107,21 +107,11 @@ namespace Player
         //0 : 왼쪽 마우스, 1 : 오른쪽 마우스
         bool[] isClicked = new bool[2];
 
-        Vector3 aimPos;
-        Vector3 aimDirection;
-
         protected override void Awake()
         {
             base.Awake();
             if (photonView.IsMine)
             {
-                ////테스트 정보
-                //HashTable _tempTable = new HashTable();
-                //_tempTable.Add("CharacterViewID", photonView.ViewID);
-                //_tempTable.Add("IsAlive", true);
-                //PhotonNetwork.LocalPlayer.SetCustomProperties(_tempTable);
-
-
                 object[] _tempData = new object[2];
                 _tempData[0] = "SetOwnerNum";
                 _tempData[1] = photonView.OwnerActorNr;
@@ -627,7 +617,7 @@ namespace Player
                         {
                             //회복
                             _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.All,
-                                playerName, -(int)(cultistData.skill1Damage), _tempObject.name, Vector3.zero, 0f);
+                                playerName, (int)(cultistData.skill1Damage), _tempObject.name, Vector3.zero, 0f);
                             GameObject _transferObject = PhotonNetwork.Instantiate("ChanYoung/Prefabs/Cultist/CultistHealEffect",
                                 _rootObject.transform.position + new Vector3(0, 1, 0), Quaternion.identity);
 

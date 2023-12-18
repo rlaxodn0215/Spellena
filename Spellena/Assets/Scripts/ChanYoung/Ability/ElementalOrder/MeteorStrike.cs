@@ -4,11 +4,17 @@ using UnityEngine;
 
 public class MeteorStrike
 {
+    public ElementalOrderData elementalOrderData;
     public float maxDistance = 5f;
 
     float skillCoolDownTime = 15f;
 
     bool isReady = false;
+
+    public MeteorStrike(ElementalOrderData elementalOrderData)
+    {
+        maxDistance = elementalOrderData.meteorStrikeMaxDistance;
+    }
 
     public float GetSkillCoolDownTime()
     {

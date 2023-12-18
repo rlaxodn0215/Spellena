@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using System.IO;
@@ -16,6 +14,7 @@ public class GoogleSheetManager : EditorWindow
     private GameCenterTestData gameCenterTestData;
     private AeternaData aeternaData;
     private ElementalOrderData elementalOrderData;
+    private CultistData cultistData;
 
     // URL
     private string URL;
@@ -39,7 +38,7 @@ public class GoogleSheetManager : EditorWindow
         gameCenterTestData = (GameCenterTestData)EditorGUILayout.ObjectField("GameCenterTestData", gameCenterTestData, typeof(GameCenterTestData), true);
         aeternaData = (AeternaData)EditorGUILayout.ObjectField("AeternaData", aeternaData, typeof(AeternaData), true);
         elementalOrderData = (ElementalOrderData)EditorGUILayout.ObjectField("ElementalOrderData", elementalOrderData, typeof(ElementalOrderData), true);
-
+        cultistData = (CultistData)EditorGUILayout.ObjectField("CultistData", cultistData, typeof(CultistData), true);
         if (GUILayout.Button("데이터 불러오고 저장하기"))
         {
             InitData();
@@ -59,7 +58,7 @@ public class GoogleSheetManager : EditorWindow
             UnityWebRequest www = UnityWebRequest.Get(URL);
             www.SendWebRequest();
             while (!www.isDone)
-            { 
+            {
                 //Debug.Log("데이터 가져오는 중...");                                
             }
 
@@ -191,25 +190,30 @@ public class GoogleSheetManager : EditorWindow
             case 2:
                 GiveElementalOrderData();
                 break;
+            case 3:
+                GiveCultistData();
+                break;
             default:
                 break;
         }
     }
 
+
+
     void GiveGameCenterTestData()
     {
         gameCenterTestData.loadingTime = 1;
-        gameCenterTestData.characterSelectTime  = 15;
+        gameCenterTestData.characterSelectTime = 15;
         gameCenterTestData.readyTime = 1;
         gameCenterTestData.playerRespawnTime = float.Parse(dividData[1, 7]);
-        gameCenterTestData.assistTime  = 10;
+        gameCenterTestData.assistTime = 10;
 
         gameCenterTestData.angelStatueCoolTime = float.Parse(dividData[18, 0]);
         gameCenterTestData.angelStatueHpPerTime = int.Parse(dividData[16, 0]);
         gameCenterTestData.angelStatueContinueTime = int.Parse(dividData[17, 0]);
 
         gameCenterTestData.occupyingGaugeRate = 100.0f / (float.Parse(dividData[0, 0]) / float.Parse(dividData[2, 0]));
-        gameCenterTestData.occupyingReturnTime  = 3;
+        gameCenterTestData.occupyingReturnTime = 3;
         gameCenterTestData.occupyingRate = 100.0f / (float.Parse(dividData[5, 0]) / float.Parse(dividData[7, 0]));
         gameCenterTestData.occupyingComplete = 99;
         gameCenterTestData.roundEndTime = int.Parse(dividData[8, 0]);
@@ -267,7 +271,7 @@ public class GoogleSheetManager : EditorWindow
 
         //[Header("에테르나 스킬3 데이터")]
         //[Tooltip("스킬3 지속 시간")]
-        aeternaData.skill3DurationTime  = float.Parse(dividData[16, 5]);
+        aeternaData.skill3DurationTime = float.Parse(dividData[16, 5]);
 
         //[Header("에테르나 스킬4 데이터")]
         //[Tooltip("스킬4 궁극기 코스트")]
@@ -372,6 +376,44 @@ public class GoogleSheetManager : EditorWindow
 
         EditorUtility.SetDirty(elementalOrderData);
     }
+
+    void GiveCultistData()
+    {
+        cultistData.hp = int.Parse(dividData[20, 0]);
+        cultistData.moveSpeed = float.Parse(dividData[21, 0]);
+        cultistData.backSpeed = float.Parse(dividData[22, 0]);
+        cultistData.sideSpeed = float.Parse(dividData[23, 0]);
+        cultistData.runSpeedRatio = float.Parse(dividData[24, 0]);
+        cultistData.sitSpeed = float.Parse(dividData[25, 0]);
+        cultistData.sitBackSpeed = float.Parse(dividData[26, 0]);
+        cultistData.sitSideSpeed = float.Parse(dividData[27, 0]);
+        cultistData.jumpHeight = float.Parse(dividData[28, 0]);
+        cultistData.headShotRatio = float.Parse(dividData[31, 0]);
+        //평타 관련
+        cultistData.invocationCastingTime = float.Parse(dividData[0, 1]);
+        cultistData.lungeHoldingTime = float.Parse(dividData[2, 2]);
+        cultistData.lungeAttackDamage = float.Parse(dividData[5, 2]);
+        cultistData.throwDamage = int.Parse(dividData[5, 5]);
+        //스킬 1
+        cultistData.skill1CastingTime = float.Parse(dividData[0, 6]);
+        cultistData.skill1CoolDownTime = float.Parse(dividData[1, 6]);
+        cultistData.skill1Damage = float.Parse(dividData[5, 6]);
+        //스킬 2
+        cultistData.skill2CastingTime = float.Parse(dividData[0, 12]);
+        cultistData.skill2CoolDownTime = float.Parse(dividData[1, 12]);
+        cultistData.skill2ChannelingTime = float.Parse(dividData[4, 12]);
+        //스킬 3
+        cultistData.skill3CastingTime = float.Parse(dividData[0, 17]);
+        cultistData.skill3CoolDownTime = float.Parse(dividData[1, 17]);
+        cultistData.skill3ChannelingTime = float.Parse(dividData[4, 17]);
+        //스킬 4
+        cultistData.skill4CoolDownTime = 0f;
+        cultistData.skill4CastingTime = float.Parse(dividData[0, 27]);
+
+
+        EditorUtility.SetDirty(cultistData);
+    }
+
 }
 
 #endif
