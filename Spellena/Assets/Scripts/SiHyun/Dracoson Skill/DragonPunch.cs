@@ -73,7 +73,7 @@ public class DragonPunch : SpawnObject
                     hitObjects.Add(_rootObject.name);
                     if (_rootObject.GetComponent<Character>() != null)
                     {
-                        //if(_rootObject.tag != tag)
+                        if(_rootObject.tag != tag)
                         {
                             _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBuffered,
                                 playerName, (int)(dracosonData.skill2Damage), hitObject.name, transform.forward, 20f);
