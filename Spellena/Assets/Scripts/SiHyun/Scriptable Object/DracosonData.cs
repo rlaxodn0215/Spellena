@@ -21,7 +21,9 @@ public class DracosonData : ScriptableObject
     public float dragonicSightHoldingTime2;
     public float dragonicSightHoldingTime3;
     public float dragonSightAttackTime;
-    public float dragonSightDamage;
+    public float dragonSightChargePhase1Damage;
+    public float dragonSightChargePhase2Damage;
+    public float dragonSightChargePhase3Damage;
     public float skill1CastingTime;
     public float skill1ChannelingTime;
     public float skill1Damage;

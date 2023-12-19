@@ -15,7 +15,7 @@ public class DragonSpin : SpawnObject
     public GameObject greenDragon;
 
     public float distance = 2.5f;
-    public float rotationSpeed = 360.0f;
+    public float rotationSpeed = 450.0f;
     public float knockbackForce = 2f;
 
     private float totalRotation = 0.0f;
@@ -34,7 +34,7 @@ public class DragonSpin : SpawnObject
         checkTimer = resetTimer;
     }
 
-    void Update()
+    void FixedUpdate()
     {
         checkTimer -= Time.deltaTime;
         if (checkTimer <= 0f)
@@ -52,7 +52,8 @@ public class DragonSpin : SpawnObject
         }
         else
         {
-            CallRPCTunnel("RequestDestroy");
+            if(PhotonNetwork.IsMasterClient)
+                CallRPCTunnel("RequestDestroy");
         }
     }
 
