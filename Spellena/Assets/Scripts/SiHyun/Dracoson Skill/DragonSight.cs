@@ -11,6 +11,8 @@ public class DragonSight : SpawnObject
 
     List<string> hitObjects = new List<string>();
 
+    private int skillDamage;
+
     private void Start()
     {
         Init();
@@ -25,6 +27,24 @@ public class DragonSight : SpawnObject
         triggerEventer.hitTriggerEvent += TriggerEvent;
     }
 
+    public void SetChargePhase(int phase)
+    {
+        switch (phase)
+        {
+            case 1:
+                skillDamage = (int)(dracosonData.dragonSightChargePhase1Damage);
+                break;
+            case 2:
+                skillDamage = (int)(dracosonData.dragonSightChargePhase2Damage);
+                break;
+            case 3:
+                skillDamage = (int)(dracosonData.dragonSightChargePhase3Damage);
+                break;
+            default:
+                skillDamage = (int)(dracosonData.dragonSightChargePhase1Damage);
+                break;
+        }
+    }
 
 
     void CallRPCTunnel(string tunnelCommand)
@@ -64,7 +84,8 @@ public class DragonSight : SpawnObject
                         //if(_rootObject.tag != tag)
                         {
                             _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBuffered,
-                                playerName, (int)(dracosonData.dragonSightDamage), hitObject.name, transform.forward, 20f);
+                                playerName, skillDamage, hitObject.name, transform.forward, 20f);
+                            PhotonNetwork.Destroy(transform.gameObject);
                         }
                     }
                 }

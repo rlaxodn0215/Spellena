@@ -3448,6 +3448,7 @@ MonoBehaviour:
   breatheObject: {fileID: 4109300234218272032, guid: abcf623c1076fb54faaddb70cc2427b3, type: 3}
   dragonShield: {fileID: 7343642687886469511, guid: 3fbc79aa69226c64196372a80163c3c6, type: 3}
   rangeMark: {fileID: 7235763155890176082}
+  metaState: 0
   skillState: 0
   skillCoolDownTime:
   - 0

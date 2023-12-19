@@ -20,7 +20,7 @@ public class DragonicBreathe : SpawnObject
         Init();
     }
 
-    void Update()
+    void FixedUpdate()
     {
         deleteTime -= Time.deltaTime;
 
@@ -34,7 +34,8 @@ public class DragonicBreathe : SpawnObject
         if (deleteTime <= 1.5f)
             transform.GetComponent<ParticleSystem>().Stop();
         else if (deleteTime <= 0f)
-            CallRPCTunnel("RequestDestroy");
+            if(PhotonNetwork.IsMasterClient)
+                CallRPCTunnel("RequestDestroy");
     }
     void Init()
     {

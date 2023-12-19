@@ -27,7 +27,9 @@ MonoBehaviour:
   dragonicSightHoldingTime2: 2
   dragonicSightHoldingTime3: 2
   dragonSightAttackTime: 0.5
-  dragonSightDamage: 50
+  dragonSightChargePhase1Damage: 50
+  dragonSightChargePhase2Damage: 75
+  dragonSightChargePhase3Damage: 100
   skill1CastingTime: 0.6
   skill1ChannelingTime: 4
   skill1Damage: 100
@@ -38,7 +40,7 @@ MonoBehaviour:
   skill3HoldingTime: 5
   skill3ShieldGage: 500
   skill4CastingTime: 3
-  skill4DurationTime: 20
+  skill4DurationTime: 7
   dragonicBreatheHoldingTime: 5
   dragonicBreatheDamage: 50
   dragonSightCoolDownTime: 0
