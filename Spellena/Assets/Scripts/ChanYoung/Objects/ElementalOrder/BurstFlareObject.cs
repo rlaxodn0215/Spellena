@@ -26,17 +26,21 @@ public class BurstFlareObject : SpawnObject
         Init();
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
-        if (PhotonNetwork.IsMasterClient)
-            CheckTime();
+         CheckTime();
     }
 
     void CheckTime()
     {
         currentLifeTime -= Time.deltaTime;
-        if(currentLifeTime <= 0f)
-            RequestRPC("RequestDestroy");
+        if (currentLifeTime <= 0f)
+        {
+            if (PhotonNetwork.IsMasterClient)
+            {
+                RequestRPC("RequestDestroy");
+            }
+        }
     }
 
     void RequestRPC(string tunnelCommand)

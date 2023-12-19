@@ -33,13 +33,10 @@ public class EterialStormObject : SpawnObject,IPunObservable
         Init();
     }
 
-    void Update()
+    void FixedUpdate()
     {
-        if (PhotonNetwork.IsMasterClient)
-        {
-            CheckTimer();
-            CheckHitCoolDownTime();
-        }
+        CheckTimer();
+        CheckHitCoolDownTime();
     }    
 
     void CheckHitCoolDownTime()
@@ -61,17 +58,20 @@ public class EterialStormObject : SpawnObject,IPunObservable
         }
         else
         {
-            if(isColliderOn == false)
-                RequestRPC("ActiveCollider");
+            if (isColliderOn == false)
+                ActiveCollider();
             else
             {
                 currentLifeTime -= Time.deltaTime;
 
-                if(currentLifeTime < 0f)
-                    RequestRPC("RequestDestroy");
+                if (currentLifeTime < 0f)
+                {
+                    if (PhotonNetwork.IsMasterClient)
+                        RequestRPC("RequestDestroy");
+                }
             }
         }
-        RequestRPC("UpdateData");
+        //RequestRPC("UpdateData");
     }
 
     void Init()
@@ -114,7 +114,7 @@ public class EterialStormObject : SpawnObject,IPunObservable
             _tempData[0] = tunnelCommand;
         }
 
-        photonView.RPC("CallRPCTunnelElementalOrderSpell6", RpcTarget.AllBuffered, _tempData);
+        photonView.RPC("CallRPCTunnelElementalOrderSpell6", RpcTarget.All, _tempData);
     }
 
     [PunRPC]
@@ -147,9 +147,12 @@ public class EterialStormObject : SpawnObject,IPunObservable
     void ActiveCollider()
     {
         isColliderOn = true;
-        for (int i = 0; i < hitEffect.transform.childCount; i++)
+        if (PhotonNetwork.IsMasterClient)
         {
-            hitEffect.transform.GetChild(i).GetComponent<ParticleSystem>().Play(true);
+            for (int i = 0; i < hitEffect.transform.childCount; i++)
+            {
+                hitEffect.transform.GetChild(i).GetComponent<ParticleSystem>().Play(true);
+            }
         }
     }
 
@@ -206,7 +209,7 @@ public class EterialStormObject : SpawnObject,IPunObservable
                 _rootObject.GetComponent<Rigidbody>().AddForce(_outsideVector * impulsePower, ForceMode.Impulse);
                 if(_distance <= 3.0f)
                 {
-                    _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBuffered,
+                    _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.All,
                          playerName, (int)(elementalOrderData.eterialStormDamage / 8), other.name, _outsideVector, 20f);
                     RequestRPC("PlayForceSound");
                 }
@@ -219,7 +222,7 @@ public class EterialStormObject : SpawnObject,IPunObservable
             _rootObject.GetComponent<Rigidbody>().AddForce(_outsideVector * impulsePower, ForceMode.Impulse);
             if (_distance <= 3.0f)
             {
-                _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBuffered,
+                _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.All,
                          playerName, (int)(elementalOrderData.eterialStormDamage / 8), other.name, _outsideVector, 20f);
                 RequestRPC("PlayForceSound");
             }

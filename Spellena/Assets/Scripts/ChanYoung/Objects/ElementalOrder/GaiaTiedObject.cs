@@ -35,10 +35,9 @@ public class GaiaTiedObject : SpawnObject
     {
         Init();
     }
-    void Update()
+    void FixedUpdate()
     {
-        if (PhotonNetwork.IsMasterClient)
-            CheckTimer();
+        CheckTimer();
         LerpCylinder();
     }
 
