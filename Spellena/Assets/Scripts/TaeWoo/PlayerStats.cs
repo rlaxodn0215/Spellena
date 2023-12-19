@@ -91,14 +91,15 @@ public class PlayerStats : MonoBehaviourPunCallbacks
     {
         if (isGameReady)
         {
-            pings[PhotonNetwork.LocalPlayer.ActorNumber] = PhotonNetwork.GetPing();
-
-            photonView.RPC("SerializePings", RpcTarget.AllBufferedViaServer,
-                PhotonNetwork.LocalPlayer.ActorNumber, pings[PhotonNetwork.LocalPlayer.ActorNumber]);
-
             if (Input.GetKey(KeyCode.Tab))
             {
+                pings[PhotonNetwork.LocalPlayer.ActorNumber] = PhotonNetwork.GetPing();
+
+                photonView.RPC("SerializePings", RpcTarget.AllBufferedViaServer,
+                    PhotonNetwork.LocalPlayer.ActorNumber, pings[PhotonNetwork.LocalPlayer.ActorNumber]);
+
                 statAssemble.SetActive(true);
+
                 ShowStats();
             }
 

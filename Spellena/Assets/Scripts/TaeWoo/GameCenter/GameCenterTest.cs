@@ -506,44 +506,4 @@ public class GameCenterTest : MonoBehaviourPunCallbacks
         inGameUI.occupyingTeamUI.rate = occupyingTeam.rate;
     }
 
-    //private void OnApplicationFocus(bool focus)
-    //{
-    //    if (!focus)
-    //    {
-    //        if(FirebaseLoginManager.Instance == null)
-    //        {
-    //            FirebaseLoginManager temp = FirebaseLoginManager.Instance;
-    //        }
-
-    //        FirebaseLoginManager.Instance.SignOut();
-
-    //    }
-
-    //}
-
-    //private void OnApplicationQuit()
-    //{
-    //    // 로그 아웃
-
-    //    if (FirebaseLoginManager.Instance == null)
-    //    {
-    //        FirebaseLoginManager temp = FirebaseLoginManager.Instance;
-    //    }
-
-    //    FirebaseLoginManager.Instance.SignOut();
-    //}
-
-    ////인게임 프레임 확인
-    //void OnGUI()
-    //{
-    //    GUI.Label(new Rect(10, 10, 100, 20), "FPS: " + (1.0f / Time.smoothDeltaTime));
-    //}
-
-    //인게임 프레임 확인
-
-    //long temp = 0;
-    //void OnGUI()
-    //{
-    //    GUI.Label(new Rect(10, 10, 100, 20), "Traffic : " + (PhotonNetwork.NetworkingClient.LoadBalancingPeer.BytesOut));
-    //}
 }
