@@ -82,11 +82,6 @@ namespace Player
         protected override void Update()
         {
             base.Update();
-
-            if(photonView.IsMine)
-            {
-                //CheckSkillCoolTimeEnd();
-            }
         }
 
 

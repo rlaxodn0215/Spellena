@@ -78,6 +78,7 @@ namespace Player
             Player.dimensionSwordForMe[6].SetActive(true);
 
             enemyObjectData = sword.GetComponent<AeternaSword>().contactObjectData;
+            Debug.Log("<color=magenta>" + (string)enemyObjectData[2] + "</color>");
 
             Player.aeternaUI.GetComponent<AeternaUI>().UIObjects["skill_2_Image_Hashold"].SetActive(true);
             Player.aeternaUI.GetComponent<AeternaUI>().UIObjects["skill_2_Image_Nohold"].SetActive(false);
@@ -127,6 +128,16 @@ namespace Player
             else if((string)data[2] == "Dagger")
             {
                 PhotonNetwork.Instantiate("Projectiles/" + (string)data[2], Player.camera.transform.position, rot1, 0, data);
+            }
+
+            else if((string)data[2] == "DragonicFlame")
+            {
+                PhotonNetwork.Instantiate("Projectiles/Dragonic Flame Projectile 3", Player.camera.transform.position, rot1, 0, data);
+            }
+
+            else if ((string)data[2] == "DragonPunch")
+            {
+                PhotonNetwork.Instantiate("Projectiles/Dragon punch", Player.camera.transform.position, rot1, 0, data);
             }
 
             else
