@@ -423,11 +423,13 @@ namespace Player
 
         void CheckDebuff(int num)
         {
+            /*
             if (buffDebuffChecker.CheckBuffDebuff("TerribleTentacles", num - 1))//true면 스킬 사용 불가
             {
                 buffDebuffChecker.UseTerribleTentacles(num - 1);
                 return;
             }
+            */
 
         }
 
