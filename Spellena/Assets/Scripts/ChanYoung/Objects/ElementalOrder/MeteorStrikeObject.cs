@@ -13,6 +13,7 @@ public class MeteorStrikeObject : SpawnObject
     float currentCastingTime = 0f;
     float lifeTime;
     float currentLifeTime = 0f;
+    float delay = 0.2f;
 
     public GameObject hitCollider;
     public GameObject hitEffect;
@@ -28,10 +29,9 @@ public class MeteorStrikeObject : SpawnObject
         Init();
     }
 
-    void Update()
+    void FixedUpdate()
     {
-        if (PhotonNetwork.IsMasterClient)
-            CheckTimer();
+        CheckTimer();
     }
 
     void CheckTimer()
@@ -40,16 +40,26 @@ public class MeteorStrikeObject : SpawnObject
             currentCastingTime -= Time.deltaTime;
         else
         {
-            if(isColliderOn == false)
-                RequestRPC("ActiveCollider");
-            if(currentLifeTime > 0f)
+            if (isColliderOn == false)
             {
-                currentLifeTime -= Time.deltaTime;
-                if (currentLifeTime <= 0f)
-                    RequestRPC("RequestDestroy");
+                delay -= Time.deltaTime;
+                if (delay <= 0f)
+                    ActiveCollider();
+            }
+            else
+            {
+                if (currentLifeTime > 0f)
+                {
+                    currentLifeTime -= Time.deltaTime;
+                    if (currentLifeTime <= 0f)
+                    {
+                        if (PhotonNetwork.IsMasterClient)
+                            RequestRPC("RequestDestroy");
+                    }
+                }
             }
         }
-        RequestRPC("UpdateData");
+        //RequestRPC("UpdateData");
     }
 
     void Init()

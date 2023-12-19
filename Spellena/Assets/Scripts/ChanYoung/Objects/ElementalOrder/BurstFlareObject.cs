@@ -26,17 +26,19 @@ public class BurstFlareObject : SpawnObject
         Init();
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
-        if (PhotonNetwork.IsMasterClient)
-            CheckTime();
+         CheckTime();
     }
 
     void CheckTime()
     {
         currentLifeTime -= Time.deltaTime;
-        if(currentLifeTime <= 0f)
-            RequestRPC("RequestDestroy");
+        if (currentLifeTime <= 0f)
+        {
+            if (PhotonNetwork.IsMasterClient)
+                RequestRPC("RequestDestroy");
+        }
     }
 
     void RequestRPC(string tunnelCommand)
@@ -102,7 +104,7 @@ public class BurstFlareObject : SpawnObject
 
     void OnTriggerEnter(Collider other)
     {
-        if (PhotonNetwork.IsMasterClient)
+        if (PhotonNetwork.IsMasterClient && isHit == false)
         {
             if (other.tag == "Wall" || other.gameObject.layer == 11)
             {
@@ -120,8 +122,8 @@ public class BurstFlareObject : SpawnObject
                     isHit = true;
                     _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.All,
                      playerName, (int)(elementalOrderData.burstFlareDamage), other.name, transform.forward, 20f);
-                    photonView.RPC("RunExplode", RpcTarget.AllBuffered, other.ClosestPointOnBounds(transform.GetChild(2).position));
-                    photonView.RPC("DestoryObject", RpcTarget.AllBuffered, 0.8f);
+                    photonView.RPC("RunExplode", RpcTarget.All, other.ClosestPointOnBounds(transform.GetChild(2).position));
+                    photonView.RPC("DestoryObject", RpcTarget.All, 0.8f);
                 }
             }
             

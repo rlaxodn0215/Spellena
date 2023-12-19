@@ -97318,7 +97318,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: 429b20bdceb9bf94d85c0887f3b454e3, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
-  m_ApplyRootMotion: 1
+  m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
   m_WarningMessage: 
@@ -97804,9 +97804,6 @@ MonoBehaviour:
   - Type: 4
     SynchronizeType: 2
     Name: Grounded
-  - Type: 9
-    SynchronizeType: 0
-    Name: BasicAttack
   - Type: 4
     SynchronizeType: 2
     Name: Run
