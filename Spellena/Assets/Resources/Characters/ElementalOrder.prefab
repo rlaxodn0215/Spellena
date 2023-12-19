@@ -97954,6 +97954,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tentacleObject: {fileID: 6732772786770581920, guid: 6211b2131d0b3a04f8ec0708c603b574, type: 3}
   buffDebuffTunnel: {fileID: 2546003558553203896}
+  cultistData: {fileID: 0}
   ritualStacks: 0
   horrorViewID: -1
 --- !u!1 &7346197448788899566
