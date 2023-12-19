@@ -385,7 +385,6 @@ namespace Player
                     localState = LocalStateDracoson.None;
                     metaState = MetamorphoseState.None;
                     CallRPCEvent("ResetAnimation", "Response");
-                    CallRPCEvent("UpdateData", "Response", skillState, "OnlySkillState", 0, 0f, false);
                     CallRPCEvent("DestroyEffect", "Response", "Flame");
                     int _temp = UnityEngine.Random.Range(0, 2);
                     soundManager.GetComponent<PhotonView>().RPC("PlayAudio", RpcTarget.All, "Shot", 0.8f,
@@ -414,6 +413,7 @@ namespace Player
                 if (skillChannelingTime[0] <= 0f && skillChannelingCheck[0])
                 {
                     Debug.Log("채널링 끝남");
+                    skillChannelingCheck[0] = false;
                     skillState = SkillStateDracoson.None;
                     CallRPCEvent("ResetAnimation", "Response");
                     CallRPCEvent("UpdateData", "Response", skillState, "OnlySkillState", 0, 0f, false);
@@ -443,11 +443,12 @@ namespace Player
             {
                 if (skillChannelingTime[1] <= 0f && skillChannelingCheck[1])
                 {
+                    skillChannelingCheck[1] = false;
                     skillState = SkillStateDracoson.None;
                     CallRPCEvent("InstantiateObject", "Response", "DragonPunch");
                     CallRPCEvent("ResetAnimation", "Response");
-                    CallRPCEvent("UpdateData", "Response", skillState, "OnlySkillState", 0, 0f, false);
-                    CallRPCEvent("SetCoolDownTime", "Response", 0);
+                    CallRPCEvent("UpdateData", "Response", skillState, "OnlySkillState", 1, 0f, false);
+                    CallRPCEvent("SetCoolDownTime", "Response", 1);
                     CallRPCEvent("PauseControl", "Response", "All", false);
                     soundManager.GetComponent<PhotonView>().RPC("PlayAudio", RpcTarget.All, "DragonRoar", 0.8f,
                         false, false, "EffectSound");
@@ -475,7 +476,8 @@ namespace Player
                     CallRPCEvent("ResetAnimation", "Response");
                     CallRPCEvent("PauseControl", "Response", "OnlyMove", false);
                     CallRPCEvent("SetCamera", "Response", "Default");
-                    CallRPCEvent("UpdateData", "Response", skillState, "OnlySkillState", 0, 0f, false);
+                    CallRPCEvent("UpdateData", "Response", skillState, "OnlySkillState", 2, 0f, false);
+                    CallRPCEvent("SetCoolDownTime", "Response", 2);
                     CallRPCEvent("StopEffect", "Response", "DragonShield", shieldId);
                 }
            }
@@ -486,6 +488,7 @@ namespace Player
                     CallRPCEvent("InstantiateObject", "Response", "MetamorphoseEffect");
                 if (skillCastingTime[3] <= 0f && skillCastingCheck[3])
                 {
+                    skillChannelingCheck[3] = false;
                     skillState = SkillStateDracoson.None;
                     localState = LocalStateDracoson.Metamorphose;
                     metaState = MetamorphoseState.Meta;
@@ -611,7 +614,6 @@ namespace Player
                     CallRPCEvent("SetAvatar", "Response", "AvatarForOhter", true);
                     CallRPCEvent("SetAnimator", "Response", "Dracoson");
                     CallRPCEvent("SetCameraPosition", "Response", "Default");
-                    CallRPCEvent("UpdateData", "Response", skillState, "OnlySkillState", 0, 0f, false);
                     isFly = false;
                     soundManager.GetComponent<PhotonView>().RPC("PlayAudio", RpcTarget.All, "DragonDeath", 1.0f,
                         false, false, "EffectSound");
@@ -1010,15 +1012,18 @@ namespace Player
                 }
                 else if(skillState == SkillStateDracoson.Skill4Ready)
                 {
-                    Debug.Log("스킬 4 시전");
-                    skillState = SkillStateDracoson.Skill4Casting;
-                    CallRPCEvent("SetAnimation", "Response", "Skill4Ready", false);
-                    CallRPCEvent("SetAnimation", "Response", "isSkill4", true);
-                    CallRPCEvent("UpdateData", "Response", skillState, "skillCastingTime", 3, skill4CastingTime, true);
-                    CallRPCEvent("InstantiateObject", "Response", "MagicCircle");
-                    CallRPCEvent("PauseControl", "Response", "All", true);
-                    soundManager.GetComponent<PhotonView>().RPC("PlayAudio", RpcTarget.All, "Cast", 0.7f,
-                                false, false, "EffectSound");
+                    if (ultimateCount >= 8)
+                    {
+                        Debug.Log("스킬 4 시전");
+                        skillState = SkillStateDracoson.Skill4Casting;
+                        CallRPCEvent("SetAnimation", "Response", "Skill4Ready", false);
+                        CallRPCEvent("SetAnimation", "Response", "isSkill4", true);
+                        CallRPCEvent("UpdateData", "Response", skillState, "skillCastingTime", 3, skill4CastingTime, true);
+                        CallRPCEvent("InstantiateObject", "Response", "MagicCircle");
+                        CallRPCEvent("PauseControl", "Response", "All", true);
+                        soundManager.GetComponent<PhotonView>().RPC("PlayAudio", RpcTarget.All, "Cast", 0.7f,
+                                    false, false, "EffectSound");
+                    }
                 }
             }
         }
@@ -1075,6 +1080,7 @@ namespace Player
                 CallRPCEvent("StopEffect", "Response", "DragonShield", _shieldViewID);
                 CallRPCEvent("ResetAnimation", "Response");
                 CallRPCEvent("UpdateData", "Response", skillState, "OnlySkillState", 0, 0f, false);
+                CallRPCEvent("SetCoolDownTime", "Response", 2);
                 soundManager.GetComponent<PhotonView>().RPC("StopAudio", RpcTarget.All, "Shilding");
                 soundManager.GetComponent<PhotonView>().RPC("PlayAudio", RpcTarget.All, "ShildingFall", 1f,
                                 false, false, "EffectSound");
