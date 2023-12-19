@@ -1205,13 +1205,14 @@ namespace Player
 
             else
             {
-                Vector3 _tempHandPoint = Vector3.Lerp(currentHandPoint, networkHandPoint, Time.deltaTime * 5);
+                Debug.Log(currentHandPoint);
+                Vector3 _tempHandPoint = Vector3.Lerp(currentHandPoint, networkHandPoint, Time.deltaTime * 12);
                 animatorForOther.SetIKPosition(AvatarIKGoal.LeftHand, _tempHandPoint);
                 animatorForOther.SetIKPosition(AvatarIKGoal.RightHand, _tempHandPoint);
                 currentHandPoint = _tempHandPoint;
 
-                float _tempRightHandWeight = Mathf.Lerp(rightNotMineCurrentWeight, networkRightCurrentWeight, Time.deltaTime * 5);
-                float _tempLeftHandWeight = Mathf.Lerp(leftNotMineCurrentWeight, networkLeftCurrentWeight, Time.deltaTime * 5);
+                float _tempRightHandWeight = Mathf.Lerp(rightNotMineCurrentWeight, networkRightCurrentWeight, Time.deltaTime * 12);
+                float _tempLeftHandWeight = Mathf.Lerp(leftNotMineCurrentWeight, networkLeftCurrentWeight, Time.deltaTime * 12);
                 animatorForOther.SetIKPositionWeight(AvatarIKGoal.RightHand, _tempRightHandWeight);
                 animatorForOther.SetIKPositionWeight(AvatarIKGoal.LeftHand, _tempLeftHandWeight);
                 rightNotMineCurrentWeight = _tempRightHandWeight;

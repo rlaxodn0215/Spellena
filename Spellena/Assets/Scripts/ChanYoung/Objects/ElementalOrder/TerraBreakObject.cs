@@ -36,12 +36,9 @@ public class TerraBreakObject : SpawnObject
         Init();
     }
 
-    void Update()
+    void FixedUpdate()
     {
-        if (PhotonNetwork.IsMasterClient)
-        {
-            CheckTimer();
-        }
+        CheckTimer();
     }
 
     void CheckTimer()
@@ -51,7 +48,7 @@ public class TerraBreakObject : SpawnObject
             currentCastingTime -= Time.deltaTime;
             if (currentCastingTime <= 0f)
             {
-                RequestRPC("ActiveCollider");
+                ActiveCollider();
             }
         }
         else
@@ -59,7 +56,12 @@ public class TerraBreakObject : SpawnObject
             if (currentHitCountTimer <= 0f)
             {
                 hitObjects.Clear();
-                RequestRPC("ActiveHitEffect");
+
+                object[] _tempObject = new object[2];
+                _tempObject[0] = "";
+                _tempObject[1] = isFirst;
+                ActiveHitEffect(_tempObject);
+
                 if (isFirst == true)
                     currentHitCountTimer = hitCountTimerFirst;
                 else
