@@ -81,7 +81,7 @@ public class DragonSight : SpawnObject
                     hitObjects.Add(_rootObject.name);
                     if (_rootObject.GetComponent<Character>() != null)
                     {
-                        //if(_rootObject.tag != tag)
+                        if(_rootObject.tag != tag)
                         {
                             _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBuffered,
                                 playerName, skillDamage, hitObject.name, transform.forward, 20f);

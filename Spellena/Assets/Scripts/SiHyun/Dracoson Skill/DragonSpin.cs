@@ -108,7 +108,7 @@ public class DragonSpin : SpawnObject
                     hitObjects.Add(_rootObject.name);
                     if (_rootObject.GetComponent<Character>() != null)
                     {
-                        //if(_rootObject.tag != tag)
+                        if(_rootObject.tag != tag)
                         {
                             Vector3 _knockbackDirection =
                                      (_rootObject.transform.position - transform.position).normalized;
