@@ -125,10 +125,10 @@ namespace Player
             if (photonView.IsMine)
             {
                 //테스트 정보
-                HashTable _tempTable = new HashTable();
-                _tempTable.Add("CharacterViewID", photonView.ViewID);
-                _tempTable.Add("IsAlive", true);
-                PhotonNetwork.LocalPlayer.SetCustomProperties(_tempTable);
+                //HashTable _tempTable = new HashTable();
+                //_tempTable.Add("CharacterViewID", photonView.ViewID);
+                //_tempTable.Add("IsAlive", true);
+                //PhotonNetwork.LocalPlayer.SetCustomProperties(_tempTable);
 
                 object[] _tempData = new object[2];
                 _tempData[0] = "SetOwnerNum";
@@ -237,13 +237,28 @@ namespace Player
 
             if(skillState == SkillStateDracoson.Breathe)
                 CallRPCEvent("BreatheDirection", "Response", camera.transform.rotation);
-                
+
+
             if (isFly)
             {
+                rigidbody.useGravity = false;
                 float _currentHeight = transform.position.y;
-                float _maxHeight = maxHeight;
-                if(_currentHeight < _maxHeight)
-                    rigidbody.AddForce(Vector3.up * 17f, ForceMode.Force);
+
+                // Check if the current height is below the maxHeight
+                if (_currentHeight < maxHeight)
+                {
+                    rigidbody.AddForce(Vector3.up * 3f, ForceMode.Acceleration);
+                }
+                else
+                {
+                    // Stop applying force once the maximum height is reached
+                    rigidbody.velocity = Vector3.zero;
+                    rigidbody.angularVelocity = Vector3.zero;
+                }
+            }
+            else
+            {
+                rigidbody.useGravity = true;
             }
         }
 
@@ -294,6 +309,8 @@ namespace Player
                     CallRPCEvent("SetAnimator", "Response", "Dracoson");
                     CallRPCEvent("SetCameraPosition", "Response", "Default");
                     isFly = false;
+                    soundManager.GetComponent<PhotonView>().RPC("PlayAudio", RpcTarget.All, "DragonDeath", 1.0f,
+                        false, false, "EffectSound");
                 }
             }
             if (skillState == SkillStateDracoson.DragonSightHolding)
@@ -306,6 +323,8 @@ namespace Player
                         localState = LocalStateDracoson.ChargePhase1;
                         CallRPCEvent("InstantiateEffect", "Response", 1);
                         CallRPCEvent("UpdateData", "Response", skillState, "normalCastingTime", 1, dragonicSightHoldingTime1, true);
+                        soundManager.GetComponent<PhotonView>().RPC("PlayAudio", RpcTarget.All, "ChargeLevel", 0.8f,
+                            false, false, "EffectSound");
                     }
                 }
                 else if (localState == LocalStateDracoson.ChargePhase1)
@@ -316,6 +335,8 @@ namespace Player
                         localState = LocalStateDracoson.ChargePhase2;
                         CallRPCEvent("InstantiateEffect", "Response", 2);
                         CallRPCEvent("UpdateData", "Response", skillState, "normalCastingTime", 2, dragonicSightHoldingTime2, true);
+                        soundManager.GetComponent<PhotonView>().RPC("PlayAudio", RpcTarget.All, "ChargeLevel", 0.8f,
+                            false, false, "EffectSound");
                     }
                 }
                 else if (localState == LocalStateDracoson.ChargePhase2)
@@ -326,6 +347,8 @@ namespace Player
                         localState = LocalStateDracoson.ChargePhase3;
                         CallRPCEvent("InstantiateEffect", "Response", 3);
                         CallRPCEvent("UpdateData", "Response", skillState, "normalCastingTime", 3, dragonicSightHoldingTime3, true);
+                        soundManager.GetComponent<PhotonView>().RPC("PlayAudio", RpcTarget.All, "ChargeLevel", 0.8f,
+                            false, false, "EffectSound");
                     }
                 }
                 else if (localState == LocalStateDracoson.ChargePhase3)
@@ -356,6 +379,12 @@ namespace Player
                     CallRPCEvent("ResetAnimation", "Response");
                     CallRPCEvent("UpdateData", "Response", skillState, "OnlySkillState", 0, 0f, false);
                     CallRPCEvent("DestroyEffect", "Response", "Flame");
+                    int _temp = UnityEngine.Random.Range(0, 2);
+                    soundManager.GetComponent<PhotonView>().RPC("PlayAudio", RpcTarget.All, "Shot", 0.8f,
+                            false, false, "EffectSound");
+                    soundManager.GetComponent<PhotonView>().RPC("PlayAudio", RpcTarget.All, "Attack" + _temp,
+                            false, false, "SpeakSound");
+                    soundManager.GetComponent<PhotonView>().RPC("StopAudio", RpcTarget.All, "Charge");
                 }
             }
             else if (skillState == SkillStateDracoson.Skill1Casting)
@@ -366,6 +395,10 @@ namespace Player
                     skillState = SkillStateDracoson.Skill1Channeling;
                     CallRPCEvent("InstantiateObject", "Response", "DragonSpin");
                     CallRPCEvent("UpdateData", "Response", skillState, "skillChannelingTime", 0, skill1ChannelingTime, true);
+                    soundManager.GetComponent<PhotonView>().RPC("PlayAudio", RpcTarget.All, "BabyRoar", 0.8f,
+                        false, false, "EffectSound");
+                    soundManager.GetComponent<PhotonView>().RPC("PlayAudio", RpcTarget.All, "FlappingWings", 0.8f,
+                        false, false, "EffectSound");
                 }
             }
             else if (skillState == SkillStateDracoson.Skill1Channeling)
@@ -389,6 +422,8 @@ namespace Player
                     CallRPCEvent("SetAnimation", "Response", "Skill2Ready", false);
                     CallRPCEvent("UpdateData", "Response", skillState, "skillChannelingTime", 1, skill2ChannelingTime, true);
                     CallRPCEvent("MarkingSkillRange", "Response", "Skill2Range", false);
+                    soundManager.GetComponent<PhotonView>().RPC("PlayAudio", RpcTarget.All, "Cast", 0.6f,
+                        false, false, "EffectSound");
                 }
             }
             else if(skillState == SkillStateDracoson.Skill2Channeling)
@@ -401,6 +436,8 @@ namespace Player
                     CallRPCEvent("UpdateData", "Response", skillState, "OnlySkillState", 0, 0f, false);
                     CallRPCEvent("SetCoolDownTime", "Response", 0);
                     CallRPCEvent("PauseControl", "Response", "All", false);
+                    soundManager.GetComponent<PhotonView>().RPC("PlayAudio", RpcTarget.All, "DragonRoar", 0.8f,
+                        false, false, "EffectSound");
                 }
             }
             else if (skillState == SkillStateDracoson.Skill3Casting)
@@ -412,6 +449,8 @@ namespace Player
                     Debug.Log("쉴드 스킬 소환");
                     CallRPCEvent("InstantiateObject", "Response", "DragonShield");
                     CallRPCEvent("UpdateData", "Response", skillState, "skillChannelingTime", 2, skill3HoldingTime, true);
+                    soundManager.GetComponent<PhotonView>().RPC("PlayAudio", RpcTarget.All, "Shilding", 1f,
+                        true, false, "EffectSound");
                 }
             }
             else if (skillState == SkillStateDracoson.Skill3Holding)
@@ -426,7 +465,7 @@ namespace Player
                     CallRPCEvent("UpdateData", "Response", skillState, "OnlySkillState", 0, 0f, false);
                     CallRPCEvent("StopEffect", "Response", "DragonShield", shieldId);
                 }
-            }
+           }
             //용가리 변신
             else if (skillState == SkillStateDracoson.Skill4Casting)
             {
@@ -445,6 +484,8 @@ namespace Player
                     CallRPCEvent("SetAnimator", "Response", "Metamorphose");
                     CallRPCEvent("PauseControl", "Response", "All", false);
                     CallRPCEvent("SetCameraPosition", "Response", "Change");
+                    soundManager.GetComponent<PhotonView>().RPC("PlayAudio", RpcTarget.All, "Dragonic", 1.0f,
+                        false, false, "EffectSound");
                 }
             }
             else if (skillState == SkillStateDracoson.Breathe)
@@ -457,6 +498,7 @@ namespace Player
                     CallRPCEvent("ResetAnimation", "Response");
                     CallRPCEvent("UpdateData", "Response", skillState, "OnlySkillState", 0, 0f, false);
                     CallRPCEvent("StopEffect", "Response", "Breathe");
+                    soundManager.GetComponent<PhotonView>().RPC("StopAudio", RpcTarget.All, "DragonBreathe");
                 }
             }
         }
@@ -791,7 +833,7 @@ namespace Player
                 if ((string)data[1] == "Change")
                     camera.transform.localPosition = new Vector3(camera.transform.localPosition.x, 3.5f, camera.transform.localPosition.z);
                 else if ((string)data[1] == "Default")
-                    camera.transform.localPosition = new Vector3(transform.localPosition.x, 1.74f, transform.localPosition.z);
+                    camera.transform.localPosition = new Vector3(camera.transform.localPosition.x, 1.74f, camera.transform.localPosition.z);
             }
         }
 
@@ -887,6 +929,8 @@ namespace Player
                         localState = LocalStateDracoson.ChargePhase0;
                         CallRPCEvent("SetAnimation", "Response", "isDragonSightHolding", true);
                         CallRPCEvent("UpdateData", "Response", skillState, "normalCastingTime", 0, dragonicSightHoldingTime0, true);
+                        soundManager.GetComponent<PhotonView>().RPC("PlayAudio", RpcTarget.All, "Charge", 0.7f,
+                            true, false, "EffectSound");
                     }
                     else if (localState == LocalStateDracoson.Metamorphose)
                     {
@@ -895,6 +939,8 @@ namespace Player
                         CallRPCEvent("SetAnimation", "Response", "Breathe", true);
                         CallRPCEvent("UpdateData", "Response", skillState, "normalCastingTime", 5, dragonicBreatheHoldingTime, true);
                         CallRPCEvent("InstantiateObject", "Response", "DragonicBreathe");
+                        soundManager.GetComponent<PhotonView>().RPC("PlayAudio", RpcTarget.All, "DragonBreathe", 0.8f,
+                            false, false, "EffectSound");
                     }
                 }
                 else if (skillState == SkillStateDracoson.Skill1Ready)
@@ -931,6 +977,8 @@ namespace Player
                     CallRPCEvent("UpdateData", "Response", skillState, "skillCastingTime", 3, skill4CastingTime, true);
                     CallRPCEvent("InstantiateObject", "Response", "MagicCircle");
                     CallRPCEvent("PauseControl", "Response", "All", true);
+                    soundManager.GetComponent<PhotonView>().RPC("PlayAudio", RpcTarget.All, "Cast", 0.7f,
+                                false, false, "EffectSound");
                 }
             }
         }
@@ -948,6 +996,7 @@ namespace Player
                     CallRPCEvent("SetAnimation", "Response", "isDragonSightHolding", false);
                     CallRPCEvent("SetAnimation", "Response", "HoldingCancel", true);
                     CallRPCEvent("ResetAnimation", "Response");
+                    soundManager.GetComponent<PhotonView>().RPC("StopAudio", RpcTarget.All, "Charge");
                 }
                 else if (localState == LocalStateDracoson.ChargePhase1)
                 {
@@ -985,6 +1034,9 @@ namespace Player
                 CallRPCEvent("StopEffect", "Response", "DragonShield", _shieldViewID);
                 CallRPCEvent("ResetAnimation", "Response");
                 CallRPCEvent("UpdateData", "Response", skillState, "OnlySkillState", 0, 0f, false);
+                soundManager.GetComponent<PhotonView>().RPC("StopAudio", RpcTarget.All, "Shilding");
+                soundManager.GetComponent<PhotonView>().RPC("PlayAudio", RpcTarget.All, "ShildingFall", 1f,
+                                false, false, "EffectSound");
             }
             else if (skillState == SkillStateDracoson.Breathe)
             {
@@ -995,6 +1047,7 @@ namespace Player
                 CallRPCEvent("StopEffect", "Response", "Breathe", _breatheViewID);
                 CallRPCEvent("ResetAnimation", "Response");
                 CallRPCEvent("UpdateData", "Response", skillState, "OnlySkillState", 0, 0f, false);
+                soundManager.GetComponent<PhotonView>().RPC("StopAudio", RpcTarget.All, "DragonBreathe");
             }
         }
 
