@@ -79,7 +79,7 @@ public class DragonicBreathe : SpawnObject
                 if (other.GetComponent<Character>() != null)
                 {
                     Debug.Log("여기까지 왔다면 사실상 실행 : "+other.name);
-                    //if(_rootObject.tag != tag)
+                    if(_rootObject.tag != tag)
                     {
                         other.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBuffered,
                                 playerName, (int)(dracosonData.dragonicBreatheDamage), other.name, transform.forward, 20f);
