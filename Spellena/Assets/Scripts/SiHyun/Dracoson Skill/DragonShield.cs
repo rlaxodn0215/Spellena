@@ -20,12 +20,13 @@ public class DragonShield : SpawnObject
         shieldGage = dracosonData.skill3ShieldGage;
     }
 
-    void Update()
+    void FixedUpdate()
     {
         deleteTime -= Time.deltaTime;
         if (shieldGage <= 0f || deleteTime <= 0f)
         {
-            CallRPCTunnel("RequestDestroy");
+            if(PhotonNetwork.IsMasterClient)
+                CallRPCTunnel("RequestDestroy");
         }
     }
 

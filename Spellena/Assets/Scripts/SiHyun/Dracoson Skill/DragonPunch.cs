@@ -26,21 +26,18 @@ public class DragonPunch : SpawnObject
         projectileDirection = projectile.transform.forward;
     }
 
-    void Update()
+    void FixedUpdate()
     {
         deleteTime -= Time.deltaTime;
         if (deleteTime <= 0f)
-            CallRPCTunnel("RequestDestroy");
-
-
+            if(PhotonNetwork.IsMasterClient)
+                CallRPCTunnel("RequestDestroy");
     }
 
     void Init()
     {
         triggerEventer.hitTriggerEvent += TriggerEvent;
     }
-
-
 
     void CallRPCTunnel(string tunnelCommand)
     {
@@ -81,39 +78,6 @@ public class DragonPunch : SpawnObject
                             _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBuffered,
                                 playerName, (int)(dracosonData.skill2Damage), hitObject.name, transform.forward, 20f);
 
-                            Vector3 _knockbackDirection =
-                                     (_rootObject.transform.position - transform.position).normalized;
-                            Debug.Log(_knockbackDirection);
-                            _rootObject.GetComponent<PhotonView>().RPC("PlayerKnockBack", RpcTarget.AllBuffered,
-                                _knockbackDirection, knockbackForce);
-                            /*Debug.Log("끌려가는 함수 작동 해줘 제발 슈발");
-                            _rootObject.GetComponent<PhotonView>().RPC("MovePlayerWithDuration", RpcTarget.AllBuffered,
-                                projectileDirection, moveDistance, moveSpeed);*/
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    void TriggerEventPushOut(GameObject hitObject)
-    {
-        if (PhotonNetwork.IsMasterClient)
-        {
-            if (hitObject.transform.root.gameObject.name != hitObject.name)
-            {
-                GameObject _rootObject = hitObject.transform.root.gameObject;
-                if (!hitObjects.Contains(_rootObject.name))
-                {
-                    hitObjects.Add(_rootObject.name);
-                    if (_rootObject.GetComponent<Character>() != null)
-                    {
-                        //if(_rootObject.tag != tag)
-                        {
-                            _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.AllBuffered,
-                                playerName, (int)(dracosonData.skill2Damage), hitObject.name, transform.forward, 20f);
-
-                            Debug.Log("나중에 추가한 트리거만 발동되는듯?");
                             Vector3 _knockbackDirection =
                                      (_rootObject.transform.position - transform.position).normalized;
                             Debug.Log(_knockbackDirection);

@@ -28,9 +28,8 @@ namespace Player
 
     public enum MetamorphoseState
     {
-
+        None, Meta, ChargePhase0, ChargePhase1, ChargePhase2, ChargePhase3,
     }
-
 
     public class Dracoson : Character
     {
@@ -95,6 +94,7 @@ namespace Player
             None, Metamorphose, ChargePhase0, ChargePhase1, ChargePhase2, ChargePhase3,
         }
 
+        public MetamorphoseState metaState = MetamorphoseState.None;
         public SkillStateDracoson skillState = SkillStateDracoson.None;
         LocalStateDracoson localState = LocalStateDracoson.None;
 
@@ -212,6 +212,7 @@ namespace Player
             if (PhotonNetwork.IsMasterClient)
             {
                 CheckOnMasterClient();
+                Debug.Log(skillChannelingTime[3]);
             }
 
             if (photonView.IsMine)
@@ -297,10 +298,11 @@ namespace Player
         //마스터 클라이언트에서만 작동
         void CheckOnMasterClient()
         {
-            if (localState == LocalStateDracoson.Metamorphose)
+            if (metaState == MetamorphoseState.Meta)
             {
                 if (skillChannelingTime[3] <= 0f && skillChannelingCheck[3])
                 {
+                    metaState = MetamorphoseState.None;
                     localState = LocalStateDracoson.None;
                     dracosonMetamorphose.SetActive(false);
                     CallRPCEvent("SetAvatar", "Response", "Metamorphose", false);
@@ -308,6 +310,8 @@ namespace Player
                     CallRPCEvent("SetAvatar", "Response", "AvatarForOhter", true);
                     CallRPCEvent("SetAnimator", "Response", "Dracoson");
                     CallRPCEvent("SetCameraPosition", "Response", "Default");
+                    CallRPCEvent("UpdateData", "Response", skillState, "OnlySkillState", 0, 0f, false);
+                    CallRPCEvent("SetMetaState", "Response", metaState);
                     isFly = false;
                     soundManager.GetComponent<PhotonView>().RPC("PlayAudio", RpcTarget.All, "DragonDeath", 1.0f,
                         false, false, "EffectSound");
@@ -315,11 +319,12 @@ namespace Player
             }
             if (skillState == SkillStateDracoson.DragonSightHolding)
             {
-                if (localState == LocalStateDracoson.ChargePhase0)
+                if (metaState == MetamorphoseState.ChargePhase0)
                 {
                     if (normalCastingTime[0] <= 0f && normalCastingCheck[0])
                     {
                         normalCastingCheck[0] = false;
+                        metaState = MetamorphoseState.ChargePhase1;
                         localState = LocalStateDracoson.ChargePhase1;
                         CallRPCEvent("InstantiateEffect", "Response", 1);
                         CallRPCEvent("UpdateData", "Response", skillState, "normalCastingTime", 1, dragonicSightHoldingTime1, true);
@@ -327,11 +332,12 @@ namespace Player
                             false, false, "EffectSound");
                     }
                 }
-                else if (localState == LocalStateDracoson.ChargePhase1)
+                else if (metaState == MetamorphoseState.ChargePhase1)
                 {
                     if (normalCastingTime[1] <= 0f && normalCastingCheck[1])
                     {
                         normalCastingCheck[1] = false;
+                        metaState = MetamorphoseState.ChargePhase2;
                         localState = LocalStateDracoson.ChargePhase2;
                         CallRPCEvent("InstantiateEffect", "Response", 2);
                         CallRPCEvent("UpdateData", "Response", skillState, "normalCastingTime", 2, dragonicSightHoldingTime2, true);
@@ -339,11 +345,12 @@ namespace Player
                             false, false, "EffectSound");
                     }
                 }
-                else if (localState == LocalStateDracoson.ChargePhase2)
+                else if (metaState == MetamorphoseState.ChargePhase2)
                 {
                     if (normalCastingTime[2] <= 0f && normalCastingCheck[2])
                     {
                         normalCastingCheck[2] = false;
+                        metaState = MetamorphoseState.ChargePhase3;
                         localState = LocalStateDracoson.ChargePhase3;
                         CallRPCEvent("InstantiateEffect", "Response", 3);
                         CallRPCEvent("UpdateData", "Response", skillState, "normalCastingTime", 3, dragonicSightHoldingTime3, true);
@@ -351,7 +358,7 @@ namespace Player
                             false, false, "EffectSound");
                     }
                 }
-                else if (localState == LocalStateDracoson.ChargePhase3)
+                else if (metaState == MetamorphoseState.ChargePhase3)
                 {
                     if (normalCastingTime[3] <= 0f && normalCastingCheck[3])
                     {
@@ -367,15 +374,16 @@ namespace Player
             {
                 if (normalCastingTime[4] <= 0f && normalCastingCheck[4])
                 {
-                    if (localState == LocalStateDracoson.ChargePhase1)
+                    if (metaState == MetamorphoseState.ChargePhase1)
                         CallRPCEvent("InstantiateObject", "Response", "DragonicFlame", 1);
-                    else if (localState == LocalStateDracoson.ChargePhase2)
+                    else if (metaState == MetamorphoseState.ChargePhase2)
                         CallRPCEvent("InstantiateObject", "Response", "DragonicFlame", 2);
-                    else if (localState == LocalStateDracoson.ChargePhase3)
+                    else if (metaState == MetamorphoseState.ChargePhase3)
                         CallRPCEvent("InstantiateObject", "Response", "DragonicFlame", 3);
                     normalCastingCheck[4] = false;
                     skillState = SkillStateDracoson.None;
                     localState = LocalStateDracoson.None;
+                    metaState = MetamorphoseState.None;
                     CallRPCEvent("ResetAnimation", "Response");
                     CallRPCEvent("UpdateData", "Response", skillState, "OnlySkillState", 0, 0f, false);
                     CallRPCEvent("DestroyEffect", "Response", "Flame");
@@ -424,6 +432,11 @@ namespace Player
                     CallRPCEvent("MarkingSkillRange", "Response", "Skill2Range", false);
                     soundManager.GetComponent<PhotonView>().RPC("PlayAudio", RpcTarget.All, "Cast", 0.6f,
                         false, false, "EffectSound");
+                    if (photonView.IsMine)
+                    {
+                        rigidbody.angularVelocity = Vector3.zero;
+                        rigidbody.velocity = Vector3.zero;
+                    }
                 }
             }
             else if(skillState == SkillStateDracoson.Skill2Channeling)
@@ -475,6 +488,8 @@ namespace Player
                 {
                     skillState = SkillStateDracoson.None;
                     localState = LocalStateDracoson.Metamorphose;
+                    metaState = MetamorphoseState.Meta;
+                    CallRPCEvent("SetMetaState", "Response", metaState);
                     CallRPCEvent("UpdateData", "Response", skillState, "skillChannelingTime", 3, skill4DurationTime, true);
                     dracosonMetamorphose.SetActive(true);
                     CallRPCEvent("ResetAnimation", "Response");
@@ -505,7 +520,7 @@ namespace Player
 
         protected override void OnJump()
         {
-            if (!isMeta)
+            if (metaState == MetamorphoseState.None)
             {
                 base.OnJump();
             }
@@ -513,7 +528,7 @@ namespace Player
 
         void OnFly()
         {
-            if (isMeta)
+            if (metaState == MetamorphoseState.Meta)
             {
                 if (!isFly)
                     Debug.Log("점프키 누름");
@@ -525,7 +540,7 @@ namespace Player
 
         void OnSkill1()
         {
-            if (photonView.IsMine)
+            if (photonView.IsMine && metaState == MetamorphoseState.None)
             {
                 CallRPCEvent("SetSkill", "Request", 1);
                 CallRPCEvent("SetAnimation", "Response", "Skill1Ready", true);
@@ -534,7 +549,7 @@ namespace Player
 
         void OnSkill2()
         {
-            if (photonView.IsMine)
+            if (photonView.IsMine && metaState == MetamorphoseState.None)
             {
                 CallRPCEvent("SetSkill", "Request", 2);
                 CallRPCEvent("SetAnimation", "Response", "Skill2Ready", true);
@@ -543,7 +558,7 @@ namespace Player
 
         void OnSkill3()
         {
-            if (photonView.IsMine)
+            if (photonView.IsMine && metaState == MetamorphoseState.None)
             {
                 CallRPCEvent("SetSkill", "Request", 3);
                 CallRPCEvent("SetAnimation", "Response", "Skill3Ready", true);
@@ -552,7 +567,7 @@ namespace Player
 
         void OnSkill4()
         {
-            if (photonView.IsMine)
+            if (photonView.IsMine && metaState == MetamorphoseState.None)
             {
                 CallRPCEvent("SetSkill", "Request", 4);
                 CallRPCEvent("SetAnimation", "Response", "Skill4Ready", true);
@@ -586,6 +601,21 @@ namespace Player
         {
             if (photonView.IsMine)
             {
+                if(metaState == MetamorphoseState.Meta)
+                {
+                    metaState = MetamorphoseState.None;
+                    localState = LocalStateDracoson.None;
+                    dracosonMetamorphose.SetActive(false);
+                    CallRPCEvent("SetAvatar", "Response", "Metamorphose", false);
+                    CallRPCEvent("SetAvatar", "Response", "AvatarForMe", true);
+                    CallRPCEvent("SetAvatar", "Response", "AvatarForOhter", true);
+                    CallRPCEvent("SetAnimator", "Response", "Dracoson");
+                    CallRPCEvent("SetCameraPosition", "Response", "Default");
+                    CallRPCEvent("UpdateData", "Response", skillState, "OnlySkillState", 0, 0f, false);
+                    isFly = false;
+                    soundManager.GetComponent<PhotonView>().RPC("PlayAudio", RpcTarget.All, "DragonDeath", 1.0f,
+                        false, false, "EffectSound");
+                }
                 CallRPCEvent("CancelSkill", "Request", 0);
                 CallRPCEvent("MarkingSkillRange", "Response", "Skill2Range", false);
             }
@@ -669,6 +699,8 @@ namespace Player
                 SetCamera(data);
             else if ((string)data[0] == "MarkingSkillRange")
                 MarkingSkillRange(data);
+            else if ((string)data[0] == "SetMetaState")
+                SetMetaState(data);
         }
 
         //RPC 요청
@@ -691,6 +723,11 @@ namespace Player
                 RequestRPCCall(_sendData);
             else if (type == "Response")
                 ResponseRPCCall(_sendData);
+        }
+
+        void SetMetaState(object[] data)
+        {
+            metaState = (MetamorphoseState)data[1];
         }
 
         void MarkingSkillRange(object[] data)
@@ -839,6 +876,7 @@ namespace Player
 
         void PauseControl(object[] data)
         {
+
             if ((string)data[1] == "OnlyMove")
             {
                 if ((bool)data[2])
@@ -857,6 +895,7 @@ namespace Player
             {
                 camera.GetComponent<MouseControl>().enabled = !(bool)data[2];
                 GetComponent<PlayerInput>().enabled = !(bool)data[2];
+
             }
         }
 
@@ -922,17 +961,18 @@ namespace Player
             {
                 if (skillState == SkillStateDracoson.None)
                 {
-                    if(localState == LocalStateDracoson.None)
+                    if(metaState == MetamorphoseState.None)
                     {
                         Debug.Log("용의 시선 차징");
                         skillState = SkillStateDracoson.DragonSightHolding;
                         localState = LocalStateDracoson.ChargePhase0;
+                        metaState = MetamorphoseState.ChargePhase0;
                         CallRPCEvent("SetAnimation", "Response", "isDragonSightHolding", true);
                         CallRPCEvent("UpdateData", "Response", skillState, "normalCastingTime", 0, dragonicSightHoldingTime0, true);
                         soundManager.GetComponent<PhotonView>().RPC("PlayAudio", RpcTarget.All, "Charge", 0.7f,
                             true, false, "EffectSound");
                     }
-                    else if (localState == LocalStateDracoson.Metamorphose)
+                    else if (metaState == MetamorphoseState.Meta)
                     {
                         Debug.Log("브레스 피해욧!!");
                         skillState = SkillStateDracoson.Breathe;
@@ -988,17 +1028,18 @@ namespace Player
             Debug.Log("홀딩 캔슬");
             if (skillState == SkillStateDracoson.DragonSightHolding)
             {
-                if (localState == LocalStateDracoson.ChargePhase0)
+                if (metaState == MetamorphoseState.ChargePhase0)
                 {
                     skillState = SkillStateDracoson.None;
                     localState = LocalStateDracoson.None;
+                    metaState = MetamorphoseState.None;
                     normalCastingCheck[0] = false;
                     CallRPCEvent("SetAnimation", "Response", "isDragonSightHolding", false);
                     CallRPCEvent("SetAnimation", "Response", "HoldingCancel", true);
                     CallRPCEvent("ResetAnimation", "Response");
                     soundManager.GetComponent<PhotonView>().RPC("StopAudio", RpcTarget.All, "Charge");
                 }
-                else if (localState == LocalStateDracoson.ChargePhase1)
+                else if (metaState == MetamorphoseState.ChargePhase1)
                 {
                     normalCastingCheck[1] = false;
                     skillState = SkillStateDracoson.DragonSightAttack;
@@ -1006,7 +1047,7 @@ namespace Player
                     CallRPCEvent("SetAnimation", "Response", "isDragonSightHolding", false);
                     CallRPCEvent("UpdateData", "Response", skillState, "normalCastingTime", 4, dragonSightAttackTime, true);
                 }
-                else if (localState == LocalStateDracoson.ChargePhase2)
+                else if (metaState == MetamorphoseState.ChargePhase2)
                 {
                     normalCastingCheck[2] = false;
                     skillState = SkillStateDracoson.DragonSightAttack;
@@ -1015,7 +1056,7 @@ namespace Player
                     CallRPCEvent("UpdateData", "Response", skillState, "normalCastingTime", 4, dragonSightAttackTime, true);
 
                 }
-                else if (localState == LocalStateDracoson.ChargePhase3)
+                else if (metaState == MetamorphoseState.ChargePhase3)
                 {
                     normalCastingCheck[3] = false;
                     skillState = SkillStateDracoson.DragonSightAttack;
@@ -1187,8 +1228,11 @@ namespace Player
                     _data[1] = tag;
                     _data[2] = "DragonicFlame";
 
-                    PhotonNetwork.Instantiate("SiHyun/Prefabs/Dracoson/Dragonic Flame Projectile " + data[2],
+                    GameObject _sight = PhotonNetwork.Instantiate("SiHyun/Prefabs/Dracoson/Dragonic Flame Projectile " + data[2],
                         _tempRay.origin + _tempRay.direction * 0.5f, _tempQ, data: _data);
+
+                    DragonSight _dragonSight = _sight.GetComponent<DragonSight>();
+                    _dragonSight.SetChargePhase((int)data[2]);
 
                     chargeCount = 0;
                 }

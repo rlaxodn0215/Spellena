@@ -1031,7 +1031,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d69855b73fcdac4fb33a74dcd3dd049, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  roomName: {fileID: 1347327889792868276}
+  roomNameText: {fileID: 1347327889792868276}
   masterPlayerName: {fileID: 1347327889137234386}
   entryStatusText: {fileID: 1347327888560841334}
   playerCountText: {fileID: 1347327889734112494}
