@@ -941,40 +941,46 @@ namespace Player
             }
             else
             {
-                Vector3 newVec = Vector3.Lerp(currentSight, networkSight, Time.deltaTime * 10);
+                Vector3 newVec = Vector3.Lerp(currentSight, networkSight, Time.deltaTime * 20);
                 animator.SetLookAtWeight(1f, 0.9f);
                 animator.SetLookAtPosition(newVec);
                 currentSight = newVec;
             }
         }
+        
         public virtual void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
         {
             if (stream.IsWriting)
             {
                 // 데이터를 보내는 부분
-                stream.SendNext(hp);
-                stream.SendNext(isOccupying);
+                //stream.SendNext(hp);
+                //stream.SendNext(isOccupying);
+                /*
                 for (int i = 0; i < playerActionDatas.Count; i++)
                 {
                     stream.SendNext(playerActionDatas[i].isExecuting);
                 }
-                stream.SendNext(moveVec);
-                stream.SendNext(isGrounded);
+                */
+                //stream.SendNext(moveVec);
+                //stream.SendNext(isGrounded);
                 stream.SendNext(sight.transform.position);
             }
             else
             {
                 // 데이터를 받는 부분
-                hp = (int)stream.ReceiveNext();
-                isOccupying = (bool)stream.ReceiveNext();
+                //hp = (int)stream.ReceiveNext();
+                //isOccupying = (bool)stream.ReceiveNext();
+                /*
                 for (int i = 0; i < playerActionDatas.Count; i++)
                 {
                     playerActionDatas[i].isExecuting = (bool)stream.ReceiveNext();
                 }
-                moveVec = (Vector3)stream.ReceiveNext();
-                isGrounded = (bool)stream.ReceiveNext();
+                */
+                //moveVec = (Vector3)stream.ReceiveNext();
+                //isGrounded = (bool)stream.ReceiveNext();
                 networkSight = (Vector3)stream.ReceiveNext();
             }
         }
+        
     }
 }

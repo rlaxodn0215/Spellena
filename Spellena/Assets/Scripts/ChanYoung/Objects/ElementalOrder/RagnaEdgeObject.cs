@@ -42,11 +42,10 @@ public class RagnaEdgeObject : SpawnObject
         Init();
     }
 
-    void Update()
+    void FixedUpdate()
     {
-        if (PhotonNetwork.IsMasterClient)
-            CheckTimer();
-        LerpCylinder();
+        CheckTimer();
+        //LerpCylinder();
     }
 
     void LerpCylinder()
@@ -70,7 +69,7 @@ public class RagnaEdgeObject : SpawnObject
                     cylinder.transform.localScale = new Vector3(cylinder.transform.localScale.x,
                         cylinder.transform.localScale.y + Time.deltaTime * 4 / cylinderLifeTime * 1.1f, cylinder.transform.localScale.z);
                     if (cylinder.transform.localScale.y > 2f)
-                        RequestRPC("ReverseCylinder");
+                        ReverseCylinder();
                 }
                 else
                 {
@@ -85,21 +84,24 @@ public class RagnaEdgeObject : SpawnObject
                 currentCylinderLifeTime -= Time.deltaTime;
 
                 if (currentCylinderLifeTime < 0f)
-                    RequestRPC("RequestDestroy");
+                {
+                    if(PhotonNetwork.IsMasterClient)
+                        RequestRPC("RequestDestroy");
+                }
             }
             else if(isFloorColliderOn == false)
             {
-                RequestRPC("ActiveFloor");
+                ActiveFloor();
             }
             else
             {
                 currentFloorLifeTime -= Time.deltaTime;
-                if(currentFloorLifeTime <= 0f)
-                    RequestRPC("ActiveCylinder");
+                if (currentFloorLifeTime <= 0f)
+                    ActiveCylinder();
             }
         }
 
-        RequestRPC("UpdateData");
+        //RequestRPC("UpdateData");
     }
 
     void Init()

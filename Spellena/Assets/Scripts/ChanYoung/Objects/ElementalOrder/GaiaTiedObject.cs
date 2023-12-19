@@ -38,7 +38,7 @@ public class GaiaTiedObject : SpawnObject
     void FixedUpdate()
     {
         CheckTimer();
-        LerpCylinder();
+        //LerpCylinder();
     }
 
     void LerpCylinder()
@@ -68,7 +68,11 @@ public class GaiaTiedObject : SpawnObject
                 {
                     currentCylinderCount++;
                     currentCylinderCheckTime = cylinderCheckTime;
-                    RequestRPC("ActiveCollider", currentCylinderCount);
+                    //RequestRPC("ActiveCollider", currentCylinderCount);
+                    object[] _tempObject = new object[2];
+                    _tempObject[0] = "";
+                    _tempObject[1] = currentCylinderCount;
+                    ActiveCollider(_tempObject);
                 }
                 else
                     currentCylinderCheckTime = 100f;
@@ -91,8 +95,13 @@ public class GaiaTiedObject : SpawnObject
                                 cylinders[i].transform.localScale = new Vector3(scaleCorrect.x,
                                    cylinders[i].transform.localScale.y - elementalOrderData.gaiaTiedLifeTime[i] * Time.deltaTime * 2, scaleCorrect.z);
                             }
-                            if(cylinders[i].transform.localScale.y <= 0f)
-                                RequestRPC("InactiveCollider", i);
+                            if (cylinders[i].transform.localScale.y <= 0f)
+                            {
+                                object[] _tempObject = new object[2];
+                                _tempObject[0] = "";
+                                _tempObject[1] = i;
+                                InactiveCollider(_tempObject);
+                            }
                         }
                         cylinders[i].transform.localPosition = new Vector3(cylinders[i].transform.localPosition.x, cylinders[i].transform.localScale.y, cylinders[i].transform.localPosition.z);
                         if (cylinders[i].transform.localScale.y > scaleCorrect.y)
@@ -104,11 +113,12 @@ public class GaiaTiedObject : SpawnObject
             currentLifeTime -= Time.deltaTime;
             if(currentLifeTime <= 0f)
             {
-                RequestRPC("RequestDestroy");
+                if(PhotonNetwork.IsMasterClient)
+                    RequestRPC("RequestDestroy");
             }
         }
 
-        RequestRPC("UpdateData");
+        //RequestRPC("UpdateData");
     }
 
     void Init()
@@ -216,6 +226,7 @@ public class GaiaTiedObject : SpawnObject
         cylinders[(int)data[1]].GetComponent<Collider>().enabled = true;
         cylinders[(int)data[1]].GetComponent<AudioSource>().volume = SettingManager.Instance.effectVal * SettingManager.Instance.soundVal;
         cylinders[(int)data[1]].GetComponent<AudioSource>().Play();
+        Debug.Log("À®");
     }
 
     void InactiveCollider(object[] data)

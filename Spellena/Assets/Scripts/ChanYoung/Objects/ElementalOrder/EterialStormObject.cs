@@ -71,7 +71,6 @@ public class EterialStormObject : SpawnObject,IPunObservable
                 }
             }
         }
-        //RequestRPC("UpdateData");
     }
 
     void Init()
@@ -147,12 +146,9 @@ public class EterialStormObject : SpawnObject,IPunObservable
     void ActiveCollider()
     {
         isColliderOn = true;
-        if (PhotonNetwork.IsMasterClient)
+        for (int i = 0; i < hitEffect.transform.childCount; i++)
         {
-            for (int i = 0; i < hitEffect.transform.childCount; i++)
-            {
-                hitEffect.transform.GetChild(i).GetComponent<ParticleSystem>().Play(true);
-            }
+            hitEffect.transform.GetChild(i).GetComponent<ParticleSystem>().Play(true);
         }
     }
 
@@ -206,7 +202,8 @@ public class EterialStormObject : SpawnObject,IPunObservable
             if(hitTimer[_index] <= 0f)
             {
                 hitTimer[_index] = hitCoolDownTime;
-                _rootObject.GetComponent<Rigidbody>().AddForce(_outsideVector * impulsePower, ForceMode.Impulse);
+                _rootObject.GetComponent<PhotonView>().RPC("PlayerKnockBack", RpcTarget.All, _outsideVector, impulsePower);
+                //_rootObject.GetComponent<Rigidbody>().AddForce(_outsideVector * impulsePower, ForceMode.Impulse);
                 if(_distance <= 3.0f)
                 {
                     _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.All,
@@ -219,7 +216,8 @@ public class EterialStormObject : SpawnObject,IPunObservable
         {
             hitObjects.Add(_rootObject.name);
             hitTimer.Add(hitCoolDownTime);
-            _rootObject.GetComponent<Rigidbody>().AddForce(_outsideVector * impulsePower, ForceMode.Impulse);
+            _rootObject.GetComponent<PhotonView>().RPC("PlayerKnockBack", RpcTarget.All, _outsideVector, impulsePower);
+            //_rootObject.GetComponent<Rigidbody>().AddForce(_outsideVector * impulsePower, ForceMode.Impulse);
             if (_distance <= 3.0f)
             {
                 _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.All,
