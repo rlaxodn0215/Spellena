@@ -74,11 +74,11 @@ public class CharacterSelect : CenterState
             string choseCharacter = (string)player.CustomProperties["Character"];
             if (choseCharacter == null)
             {
-                //GameCenterTest.ChangePlayerCustomProperties(player, "Character", "Observer");
-                //choseCharacter = "Observer";
+                GameCenterTest.ChangePlayerCustomProperties(player, "Character", "Observer");
+                choseCharacter = "Observer";
 
-                GameCenterTest.ChangePlayerCustomProperties(player, "Character", "Aeterna");
-                choseCharacter = "Aeterna";
+                //GameCenterTest.ChangePlayerCustomProperties(player, "Character", "Aeterna");
+                //choseCharacter = "Aeterna";
             }
 
             if ((string)player.CustomProperties["Team"] == "A")     // A ÆÀ (Red)
