@@ -10205,8 +10205,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SynchronizeVelocity: 1
-  m_SynchronizeAngularVelocity: 0
-  m_TeleportEnabled: 0
+  m_SynchronizeAngularVelocity: 1
+  m_TeleportEnabled: 1
   m_TeleportIfDistanceGreaterThan: 3
 --- !u!95 &1517351796
 Animator:
@@ -10346,9 +10346,9 @@ CapsuleCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.1589776
-  m_Height: 1.3201662
+  m_Height: 1.2903148
   m_Direction: 1
-  m_Center: {x: 0, y: 0.6103175, z: 0}
+  m_Center: {x: 0, y: 0.62524325, z: 0}
 --- !u!136 &-2320758759326817677
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -10360,9 +10360,9 @@ CapsuleCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   m_Radius: 0.1589776
-  m_Height: 1.3151001
+  m_Height: 1.2839208
   m_Direction: 1
-  m_Center: {x: 0, y: 0.60778445, z: 0}
+  m_Center: {x: 0, y: 0.6233741, z: 0}
 --- !u!114 &2628121825258516268
 MonoBehaviour:
   m_ObjectHideFlags: 0
