@@ -13,15 +13,15 @@ MonoBehaviour:
   m_Name: ElementalOrderData
   m_EditorClassIdentifier: 
   hp: 600
-  moveSpeed: 10
-  backSpeed: 8
-  sideSpeed: 9
+  moveSpeed: 5
+  backSpeed: 4
+  sideSpeed: 4
   runSpeedRatio: 1.2
-  sitSpeed: 6
-  sitSideSpeed: 5
-  sitBackSpeed: 4
+  sitSpeed: 3
+  sitSideSpeed: 2
+  sitBackSpeed: 2
   jumpHeight: 5
-  headShotRatio: 3
+  headShotRatio: 1.5
   ragnaEdgeFloorDamage: 150
   ragnaEdgeCylinderDamage: 150
   rangaEdgeCoolDownTime: 10

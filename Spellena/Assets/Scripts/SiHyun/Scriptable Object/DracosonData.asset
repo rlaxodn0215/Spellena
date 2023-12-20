@@ -21,7 +21,7 @@ MonoBehaviour:
   sitSideSpeed: 2
   sitBackSpeed: 1
   jumpHeight: 5
-  headShotRatio: 0
+  headShotRatio: 1.5
   dragonicSightHoldingTime0: 2
   dragonicSightHoldingTime1: 2
   dragonicSightHoldingTime2: 2
