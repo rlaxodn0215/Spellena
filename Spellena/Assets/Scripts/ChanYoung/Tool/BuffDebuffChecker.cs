@@ -17,6 +17,8 @@ public class BuffDebuffChecker : MonoBehaviourPunCallbacks
     NavMeshAgent agent;
     GameObject target;
 
+    LineRenderer lineRenderer;
+
     //컬티스트만 사용 -> 의식 스택
     //라운드 종료시에만 스택이 쌓임
     public int ritualStacks = 0;
@@ -51,6 +53,8 @@ public class BuffDebuffChecker : MonoBehaviourPunCallbacks
     float chasingTimer = 0f;
 
 
+
+
     private void Start()
     {
         Init();
@@ -69,6 +73,28 @@ public class BuffDebuffChecker : MonoBehaviourPunCallbacks
         for(int i = 0; i < tentacles.Length; i++)
         {
             tentacles[i] = new Tentacle();
+        }
+
+        lineRenderer = GetComponent<LineRenderer>();
+    }
+
+    private void Update()
+    {
+        if(agent.hasPath && agent.enabled)
+        {
+            Debug.Log("간다");
+            Vector3[] corners = agent.path.corners;
+            for(int i = 0; i < corners.Length; i++)
+            {
+                corners[i] += new Vector3(0, 1f, 0);
+            }
+            lineRenderer.positionCount = corners.Length;
+            lineRenderer.SetPositions(corners);
+        }
+        else
+        {
+            Debug.Log("만다");
+            lineRenderer.positionCount = 0;
         }
     }
 
@@ -119,14 +145,14 @@ public class BuffDebuffChecker : MonoBehaviourPunCallbacks
                 }
                 else if (buffsAndDebuffs[i] == "BlessingCast")
                 {
-                    for(int j = 0; j < blessingTargets.Count; j++)
+                    for (int j = 0; j < blessingTargets.Count; j++)
                     {
                         if (blessingTargets[j] == gameObject)
                             continue;
                         Vector3 _viewPort = blessingTargets[j].GetComponent<Character>().camera.GetComponent<Camera>().WorldToViewportPoint(transform.position);
 
                         //카메라안에 들어오는가 확인
-                        if(_viewPort.x >= 0 && _viewPort.x <= 1 && _viewPort.y >= 0 && _viewPort.y <=1)
+                        if (_viewPort.x >= 0 && _viewPort.x <= 1 && _viewPort.y >= 0 && _viewPort.y <= 1)
                         {
                             Vector3 _playerCameraPos = blessingTargets[j].transform.position + new Vector3(0, 1, 0);
                             Vector3 _cameraPos = transform.position + new Vector3(0, 1, 0);
@@ -162,19 +188,17 @@ public class BuffDebuffChecker : MonoBehaviourPunCallbacks
             }
         }
 
-        if(photonView.IsMine)
+        if (agent.enabled == true)
         {
-            if (agent.enabled == true)
+            agent.SetDestination(target.transform.position);
+            if (chasingTimer > 0f)
             {
-                agent.SetDestination(target.transform.position);
-                if (chasingTimer > 0f)
+                chasingTimer -= Time.deltaTime;
+                if (chasingTimer <= 0f)
                 {
-                    chasingTimer -= Time.deltaTime;
-                    if (chasingTimer <= 0f)
-                    {
-                        agent.enabled = false;
+                    agent.enabled = false;
+                    if(photonView.IsMine)
                         photonView.RPC("ResetTentacleRequest", RpcTarget.MasterClient);
-                    }
                 }
             }
         }
@@ -374,8 +398,7 @@ public class BuffDebuffChecker : MonoBehaviourPunCallbacks
 
         if (tentacles[0].isActive == true)
         {
-            if(photonView.IsMine)
-                ChaseNearEnemy();
+            ChaseNearEnemy();
         }
     }
 
