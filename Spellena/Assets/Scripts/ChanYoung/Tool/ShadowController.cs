@@ -14,7 +14,7 @@ public class ShadowController : MonoBehaviour
         LayerMask layerMask = LayerMask.GetMask("Map");
         if (Physics.Raycast(_ray, out _rayHit, Mathf.Infinity, layerMask))
         {
-            transform.position = _rayHit.point + new Vector3(0, 0.05f, 0);
+            transform.position = _rayHit.point;
             Debug.Log("üũ");
         }
     }
