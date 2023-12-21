@@ -1141,11 +1141,8 @@ namespace Player
             float _beforeSpeed = animator.GetCurrentAnimatorStateInfo(4).speed;
             float _animationLength = animator.GetCurrentAnimatorStateInfo(4).length;
             float _normalizedSpeed = _animationLength / animationTime;
-            if (_normalizedSpeed != 1 && _normalizedSpeed != _beforeSpeed)
-            {
-                animator.SetFloat(state, _normalizedSpeed);
-                overlayAnimator.SetFloat(state, _normalizedSpeed);
-            }
+            animator.SetFloat(state, _normalizedSpeed);
+            overlayAnimator.SetFloat(state, _normalizedSpeed);
         }
 
         void CheckAnimatorExtra()
