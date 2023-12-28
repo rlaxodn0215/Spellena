@@ -35,6 +35,8 @@ public class DeadCamera : MonoBehaviour
         layerMask = 1 << LayerMask.NameToLayer("Other");
         int temp = 1 << LayerMask.NameToLayer("OccupationArea");
         layerMask |= temp;
+        int temp1 = 1 << LayerMask.NameToLayer("Me");
+        layerMask |= temp1;
 
         layerMask = ~layerMask;
     }

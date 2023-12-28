@@ -13,13 +13,13 @@ MonoBehaviour:
   m_Name: CultistData
   m_EditorClassIdentifier: 
   hp: 500
-  moveSpeed: 5
-  backSpeed: 3
-  sideSpeed: 4
+  moveSpeed: 10
+  backSpeed: 8
+  sideSpeed: 9
   runSpeedRatio: 1.2
-  sitSpeed: 3
-  sitSideSpeed: 3
-  sitBackSpeed: 3
+  sitSpeed: 6
+  sitSideSpeed: 5
+  sitBackSpeed: 4
   jumpHeight: 5
   headShotRatio: 1.5
   invocationCastingTime: 1

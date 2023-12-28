@@ -71,6 +71,7 @@ namespace Player
 
                     ParticleSystem[] systems = GetComponentsInChildren<ParticleSystem>();
                     Light[] lights = GetComponentsInChildren<Light>();
+                    MeshRenderer[] renderers = GetComponentsInChildren<MeshRenderer>();
 
                     isHealingSword = (bool)data[4];
 
@@ -97,6 +98,19 @@ namespace Player
                             ColorUtility.TryParseHtmlString("#E700C7", out color);
 
                         light.color = color;
+                    }
+
+                    foreach(MeshRenderer renderer in renderers)
+                    {
+                        Color color;
+
+                        if (isHealingSword)
+                            ColorUtility.TryParseHtmlString("#19FF2B", out color);
+                        else
+                            ColorUtility.TryParseHtmlString("#E700C7", out color);
+
+                        //renderer.material.color = color;
+                        renderer.material.
                     }
 
                 }
