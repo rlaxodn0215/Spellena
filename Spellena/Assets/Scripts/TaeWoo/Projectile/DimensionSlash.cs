@@ -100,19 +100,6 @@ namespace Player
                         light.color = color;
                     }
 
-                    foreach(MeshRenderer renderer in renderers)
-                    {
-                        Color color;
-
-                        if (isHealingSword)
-                            ColorUtility.TryParseHtmlString("#19FF2B", out color);
-                        else
-                            ColorUtility.TryParseHtmlString("#E700C7", out color);
-
-                        //renderer.material.color = color;
-                        renderer.material.
-                    }
-
                 }
             }
 
