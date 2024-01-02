@@ -38,6 +38,6 @@ Material:
     - _UseShadows: 0
     - _WaveLength: 1
     m_Colors:
-    - _PrimaryColor: {r: 0, g: 0.659, b: 0.716, a: 1}
-    - _SecondaryColor: {r: 0, g: 1, b: 1, a: 1}
+    - _PrimaryColor: {r: 0, g: 0.7176471, b: 0.6476046, a: 1}
+    - _SecondaryColor: {r: 0, g: 0.0791831, b: 1, a: 1}
   m_BuildTextureStacks: []
