@@ -5,20 +5,36 @@ namespace BehaviourTree
     public class Condition : Node
     {
         private Func<bool> condition;
+        private Node trueNode;
+        private Node falseNode;
 
         public Condition()
         {
-            this.condition = null;
+            condition = null;
         }
 
-        public Condition(Func<bool> _condition)
+        public Condition(Func<bool> _condition, Node _trueNode, Node _falseNode)
         {
-            this.condition = _condition;
+            condition += _condition;
+            trueNode = _trueNode;
+            falseNode = _falseNode;
         }
 
         public override NodeState Evaluate()
         {
-            return condition() ? NodeState.Success : NodeState.Failure;
+            if(condition())
+            {
+                if(trueNode != null)
+                    trueNode.Evaluate();
+                return NodeState.Success;
+            }
+
+            else
+            {
+                if (falseNode != null)
+                    falseNode.Evaluate();
+                return NodeState.Failure;
+            }
         }
 
     }

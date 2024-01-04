@@ -17,7 +17,7 @@ namespace BehaviourTree
         public Node parent;
         protected List<Node> children = new List<Node>();
 
-        private Dictionary<string, object> dataContext = new Dictionary<string, object>();
+        //private Dictionary<string, object> dataContext = new Dictionary<string, object>();
 
         public Node()
         {
@@ -38,48 +38,48 @@ namespace BehaviourTree
 
         public virtual NodeState Evaluate() => NodeState.Failure;
 
-        public void SetData(string key, object value)
-        {
-            dataContext[key] = value;
-        }
+        //public void SetData(string key, object value)
+        //{
+        //    dataContext[key] = value;
+        //}
 
-        public object GetData(string key)
-        {
-            object value = null;
-            if (dataContext.TryGetValue(key, out value))
-                return value;
+        //public object GetData(string key)
+        //{
+        //    object value = null;
+        //    if (dataContext.TryGetValue(key, out value))
+        //        return value;
 
-            // 부모 노드에 해당 데이터가 있는지 확인
-            Node node = parent;
-            while(node !=null)
-            {
-                value = GetData(key);
-                if (value != null)
-                    return value;
-                node = node.parent;
-            }
+        //    // 부모 노드에 해당 데이터가 있는지 확인
+        //    Node node = parent;
+        //    while(node !=null)
+        //    {
+        //        value = GetData(key);
+        //        if (value != null)
+        //            return value;
+        //        node = node.parent;
+        //    }
 
-            return null;
-        }
+        //    return null;
+        //}
 
-        public bool ClearData(string key)
-        {
-            if (dataContext.ContainsKey(key))
-            {
-                dataContext.Remove(key);
-                return true;
-            }
+        //public bool ClearData(string key)
+        //{
+        //    if (dataContext.ContainsKey(key))
+        //    {
+        //        dataContext.Remove(key);
+        //        return true;
+        //    }
 
-            Node node = parent;
-            while (node != null)
-            {
-                if (node.ClearData(key))
-                    return true;
-                node = node.parent;
-            }
+        //    Node node = parent;
+        //    while (node != null)
+        //    {
+        //        if (node.ClearData(key))
+        //            return true;
+        //        node = node.parent;
+        //    }
 
-            return false;
-        }
+        //    return false;
+        //}
     }
 }
 
