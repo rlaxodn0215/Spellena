@@ -15,21 +15,37 @@ public class CheckGauge
     public CheckGauge(float _dataCoolTime)
     {
         dataCoolTime = _dataCoolTime;
+        curCoolTime = 0.0f;
     }
 
     public CheckGauge(int _dataUltimateGauage)
     {
         dataUltimateGauage = _dataUltimateGauage;
+        curUltimateGauage = 0;
+    }
+
+    public void UpdateCurCoolTime()
+    {
+        if(dataCoolTime >= 0)
+            curCoolTime += Time.deltaTime;
     }
 
     public void UpdateCurCoolTime(float _curCoolTime)
     {
-        curCoolTime = _curCoolTime;
+        if (dataCoolTime >= 0)
+            curCoolTime = _curCoolTime;
+    }
+
+    public void UpdateCurUltimateGauage()
+    {
+        if (dataUltimateGauage >= 0)
+            curUltimateGauage++;
     }
 
     public void UpdateCurUltimateGauage(int _curUltimateGauage)
     {
-        curUltimateGauage = _curUltimateGauage;
+        if (dataUltimateGauage >= 0)
+            curUltimateGauage = _curUltimateGauage;
     }
 
     public bool CheckCoolTime()

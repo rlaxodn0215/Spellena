@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System;
 
 namespace BehaviourTree
@@ -5,34 +6,33 @@ namespace BehaviourTree
     public class Condition : Node
     {
         private Func<bool> condition;
-        private Node trueNode;
-        private Node falseNode;
 
-        public Condition()
+        public Condition() : base()
         {
             condition = null;
         }
 
-        public Condition(Func<bool> _condition, Node _trueNode, Node _falseNode)
+        public Condition(Func<bool> _condition, List<Node> _TNodes)
+            : base(_TNodes)
         {
             condition += _condition;
-            trueNode = _trueNode;
-            falseNode = _falseNode;
         }
 
         public override NodeState Evaluate()
         {
             if(condition())
             {
-                if(trueNode != null)
-                    trueNode.Evaluate();
+                //TRUE
+                if(children[0] != null)
+                    children[0].Evaluate();
                 return NodeState.Success;
             }
 
             else
             {
-                if (falseNode != null)
-                    falseNode.Evaluate();
+                //FALSE
+                //if (children[1] != null)
+                    //children[1].Evaluate();
                 return NodeState.Failure;
             }
         }

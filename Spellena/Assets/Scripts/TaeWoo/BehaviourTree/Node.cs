@@ -36,7 +36,10 @@ namespace BehaviourTree
             children.Add(node);
         }
 
-        public virtual NodeState Evaluate() => NodeState.Failure;
+        public virtual NodeState Evaluate()
+        {
+            return NodeState.Failure;
+        }
 
         //public void SetData(string key, object value)
         //{

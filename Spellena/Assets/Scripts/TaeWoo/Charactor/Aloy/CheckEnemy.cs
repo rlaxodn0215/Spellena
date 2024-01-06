@@ -4,15 +4,17 @@ public class CheckEnemy
 {
     private Transform playerTransform;
 
+    private Animator animator;
     private float viewAngle;
     private float viewRadius;
     private LayerMask targetMask;
     private LayerMask obstacleMask;
 
     private Transform enemy;
+
+    [HideInInspector]
     public Transform Enemy { get { return enemy; } }
     
-
     public CheckEnemy()
     {
         viewAngle = 0;
@@ -24,6 +26,8 @@ public class CheckEnemy
         LayerMask _targetMask, LayerMask _obstacleMask)
     {
         playerTransform = _playerTransform;
+        animator = playerTransform.GetComponent<Animator>();
+        if (animator == null) Debug.LogError("Animator가 할당되지 않았습니다");
         viewAngle = _viewAngle;
         viewRadius = _viewRadius;
         targetMask = 1 << _targetMask;
@@ -58,13 +62,15 @@ public class CheckEnemy
                     // 태그가 다른 적 구분
                     Debug.DrawLine(SightPos, targetPos, Color.red);
                     enemy = player.transform;
+                    animator.SetBool("CheckEnemy", true);
                     return true;
                 }
             }
         }
 
+        enemy = null;
+        animator.SetBool("CheckEnemy", false);
         return false;
-
     }
 
     private Vector3 AngleToDir(float angle)
