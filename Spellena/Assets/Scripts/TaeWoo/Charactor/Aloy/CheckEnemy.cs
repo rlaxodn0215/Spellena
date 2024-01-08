@@ -12,6 +12,8 @@ public class CheckEnemy
 
     private Transform enemy;
 
+    private Animator bowAnimator;
+
     [HideInInspector]
     public Transform Enemy { get { return enemy; } }
     
@@ -22,10 +24,12 @@ public class CheckEnemy
         targetMask = 0;
     }
 
-    public CheckEnemy(Transform _playerTransform, float _viewAngle, float _viewRadius,
+    public CheckEnemy(Transform _playerTransform, GameObject _bowAniObj, float _viewAngle, float _viewRadius,
         LayerMask _targetMask, LayerMask _obstacleMask)
     {
         playerTransform = _playerTransform;
+        bowAnimator = _bowAniObj.GetComponent<Animator>();
+        if (bowAnimator == null) Debug.LogError("bowAnimator가 할당되지 않았습니다");
         animator = playerTransform.GetComponent<Animator>();
         if (animator == null) Debug.LogError("Animator가 할당되지 않았습니다");
         viewAngle = _viewAngle;
@@ -62,14 +66,14 @@ public class CheckEnemy
                     // 태그가 다른 적 구분
                     Debug.DrawLine(SightPos, targetPos, Color.red);
                     enemy = player.transform;
-                    animator.SetBool("CheckEnemy", true);
+                    CheckEnemyAni(true);
                     return true;
                 }
             }
         }
 
         enemy = null;
-        animator.SetBool("CheckEnemy", false);
+        CheckEnemyAni(false);
         return false;
     }
 
@@ -77,5 +81,11 @@ public class CheckEnemy
     {
         float radian = angle * Mathf.Deg2Rad;
         return new Vector3(Mathf.Sin(radian), 0f, Mathf.Cos(radian));
+    }
+
+    private void CheckEnemyAni(bool setBool)
+    {
+        animator.SetBool("CheckEnemy", setBool);
+        bowAnimator.SetBool("Draw", setBool);
     }
 }

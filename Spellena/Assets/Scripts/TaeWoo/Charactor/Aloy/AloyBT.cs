@@ -6,6 +6,9 @@ using BehaviourTree;
 public class AloyBT : BehaviourTree.Tree
 {
     public Transform occupationPoint;
+    public GameObject bowAniObj;
+    public GameObject arrowAniObj;
+    public GameObject arrowPoolObj;
 
     private Animator animator;
 
@@ -20,7 +23,7 @@ public class AloyBT : BehaviourTree.Tree
 
     void InitData()
     {
-        checkEnemy = new CheckEnemy(transform, 120f, 10f, LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("Wall"));
+        checkEnemy = new CheckEnemy(transform, bowAniObj, 120f, 10f, LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("Wall"));
         skillTimer = new int[skillNum];
         animator = GetComponent<Animator>();
         if (animator == null) Debug.LogError("Animator가 할당되지 않았습니다");
@@ -31,7 +34,7 @@ public class AloyBT : BehaviourTree.Tree
         }
 
         gotoOccupationArea = new GotoOccupationArea(transform, occupationPoint);
-        aloyBasicAttack = new AloyBasicAttack(transform, checkEnemy, gaugeList[0], 10);
+        aloyBasicAttack = new AloyBasicAttack(transform, bowAniObj, arrowAniObj, arrowPoolObj,checkEnemy, gaugeList[0]);
         //aloyLaserAttack = new AloyLaserAttack(transform, checkEnemy, gaugeList[1], 20);
     }
 
