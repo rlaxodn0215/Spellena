@@ -23,7 +23,7 @@ public class AloyBT : BehaviourTree.Tree
 
     void InitData()
     {
-        checkEnemy = new CheckEnemy(transform, bowAniObj, 120f, 10f, LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("Wall"));
+        checkEnemy = new CheckEnemy(transform, bowAniObj, 120f, 40f, LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("Wall"));
         skillTimer = new int[skillNum];
         animator = GetComponent<Animator>();
         if (animator == null) Debug.LogError("Animator가 할당되지 않았습니다");

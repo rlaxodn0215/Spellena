@@ -6,7 +6,7 @@ using Managers;
 public class Arrow : PoolObject
 {
     public int damage = 10;
-    public float arrowForce = 20.0f;
+    public float arrowVelocity = 120.0f;
     public float lifeTiming = 100f;
     private CheckGauge lifeTime;
     private Rigidbody rigidbody;
@@ -24,8 +24,8 @@ public class Arrow : PoolObject
 
     void OnEnable()
     {
-        if(rigidbody !=null)
-            rigidbody.AddForce(transform.forward * arrowForce, ForceMode.Impulse);
+        if (rigidbody != null)
+            rigidbody.velocity = transform.forward * arrowVelocity;
     }
 
     private void OnCollisionEnter(Collision collision)

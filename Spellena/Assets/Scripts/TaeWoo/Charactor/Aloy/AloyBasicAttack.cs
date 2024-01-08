@@ -122,7 +122,6 @@ public class AloyBasicAttack : Node
     {
         Vector3 targetDir = (checkEnemy.Enemy.position - playerTransform.position).normalized;
         targetDir.y = 0;
-
         playerTransform.forward =
             Vector3.Lerp(playerTransform.forward, targetDir, rotateSpeed * Time.deltaTime);
 
@@ -134,7 +133,7 @@ public class AloyBasicAttack : Node
             bowAnimator.SetBool("Shoot", true);
             animator.SetBool("Shoot", true);
 
-            arrowPool.GetObject(targetDir);
+            arrowPool.GetObject();
 
             if(bowAnimator.GetCurrentAnimatorStateInfo(0).IsName("Shoot"))
             {

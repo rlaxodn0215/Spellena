@@ -29,12 +29,6 @@ namespace Managers
             CreateObjects(initObjectNum);
         }
 
-        // Update is called once per frame
-        void Update()
-        {
-            //KeyInput();
-        }
-
         void CreateObjects(int objectNum)
         {
             //Debug.Log("[PoolManager] CreatePlayers : #" + objectNum);
@@ -89,24 +83,6 @@ namespace Managers
         }
 
         public PoolObject GetObject()
-        {
-            if (objIDs.Count > 0)
-            {
-                PoolObject ob = objs.Find(item => item.ObjID == objIDs.Peek());
-                objIDs.Dequeue();
-                ob.gameObject.SetActive(true);
-                return ob;
-            }
-
-            else
-            {
-                PoolObject ob = CreateNewPoolObject(++addObjectNum);
-                objs.Add(ob);
-                return ob;
-            }
-        }
-
-        public PoolObject GetObject(Vector3 direction)
         {
             if (objIDs.Count > 0)
             {
