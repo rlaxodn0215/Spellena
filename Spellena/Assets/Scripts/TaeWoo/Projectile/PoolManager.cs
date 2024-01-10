@@ -77,6 +77,7 @@ namespace Managers
             poolObj.SetCallback(AddID);
             poolObj.InitPoolObject();
 
+            gb.SetActive(false);
             //Debug.Log("[PoolManager] Created new Object ID : " + id);
 
             return poolObj;
@@ -115,7 +116,10 @@ namespace Managers
             else
             {
                 PoolObject ob = CreateNewPoolObject(++addObjectNum);
+                ob.transform.position = _transform.position;
+                ob.transform.rotation = _transform.rotation;
                 objs.Add(ob);
+                ob.gameObject.SetActive(true);
                 return ob;
             }
         }

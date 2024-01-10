@@ -8,7 +8,6 @@ public class Arrow : PoolObject
     public int damage;
     public float arrowVelocity;
     public float lifeTiming;
-    public float maxLength;
     public float rotateSpeed;
 
     public bool ableHit;

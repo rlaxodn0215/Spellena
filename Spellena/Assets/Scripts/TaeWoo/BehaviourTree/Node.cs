@@ -17,6 +17,7 @@ namespace BehaviourTree
         public Node parent;
         protected List<Node> children = new List<Node>();
 
+        protected bool isNoSkillDoing = true;
         //private Dictionary<string, object> dataContext = new Dictionary<string, object>();
 
         public Node()
@@ -39,6 +40,11 @@ namespace BehaviourTree
         public virtual NodeState Evaluate()
         {
             return NodeState.Failure;
+        }
+
+        public virtual bool IsSkillDoing()
+        {
+            return isNoSkillDoing;
         }
 
         //public void SetData(string key, object value)

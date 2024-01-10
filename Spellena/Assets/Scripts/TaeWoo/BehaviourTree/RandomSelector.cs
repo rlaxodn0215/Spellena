@@ -7,15 +7,16 @@ namespace BehaviourTree
     public class RandomSelector : Node
     {
         int randomIndex = 0;
+
         public RandomSelector() : base() { }
 
         public RandomSelector(List<Node> children) : base(children) { }
 
         public override NodeState Evaluate()
         {
-            randomIndex = Random.Range(0, children.Count);
-
             Node node = children[randomIndex];
+            if(node.IsSkillDoing())
+                randomIndex = Random.Range(0, children.Count);
 
             switch (node.Evaluate())
             {

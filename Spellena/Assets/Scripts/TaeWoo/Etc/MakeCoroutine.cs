@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-namespace Player
+namespace CoroutineMaker
 {
     public class MakeCoroutine : MonoBehaviour
     {

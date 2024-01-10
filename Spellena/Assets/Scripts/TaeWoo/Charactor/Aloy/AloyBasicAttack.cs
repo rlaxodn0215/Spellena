@@ -21,7 +21,6 @@ public class AloyBasicAttack : Node
     private GameObject arrowAniObj;
 
     private PoolManager basicAttackArrows;
-    private PoolManager basicAttackHit;
 
     private Transform playerTransform;
     private Transform attackTransform;
@@ -128,6 +127,11 @@ public class AloyBasicAttack : Node
 
     void Attack()
     {
+        Vector3 dest = checkEnemy.Enemy.position - playerTransform.position;
+        dest.y = 0;
+        float distance = dest.magnitude;
+        attackTransform.localRotation = Quaternion.Euler(-distance * 0.125f,0,0);
+
         Vector3 targetDir = (checkEnemy.Enemy.position - playerTransform.position).normalized;
         targetDir.y = 0;
         playerTransform.forward =
@@ -163,7 +167,6 @@ public class AloyBasicAttack : Node
             {
                 arrowAniObj.SetActive(false);
             }
-
         }
     }
 }

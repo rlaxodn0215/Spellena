@@ -11,37 +11,39 @@ public class AloyBT : BehaviourTree.Tree
     public GameObject arrowAniObj;
 
     public Transform basicAttackTransform;
+    public Transform preciseAttackTransform;
+    public Transform beamAttackTransform;
 
     private Animator animator;
 
-    private int skillNum = 1;
-    private int[] skillTimer;
+    private int skillNum = 4;
 
     private GameObject aloyPoolObj;
     private List<CheckGauge> gaugeList = new List<CheckGauge>();
     private CheckEnemy checkEnemy;
     private GotoOccupationArea gotoOccupationArea;
+
     private AloyBasicAttack aloyBasicAttack;
-    private AloyLaserAttack aloyLaserAttack;
+    private AloyPreciseShot aloyPreciseShot;
+    private AloyPurifyBeam aloyPurifyBeam;
 
     void InitData()
     {
         checkEnemy = new CheckEnemy(transform, bowAniObj, 120f, 40f, LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("Wall"));
-        skillTimer = new int[skillNum];
         animator = GetComponent<Animator>();
         if (animator == null) Debug.LogError("Animator가 할당되지 않았습니다");
 
-        for(int i = 0; i < skillNum; i++)
-        {
-            gaugeList.Add(new CheckGauge(2.0f));
-        }
+        gaugeList.Add(new CheckGauge(2.0f));
+        gaugeList.Add(new CheckGauge(8.0f));
+        gaugeList.Add(new CheckGauge(10.0f));
 
         aloyPoolObj = GameObject.Find("AloyPoolManager");
         if (aloyPoolObj == null) Debug.LogError("AloyPoolManager을 찾을 수 없습니다");
 
         gotoOccupationArea = new GotoOccupationArea(transform, occupationPoint);
-        aloyBasicAttack = new AloyBasicAttack(transform, basicAttackTransform, bowAniObj, arrowAniObj, aloyPoolObj,checkEnemy, gaugeList[0]);
-        //aloyLaserAttack = new AloyLaserAttack(transform, checkEnemy, gaugeList[1], 20);
+        aloyBasicAttack = new AloyBasicAttack(transform, basicAttackTransform, bowAniObj, arrowAniObj, aloyPoolObj, checkEnemy, gaugeList[0]);
+        aloyPreciseShot = new AloyPreciseShot(transform, preciseAttackTransform, bowAniObj, arrowAniObj, aloyPoolObj, checkEnemy, gaugeList[1]);
+        aloyPurifyBeam = new AloyPurifyBeam(transform, beamAttackTransform, bowAniObj, arrowAniObj, checkEnemy, gaugeList[2]);
     }
 
     //Start()
@@ -57,7 +59,8 @@ public class AloyBT : BehaviourTree.Tree
                     new RandomSelector(new List<Node>
                     {
                         aloyBasicAttack,
-                        //aloyLaserAttack
+                        aloyPreciseShot,
+                        aloyPurifyBeam
                     }),
                 }
             ),

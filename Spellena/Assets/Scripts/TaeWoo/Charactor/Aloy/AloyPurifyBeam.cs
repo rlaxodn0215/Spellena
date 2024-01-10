@@ -1,0 +1,186 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.AI;
+using BehaviourTree;
+using Managers;
+using CoroutineMaker;
+
+public class AloyPurifyBeam : Node
+{
+    public enum MoveWay
+    {
+        Forward,
+        Back,
+        Left,
+        Right
+    }
+
+    private MoveWay way;
+    private float avoidSpeed = 1.2f;
+    private Animator bowAnimator;
+    private GameObject arrowAniObj;
+
+    private Transform playerTransform;
+    private Transform attackTransform;
+    private GameObject beamParticle;
+
+    private CheckEnemy checkEnemy;
+    private CheckGauge coolTime;
+    private NavMeshAgent agent;
+    private Animator animator;
+
+    private float avoidTiming = 1.0f;
+    private float rotateSpeed = 7.5f;
+    private float range = 7.5f;
+
+    private CheckGauge checkAvoid;
+
+    private MakeCoroutine coroutine;
+
+    public AloyPurifyBeam() { }
+
+    public AloyPurifyBeam(Transform _playerTransform, Transform _attackTransform, GameObject _bowAniObj, GameObject _arrowAniObj,
+         CheckEnemy _checkEnemy, CheckGauge _coolTime)
+    {
+        playerTransform = _playerTransform;
+        attackTransform = _attackTransform;
+        beamParticle = attackTransform.transform.GetChild(0).gameObject;
+        if (beamParticle == null) Debug.LogError("beamParticle�� �Ҵ���� �ʾҽ��ϴ�");
+
+        bowAnimator = _bowAniObj.GetComponent<Animator>();
+        if (bowAnimator == null) Debug.LogError("bowAnimator�� �Ҵ���� �ʾҽ��ϴ�");
+        agent = playerTransform.GetComponent<NavMeshAgent>();
+        if (agent == null) Debug.LogError("NavMeshAgent�� �Ҵ���� �ʾҽ��ϴ�");
+        animator = playerTransform.GetComponent<Animator>();
+        if (animator == null) Debug.LogError("Animator�� �Ҵ���� �ʾҽ��ϴ�");
+
+        checkEnemy = _checkEnemy;
+        coolTime = _coolTime;
+        arrowAniObj = _arrowAniObj;
+
+        checkAvoid = new CheckGauge(avoidTiming);
+    }
+
+    public override NodeState Evaluate()
+    {
+        if (checkEnemy.Enemy != null)
+        {
+            Avoiding();
+            Attack();
+        }
+
+        else
+        {
+            Debug.LogError("적이 할당되지 않았습니다");
+        }
+
+        return NodeState.Running;
+    }
+
+    void Avoiding()
+    {
+        agent.isStopped = true;
+        animator.SetBool("Move", false);
+        checkAvoid.UpdateCurCoolTime();
+        Moving();
+    }
+
+    void Moving()
+    {
+        if (checkAvoid.CheckCoolTime())
+        {
+            checkAvoid.UpdateCurCoolTime(0.0f);
+            way = (MoveWay)Random.Range(0, 4);
+
+            animator.SetBool("AvoidForward", false);
+            animator.SetBool("AvoidBack", false);
+            animator.SetBool("AvoidLeft", false);
+            animator.SetBool("AvoidRight", false);
+        }
+
+        switch (way)
+        {
+            // Forward
+            case MoveWay.Forward:
+                playerTransform.Translate(avoidSpeed * 0.5f * Vector3.forward * Time.deltaTime);
+                animator.SetBool("AvoidForward", true);
+                break;
+            // Back
+            case MoveWay.Back:
+                playerTransform.Translate(avoidSpeed * 0.5f * Vector3.back * Time.deltaTime);
+                animator.SetBool("AvoidBack", true);
+                break;
+            // Left
+            case MoveWay.Left:
+                playerTransform.Translate(avoidSpeed * Vector3.left * Time.deltaTime);
+                animator.SetBool("AvoidLeft", true);
+                break;
+            // Right
+            case MoveWay.Right:
+                playerTransform.Translate(avoidSpeed * Vector3.right * Time.deltaTime);
+                animator.SetBool("AvoidRight", true);
+                break;
+            default:
+                Debug.LogError("�߸��� ���� �� �߻�!!");
+                break;
+        }
+    }
+
+    void Attack()
+    {
+        Vector3 targetDir = checkEnemy.Enemy.position - playerTransform.position;
+        float distance = targetDir.magnitude;
+        targetDir.Normalize();
+        targetDir.y = 0;
+        playerTransform.forward =
+            Vector3.Lerp(playerTransform.forward, targetDir, rotateSpeed * Time.deltaTime);
+
+        if (coolTime.CheckCoolTime() && distance <= range)
+        {
+            coolTime.UpdateCurCoolTime(0.0f);
+
+            Debug.Log("AloyPurifyBeam to " + "<color=magenta>"
+            + checkEnemy.Enemy.name + "</color>");
+
+            coroutine = MakeCoroutine.Start_Coroutine(ShootBeam());
+        }
+
+        else
+        {
+            bowAnimator.SetBool("Shoot", false);
+            animator.SetBool("Shoot", false);
+
+            if (bowAnimator.GetCurrentAnimatorStateInfo(0).IsName("Draw"))
+            {
+                arrowAniObj.SetActive(true);
+            }
+
+            else
+            {
+                arrowAniObj.SetActive(false);
+            }
+
+        }
+    }
+
+    IEnumerator ShootBeam()
+    {
+        isNoSkillDoing = false;
+
+        bowAnimator.SetBool("Draw", true);
+        animator.SetBool("CheckEnemy", true);
+
+        beamParticle.SetActive(true);
+
+        yield return new WaitForSeconds(3.5f);
+
+        beamParticle.SetActive(false);
+
+        yield return new WaitForSeconds(0.8f);
+
+        isNoSkillDoing = true;
+        coroutine.Stop();
+
+    }
+}
