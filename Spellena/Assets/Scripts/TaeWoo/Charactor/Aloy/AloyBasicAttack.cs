@@ -19,9 +19,13 @@ public class AloyBasicAttack : Node
     private float avoidSpeed = 1.2f;
     private Animator bowAnimator;
     private GameObject arrowAniObj;
-    private PoolManager arrowPool;
+
+    private PoolManager basicAttackArrows;
+    private PoolManager basicAttackHit;
 
     private Transform playerTransform;
+    private Transform attackTransform;
+
     private CheckEnemy checkEnemy;
     private CheckGauge coolTime;
     private NavMeshAgent agent;
@@ -34,21 +38,25 @@ public class AloyBasicAttack : Node
 
     public AloyBasicAttack() { }
 
-    public AloyBasicAttack(Transform _playerTransform, GameObject _bowAniObj, GameObject _arrowAniObj,
+    public AloyBasicAttack(Transform _playerTransform, Transform _attackTransform, GameObject _bowAniObj, GameObject _arrowAniObj,
         GameObject _arrowPool, CheckEnemy _checkEnemy, CheckGauge _coolTime)
     {
         playerTransform = _playerTransform;
+        attackTransform = _attackTransform;
+
         bowAnimator = _bowAniObj.GetComponent<Animator>();
         if (bowAnimator == null) Debug.LogError("bowAnimator가 할당되지 않았습니다");
         agent = playerTransform.GetComponent<NavMeshAgent>();
         if (agent == null) Debug.LogError("NavMeshAgent가 할당되지 않았습니다");
         animator = playerTransform.GetComponent<Animator>();
         if (animator == null) Debug.LogError("Animator가 할당되지 않았습니다");
+
         checkEnemy = _checkEnemy;
         coolTime = _coolTime;
         arrowAniObj = _arrowAniObj;
-        arrowPool = _arrowPool.GetComponent<PoolManager>();
-        if (arrowPool == null) Debug.LogError("arrowPool 할당되지 않았습니다");
+
+        basicAttackArrows = _arrowPool.transform.GetChild(0).GetComponent<PoolManager>();
+        if (basicAttackArrows == null) Debug.LogError("basicAttackArrows 할당되지 않았습니다");
 
         checkAvoid = new CheckGauge(avoidTiming);
     }
@@ -133,7 +141,7 @@ public class AloyBasicAttack : Node
             bowAnimator.SetBool("Shoot", true);
             animator.SetBool("Shoot", true);
 
-            arrowPool.GetObject();
+            basicAttackArrows.GetObject(attackTransform);
 
             if(bowAnimator.GetCurrentAnimatorStateInfo(0).IsName("Shoot"))
             {

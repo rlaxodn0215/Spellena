@@ -100,6 +100,26 @@ namespace Managers
             }
         }
 
+        public PoolObject GetObject(Transform _transform)
+        {
+            if (objIDs.Count > 0)
+            {
+                PoolObject ob = objs.Find(item => item.ObjID == objIDs.Peek());
+                objIDs.Dequeue();
+                ob.transform.position = _transform.position;
+                ob.transform.rotation = _transform.rotation;
+                ob.gameObject.SetActive(true);
+                return ob;
+            }
+
+            else
+            {
+                PoolObject ob = CreateNewPoolObject(++addObjectNum);
+                objs.Add(ob);
+                return ob;
+            }
+        }
+
         void AddID(int id)
         {
             objIDs.Enqueue(id);

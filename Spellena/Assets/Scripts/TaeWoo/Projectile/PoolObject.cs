@@ -25,7 +25,9 @@ namespace Managers
         public virtual void InitPoolObject() { }
         public virtual void SetPoolObject(Vector3 direction) { }
 
-        protected void DisActive()
+        public virtual void SetHitObject(GameObject _hitObject) { }
+
+        protected virtual void DisActive()
         {
             transform.position = objTrans.position;
             transform.rotation = objTrans.rotation;

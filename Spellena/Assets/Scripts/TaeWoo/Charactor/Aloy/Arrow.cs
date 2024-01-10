@@ -5,9 +5,17 @@ using Managers;
 
 public class Arrow : PoolObject
 {
-    public int damage = 10;
-    public float arrowVelocity = 120.0f;
-    public float lifeTiming = 100f;
+    public int damage;
+    public float arrowVelocity;
+    public float lifeTiming;
+    public float maxLength;
+    public float rotateSpeed;
+
+    public bool ableHit;
+    public GameObject hitObject;
+    private GameObject makeHitObject;
+    public float hitObjectDestoryTime;
+
     private CheckGauge lifeTime;
     private Rigidbody rigidbody;
 
@@ -15,11 +23,16 @@ public class Arrow : PoolObject
     {
         lifeTime = new CheckGauge(lifeTiming);
         rigidbody = GetComponent<Rigidbody>();
-        if (rigidbody == null) Debug.LogError("rigidbody∞° «“¥Áµ«¡ˆ æ æ“Ω¿¥œ¥Ÿ");
+        if (rigidbody == null) Debug.LogError("rigidbodyÍ∞Ä Ìï†ÎãπÎêòÏßÄ ÏïäÏïòÏäµÎãàÎã§");
     }
     public override void SetPoolObject(Vector3 direction)
     {
         transform.LookAt(direction);
+    }
+
+    public override void SetHitObject(GameObject _hitObject)
+    {
+        hitObject = _hitObject;
     }
 
     void OnEnable()
@@ -28,25 +41,50 @@ public class Arrow : PoolObject
             rigidbody.velocity = transform.forward * arrowVelocity;
     }
 
-    private void OnCollisionEnter(Collision collision)
-    {
-        
-    }
-
     void Update()
     {
         lifeTime.UpdateCurCoolTime();
+
+        Rotate();
         CheckDisActive();
+    }
+
+
+    void Rotate()
+    {
+        transform.Rotate(Vector3.right, rotateSpeed * Time.deltaTime);
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (ableHit)
+        {
+            if (collision.transform.name != gameObject.name)
+                HitObj(collision);
+        }
+    }
+
+    void HitObj(Collision collision)
+    {
+        DisActive();
+        makeHitObject = Instantiate(hitObject, collision.GetContact(0).point, Quaternion.identity);
+        Destroy(makeHitObject, hitObjectDestoryTime);
     }
 
     void CheckDisActive()
     {
         if (lifeTime.CheckCoolTime())
         {
-            lifeTime.UpdateCurCoolTime(0.0f);
-            rigidbody.velocity = Vector3.zero;
-            rigidbody.angularVelocity = Vector3.zero;
             DisActive();
         }
+    }
+
+    protected override void DisActive()
+    {
+        lifeTime.UpdateCurCoolTime(0.0f);
+        GetComponent<Rigidbody>().velocity = Vector3.zero;
+        GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+
+        base.DisActive();
     }
 }

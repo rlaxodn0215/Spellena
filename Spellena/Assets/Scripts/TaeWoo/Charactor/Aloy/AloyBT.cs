@@ -6,15 +6,18 @@ using BehaviourTree;
 public class AloyBT : BehaviourTree.Tree
 {
     public Transform occupationPoint;
+
     public GameObject bowAniObj;
     public GameObject arrowAniObj;
-    public GameObject arrowPoolObj;
+
+    public Transform basicAttackTransform;
 
     private Animator animator;
 
     private int skillNum = 1;
     private int[] skillTimer;
 
+    private GameObject aloyPoolObj;
     private List<CheckGauge> gaugeList = new List<CheckGauge>();
     private CheckEnemy checkEnemy;
     private GotoOccupationArea gotoOccupationArea;
@@ -33,8 +36,11 @@ public class AloyBT : BehaviourTree.Tree
             gaugeList.Add(new CheckGauge(2.0f));
         }
 
+        aloyPoolObj = GameObject.Find("AloyPoolManager");
+        if (aloyPoolObj == null) Debug.LogError("AloyPoolManager을 찾을 수 없습니다");
+
         gotoOccupationArea = new GotoOccupationArea(transform, occupationPoint);
-        aloyBasicAttack = new AloyBasicAttack(transform, bowAniObj, arrowAniObj, arrowPoolObj,checkEnemy, gaugeList[0]);
+        aloyBasicAttack = new AloyBasicAttack(transform, basicAttackTransform, bowAniObj, arrowAniObj, aloyPoolObj,checkEnemy, gaugeList[0]);
         //aloyLaserAttack = new AloyLaserAttack(transform, checkEnemy, gaugeList[1], 20);
     }
 
