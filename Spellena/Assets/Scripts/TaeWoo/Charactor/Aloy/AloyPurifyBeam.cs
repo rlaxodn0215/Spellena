@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using BehaviourTree;
-using Managers;
 using CoroutineMaker;
 
 public class AloyPurifyBeam : Node
@@ -31,7 +30,7 @@ public class AloyPurifyBeam : Node
     private Animator animator;
 
     private float avoidTiming = 1.0f;
-    private float rotateSpeed = 7.5f;
+    private float rotateSpeed = 8.0f;
     private float range = 7.5f;
 
     private CheckGauge checkAvoid;
@@ -58,6 +57,8 @@ public class AloyPurifyBeam : Node
         checkEnemy = _checkEnemy;
         coolTime = _coolTime;
         arrowAniObj = _arrowAniObj;
+
+
 
         checkAvoid = new CheckGauge(avoidTiming);
     }
@@ -173,7 +174,7 @@ public class AloyPurifyBeam : Node
 
         beamParticle.SetActive(true);
 
-        yield return new WaitForSeconds(3.5f);
+        yield return new WaitForSeconds(5.0f);
 
         beamParticle.SetActive(false);
 

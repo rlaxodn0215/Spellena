@@ -36,6 +36,7 @@ public class AloyBT : BehaviourTree.Tree
         gaugeList.Add(new CheckGauge(2.0f));
         gaugeList.Add(new CheckGauge(8.0f));
         gaugeList.Add(new CheckGauge(10.0f));
+        gaugeList.Add(new CheckGauge(20.0f));
 
         aloyPoolObj = GameObject.Find("AloyPoolManager");
         if (aloyPoolObj == null) Debug.LogError("AloyPoolManager을 찾을 수 없습니다");
