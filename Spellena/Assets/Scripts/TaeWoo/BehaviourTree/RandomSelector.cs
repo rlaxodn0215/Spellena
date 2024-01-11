@@ -15,7 +15,7 @@ namespace BehaviourTree
         public override NodeState Evaluate()
         {
             Node node = children[randomIndex];
-            if(node.IsSkillDoing())
+            if(GetData("IsNoSkillDoing") == null)
                 randomIndex = Random.Range(0, children.Count);
 
             switch (node.Evaluate())

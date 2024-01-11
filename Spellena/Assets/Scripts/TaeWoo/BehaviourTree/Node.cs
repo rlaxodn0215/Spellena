@@ -17,8 +17,7 @@ namespace BehaviourTree
         public Node parent;
         protected List<Node> children = new List<Node>();
 
-        protected bool isNoSkillDoing = true;
-        //private Dictionary<string, object> dataContext = new Dictionary<string, object>();
+        private Dictionary<string, object> dataContext = new Dictionary<string, object>();
 
         public Node()
         {
@@ -31,7 +30,7 @@ namespace BehaviourTree
                 Attach(child);
         }
 
-        private void Attach(Node node)
+        protected void Attach(Node node)
         {
             node.parent = this;
             children.Add(node);
@@ -42,53 +41,62 @@ namespace BehaviourTree
             return NodeState.Failure;
         }
 
-        public virtual bool IsSkillDoing()
+        public void SetData(string key, object value)
         {
-            return isNoSkillDoing;
+            dataContext[key] = value;
         }
 
-        //public void SetData(string key, object value)
-        //{
-        //    dataContext[key] = value;
-        //}
+        public void SetDataToRoot(string key, object value)
+        {
+            Node temp = parent;
+            Node root = this;
 
-        //public object GetData(string key)
-        //{
-        //    object value = null;
-        //    if (dataContext.TryGetValue(key, out value))
-        //        return value;
+            while (temp != null)
+            {
+                root = temp;
+                temp = temp.parent;
+            }
 
-        //    // 부모 노드에 해당 데이터가 있는지 확인
-        //    Node node = parent;
-        //    while(node !=null)
-        //    {
-        //        value = GetData(key);
-        //        if (value != null)
-        //            return value;
-        //        node = node.parent;
-        //    }
+            root.dataContext[key] = value;
+        }
 
-        //    return null;
-        //}
+        public object GetData(string key)
+        {
+            object value = null;
+            if (dataContext.TryGetValue(key, out value))
+                return value;
 
-        //public bool ClearData(string key)
-        //{
-        //    if (dataContext.ContainsKey(key))
-        //    {
-        //        dataContext.Remove(key);
-        //        return true;
-        //    }
+            // 부모 노드에 해당 데이터가 있는지 확인
+            Node node = parent;
+            while (node != null)
+            {
+                value = node.GetData(key);
+                if (value != null)
+                    return value;
+                node = node.parent;
+            }
 
-        //    Node node = parent;
-        //    while (node != null)
-        //    {
-        //        if (node.ClearData(key))
-        //            return true;
-        //        node = node.parent;
-        //    }
+            return null;
+        }
 
-        //    return false;
-        //}
+        public bool ClearData(string key)
+        {
+            if (dataContext.ContainsKey(key))
+            {
+                dataContext.Remove(key);
+                return true;
+            }
+
+            Node node = parent;
+            while (node != null)
+            {
+                if (node.ClearData(key))
+                    return true;
+                node = node.parent;
+            }
+
+            return false;
+        }
     }
 }
 

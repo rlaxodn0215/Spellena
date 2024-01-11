@@ -10,10 +10,17 @@ public class Arrow : PoolObject
     public float lifeTiming;
     public float rotateSpeed;
 
-    public bool ableHit;
-    public GameObject hitObject;
-    private GameObject makeHitObject;
-    public float hitObjectDestoryTime;
+    public bool ableHitParticle;
+    public bool ableArrowStuck;
+
+    public GameObject hitParticleObject;
+    public GameObject arrowStuckObject;
+
+    private GameObject makeHitParticleObject;
+    private GameObject makeArrowStuckObject;
+
+    public float hitParticleDestoryTime;
+    public float arrowStuckDestoryTime;
 
     private CheckGauge lifeTime;
     private Rigidbody rigidbody;
@@ -27,11 +34,6 @@ public class Arrow : PoolObject
     public override void SetPoolObject(Vector3 direction)
     {
         transform.LookAt(direction);
-    }
-
-    public override void SetHitObject(GameObject _hitObject)
-    {
-        hitObject = _hitObject;
     }
 
     void OnEnable()
@@ -48,7 +50,6 @@ public class Arrow : PoolObject
         CheckDisActive();
     }
 
-
     void Rotate()
     {
         transform.Rotate(Vector3.right, rotateSpeed * Time.deltaTime);
@@ -56,18 +57,33 @@ public class Arrow : PoolObject
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (ableHit)
+        if (collision.transform.name != gameObject.name)
         {
-            if (collision.transform.name != gameObject.name)
-                HitObj(collision);
+            if (ableHitParticle)
+            {
+                MakeHitParticle(collision);
+            }
+
+            if (ableArrowStuck)
+            {
+                MakeArrowStuck(collision);
+            }
         }
     }
 
-    void HitObj(Collision collision)
+    void MakeHitParticle(Collision collision)
     {
+        makeHitParticleObject = Instantiate(hitParticleObject, collision.GetContact(0).point, Quaternion.identity);
+        Destroy(makeHitParticleObject, hitParticleDestoryTime);
         DisActive();
-        makeHitObject = Instantiate(hitObject, collision.GetContact(0).point, Quaternion.identity);
-        Destroy(makeHitObject, hitObjectDestoryTime);
+    }
+
+    void MakeArrowStuck(Collision collision)
+    {
+        makeArrowStuckObject = Instantiate(arrowStuckObject, collision.GetContact(0).point, transform.rotation);
+        makeArrowStuckObject.transform.parent = collision.transform;
+        Destroy(makeArrowStuckObject, arrowStuckDestoryTime);
+        DisActive();
     }
 
     void CheckDisActive()

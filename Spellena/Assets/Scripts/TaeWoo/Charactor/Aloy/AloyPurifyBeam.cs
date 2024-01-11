@@ -22,9 +22,9 @@ public class AloyPurifyBeam : Node
 
     private Transform playerTransform;
     private Transform attackTransform;
-    private GameObject beamParticle;
+    private Transform enemyTransform;
 
-    private CheckEnemy checkEnemy;
+    private GameObject beamParticle;
     private CheckGauge coolTime;
     private NavMeshAgent agent;
     private Animator animator;
@@ -39,8 +39,8 @@ public class AloyPurifyBeam : Node
 
     public AloyPurifyBeam() { }
 
-    public AloyPurifyBeam(Transform _playerTransform, Transform _attackTransform, GameObject _bowAniObj, GameObject _arrowAniObj,
-         CheckEnemy _checkEnemy, CheckGauge _coolTime)
+    public AloyPurifyBeam(Transform _playerTransform, Transform _attackTransform, 
+        GameObject _bowAniObj, GameObject _arrowAniObj, CheckGauge _coolTime)
     {
         playerTransform = _playerTransform;
         attackTransform = _attackTransform;
@@ -54,19 +54,17 @@ public class AloyPurifyBeam : Node
         animator = playerTransform.GetComponent<Animator>();
         if (animator == null) Debug.LogError("Animator�� �Ҵ���� �ʾҽ��ϴ�");
 
-        checkEnemy = _checkEnemy;
         coolTime = _coolTime;
         arrowAniObj = _arrowAniObj;
-
-
 
         checkAvoid = new CheckGauge(avoidTiming);
     }
 
     public override NodeState Evaluate()
     {
-        if (checkEnemy.Enemy != null)
+        if (GetData("Enemy") != null)
         {
+            enemyTransform = (Transform)GetData("Enemy");
             Avoiding();
             Attack();
         }
@@ -130,7 +128,7 @@ public class AloyPurifyBeam : Node
 
     void Attack()
     {
-        Vector3 targetDir = checkEnemy.Enemy.position - playerTransform.position;
+        Vector3 targetDir = enemyTransform.position - playerTransform.position;
         float distance = targetDir.magnitude;
         targetDir.Normalize();
         targetDir.y = 0;
@@ -142,7 +140,7 @@ public class AloyPurifyBeam : Node
             coolTime.UpdateCurCoolTime(0.0f);
 
             Debug.Log("AloyPurifyBeam to " + "<color=magenta>"
-            + checkEnemy.Enemy.name + "</color>");
+            + enemyTransform.name + "</color>");
 
             coroutine = MakeCoroutine.Start_Coroutine(ShootBeam());
         }
@@ -167,7 +165,7 @@ public class AloyPurifyBeam : Node
 
     IEnumerator ShootBeam()
     {
-        isNoSkillDoing = false;
+        SetDataToRoot("IsNoSkillDoing", true);
 
         bowAnimator.SetBool("Draw", true);
         animator.SetBool("CheckEnemy", true);
@@ -180,7 +178,7 @@ public class AloyPurifyBeam : Node
 
         yield return new WaitForSeconds(0.8f);
 
-        isNoSkillDoing = true;
+        ClearData("IsNoSkillDoing");
         coroutine.Stop();
 
     }

@@ -51,9 +51,12 @@ MonoBehaviour:
   arrowVelocity: 80
   lifeTiming: 10
   rotateSpeed: 0
-  ableHit: 1
-  hitObject: {fileID: 6069143791621258020, guid: d4c3ac21f11bb9b45bc5dfb2421c2efc, type: 3}
-  hitObjectDestoryTime: 1.5
+  ableHitParticle: 1
+  ableArrowStuck: 0
+  hitParticleObject: {fileID: 6069143791621258020, guid: d4c3ac21f11bb9b45bc5dfb2421c2efc, type: 3}
+  arrowStuckObject: {fileID: 0}
+  hitParticleDestoryTime: 1.5
+  arrowStuckDestoryTime: 0
 --- !u!135 &-6155840532229347061
 SphereCollider:
   m_ObjectHideFlags: 0

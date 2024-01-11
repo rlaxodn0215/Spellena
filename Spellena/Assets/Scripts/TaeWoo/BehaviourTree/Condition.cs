@@ -3,19 +3,19 @@ using System;
 
 namespace BehaviourTree
 {
-    public class Condition : Node
+    public class Condition : Node 
     {
-        private Func<bool> condition;
+        protected Func<bool> condition;
 
         public Condition() : base()
         {
             condition = null;
         }
 
-        public Condition(Func<bool> _condition, List<Node> _TNodes)
-            : base(_TNodes)
+        public Condition(Func<bool> _condition, Node _TNodes)
         {
             condition += _condition;
+            Attach(_TNodes);
         }
 
         public override NodeState Evaluate()
@@ -31,8 +31,6 @@ namespace BehaviourTree
             else
             {
                 //FALSE
-                //if (children[1] != null)
-                    //children[1].Evaluate();
                 return NodeState.Failure;
             }
         }

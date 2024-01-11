@@ -24,8 +24,8 @@ public class AloyBasicAttack : Node
 
     private Transform playerTransform;
     private Transform attackTransform;
+    private Transform enemyTransform;
 
-    private CheckEnemy checkEnemy;
     private CheckGauge coolTime;
     private NavMeshAgent agent;
     private Animator animator;
@@ -38,7 +38,7 @@ public class AloyBasicAttack : Node
     public AloyBasicAttack() { }
 
     public AloyBasicAttack(Transform _playerTransform, Transform _attackTransform, GameObject _bowAniObj, GameObject _arrowAniObj,
-        GameObject _arrowPool, CheckEnemy _checkEnemy, CheckGauge _coolTime)
+        GameObject _arrowPool, CheckGauge _coolTime)
     {
         playerTransform = _playerTransform;
         attackTransform = _attackTransform;
@@ -50,7 +50,6 @@ public class AloyBasicAttack : Node
         animator = playerTransform.GetComponent<Animator>();
         if (animator == null) Debug.LogError("Animator가 할당되지 않았습니다");
 
-        checkEnemy = _checkEnemy;
         coolTime = _coolTime;
         arrowAniObj = _arrowAniObj;
 
@@ -62,8 +61,9 @@ public class AloyBasicAttack : Node
 
     public override NodeState Evaluate()
     {
-        if (checkEnemy.Enemy != null)
+        if (GetData("Enemy") != null)
         {
+            enemyTransform = (Transform)GetData("Enemy");
             Avoiding();
             Attack();
         }
@@ -127,12 +127,12 @@ public class AloyBasicAttack : Node
 
     void Attack()
     {
-        Vector3 dest = checkEnemy.Enemy.position - playerTransform.position;
+        Vector3 dest = enemyTransform.position - playerTransform.position;
         dest.y = 0;
         float distance = dest.magnitude;
         attackTransform.localRotation = Quaternion.Euler(-distance * 0.125f,0,0);
 
-        Vector3 targetDir = (checkEnemy.Enemy.position - playerTransform.position).normalized;
+        Vector3 targetDir = (enemyTransform.position - playerTransform.position).normalized;
         targetDir.y = 0;
         playerTransform.forward =
             Vector3.Lerp(playerTransform.forward, targetDir, rotateSpeed * Time.deltaTime);
@@ -141,7 +141,7 @@ public class AloyBasicAttack : Node
         {
             coolTime.UpdateCurCoolTime(0.0f);
             Debug.Log("AloyBasicAttack to " + "<color=magenta>"
-            + checkEnemy.Enemy.name + "</color>");
+            + enemyTransform.name + "</color>");
             bowAnimator.SetBool("Shoot", true);
             animator.SetBool("Shoot", true);
 

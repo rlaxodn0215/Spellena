@@ -12,12 +12,11 @@ public class AloyArrowStrike : Node
 
     private Transform playerTransform;
     private Transform attackTransform;
-    private GameObject ariseArrow;
-    private GameObject downArrow;
+    private Transform enemyTransform;
 
+    private GameObject ariseArrow;
     private PoolManager downArrows;
 
-    private CheckEnemy checkEnemy;
     private CheckGauge coolTime;
     private Animator animator;
 
@@ -26,7 +25,7 @@ public class AloyArrowStrike : Node
     public AloyArrowStrike() { }
 
     public AloyArrowStrike(Transform _playerTransform, Transform _attackTransform, GameObject _bowAniObj, GameObject _arrowAniObj,
-         GameObject _arrowPool, CheckEnemy _checkEnemy, CheckGauge _coolTime)
+         GameObject _arrowPool, CheckGauge _coolTime)
     {
         playerTransform = _playerTransform;
         attackTransform = _attackTransform;
@@ -38,18 +37,18 @@ public class AloyArrowStrike : Node
         animator = playerTransform.GetComponent<Animator>();
         if (animator == null) Debug.LogError("Animator�� �Ҵ���� �ʾҽ��ϴ�");
 
-        checkEnemy = _checkEnemy;
         coolTime = _coolTime;
         arrowAniObj = _arrowAniObj;
 
-        downArrows = _arrowPool.GetComponent<PoolManager>();
+        downArrows = _arrowPool.transform.GetChild(2).GetComponent<PoolManager>();
         if (downArrows == null) Debug.LogError("downArrows�� �Ҵ���� �ʾҽ��ϴ�");
     }
 
     public override NodeState Evaluate()
     {
-        if (checkEnemy.Enemy != null)
+        if (GetData("Enemy") != null)
         {
+            enemyTransform = (Transform)GetData("Enemy");
             Attack();
         }
 
@@ -68,7 +67,7 @@ public class AloyArrowStrike : Node
             coolTime.UpdateCurCoolTime(0.0f);
 
             Debug.Log("AloyArrowStrike to " + "<color=magenta>"
-            + checkEnemy.Enemy.name + "</color>");
+            + enemyTransform.name + "</color>");
 
             coroutine = MakeCoroutine.Start_Coroutine(ShootStrike());
         }
@@ -76,7 +75,6 @@ public class AloyArrowStrike : Node
         else
         {
             bowAnimator.SetBool("Shoot", false);
-            //animator.SetBool("Shoot", false);
 
             if (bowAnimator.GetCurrentAnimatorStateInfo(0).IsName("Draw"))
             {
@@ -93,18 +91,25 @@ public class AloyArrowStrike : Node
 
     IEnumerator ShootStrike()
     {
-        isNoSkillDoing = false;
+        SetDataToRoot("IsNoSkillDoing", true);
 
         yield return new WaitForSeconds(0.8f);
 
         ariseArrow.SetActive(true);
 
-        isNoSkillDoing = true;
+        ClearData("IsNoSkillDoing");
 
         yield return new WaitForSeconds(3.0f);
 
         ariseArrow.SetActive(false);
-        downArrow.SetActive(true);
+        downArrows.gameObject.SetActive(true);
+
+        downArrows.transform.position = enemyTransform.position;
+        downArrows.transform.rotation = Quaternion.Euler(90, 0, 0);
+        downArrows.transform.position += new Vector3(0, 25, 0);
+
+        yield return new WaitForSeconds(10.0f);
+        downArrows.gameObject.SetActive(false);
 
         coroutine.Stop();
     }

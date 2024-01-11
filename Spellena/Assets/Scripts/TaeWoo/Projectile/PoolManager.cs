@@ -101,6 +101,29 @@ namespace Managers
             }
         }
 
+        public PoolObject GetObject(Vector3 pos, Quaternion rot)
+        {
+            if (objIDs.Count > 0)
+            {
+                PoolObject ob = objs.Find(item => item.ObjID == objIDs.Peek());
+                objIDs.Dequeue();
+                ob.transform.position = pos;
+                ob.transform.rotation = rot;
+                ob.gameObject.SetActive(true);
+                return ob;
+            }
+
+            else
+            {
+                PoolObject ob = CreateNewPoolObject(++addObjectNum);
+                ob.transform.position = pos;
+                ob.transform.rotation = rot;
+                objs.Add(ob);
+                ob.gameObject.SetActive(true);
+                return ob;
+            }
+        }
+
         public PoolObject GetObject(Transform _transform)
         {
             if (objIDs.Count > 0)

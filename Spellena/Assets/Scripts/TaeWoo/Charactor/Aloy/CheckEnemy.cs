@@ -1,6 +1,6 @@
 using UnityEngine;
-using System;
-public class CheckEnemy
+using BehaviourTree;
+public class CheckEnemy : Condition
 {
     private Transform playerTransform;
 
@@ -10,23 +10,20 @@ public class CheckEnemy
     private LayerMask targetMask;
     private LayerMask obstacleMask;
 
-    private Transform enemy;
-
     private Animator bowAnimator;
-
-    [HideInInspector]
-    public Transform Enemy { get { return enemy; } }
     
-    public CheckEnemy()
+    public CheckEnemy() : base()
     {
         viewAngle = 0;
         viewRadius = 0;
         targetMask = 0;
     }
 
-    public CheckEnemy(Transform _playerTransform, GameObject _bowAniObj, float _viewAngle, float _viewRadius,
-        LayerMask _targetMask, LayerMask _obstacleMask)
+    public CheckEnemy(Node _TNode , Transform _playerTransform, GameObject _bowAniObj, float _viewAngle, float _viewRadius,
+        LayerMask _targetMask, LayerMask _obstacleMask) : base(null, _TNode)
     {
+        condition += EnemyInRange;
+
         playerTransform = _playerTransform;
         bowAnimator = _bowAniObj.GetComponent<Animator>();
         if (bowAnimator == null) Debug.LogError("bowAnimator가 할당되지 않았습니다");
@@ -65,14 +62,14 @@ public class CheckEnemy
                 {
                     // 태그가 다른 적 구분
                     Debug.DrawLine(SightPos, targetPos, Color.red);
-                    enemy = player.transform;
+                    SetDataToRoot("Enemy", player.transform);
                     CheckEnemyAni(true);
                     return true;
                 }
             }
         }
 
-        enemy = null;
+        ClearData("Enemy");
         CheckEnemyAni(false);
         return false;
     }
