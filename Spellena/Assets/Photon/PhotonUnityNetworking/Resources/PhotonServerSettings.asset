@@ -201,6 +201,14 @@ MonoBehaviour:
   - CallRPCTunnelDracosonDragonShield
   - DestroyObject
   - MovePlayerWithDuration
+  - SetSkillReady
+  - SyncCommands
+  - SetSkillIsReady
+  - NotifySkillIsReady
+  - SetSkillState
+  - NotifySetSkillCoolDownTime
+  - SetSkillPlayer
+  - PlayAnimationState
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
