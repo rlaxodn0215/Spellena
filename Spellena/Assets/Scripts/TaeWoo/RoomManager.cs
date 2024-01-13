@@ -8,7 +8,6 @@ using Photon.Pun.Demo.PunBasics;
 public class RoomManager : MonoBehaviourPunCallbacks
 {
     public GameObject player;
-    public GameObject gameCenter;
 
     public Transform spawnPoint;
 
@@ -49,18 +48,8 @@ public class RoomManager : MonoBehaviourPunCallbacks
     {
         base.OnJoinedRoom();
 
-        Debug.Log(message: "We're in the Room");
-
-        GameObject _gameCenter;
-
-        if (PhotonNetwork.IsMasterClient)
-        {
-            _gameCenter = PhotonNetwork.Instantiate("ChanYoung/Prefabs/GameCenter", spawnPoint.position, Quaternion.identity);
-        }
-
         //player = PhotonNetwork.Instantiate("ChanYoung/Prefabs/ElementalOrder", spawnPoint.position, Quaternion.identity);
-        player = PhotonNetwork.Instantiate("Characters/Cultist", spawnPoint.position, Quaternion.identity);
-        player.GetComponent<Player.Character>().IsLocalPlayer();
+        player = PhotonNetwork.Instantiate("ChanYoung/Prefabs/PrefabsNew/ElementalOrder", spawnPoint.position, Quaternion.identity);
     }
 }
 

@@ -143,6 +143,15 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""MouseMove"",
+                    ""type"": ""Value"",
+                    ""id"": ""b89f763a-44da-4787-862c-d86647c7ed7f"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -332,6 +341,61 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
                     ""action"": ""Fly"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""2D Vector"",
+                    ""id"": ""b9f592c8-0285-4ad7-ac2b-cdd4733e7e48"",
+                    ""path"": ""2DVector(mode=2)"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MouseMove"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""c9081e62-6822-46da-bcb5-99fc3786f155"",
+                    ""path"": ""<Mouse>/delta/up"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MouseMove"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""61903150-c638-489c-a040-2e868675850e"",
+                    ""path"": ""<Mouse>/delta/down"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MouseMove"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""5e5636a6-ed9c-426f-82bb-e2b56ad844ed"",
+                    ""path"": ""<Mouse>/delta/left"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MouseMove"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""1bee7607-8918-4483-8dfd-9ce23c1bd49b"",
+                    ""path"": ""<Mouse>/delta/right"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MouseMove"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
                 }
             ]
         }
@@ -370,6 +434,7 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
         m_PlayerActions_Skill3 = m_PlayerActions.FindAction("Skill3", throwIfNotFound: true);
         m_PlayerActions_Skill4 = m_PlayerActions.FindAction("Skill4", throwIfNotFound: true);
         m_PlayerActions_Fly = m_PlayerActions.FindAction("Fly", throwIfNotFound: true);
+        m_PlayerActions_MouseMove = m_PlayerActions.FindAction("MouseMove", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -444,6 +509,7 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerActions_Skill3;
     private readonly InputAction m_PlayerActions_Skill4;
     private readonly InputAction m_PlayerActions_Fly;
+    private readonly InputAction m_PlayerActions_MouseMove;
     public struct PlayerActionsActions
     {
         private @PlayerControl m_Wrapper;
@@ -461,6 +527,7 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
         public InputAction @Skill3 => m_Wrapper.m_PlayerActions_Skill3;
         public InputAction @Skill4 => m_Wrapper.m_PlayerActions_Skill4;
         public InputAction @Fly => m_Wrapper.m_PlayerActions_Fly;
+        public InputAction @MouseMove => m_Wrapper.m_PlayerActions_MouseMove;
         public InputActionMap Get() { return m_Wrapper.m_PlayerActions; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -509,6 +576,9 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
             @Fly.started += instance.OnFly;
             @Fly.performed += instance.OnFly;
             @Fly.canceled += instance.OnFly;
+            @MouseMove.started += instance.OnMouseMove;
+            @MouseMove.performed += instance.OnMouseMove;
+            @MouseMove.canceled += instance.OnMouseMove;
         }
 
         private void UnregisterCallbacks(IPlayerActionsActions instance)
@@ -552,6 +622,9 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
             @Fly.started -= instance.OnFly;
             @Fly.performed -= instance.OnFly;
             @Fly.canceled -= instance.OnFly;
+            @MouseMove.started -= instance.OnMouseMove;
+            @MouseMove.performed -= instance.OnMouseMove;
+            @MouseMove.canceled -= instance.OnMouseMove;
         }
 
         public void RemoveCallbacks(IPlayerActionsActions instance)
@@ -593,5 +666,6 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
         void OnSkill3(InputAction.CallbackContext context);
         void OnSkill4(InputAction.CallbackContext context);
         void OnFly(InputAction.CallbackContext context);
+        void OnMouseMove(InputAction.CallbackContext context);
     }
 }
