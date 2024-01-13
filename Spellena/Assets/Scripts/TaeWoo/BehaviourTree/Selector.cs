@@ -27,6 +27,7 @@ namespace BehaviourTree
                 }
             }
 
+            SetDataToRoot("Status", "Selector");
             state = NodeState.Failure;
             return state;
         }

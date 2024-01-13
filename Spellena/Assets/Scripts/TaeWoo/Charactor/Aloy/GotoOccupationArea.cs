@@ -3,14 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using BehaviourTree;
+using CoroutineMaker;
 
 public class GotoOccupationArea : Node
 {
     private Transform playerTransform;
     private NavMeshAgent agent;
 
-    private Transform occupationPoint;
+    private List<Transform> occupationPoints = new List<Transform>();
+    private Vector3 movePoint;
     private Animator animator;
+
+    private int randomIndex = 0;
 
     public GotoOccupationArea() { }
 
@@ -23,18 +27,40 @@ public class GotoOccupationArea : Node
         animator = playerTransform.GetComponent<Animator>();
         if (animator == null) Debug.LogError("Animator가 할당되지 않았습니다");
 
-        occupationPoint = _occupationPoint;
+        for(int i = 0; i < _occupationPoint.childCount; i++)
+        {
+            occupationPoints.Add(_occupationPoint.GetChild(i));
+        }
+
+        agent.destination = occupationPoints[randomIndex].position;
     }
 
     public override NodeState Evaluate()
     {
-        agent.isStopped = false;
-        agent.destination = occupationPoint.position;
+        SetDataToRoot("Status", "GotoOccupationArea");
+
+        RandomOccupationPosition();
+
         animator.SetBool("Move", true);
 
-        Debug.Log("GotoOccupationArea..");
+        Debug.Log("GotoOccupationArea.. Point " + randomIndex);
 
         state = NodeState.Running;
         return state;
+    }
+
+    private void RandomOccupationPosition()
+    {
+        if (agent.remainingDistance <= agent.stoppingDistance)
+        {
+            randomIndex = Random.Range(0, occupationPoints.Count);
+            agent.destination = occupationPoints[randomIndex].position;
+            agent.speed = 3;
+        }
+
+        else
+        {
+            agent.isStopped = false;
+        }
     }
 }

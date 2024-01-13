@@ -14,9 +14,12 @@ namespace BehaviourTree
 
         public override NodeState Evaluate()
         {
-            Node node = children[randomIndex];
             if(GetData("IsNoSkillDoing") == null)
                 randomIndex = Random.Range(0, children.Count);
+
+            Node node = children[randomIndex];
+
+            SetDataToRoot("Status", "RandomSelector");
 
             switch (node.Evaluate())
             {
@@ -33,6 +36,7 @@ namespace BehaviourTree
                     state = NodeState.Failure;
                     return state;
             }
+            
         }
     }
 }

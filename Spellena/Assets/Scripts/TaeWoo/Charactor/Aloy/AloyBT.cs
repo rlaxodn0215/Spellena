@@ -10,10 +10,7 @@ public class AloyBT : BehaviourTree.Tree
     public GameObject bowAniObj;
     public GameObject arrowAniObj;
 
-    public Transform basicAttackTransform;
-    public Transform preciseAttackTransform;
-    public Transform beamAttackTransform;
-    public Transform arrowStrikeTransform;
+    public Transform aimingTransform;
 
     private Animator animator;
 
@@ -44,13 +41,13 @@ public class AloyBT : BehaviourTree.Tree
         gotoOccupationArea = new GotoOccupationArea
             (transform, occupationPoint);
         aloyBasicAttack = new AloyBasicAttack
-            (transform, basicAttackTransform, bowAniObj, arrowAniObj, aloyPoolObj, gaugeList[0]);
+            (transform, aimingTransform, bowAniObj, arrowAniObj, aloyPoolObj, gaugeList[0]);
         aloyPreciseShot = new AloyPreciseShot
-            (transform, preciseAttackTransform, bowAniObj, arrowAniObj, aloyPoolObj, gaugeList[1]);
+            (transform, aimingTransform, bowAniObj, arrowAniObj, aloyPoolObj, gaugeList[1]);
         aloyPurifyBeam = new AloyPurifyBeam
-            (transform, beamAttackTransform, bowAniObj, arrowAniObj, gaugeList[2]);
+            (transform, aimingTransform, bowAniObj, arrowAniObj, gaugeList[2]);
         aloyArrowStrike = new AloyArrowStrike
-            (transform, arrowStrikeTransform, bowAniObj, arrowAniObj, aloyPoolObj, gaugeList[3]);
+            (transform, aimingTransform, bowAniObj, arrowAniObj, aloyPoolObj, gaugeList[3]);
     }
 
     //Start()
@@ -68,13 +65,13 @@ public class AloyBT : BehaviourTree.Tree
                         aloyPurifyBeam,
                         aloyArrowStrike
                     }),
-                transform, bowAniObj, 120f, 40f,
-                LayerMask.NameToLayer("Player"),
-                LayerMask.NameToLayer("Wall")),
+                transform, bowAniObj, 150f, 40f,
+                LayerMask.GetMask("Player")),
             gotoOccupationArea
         }
         );
-    
+
+        root.SetDataToRoot("Status", "None");  
 
         return root;
     }
@@ -83,6 +80,7 @@ public class AloyBT : BehaviourTree.Tree
     {
         base.Update();
         CoolTimer();
+        ShowState();
     }
 
     void CoolTimer()
@@ -101,8 +99,14 @@ public class AloyBT : BehaviourTree.Tree
     void SetLookAtObj()
     {
         if (animator == null) return;
-        animator.SetLookAtWeight(1f, 0.9f);
         if (root.GetData("Enemy") == null) return;
+        animator.SetLookAtWeight(1f, 0.9f);
         animator.SetLookAtPosition(((Transform)root.GetData("Enemy")).position);
+        aimingTransform.LookAt(((Transform)root.GetData("Enemy")).position);
+    }
+
+    void ShowState()
+    {
+        Debug.Log("<color=orange>" + (string)root.GetData("Status") + "</color>");
     }
 }

@@ -37,11 +37,11 @@ public class AloyBasicAttack : Node
 
     public AloyBasicAttack() { }
 
-    public AloyBasicAttack(Transform _playerTransform, Transform _attackTransform, GameObject _bowAniObj, GameObject _arrowAniObj,
+    public AloyBasicAttack(Transform _playerTransform, Transform _aimingTransform, GameObject _bowAniObj, GameObject _arrowAniObj,
         GameObject _arrowPool, CheckGauge _coolTime)
     {
         playerTransform = _playerTransform;
-        attackTransform = _attackTransform;
+        attackTransform = _aimingTransform.GetChild(0);
 
         bowAnimator = _bowAniObj.GetComponent<Animator>();
         if (bowAnimator == null) Debug.LogError("bowAnimator가 할당되지 않았습니다");
@@ -66,14 +66,15 @@ public class AloyBasicAttack : Node
             enemyTransform = (Transform)GetData("Enemy");
             Avoiding();
             Attack();
+            SetDataToRoot("Status", "AloyBasicAttack");
+            return NodeState.Running;
         }
 
         else
         {
             Debug.LogError("적이 할당되지 않았습니다");
+            return NodeState.Failure;
         }
-
-        return NodeState.Running;
     }
 
     void Avoiding()
@@ -127,15 +128,11 @@ public class AloyBasicAttack : Node
 
     void Attack()
     {
-        Vector3 dest = enemyTransform.position - playerTransform.position;
-        dest.y = 0;
-        float distance = dest.magnitude;
-        attackTransform.localRotation = Quaternion.Euler(-distance * 0.125f,0,0);
-
         Vector3 targetDir = (enemyTransform.position - playerTransform.position).normalized;
         targetDir.y = 0;
         playerTransform.forward =
             Vector3.Lerp(playerTransform.forward, targetDir, rotateSpeed * Time.deltaTime);
+
 
         if (coolTime.CheckCoolTime())
         {

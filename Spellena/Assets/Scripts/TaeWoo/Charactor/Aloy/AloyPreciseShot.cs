@@ -41,11 +41,11 @@ public class AloyPreciseShot : Node
 
     public AloyPreciseShot() { }
 
-    public AloyPreciseShot(Transform _playerTransform, Transform _attackTransform, GameObject _bowAniObj, GameObject _arrowAniObj,
+    public AloyPreciseShot(Transform _playerTransform, Transform _aimingTransform, GameObject _bowAniObj, GameObject _arrowAniObj,
         GameObject _arrowPool, CheckGauge _coolTime)
     {
         playerTransform = _playerTransform;
-        attackTransform = _attackTransform;
+        attackTransform = _aimingTransform.GetChild(1);
         aimParticle = attackTransform.transform.GetChild(0).gameObject;
         if(aimParticle == null) Debug.LogError("aimParticle�� �Ҵ���� �ʾҽ��ϴ�");
 
@@ -72,14 +72,15 @@ public class AloyPreciseShot : Node
             enemyTransform = (Transform)GetData("Enemy");
             Avoiding();
             Attack();
+            SetDataToRoot("Status", "AloyPreciseShot");
+            return NodeState.Running;
         }
 
         else
         {
             Debug.LogError("적이 할당되지 않았습니다");
+            return NodeState.Failure;
         }
-
-        return NodeState.Running;
     }
 
     void Avoiding()
@@ -134,7 +135,6 @@ public class AloyPreciseShot : Node
     void Attack()
     {
         Vector3 targetDir = (enemyTransform.position - playerTransform.position).normalized;
-        targetDir.y = 0;
         playerTransform.forward =
             Vector3.Lerp(playerTransform.forward, targetDir, rotateSpeed * Time.deltaTime);
 

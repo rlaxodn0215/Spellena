@@ -39,11 +39,11 @@ public class AloyPurifyBeam : Node
 
     public AloyPurifyBeam() { }
 
-    public AloyPurifyBeam(Transform _playerTransform, Transform _attackTransform, 
+    public AloyPurifyBeam(Transform _playerTransform, Transform _aimingTransform, 
         GameObject _bowAniObj, GameObject _arrowAniObj, CheckGauge _coolTime)
     {
         playerTransform = _playerTransform;
-        attackTransform = _attackTransform;
+        attackTransform = _aimingTransform.GetChild(2);
         beamParticle = attackTransform.transform.GetChild(0).gameObject;
         if (beamParticle == null) Debug.LogError("beamParticle�� �Ҵ���� �ʾҽ��ϴ�");
 
@@ -67,14 +67,15 @@ public class AloyPurifyBeam : Node
             enemyTransform = (Transform)GetData("Enemy");
             Avoiding();
             Attack();
+            SetDataToRoot("Status", "AloyPurifyBeam");
+            return NodeState.Running;
         }
 
         else
         {
             Debug.LogError("적이 할당되지 않았습니다");
+            return NodeState.Failure;
         }
-
-        return NodeState.Running;
     }
 
     void Avoiding()

@@ -8,7 +8,6 @@ public class CheckEnemy : Condition
     private float viewAngle;
     private float viewRadius;
     private LayerMask targetMask;
-    private LayerMask obstacleMask;
 
     private Animator bowAnimator;
     
@@ -19,8 +18,8 @@ public class CheckEnemy : Condition
         targetMask = 0;
     }
 
-    public CheckEnemy(Node _TNode , Transform _playerTransform, GameObject _bowAniObj, float _viewAngle, float _viewRadius,
-        LayerMask _targetMask, LayerMask _obstacleMask) : base(null, _TNode)
+    public CheckEnemy(Node _TNode , Transform _playerTransform, GameObject _bowAniObj,
+        float _viewAngle, float _viewRadius, LayerMask _targetMask) : base(null, _TNode)
     {
         condition += EnemyInRange;
 
@@ -31,8 +30,7 @@ public class CheckEnemy : Condition
         if (animator == null) Debug.LogError("Animator가 할당되지 않았습니다");
         viewAngle = _viewAngle;
         viewRadius = _viewRadius;
-        targetMask = 1 << _targetMask;
-        obstacleMask = 1 << _obstacleMask;
+        targetMask =  _targetMask;
     }
 
     public bool EnemyInRange()
@@ -57,20 +55,33 @@ public class CheckEnemy : Condition
                 Vector3 targetDir = (targetPos - SightPos).normalized;
                 float targetAngle = Mathf.Acos(Vector3.Dot(lookDir, targetDir)) * Mathf.Rad2Deg;
 
-                if (targetAngle <= viewAngle * 0.5f &&
-                    !Physics.Raycast(SightPos, targetDir, viewRadius, obstacleMask))
+                Ray ray = new Ray(SightPos, targetDir);
+                RaycastHit hit;
+
+                if (targetAngle <= viewAngle * 0.5f 
+                    && Physics.Raycast(ray, out hit, viewRadius))
                 {
-                    // 태그가 다른 적 구분
-                    Debug.DrawLine(SightPos, targetPos, Color.red);
-                    SetDataToRoot("Enemy", player.transform);
-                    CheckEnemyAni(true);
-                    return true;
+                    if (hit.collider.gameObject.layer
+                        == LayerMask.NameToLayer("Player"))
+                    {
+                        // 태그가 다른 적 구분
+                        Debug.DrawLine(SightPos, targetPos, Color.red);
+                        if (GetData("EnemyCheck") == null)
+                        {
+                            SetDataToRoot("Enemy", player.transform);
+                            animator.SetBool("CheckEnemy", true);
+                            bowAnimator.SetBool("Draw", true);
+                        }
+
+                        return true;
+                    }
                 }
             }
         }
 
         ClearData("Enemy");
-        CheckEnemyAni(false);
+        animator.SetBool("CheckEnemy", false);
+        bowAnimator.SetBool("Draw", false);
         return false;
     }
 
@@ -78,11 +89,5 @@ public class CheckEnemy : Condition
     {
         float radian = angle * Mathf.Deg2Rad;
         return new Vector3(Mathf.Sin(radian), 0f, Mathf.Cos(radian));
-    }
-
-    private void CheckEnemyAni(bool setBool)
-    {
-        animator.SetBool("CheckEnemy", setBool);
-        bowAnimator.SetBool("Draw", setBool);
     }
 }

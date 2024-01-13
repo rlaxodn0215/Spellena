@@ -15,6 +15,7 @@ public class AloyArrowStrike : Node
     private Transform enemyTransform;
 
     private GameObject ariseArrow;
+    private GameObject ariseEnergy;
     private PoolManager downArrows;
 
     private CheckGauge coolTime;
@@ -30,6 +31,7 @@ public class AloyArrowStrike : Node
         playerTransform = _playerTransform;
         attackTransform = _attackTransform;
         ariseArrow = attackTransform.transform.GetChild(0).gameObject;
+        ariseEnergy = attackTransform.transform.GetChild(1).gameObject;
         if (ariseArrow == null) Debug.LogError("ariseArrow�� �Ҵ���� �ʾҽ��ϴ�");
 
         bowAnimator = _bowAniObj.GetComponent<Animator>();
@@ -50,14 +52,15 @@ public class AloyArrowStrike : Node
         {
             enemyTransform = (Transform)GetData("Enemy");
             Attack();
+            SetDataToRoot("Status", "AloyArrowStrike");
+            return NodeState.Running;
         }
 
         else
         {
             Debug.LogError("적이 할당되지 않았습니다");
+            return NodeState.Failure;
         }
-
-        return NodeState.Running;
     }
 
     void Attack()
@@ -93,10 +96,24 @@ public class AloyArrowStrike : Node
     {
         SetDataToRoot("IsNoSkillDoing", true);
 
-        yield return new WaitForSeconds(0.8f);
+        SetDataToRoot("EnemyCheck", false);
+        SetDataToRoot("Enemy", ariseArrow.transform);
+
+        animator.SetBool("AvoidRight", false);
+        animator.SetBool("AvoidLeft", false);
+        animator.SetBool("AvoidBack", false);
+        animator.SetBool("AvoidForward", false);
+        animator.SetBool("Move", false);
+
+        ariseEnergy.SetActive(true);
+
+        yield return new WaitForSeconds(2.0f);
 
         ariseArrow.SetActive(true);
+        ariseEnergy.SetActive(false);
 
+        yield return new WaitForSeconds(1.0f);
+        ClearData("EnemyCheck");
         ClearData("IsNoSkillDoing");
 
         yield return new WaitForSeconds(3.0f);
