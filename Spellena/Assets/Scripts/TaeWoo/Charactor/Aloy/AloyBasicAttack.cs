@@ -133,7 +133,6 @@ public class AloyBasicAttack : Node
         playerTransform.forward =
             Vector3.Lerp(playerTransform.forward, targetDir, rotateSpeed * Time.deltaTime);
 
-
         if (coolTime.CheckCoolTime())
         {
             coolTime.UpdateCurCoolTime(0.0f);

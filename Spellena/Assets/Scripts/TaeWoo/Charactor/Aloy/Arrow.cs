@@ -59,15 +59,17 @@ public class Arrow : PoolObject
     {
         if (collision.transform.name != gameObject.name)
         {
+            if (ableArrowStuck)
+            {
+                MakeArrowStuck(collision);
+            }
+
             if (ableHitParticle)
             {
                 MakeHitParticle(collision);
             }
 
-            if (ableArrowStuck)
-            {
-                MakeArrowStuck(collision);
-            }
+            DisActive();
         }
     }
 
@@ -75,15 +77,13 @@ public class Arrow : PoolObject
     {
         makeHitParticleObject = Instantiate(hitParticleObject, collision.GetContact(0).point, Quaternion.identity);
         Destroy(makeHitParticleObject, hitParticleDestoryTime);
-        DisActive();
     }
 
     void MakeArrowStuck(Collision collision)
     {
-        makeArrowStuckObject = Instantiate(arrowStuckObject, collision.GetContact(0).point, transform.rotation);
+        makeArrowStuckObject = Instantiate(arrowStuckObject, collision.GetContact(0).point, transform.localRotation);
         makeArrowStuckObject.transform.parent = collision.transform;
         Destroy(makeArrowStuckObject, arrowStuckDestoryTime);
-        DisActive();
     }
 
     void CheckDisActive()

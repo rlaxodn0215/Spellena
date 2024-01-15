@@ -4,6 +4,7 @@ using UnityEngine;
 using BehaviourTree;
 using CoroutineMaker;
 using Managers;
+using UnityEngine.AI;
 
 public class AloyArrowStrike : Node
 {
@@ -65,6 +66,7 @@ public class AloyArrowStrike : Node
 
     void Attack()
     {
+
         if (coolTime.CheckCoolTime())
         {
             coolTime.UpdateCurCoolTime(0.0f);
@@ -78,6 +80,7 @@ public class AloyArrowStrike : Node
         else
         {
             bowAnimator.SetBool("Shoot", false);
+            animator.SetBool("Move", false);
 
             if (bowAnimator.GetCurrentAnimatorStateInfo(0).IsName("Draw"))
             {
