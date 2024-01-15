@@ -76,6 +76,7 @@ public class CheckEnemy : Condition
                         return true;
                     }
                 }
+
             }
         }
 

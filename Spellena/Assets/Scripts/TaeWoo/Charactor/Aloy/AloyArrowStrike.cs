@@ -21,8 +21,10 @@ public class AloyArrowStrike : Node
 
     private CheckGauge coolTime;
     private Animator animator;
+    private NavMeshAgent agent;
 
     private MakeCoroutine coroutine;
+    private float rotateSpeed = 7.5f;
 
     public AloyArrowStrike() { }
 
@@ -39,6 +41,8 @@ public class AloyArrowStrike : Node
         if (bowAnimator == null) Debug.LogError("bowAnimator�� �Ҵ���� �ʾҽ��ϴ�");
         animator = playerTransform.GetComponent<Animator>();
         if (animator == null) Debug.LogError("Animator�� �Ҵ���� �ʾҽ��ϴ�");
+        agent = playerTransform.GetComponent<NavMeshAgent>();
+        if (agent == null) Debug.LogError("NavMeshAgent가 할당되지 않았습니다");
 
         coolTime = _coolTime;
         arrowAniObj = _arrowAniObj;
@@ -66,8 +70,8 @@ public class AloyArrowStrike : Node
 
     void Attack()
     {
-
-        if (coolTime.CheckCoolTime())
+        if (coolTime.CheckCoolTime() &&
+            animator.GetCurrentAnimatorStateInfo(2).IsName("Aim"))
         {
             coolTime.UpdateCurCoolTime(0.0f);
 
@@ -79,6 +83,12 @@ public class AloyArrowStrike : Node
 
         else
         {
+            Vector3 targetDir = (enemyTransform.position - playerTransform.position).normalized;
+            targetDir.y = 0;
+            playerTransform.forward =
+                Vector3.Lerp(playerTransform.forward, targetDir, rotateSpeed * Time.deltaTime);
+
+            agent.isStopped = true;
             bowAnimator.SetBool("Shoot", false);
             animator.SetBool("Move", false);
 
@@ -115,7 +125,8 @@ public class AloyArrowStrike : Node
         ariseArrow.SetActive(true);
         ariseEnergy.SetActive(false);
 
-        yield return new WaitForSeconds(1.0f);
+        yield return new WaitForSeconds(0.75f);
+
         ClearData("EnemyCheck");
         ClearData("IsNoSkillDoing");
 

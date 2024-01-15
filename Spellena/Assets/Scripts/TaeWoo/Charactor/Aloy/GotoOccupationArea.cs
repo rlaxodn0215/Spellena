@@ -13,14 +13,17 @@ public class GotoOccupationArea : Node
     private List<Transform> occupationPoints = new List<Transform>();
     private Vector3 movePoint;
     private Animator animator;
+    private GameObject arrowAniObj;
 
     private int randomIndex = 0;
 
     public GotoOccupationArea() { }
 
-    public GotoOccupationArea(Transform _playerTransform, Transform _occupationPoint)
+    public GotoOccupationArea(Transform _playerTransform,
+        Transform _occupationPoint, GameObject _arrowAniObj)
     {
         playerTransform = _playerTransform;
+        arrowAniObj = _arrowAniObj;
 
         agent = playerTransform.GetComponent<NavMeshAgent>();
         if (agent == null) Debug.LogError("NavMeshAgent가 할당되지 않았습니다");
@@ -42,6 +45,7 @@ public class GotoOccupationArea : Node
         RandomOccupationPosition();
 
         animator.SetBool("Move", true);
+        arrowAniObj.SetActive(false);
 
         Debug.Log("GotoOccupationArea.. Point " + randomIndex);
 

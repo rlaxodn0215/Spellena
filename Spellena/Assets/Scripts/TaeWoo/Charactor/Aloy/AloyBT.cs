@@ -11,10 +11,9 @@ public class AloyBT : BehaviourTree.Tree
     public GameObject arrowAniObj;
 
     public Transform aimingTransform;
+    public Transform arrowStrikeTransform;
 
     private Animator animator;
-
-    //private int skillNum = 4;
 
     private GameObject aloyPoolObj;
     private List<CheckGauge> gaugeList = new List<CheckGauge>();
@@ -33,13 +32,13 @@ public class AloyBT : BehaviourTree.Tree
         gaugeList.Add(new CheckGauge(2.0f));
         gaugeList.Add(new CheckGauge(8.0f));
         gaugeList.Add(new CheckGauge(10.0f));
-        gaugeList.Add(new CheckGauge(15.0f));
+        gaugeList.Add(new CheckGauge(20.0f));
 
         aloyPoolObj = GameObject.Find("AloyPoolManager");
         if (aloyPoolObj == null) Debug.LogError("AloyPoolManager을 찾을 수 없습니다");
 
         gotoOccupationArea = new GotoOccupationArea
-            (transform, occupationPoint);
+            (transform, occupationPoint, arrowAniObj);
         aloyBasicAttack = new AloyBasicAttack
             (transform, aimingTransform, bowAniObj, arrowAniObj, aloyPoolObj, gaugeList[0]);
         aloyPreciseShot = new AloyPreciseShot
@@ -47,7 +46,7 @@ public class AloyBT : BehaviourTree.Tree
         aloyPurifyBeam = new AloyPurifyBeam
             (transform, aimingTransform, bowAniObj, arrowAniObj, gaugeList[2]);
         aloyArrowStrike = new AloyArrowStrike
-            (transform, aimingTransform, bowAniObj, arrowAniObj, aloyPoolObj, gaugeList[3]);
+            (transform, arrowStrikeTransform, bowAniObj, arrowAniObj, aloyPoolObj, gaugeList[3]);
     }
 
     //Start()
@@ -61,11 +60,11 @@ public class AloyBT : BehaviourTree.Tree
                 new RandomSelector(new List<Node>
                     {
                         aloyBasicAttack,
-                        aloyPreciseShot,
-                        aloyPurifyBeam,
-                        aloyArrowStrike
+                        //aloyPreciseShot,
+                        //aloyPurifyBeam,
+                        //aloyArrowStrike
                     }),
-                transform, bowAniObj, 150f, 40f,
+                transform, bowAniObj, 150f, 30f,
                 LayerMask.GetMask("Player")),
             gotoOccupationArea
         }

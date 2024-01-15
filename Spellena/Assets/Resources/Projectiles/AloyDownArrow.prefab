@@ -9851,8 +9851,10 @@ MonoBehaviour:
   rotateSpeed: 0
   ableHitParticle: 1
   ableArrowStuck: 1
+  isUltimate: 1
   hitParticleObject: {fileID: 4353298380709256508, guid: 0a6fac95b851ff64588077fe111d963f, type: 3}
   arrowStuckObject: {fileID: 8956526843649204478, guid: 6eba381eb994a6a47b2b773229b01c65, type: 3}
+  areaRaycasting: {fileID: 0}
   hitParticleDestoryTime: 1
   arrowStuckDestoryTime: 3
 --- !u!136 &3615579227885699967

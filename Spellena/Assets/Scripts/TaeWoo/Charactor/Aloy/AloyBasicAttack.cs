@@ -85,12 +85,71 @@ public class AloyBasicAttack : Node
         Moving();
     }
 
+    MoveWay CheckingMoveable()
+    {
+        MoveWay temp = MoveWay.Forward;
+        bool notMoveable = true;
+
+        while (notMoveable)
+        {
+            temp = (MoveWay)Random.Range(0, 4);
+            Ray ray;
+
+            switch (temp)
+            {
+                // Forward
+                case MoveWay.Forward:
+                    ray = new Ray(playerTransform.position + Vector3.up,
+                        playerTransform.forward);
+                    break;
+                // Back
+                case MoveWay.Back:
+                    ray = new Ray(playerTransform.position + Vector3.up,
+                        -playerTransform.forward);
+                    break;
+                // Left
+                case MoveWay.Left:
+                    ray = new Ray(playerTransform.position + Vector3.up,
+                        -playerTransform.right);
+                    break;
+                // Right
+                case MoveWay.Right:
+                    ray = new Ray(playerTransform.position + Vector3.up,
+                        playerTransform.right);
+                    break;
+                default:
+                    Debug.LogError("잘못된 랜덤 수 발생!!");
+                    ray = new Ray(playerTransform.position + Vector3.up,
+                        playerTransform.forward);
+                    break;
+            }
+
+            notMoveable = Physics.Raycast(ray, 0.5f, LayerMask.NameToLayer("Wall"));
+
+        }
+
+
+        return temp;
+    }
+
     void Moving()
     {
+        //Ray ray1 = new Ray(playerTransform.position + Vector3.up, playerTransform.forward);
+        //Ray ray2 = new Ray(playerTransform.position + Vector3.up, -playerTransform.forward);
+        //Ray ray3 = new Ray(playerTransform.position + Vector3.up, -playerTransform.right);
+        //Ray ray4 = new Ray(playerTransform.position + Vector3.up, playerTransform.right);
+
+        //Debug.DrawRay(ray1.origin, ray1.direction);
+        //Debug.DrawRay(ray2.origin, ray2.direction);
+        //Debug.DrawRay(ray3.origin, ray3.direction);
+        //Debug.DrawRay(ray4.origin, ray4.direction);
+
+
         if (checkAvoid.CheckCoolTime())
         {
             checkAvoid.UpdateCurCoolTime(0.0f);
-            way = (MoveWay)Random.Range(0, 4);
+
+            way = CheckingMoveable();
 
             animator.SetBool("AvoidForward", false);
             animator.SetBool("AvoidBack", false);
@@ -133,7 +192,8 @@ public class AloyBasicAttack : Node
         playerTransform.forward =
             Vector3.Lerp(playerTransform.forward, targetDir, rotateSpeed * Time.deltaTime);
 
-        if (coolTime.CheckCoolTime())
+        if (coolTime.CheckCoolTime() && 
+            animator.GetCurrentAnimatorStateInfo(2).IsName("Aim"))
         {
             coolTime.UpdateCurCoolTime(0.0f);
             Debug.Log("AloyBasicAttack to " + "<color=magenta>"
@@ -143,7 +203,7 @@ public class AloyBasicAttack : Node
 
             basicAttackArrows.GetObject(attackTransform);
 
-            if(bowAnimator.GetCurrentAnimatorStateInfo(0).IsName("Shoot"))
+            if (bowAnimator.GetCurrentAnimatorStateInfo(0).IsName("Shoot"))
             {
                 arrowAniObj.SetActive(false);
             }

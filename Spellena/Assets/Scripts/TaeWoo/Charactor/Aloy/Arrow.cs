@@ -12,6 +12,7 @@ public class Arrow : PoolObject
 
     public bool ableHitParticle;
     public bool ableArrowStuck;
+    public bool isUltimate;
 
     public GameObject hitParticleObject;
     public GameObject arrowStuckObject;
@@ -59,10 +60,14 @@ public class Arrow : PoolObject
     {
         if (collision.transform.name != gameObject.name)
         {
+            if(isUltimate) DisActive();
+
             if (ableArrowStuck)
             {
                 MakeArrowStuck(collision);
             }
+
+            DisActive();
 
             if (ableHitParticle)
             {
@@ -81,7 +86,7 @@ public class Arrow : PoolObject
 
     void MakeArrowStuck(Collision collision)
     {
-        makeArrowStuckObject = Instantiate(arrowStuckObject, collision.GetContact(0).point, transform.localRotation);
+        makeArrowStuckObject = Instantiate(arrowStuckObject, collision.GetContact(0).point, transform.rotation);
         makeArrowStuckObject.transform.parent = collision.transform;
         Destroy(makeArrowStuckObject, arrowStuckDestoryTime);
     }
