@@ -5,7 +5,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine.InputSystem;
 using System;
-using UnityEditor.TextCore.Text;
+using System.Reflection;
 
 public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
 {
@@ -116,6 +116,8 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
                         skillDatas[i].skillState = SkillData.SkillState.Channeling;
                     //스킬 채널링 시간 같은 타이밍에 동시에 실행되므로 fixedDeltaTime 한 프레임 추가
                     skillDatas[i].skillChannelingTime = playerData.skillChannelingTime[i] + Time.fixedDeltaTime;
+                    //캐스팅 시간이 있는 스킬은 이 곳에서 로직이 실행됨
+                    PlaySkillLogic(i);
                 }
             }
 
@@ -126,7 +128,6 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
                 if (skillDatas[i].skillChannelingTime <= 0 && PhotonNetwork.IsMasterClient)
                 {
                     photonView.RPC("NotifySetSkillCoolDownTime", RpcTarget.All, i);
-                    Debug.Log("끝");
                 }
             }
         }
@@ -224,6 +225,7 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
     virtual public void SetLocalPlayer()
     {
         cameraOverlay.gameObject.SetActive(true);
+        cameraMain.gameObject.SetActive(true);
         SkinnedMeshRenderer[] _skinMeshForOther = AvatarForOther.GetComponentsInChildren<SkinnedMeshRenderer>();
         SkinnedMeshRenderer[] _skinMeshForMe = AvatarForMe.GetComponentsInChildren<SkinnedMeshRenderer>();
         for (int i = 0; i < _skinMeshForOther.Length; i++)
@@ -340,7 +342,6 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
 
     virtual protected void SetSkillReady(int index)
     {
-        Debug.Log("잉");
         if (!IsSkillProgressing())
         {
             for (int i = 0; i < skillDatas.Count; i++)
@@ -403,30 +404,54 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
     [PunRPC]
     virtual public void SetSkillPlayer(int index, int nextSkillState)
     {
-        Debug.Log(index);
-        Debug.Log((SkillData.SkillState)nextSkillState);
         //스킬 사용 타이밍
+        SkillData.SkillState _nextSkillState = (SkillData.SkillState)nextSkillState;
         if (photonView.IsMine)
         {
-            skillDatas[index].skillState = (SkillData.SkillState)nextSkillState;
-            if ((SkillData.SkillState)nextSkillState == SkillData.SkillState.Casting)
+            skillDatas[index].skillState = _nextSkillState;
+            if (_nextSkillState == SkillData.SkillState.Casting)
             {
-                skillDatas[index].skillCastingTime = playerData.skillCastingTime[index];
+                if (playerData.skillCastingTime[index] <= 0f)
+                {
+                    _nextSkillState = SkillData.SkillState.Channeling;
+                    skillDatas[index].skillState = _nextSkillState;
+                    skillDatas[index].skillChannelingTime = playerData.skillChannelingTime[index];
+                }
+                else
+                    skillDatas[index].skillCastingTime = playerData.skillCastingTime[index];
 
                 for (int i = 0; i < skillDatas.Count; i++)
                     skillDatas[i].isLocalReady = false;
                 skillDatas[index].isReady = false;
                 InvokeAnimation(index, true);
+
+                if(_nextSkillState == SkillData.SkillState.Channeling)
+                    //바로 채널링으로 이행되는 스킬은 바로 스킬 작동
+                    PlaySkillLogic(index);
+
             }
         }
         else
         {
             if (PhotonNetwork.IsMasterClient)
                 skillDatas[index].isReady = false;
-            skillDatas[index].skillCastingTime = playerData.skillCastingTime[index];
-            if ((SkillData.SkillState)nextSkillState == SkillData.SkillState.Casting)
+            if (playerData.skillCastingTime[index] <= 0f)
+            {
+                _nextSkillState = SkillData.SkillState.Channeling;
+                skillDatas[index].skillChannelingTime = playerData.skillChannelingTime[index];
+            }
+            else
+                skillDatas[index].skillCastingTime = playerData.skillCastingTime[index];
+            if (_nextSkillState == SkillData.SkillState.Casting
+                || _nextSkillState == SkillData.SkillState.Channeling)
                 InvokeAnimation(index, true);
         }
+    }
+
+    //스킬 로직 구현은 여기에서 오버라이드로 구현
+    virtual protected void PlaySkillLogic(int index)
+    {
+
     }
 
     virtual protected void InvokeAnimation(int index, bool isPlay)
