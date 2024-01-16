@@ -2,10 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
-using System.Linq;
-using TMPro.EditorUtilities;
-using System;
-
 public class PlayerElementalOrder : PlayerCommon
 {
     private List<int> commands = new List<int>();
