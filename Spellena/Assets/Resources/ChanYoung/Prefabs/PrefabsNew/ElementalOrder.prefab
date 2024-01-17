@@ -5266,6 +5266,7 @@ GameObject:
   - component: {fileID: 7667575225708645539}
   - component: {fileID: 7667575225708645564}
   - component: {fileID: 5342523856560370274}
+  - component: {fileID: 5755468417569486053}
   m_Layer: 15
   m_Name: ElementalOrder
   m_TagString: Untagged
@@ -5388,6 +5389,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 7667575225708645539}
   - {fileID: 5342523856560370274}
+  - {fileID: 5755468417569486053}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -5408,6 +5410,18 @@ MonoBehaviour:
   cameraOverlay: {fileID: 5361540843814770686}
   moveDirection: {x: 0, y: 0}
   isRunning: 0
+--- !u!114 &5755468417569486053
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7667575225708645566}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f4ddb26faa772f40b2c77c38c264bd0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7667575226157978949
 GameObject:
   m_ObjectHideFlags: 0
