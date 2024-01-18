@@ -4,6 +4,9 @@ using UnityEngine;
 using Photon.Pun;
 public class PlayerElementalOrder : PlayerCommon
 {
+    private GameObject castingAura;
+    private float distance;
+
     private List<int> commands = new List<int>();
 
 
@@ -12,6 +15,19 @@ public class PlayerElementalOrder : PlayerCommon
         AddSkill(2);
         for(int i = 0; i < skillDatas.Count; i++)
             skillDatas[i].isUnique = true;
+
+        castingAura = unique.transform.GetChild(0).gameObject;
+    }
+
+    private void Update()
+    {
+        if(photonView.IsMine)
+        {
+            if(castingAura.activeSelf)
+            {
+                SetCastingAuraPos();
+            }
+        }
     }
 
     protected override void OnSkill1()
@@ -86,6 +102,86 @@ public class PlayerElementalOrder : PlayerCommon
         base.SetSkillPlayer(index, nextSkillState);
         if (photonView.IsMine && (SkillData.SkillState)nextSkillState == SkillData.SkillState.Casting)
             commands.Clear();
+    }
+
+    protected override void PlayUniqueState(int index, bool IsOn)
+    {
+
+        if(index == 0)
+            SetCastingAura(index, IsOn);
+    }
+
+    private void SetCastingAura(int index, bool IsOn)
+    {
+        castingAura.SetActive(IsOn);
+        if (IsOn)
+            distance = playerData.skillDistance[index];
+    }
+
+    private void SetCastingAuraPos()
+    {
+        Ray _ray = new Ray();
+        _ray.origin = transform.position + new Vector3(0, 0.5f, 0);
+        _ray.direction = transform.forward;
+
+        RaycastHit _hit;
+        if (Physics.Raycast(_ray, out _hit, distance, layerMaskWall))
+            _ray.origin = _hit.point;
+        else
+            _ray.origin = transform.position + transform.forward * distance;
+        _ray.direction = Vector3.down;
+
+        if (Physics.Raycast(_ray, out _hit, Mathf.Infinity, layerMaskMap))
+            castingAura.transform.position = _hit.point + new Vector3(0, 0.05f, 0);
+    }
+
+    protected override void PlaySkillLogic(int index, SkillTiming timing)
+    {
+        if (timing != SkillTiming.Immediately)
+            return;
+
+        if (index == 0)
+            PlaySkillLogic1();
+        else if(index == 1)
+            PlaySkillLogic2();
+        else if (index == 2)
+            PlaySkillLogic3();
+        else if (index == 3)
+            PlaySkillLogic4();
+        else if (index == 4)
+            PlaySkillLogic5();
+        else if (index == 5)
+            PlaySkillLogic6();
+    }
+
+    private void PlaySkillLogic1()
+    {
+        //MeteorStrike, 1, 1
+    }
+
+    private void PlaySkillLogic2()
+    {
+        //RagnaEdge 1, 2
+    }
+
+    private void PlaySkillLogic3()
+    {
+        //BurstFlare 1, 3
+    }
+
+    private void PlaySkillLogic4()
+    {
+        //GaiaTied 2, 2
+    }
+
+    private void PlaySkillLogic5()
+    {
+        //TerraBreak 2, 3
+    }
+
+    private void PlaySkillLogic6()
+    {
+        //Eterial Storm 3, 3
     }
 
 }

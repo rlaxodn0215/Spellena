@@ -101,7 +101,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Skill6Channeling
+  m_Name: Skill6Casting
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -117,7 +117,7 @@ AnimatorState:
   m_TimeParameterActive: 0
   m_Motion: {fileID: -203655887218126122, guid: b2d09a64e1a17544f9c2a85e1044434b, type: 3}
   m_Tag: 
-  m_SpeedParameter: Skill6Channeling
+  m_SpeedParameter: Skill6Casting
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
@@ -172,7 +172,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Skill4Channeling
+  m_Name: Skill4Casting
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -188,7 +188,7 @@ AnimatorState:
   m_TimeParameterActive: 0
   m_Motion: {fileID: -203655887218126122, guid: deba1813ead275b46b8d58605360a87b, type: 3}
   m_Tag: 
-  m_SpeedParameter: Skill4Channeling
+  m_SpeedParameter: Skill4Casting
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
@@ -241,37 +241,37 @@ AnimatorController:
   m_Name: ElementalOrderMeController
   serializedVersion: 5
   m_AnimatorParameters:
-  - m_Name: Skill1Channeling
+  - m_Name: Skill1Casting
     m_Type: 1
     m_DefaultFloat: 1
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 0}
-  - m_Name: Skill2Channeling
+  - m_Name: Skill2Casting
     m_Type: 1
     m_DefaultFloat: 1
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 0}
-  - m_Name: Skill3Channeling
+  - m_Name: Skill3Casting
     m_Type: 1
     m_DefaultFloat: 1
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 0}
-  - m_Name: Skill4Channeling
+  - m_Name: Skill4Casting
     m_Type: 1
     m_DefaultFloat: 1
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 0}
-  - m_Name: Skill5Channeling
+  - m_Name: Skill5Casting
     m_Type: 1
     m_DefaultFloat: 1
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 0}
-  - m_Name: Skill6Channeling
+  - m_Name: Skill6Casting
     m_Type: 1
     m_DefaultFloat: 1
     m_DefaultInt: 0
@@ -396,7 +396,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Skill3Channeling
+  m_Name: Skill3Casting
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -412,7 +412,7 @@ AnimatorState:
   m_TimeParameterActive: 0
   m_Motion: {fileID: -203655887218126122, guid: a8fac69a98ca9e3419f959530d2ebfa8, type: 3}
   m_Tag: 
-  m_SpeedParameter: Skill3Channeling
+  m_SpeedParameter: Skill3Casting
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
@@ -499,7 +499,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Skill2Channeling
+  m_Name: Skill2Casting
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -515,7 +515,7 @@ AnimatorState:
   m_TimeParameterActive: 0
   m_Motion: {fileID: -8132736215989395924, guid: 02231033c3483d64286d3414b20e59e4, type: 3}
   m_Tag: 
-  m_SpeedParameter: Skill2Channeling
+  m_SpeedParameter: Skill2Casting
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
@@ -623,7 +623,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Skill5Channeling
+  m_Name: Skill5Casting
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -639,7 +639,7 @@ AnimatorState:
   m_TimeParameterActive: 0
   m_Motion: {fileID: -203655887218126122, guid: 015c31a52f03d0149b95733fc8e9c702, type: 3}
   m_Tag: 
-  m_SpeedParameter: Skill5Channeling
+  m_SpeedParameter: Skill5Casting
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
@@ -672,7 +672,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Skill1Channeling
+  m_Name: Skill1Casting
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -688,7 +688,7 @@ AnimatorState:
   m_TimeParameterActive: 0
   m_Motion: {fileID: -203655887218126122, guid: 80931ec16b256c14fa9826ce64a2da66, type: 3}
   m_Tag: 
-  m_SpeedParameter: Skill1Channeling
+  m_SpeedParameter: Skill1Casting
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 

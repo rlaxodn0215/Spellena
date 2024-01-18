@@ -6,6 +6,7 @@ using Photon.Realtime;
 using UnityEngine.InputSystem;
 using System;
 using System.Reflection;
+using Unity.VisualScripting;
 
 public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
 {
@@ -27,6 +28,8 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
     public Camera cameraMain;
     public Camera cameraOverlay;
 
+    protected GameObject unique;
+
     protected Rigidbody rigidbodyMain;
     protected GameObject AvatarForMe;
     protected GameObject AvatarForOther;
@@ -38,6 +41,7 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
     //가해지는 외부 힘
     protected Vector3 externalForce = Vector3.zero;
     protected LayerMask layerMaskMap;
+    protected LayerMask layerMaskWall;
 
     public event Action<Vector2, bool> UpdateLowerAnimation;
     public event Action<int> PlayAnimation;
@@ -63,6 +67,11 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
         public bool isLocalReady = false;
         //홀딩, 지점 타격 등 특수 준비 상태가 있는지 확인
         public bool isUnique = false;
+    }
+
+    public enum SkillTiming
+    {
+        Immediately, AfterCasting
     }
 
     //로컬 -> None : 비어있는 상태, Ready : 준비 상태
@@ -117,7 +126,7 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
                     //스킬 채널링 시간 같은 타이밍에 동시에 실행되므로 fixedDeltaTime 한 프레임 추가
                     skillDatas[i].skillChannelingTime = playerData.skillChannelingTime[i] + Time.fixedDeltaTime;
                     //캐스팅 시간이 있는 스킬은 이 곳에서 로직이 실행됨
-                    PlaySkillLogic(i);
+                    PlaySkillLogic(i, SkillTiming.AfterCasting);
                 }
             }
 
@@ -194,6 +203,7 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
     protected void InitCommonComponents()
     {
         layerMaskMap = LayerMask.GetMask("Map");
+        layerMaskWall = LayerMask.GetMask("Wall");
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -206,6 +216,8 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
         AvatarForMe = transform.GetChild(2).gameObject;
 
         SetLocalPlayer();
+
+        unique = transform.GetChild(0).GetChild(1).gameObject;
     }
 
     protected void AddSkill(int count)
@@ -357,8 +369,10 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
         {
             if (skillDatas[i].skillState <= SkillData.SkillState.Unique)
             {
+                if (skillDatas[i].skillState == SkillData.SkillState.Unique)
+                    PlayUniqueState(i, false);
                 skillDatas[i].skillState = SkillData.SkillState.None;
-                skillDatas[i].isLocalReady = false; 
+                skillDatas[i].isLocalReady = false;
             }
         }
     }
@@ -408,6 +422,8 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
         SkillData.SkillState _nextSkillState = (SkillData.SkillState)nextSkillState;
         if (photonView.IsMine)
         {
+            PlayUniqueState(index, false);
+
             skillDatas[index].skillState = _nextSkillState;
             if (_nextSkillState == SkillData.SkillState.Casting)
             {
@@ -425,11 +441,13 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
                 skillDatas[index].isReady = false;
                 InvokeAnimation(index, true);
 
-                if(_nextSkillState == SkillData.SkillState.Channeling)
+                if (_nextSkillState == SkillData.SkillState.Channeling)
                     //바로 채널링으로 이행되는 스킬은 바로 스킬 작동
-                    PlaySkillLogic(index);
-
+                    PlaySkillLogic(index, SkillTiming.Immediately);
             }
+            //Unique일때
+            else
+                PlayUniqueState(index, true);
         }
         else
         {
@@ -448,8 +466,13 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
         }
     }
 
+    virtual protected void PlayUniqueState(int index, bool IsOn)
+    {
+
+    }
+
     //스킬 로직 구현은 여기에서 오버라이드로 구현
-    virtual protected void PlaySkillLogic(int index)
+    virtual protected void PlaySkillLogic(int index, SkillTiming timing)
     {
 
     }

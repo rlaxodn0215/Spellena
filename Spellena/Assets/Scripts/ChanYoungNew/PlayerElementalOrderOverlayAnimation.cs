@@ -33,7 +33,7 @@ public class PlayerElementalOrderOverlayAnimation : PlayerCommonOverlayAnimation
             SetIK(rightHandPos, leftHandPos);
             SetCameraPos(0f);
         }
-        else if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Skill1Channeling"))
+        else if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Skill1Casting"))
         {
             rightHandWeight = Mathf.Lerp(rightHandWeight, 0.5f, Time.deltaTime * 20);
             leftHandWeight = Mathf.Lerp(leftHandWeight, 0.5f, Time.deltaTime * 20);
@@ -42,7 +42,7 @@ public class PlayerElementalOrderOverlayAnimation : PlayerCommonOverlayAnimation
             SetIK(_targetVec, _targetVec);
             SetCameraPos(0.2f);
         }
-        else if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Skill2Channeling"))
+        else if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Skill2Casting"))
         {
             rightHandWeight = Mathf.Lerp(rightHandWeight, 0.3f, Time.deltaTime);
             leftHandWeight = Mathf.Lerp(leftHandWeight, 0f, Time.deltaTime);
