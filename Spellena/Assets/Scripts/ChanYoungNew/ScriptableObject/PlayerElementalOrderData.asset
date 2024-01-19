@@ -26,3 +26,17 @@ MonoBehaviour:
   - 1
   - 1
   - 1
+  skillLifeTime:
+  - 5
+  - 5
+  - 5
+  - 5
+  - 5
+  - 5
+  skillDistance:
+  - 5
+  - 5
+  - 5
+  - 5
+  - 5
+  - 5

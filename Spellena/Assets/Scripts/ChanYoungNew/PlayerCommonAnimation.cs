@@ -1,12 +1,4 @@
 using Photon.Pun;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
-using TMPro.EditorUtilities;
-using Unity.VisualScripting;
-using Unity.VisualScripting.Antlr3.Runtime.Misc;
-using UnityEditor.Animations;
 using UnityEngine;
 
 public class PlayerCommonAnimation : MonoBehaviourPunCallbacks, IPunObservable
@@ -17,10 +9,6 @@ public class PlayerCommonAnimation : MonoBehaviourPunCallbacks, IPunObservable
     protected Transform handSightMain;
 
     protected Animator animator;
-    protected AnimatorController animatorController;
-    protected List<AnimatorState> states = new List<AnimatorState>();
-    protected List<AnimationClip> clips = new List<AnimationClip>();
-
     protected PlayerCommon playerCommon;
     protected PlayerData playerData;
 
@@ -29,12 +17,19 @@ public class PlayerCommonAnimation : MonoBehaviourPunCallbacks, IPunObservable
     protected float targetMoveDirectionVertical = 0;
     protected float targetMoveDirectionHorizontal = 0;
 
-    protected float crossFadeTime = 0.3f;
-
     protected float rightHandWeight = 0f;
     protected float leftHandWeight = 0f;
 
+
+    protected string nextAnimationState = string.Empty;
     private Quaternion networkRotation;
+
+    int animationListener;
+
+    public enum AnimationType
+    {
+        Casting, Channeling
+    }
 
     virtual protected void Start()
     {
@@ -44,20 +39,12 @@ public class PlayerCommonAnimation : MonoBehaviourPunCallbacks, IPunObservable
     virtual protected void Update()
     {
         LerpLowerAnimation();
-        CorrectUniqueAnimation();
 
         if (!photonView.IsMine)
             cameraMain.transform.localRotation = Quaternion.Lerp(cameraMain.transform.localRotation, networkRotation, Time.deltaTime * 8);
-    }
 
-    virtual protected void FixedUpdate()
-    {
-
-    }
-
-    virtual protected void CorrectUniqueAnimation()
-    {
-
+        if(ListenAnimatorState())
+            PlayAnimationChangeEvent();
     }
 
     private void LerpLowerAnimation()
@@ -81,15 +68,7 @@ public class PlayerCommonAnimation : MonoBehaviourPunCallbacks, IPunObservable
         playerData = playerCommon.playerData;
         playerCommon.PlayAnimation += SetAnimationParameter;
 
-        animatorController = animator.runtimeAnimatorController as AnimatorController;
-        ChildAnimatorState[] _states = animatorController.layers[1].stateMachine.states;
-
-        for (int i = 0; i < _states.Length; i++)
-        {
-            states.Add(_states[i].state);
-            clips.Add(_states[i].state.motion as AnimationClip);
-        }
-
+        animationListener = animator.GetCurrentAnimatorStateInfo(1).fullPathHash;
     }
 
     virtual protected void UpdateLowerAnimation(Vector2 moveDirection, bool isRunning)
@@ -105,26 +84,79 @@ public class PlayerCommonAnimation : MonoBehaviourPunCallbacks, IPunObservable
         animator.SetFloat("TargetMoveDirectionHorizontal", moveDirection.x);
     }
 
+    virtual protected bool ListenAnimatorState()
+    {
+        int _hash = animator.GetNextAnimatorStateInfo(1).fullPathHash;
+        if (_hash == 0)
+            return false;
+        if (_hash != animationListener)
+        {
+            animationListener = _hash;
+            return true;
+        }
+        return false;
+    }
+
+    virtual protected void PlayAnimationChangeEvent()
+    {
+        AnimatorStateInfo _info = animator.GetNextAnimatorStateInfo(1);
+        SetAnimationTime(_info);
+    }
+    virtual protected void SetAnimationTime(AnimatorStateInfo info)
+    {
+        float _time = 0f;
+        string _parameter = "";
+        string _skill = "";
+
+        int _check = 0;
+
+        for(int i = 0; i < playerData.skillCastingTime.Count; i++)
+        {
+            string _temp = "Skill" + (i + 1) + "Casting";
+            if (info.IsName(_temp))
+            {
+                _time = playerData.skillCastingTime[i];
+                _parameter = _temp;
+                _skill = "Skill" + (i + 1);
+                _check = 1;
+                break;
+            }
+
+        }
+
+        if (_check == 0)
+        {
+            for (int i = 0; i < playerData.skillChannelingTime.Count; i++)
+            {
+                string _temp = "Skill" + (i + 1) + "Channeling";
+                if (info.IsName(_temp))
+                {
+                    _time = playerData.skillChannelingTime[i];
+                    _parameter = _temp;
+                    _skill = "Skill" + (i + 1);
+                    _check = 1;
+                    break;
+                }
+            }
+        }
+
+        animator.SetBool(_skill, false);
+
+        float _length = info.length;
+        if (_length <= 1.01 && _length >= 0.99)
+            return;
+
+        if (_check == 1)
+        {
+            float _speed = _length / _time;
+            animator.SetFloat(_parameter, _speed);
+        }
+    }
+
     virtual protected void OnAnimatorIK()
     {
         animator.SetLookAtPosition(sightMain.position);
         animator.SetLookAtWeight(1f);
-    }
-
-
-    virtual protected void SetAnimation(int index, int stateIndex, string stateName)
-    {
-        float skillTime = playerData.skillCastingTime[index];
-        float _length = clips[stateIndex].length;
-        float _targetSpeed = _length / skillTime;
-
-        CrossFadeAnimation(stateName, _targetSpeed);
-    }
-
-    virtual protected void CrossFadeAnimation(string stateName, float targetSpeed)
-    {
-        animator.SetFloat(stateName, targetSpeed);
-        animator.CrossFade(stateName, crossFadeTime, 1);
     }
 
     protected void SetAnimationParameter(int index)
@@ -133,17 +165,18 @@ public class PlayerCommonAnimation : MonoBehaviourPunCallbacks, IPunObservable
             return;
         else
         {
-            string _stateName = "Skill" + (index + 1) + "Casting";
-            for (int i = 0; i < states.Count; i++)
+            for(int i = 0; i < playerData.skillCastingTime.Count; i++)
             {
-                if (states[i].name == _stateName)
-                {
-                    SetAnimation(index, i, _stateName);
-                    break;
-                }
+                string _type = "Skill" + (i + 1);
+                animator.SetBool(_type, false);
             }
+
+
+            string _stateName = "Skill" + (index + 1);
+            animator.SetBool(_stateName, true);
         }
     }
+
 
     virtual public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {

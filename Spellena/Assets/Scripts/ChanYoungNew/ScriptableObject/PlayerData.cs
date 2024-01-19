@@ -8,4 +8,6 @@ public class PlayerData : ScriptableObject
 {
     public List<float> skillCastingTime;
     public List<float> skillChannelingTime;
+    public List<float> skillLifeTime;
+    public List<float> skillDistance;
 }
