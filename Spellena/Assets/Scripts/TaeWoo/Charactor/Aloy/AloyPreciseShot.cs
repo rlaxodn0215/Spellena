@@ -193,6 +193,7 @@ public class AloyPreciseShot : Node
             Debug.Log("AloyPreciseShot to " + "<color=magenta>"
             + enemyTransform.name + "</color>");
 
+            //preciseAttackArrows.GetObject(attackTransform);
             coroutine = MakeCoroutine.Start_Coroutine(MutipleShoot());
         }
 

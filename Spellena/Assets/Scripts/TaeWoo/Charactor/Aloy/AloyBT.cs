@@ -60,9 +60,9 @@ public class AloyBT : BehaviourTree.Tree
                 new RandomSelector(new List<Node>
                     {
                         aloyBasicAttack,
-                        //aloyPreciseShot,
-                        //aloyPurifyBeam,
-                        //aloyArrowStrike
+                        aloyPreciseShot,
+                        aloyPurifyBeam,
+                        aloyArrowStrike
                     }),
                 transform, bowAniObj, 150f, 30f,
                 LayerMask.GetMask("Player")),

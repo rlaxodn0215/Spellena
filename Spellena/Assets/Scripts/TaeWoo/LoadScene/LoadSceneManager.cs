@@ -26,7 +26,6 @@ public class LoadSceneManager : MonoBehaviourPunCallbacks
     public static void GoBackToMenu(string sceneName)
     {
         nextScene = sceneName;
-
         PhotonNetwork.LoadLevel("TaeWoo_BackToMainLoadingScene");
     }
 

@@ -62,7 +62,7 @@ public class CheckEnemy : Condition
                     && Physics.Raycast(ray, out hit, viewRadius))
                 {
                     if (hit.collider.gameObject.layer
-                        == LayerMask.NameToLayer("Player"))
+                        != LayerMask.NameToLayer("Wall"))
                     {
                         // 태그가 다른 적 구분
                         Debug.DrawLine(SightPos, targetPos, Color.red);
@@ -83,6 +83,7 @@ public class CheckEnemy : Condition
         ClearData("Enemy");
         animator.SetBool("CheckEnemy", false);
         bowAnimator.SetBool("Draw", false);
+
         return false;
     }
 

@@ -3,35 +3,38 @@ using Photon.Pun;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 // initPlayerData
-public class InitPlayerData : CenterState
+namespace temp
 {
-    public override void StateExecution()
+    public class InitPlayerData : CenterState
     {
-        if (PhotonNetwork.IsMasterClient)
+        public override void StateExecution()
         {
-            GameCenterTest.globalTimer = 0.0f;
+            if (PhotonNetwork.IsMasterClient)
+            {
+                GameCenterTest.globalTimer = 0.0f;
 
-            ConnectInGameUI();
-            MakeSpawnPoint();
+                ConnectInGameUI();
+                MakeSpawnPoint();
 
-            gameCenter.currentGameState = GameCenterTest.GameState.CharacterSelect;
+                gameCenter.currentGameState = GameCenterTest.GameState.CharacterSelect;
+            }
         }
-    }
 
-    void ConnectInGameUI()
-    {
-        if (gameCenter.inGameUIObj != null)
+        void ConnectInGameUI()
         {
-            gameCenter.inGameUIView = gameCenter.inGameUIObj.GetComponent<PhotonView>();
-            gameCenter.inGameUI = gameCenter.inGameUIObj.GetComponent<InGameUI>();
+            if (gameCenter.inGameUIObj != null)
+            {
+                gameCenter.inGameUIView = gameCenter.inGameUIObj.GetComponent<PhotonView>();
+                gameCenter.inGameUI = gameCenter.inGameUIObj.GetComponent<InGameUI>();
+            }
         }
+
+
+        void MakeSpawnPoint()
+        {
+            gameCenter.playerSpawnA = GameCenterTest.FindObject(gameCenter.playerSpawnPoints, "TeamA").GetComponentsInChildren<Transform>(true);
+            gameCenter.playerSpawnB = GameCenterTest.FindObject(gameCenter.playerSpawnPoints, "TeamB").GetComponentsInChildren<Transform>(true);
+        }
+
     }
-
-
-    void MakeSpawnPoint()
-    {
-        gameCenter.playerSpawnA = GameCenterTest.FindObject(gameCenter.playerSpawnPoints, "TeamA").GetComponentsInChildren<Transform>(true);
-        gameCenter.playerSpawnB = GameCenterTest.FindObject(gameCenter.playerSpawnPoints, "TeamB").GetComponentsInChildren<Transform>(true);
-    }
-
 }

@@ -4,63 +4,66 @@ using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
 
-public class LoadingScene : MonoBehaviourPunCallbacks
+namespace temp
 {
-    public GameObject mapName;
-    public GameObject helpBackImage;
-    public GameObject helpText;
-    public GameObject helpWords;
-    public GameObject loadingSign;
-
-    public string name;
-    public string words;
-
-    private Text mapNameText;
-    private Text helpWordsText;
-
-    private Image helpBackImageComponent;
-    private RectTransform loadingSignRectTransform;
-
-    private float timer = 0.0f;
-    private float helpBackImageOpenSpeed = 1.0f;
-    private float loadingSignRotateSpeed = 3.5f;
-    private float loadingSignRotateFrequency = 0.2f;
-
-    void Start()
+    public class LoadingScene : MonoBehaviourPunCallbacks
     {
-        mapNameText = mapName.GetComponent<Text>();
-        helpBackImageComponent = helpBackImage.GetComponent<Image>();
-        helpWordsText = helpWords.GetComponent<Text>();
-        loadingSignRectTransform = loadingSign.GetComponent<RectTransform>();
+        public GameObject mapName;
+        public GameObject helpBackImage;
+        public GameObject helpText;
+        public GameObject helpWords;
+        public GameObject loadingSign;
 
-        mapNameText.text = name;
-        helpWordsText.text = words;
+        public string name;
+        public string words;
 
-        StartCoroutine(SlideHelpBackImage());
-    }
+        private Text mapNameText;
+        private Text helpWordsText;
 
-    IEnumerator SlideHelpBackImage()
-    {
-        while(helpBackImageComponent.fillAmount < 1.0f)
+        private Image helpBackImageComponent;
+        private RectTransform loadingSignRectTransform;
+
+        private float timer = 0.0f;
+        private float helpBackImageOpenSpeed = 1.0f;
+        private float loadingSignRotateSpeed = 3.5f;
+        private float loadingSignRotateFrequency = 0.2f;
+
+        void Start()
         {
-            helpBackImageComponent.fillAmount += helpBackImageOpenSpeed * Time.deltaTime;
-            yield return null;
+            mapNameText = mapName.GetComponent<Text>();
+            helpBackImageComponent = helpBackImage.GetComponent<Image>();
+            helpWordsText = helpWords.GetComponent<Text>();
+            loadingSignRectTransform = loadingSign.GetComponent<RectTransform>();
+
+            mapNameText.text = name;
+            helpWordsText.text = words;
+
+            StartCoroutine(SlideHelpBackImage());
         }
 
-        helpText.SetActive(true);
-        helpWords.SetActive(true);
-    }
+        IEnumerator SlideHelpBackImage()
+        {
+            while (helpBackImageComponent.fillAmount < 1.0f)
+            {
+                helpBackImageComponent.fillAmount += helpBackImageOpenSpeed * Time.deltaTime;
+                yield return null;
+            }
 
-    // Update is called once per frame
-    void FixedUpdate()
-    {
-        timer += Time.deltaTime;
-        LoadingSignRotate();
-    }
-    
+            helpText.SetActive(true);
+            helpWords.SetActive(true);
+        }
 
-    void LoadingSignRotate()
-    {
-        loadingSignRectTransform.Rotate(0,loadingSignRotateSpeed * Mathf.Abs(Mathf.Sin(loadingSignRotateFrequency * timer)), 0);
+        // Update is called once per frame
+        void FixedUpdate()
+        {
+            timer += Time.deltaTime;
+            LoadingSignRotate();
+        }
+
+
+        void LoadingSignRotate()
+        {
+            loadingSignRectTransform.Rotate(0, loadingSignRotateSpeed * Mathf.Abs(Mathf.Sin(loadingSignRotateFrequency * timer)), 0);
+        }
     }
 }

@@ -34350,6 +34350,7 @@ MonoBehaviour:
   rotateSpeed: 15
   ableHitParticle: 1
   ableArrowStuck: 1
+  isUltimate: 0
   hitParticleObject: {fileID: 3492691017000508022, guid: aee36ebbd3e183d4795b7b75b450c4ef, type: 3}
   arrowStuckObject: {fileID: 7579633284073917657, guid: 11a10d644ab03ed42b3f69f67c9a394a, type: 3}
   hitParticleDestoryTime: 1.2
@@ -34364,7 +34365,7 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.1
+  m_Radius: 0.05
   m_Height: 0.5
   m_Direction: 2
   m_Center: {x: 0, y: 0, z: 1.6}

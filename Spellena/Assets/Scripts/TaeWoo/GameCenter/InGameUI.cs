@@ -3,6 +3,7 @@ using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using temp;
 
 public class InGameUI : MonoBehaviourPunCallbacks,IPunObservable
 {

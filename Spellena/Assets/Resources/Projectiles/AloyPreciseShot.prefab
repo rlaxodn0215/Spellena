@@ -53,6 +53,7 @@ MonoBehaviour:
   rotateSpeed: 0
   ableHitParticle: 1
   ableArrowStuck: 0
+  isUltimate: 0
   hitParticleObject: {fileID: 6069143791621258020, guid: d4c3ac21f11bb9b45bc5dfb2421c2efc, type: 3}
   arrowStuckObject: {fileID: 0}
   hitParticleDestoryTime: 1.5
@@ -68,7 +69,7 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.1
+  m_Radius: 0.08
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &2706224503856540726
 Rigidbody:

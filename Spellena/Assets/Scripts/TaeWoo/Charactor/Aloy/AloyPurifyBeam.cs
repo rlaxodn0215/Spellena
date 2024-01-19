@@ -25,17 +25,25 @@ public class AloyPurifyBeam : Node
     private Transform enemyTransform;
 
     private GameObject beamParticle;
+    private GameObject beamParticleHit;
+    private Vector3[] particleScale = new Vector3[3];
+    private float colliderHeight;
+    private Vector3 colliderCenter;
+
     private CheckGauge coolTime;
     private NavMeshAgent agent;
     private Animator animator;
 
     private float avoidTiming = 1.0f;
     private float rotateSpeed = 8.0f;
-    private float range = 7.5f;
+    private float range = 8.5f;
 
     private CheckGauge checkAvoid;
 
     private MakeCoroutine coroutine;
+
+    private RaycastHit hit;
+    private CapsuleCollider collider;
 
     public AloyPurifyBeam() { }
 
@@ -46,6 +54,8 @@ public class AloyPurifyBeam : Node
         attackTransform = _aimingTransform.GetChild(2);
         beamParticle = attackTransform.transform.GetChild(0).gameObject;
         if (beamParticle == null) Debug.LogError("beamParticle�� �Ҵ���� �ʾҽ��ϴ�");
+        beamParticleHit = attackTransform.transform.GetChild(1).gameObject;
+        if (beamParticleHit == null) Debug.LogError("beamParticle�� �Ҵ���� �ʾҽ��ϴ�");
 
         bowAnimator = _bowAniObj.GetComponent<Animator>();
         if (bowAnimator == null) Debug.LogError("bowAnimator�� �Ҵ���� �ʾҽ��ϴ�");
@@ -58,6 +68,16 @@ public class AloyPurifyBeam : Node
         arrowAniObj = _arrowAniObj;
 
         checkAvoid = new CheckGauge(avoidTiming);
+
+        collider = attackTransform.GetChild(0).GetComponent<CapsuleCollider>();
+        if (collider == null) Debug.LogError("collider�� �Ҵ���� �ʾҽ��ϴ�");
+        colliderHeight = collider.height;
+        colliderCenter = collider.center;
+
+        for(int i = 0; i < 3; i++)
+        {
+            particleScale[i] = beamParticle.transform.GetChild(i).localScale;
+        }
     }
 
     public override NodeState Evaluate()
@@ -68,6 +88,7 @@ public class AloyPurifyBeam : Node
             Avoiding();
             Attack();
             SetDataToRoot("Status", "AloyPurifyBeam");
+            RangeChanging();
             return NodeState.Running;
         }
 
@@ -75,6 +96,37 @@ public class AloyPurifyBeam : Node
         {
             Debug.LogError("적이 할당되지 않았습니다");
             return NodeState.Failure;
+        }
+    }
+
+    void RangeChanging()
+    {
+        Ray ray = new Ray(attackTransform.position, attackTransform.forward);
+        beamParticleHit.transform.position = hit.point;
+
+        if (Physics.Raycast(ray, out hit, range))
+        {
+            collider.height = hit.distance / range * colliderHeight;
+            collider.center
+                = new Vector3(colliderCenter.x, colliderCenter.y, hit.distance / range * colliderCenter.z);
+
+            Debug.DrawLine(ray.origin, hit.point, Color.green);
+            for (int i = 0; i< 3; i++)
+            {
+                beamParticle.transform.GetChild(i).localScale
+                    = new Vector3(particleScale[i].x, hit.distance / range * particleScale[i].y, particleScale[i].z);
+            }
+        }
+
+        else
+        {
+            collider.height = colliderHeight;
+            collider.center = colliderCenter;
+
+            for (int i = 0; i < 3; i++)
+            {
+                beamParticle.transform.GetChild(i).localScale = particleScale[i];
+            }
         }
     }
 
@@ -217,9 +269,12 @@ public class AloyPurifyBeam : Node
         animator.SetBool("CheckEnemy", true);
 
         beamParticle.SetActive(true);
+        yield return new WaitForSeconds(0.2f);
+        beamParticleHit.SetActive(true);
 
-        yield return new WaitForSeconds(5.0f);
-
+        yield return new WaitForSeconds(4.3f);
+        beamParticleHit.SetActive(false);
+        yield return new WaitForSeconds(0.7f);
         beamParticle.SetActive(false);
 
         yield return new WaitForSeconds(0.8f);

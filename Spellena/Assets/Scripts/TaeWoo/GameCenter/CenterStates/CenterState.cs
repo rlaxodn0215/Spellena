@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 
-public abstract class CenterState : MonoBehaviourPunCallbacks
+namespace temp
 {
-    public GameCenterTest gameCenter;
-    public void ConnectCenter(GameCenterTest center)
+    public abstract class CenterState : MonoBehaviourPunCallbacks
     {
-        gameCenter = center;
+        public GameCenterTest gameCenter;
+        public void ConnectCenter(GameCenterTest center)
+        {
+            gameCenter = center;
+        }
+        public abstract void StateExecution();
     }
-    public abstract void StateExecution();
 }

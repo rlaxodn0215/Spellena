@@ -3,17 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 
-public class GameResult : CenterState
+namespace temp
 {
-    bool isOnce = true;
-
-    public override void StateExecution()
+    public class GameResult : CenterState
     {
-        if(isOnce)
+        bool isOnce = true;
+
+        public override void StateExecution()
         {
-            isOnce = false;
-            gameCenter.photonView.RPC("ShowGameResult", RpcTarget.AllBuffered);
+            if (isOnce)
+            {
+                isOnce = false;
+                gameCenter.photonView.RPC("ShowGameResult", RpcTarget.AllBuffered);
+            }
         }
     }
-}
 
+}

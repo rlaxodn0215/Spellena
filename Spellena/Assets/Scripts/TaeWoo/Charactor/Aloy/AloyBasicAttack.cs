@@ -31,7 +31,7 @@ public class AloyBasicAttack : Node
     private Animator animator;
 
     private float avoidTiming = 1.0f;
-    private float rotateSpeed = 7.5f;
+    private float rotateSpeed = 0.5f;
 
     private CheckGauge checkAvoid;
 
@@ -134,18 +134,7 @@ public class AloyBasicAttack : Node
 
     void Moving()
     {
-        //Ray ray1 = new Ray(playerTransform.position + Vector3.up, playerTransform.forward);
-        //Ray ray2 = new Ray(playerTransform.position + Vector3.up, -playerTransform.forward);
-        //Ray ray3 = new Ray(playerTransform.position + Vector3.up, -playerTransform.right);
-        //Ray ray4 = new Ray(playerTransform.position + Vector3.up, playerTransform.right);
-
-        //Debug.DrawRay(ray1.origin, ray1.direction);
-        //Debug.DrawRay(ray2.origin, ray2.direction);
-        //Debug.DrawRay(ray3.origin, ray3.direction);
-        //Debug.DrawRay(ray4.origin, ray4.direction);
-
-
-        if (checkAvoid.CheckCoolTime())
+        if (checkAvoid.CheckCoolTime() )
         {
             checkAvoid.UpdateCurCoolTime(0.0f);
 
@@ -193,7 +182,8 @@ public class AloyBasicAttack : Node
             Vector3.Lerp(playerTransform.forward, targetDir, rotateSpeed * Time.deltaTime);
 
         if (coolTime.CheckCoolTime() && 
-            animator.GetCurrentAnimatorStateInfo(2).IsName("Aim"))
+            animator.GetCurrentAnimatorStateInfo(2).IsName("Aim") &&
+            Mathf.Acos(Vector3.Dot(playerTransform.forward, targetDir)) * Mathf.Rad2Deg <= 10.0f)
         {
             coolTime.UpdateCurCoolTime(0.0f);
             Debug.Log("AloyBasicAttack to " + "<color=magenta>"
