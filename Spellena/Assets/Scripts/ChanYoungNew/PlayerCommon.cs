@@ -24,9 +24,14 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
 
     protected bool isGround = false;
     protected bool isAlive = true;
+    protected bool isUniqueState = false;
 
     public Camera cameraMain;
     public Camera cameraOverlay;
+    public Camera cameraMinimap;
+    public GameObject UI;
+
+    protected GameObject minimapMask;
 
     protected GameObject unique;
 
@@ -47,6 +52,9 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
     public event Action<int> PlayAnimation;
 
     protected List<SkillData> skillDatas = new List<SkillData>();
+
+    protected bool isCameraLocked = false;
+    protected Vector3 pointStrike;
 
     protected class SkillData
     {
@@ -215,7 +223,13 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
         AvatarForOther = transform.GetChild(1).gameObject;
         AvatarForMe = transform.GetChild(2).gameObject;
 
+
         unique = transform.GetChild(0).GetChild(1).gameObject;
+
+        minimapMask = UI.transform.GetChild(0).gameObject;
+
+        if(photonView.IsMine)
+            SetLocalPlayer();
     }
 
     protected void AddSkill(int count)
@@ -232,10 +246,14 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
 
     }
 
-    virtual public void SetLocalPlayer(string team)
+    virtual public void SetLocalPlayer()
     {
         cameraOverlay.gameObject.SetActive(true);
         cameraMain.gameObject.SetActive(true);
+        cameraMinimap.gameObject.SetActive(true);
+
+        UI.SetActive(true);
+
         SkinnedMeshRenderer[] _skinMeshForOther = AvatarForOther.GetComponentsInChildren<SkinnedMeshRenderer>();
         SkinnedMeshRenderer[] _skinMeshForMe = AvatarForMe.GetComponentsInChildren<SkinnedMeshRenderer>();
         for (int i = 0; i < _skinMeshForOther.Length; i++)
@@ -243,37 +261,24 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
         for (int i = 0; i < _skinMeshForMe.Length; i++)
             _skinMeshForMe[i].gameObject.layer = 8;
 
-        // 플레이어 캐릭터 선택시 팀 태그 추가
-        photonView.RPC("SetTag", RpcTarget.All, team);
-    }
-
-    [PunRPC]
-    protected virtual void SetTag(string team)
-    {
-        this.tag = team;
-
-        Transform[] allChildren = GetComponentsInChildren<Transform>();
-        if (allChildren == null) return;
-
-        foreach (Transform child in allChildren)
-        {
-            child.gameObject.tag = team;
-        }
     }
 
     //입력 이벤트 -> 키보드 상태 변경 시 마다 호출
 
     virtual protected void OnMouseMove(InputValue inputValue)
     {
-        transform.rotation = Quaternion.Euler(0, transform.eulerAngles.y + inputValue.Get<Vector2>().x / 5f, 0);
+        if (!isCameraLocked)
+        {
+            transform.rotation = Quaternion.Euler(0, transform.eulerAngles.y + inputValue.Get<Vector2>().x / 5f, 0);
 
-        float _nextAngle = cameraMain.transform.eulerAngles.x - inputValue.Get<Vector2>().y / 5f;
-        float _normalizedAngle = GlobalOperation.Instance.NormalizeAngle(_nextAngle);
-        if (_normalizedAngle > 60)
-            _normalizedAngle = 60;
-        else if (_normalizedAngle < -60)
-            _normalizedAngle = -60;
-        cameraMain.transform.localRotation = Quaternion.Euler(_normalizedAngle , 0, 0);
+            float _nextAngle = cameraMain.transform.eulerAngles.x - inputValue.Get<Vector2>().y / 5f;
+            float _normalizedAngle = GlobalOperation.Instance.NormalizeAngle(_nextAngle);
+            if (_normalizedAngle > 60)
+                _normalizedAngle = 60;
+            else if (_normalizedAngle < -60)
+                _normalizedAngle = -60;
+            cameraMain.transform.localRotation = Quaternion.Euler(_normalizedAngle, 0, 0);
+        }
     }
     virtual protected void OnMove(InputValue inputValue)
     {
@@ -436,7 +441,11 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
         SkillData.SkillState _nextSkillState = (SkillData.SkillState)nextSkillState;
         if (photonView.IsMine)
         {
-            PlayUniqueState(index, false);
+            if (isUniqueState)
+            {
+                isUniqueState = false;
+                PlayUniqueState(index, isUniqueState);
+            }
 
             skillDatas[index].skillState = _nextSkillState;
             if (_nextSkillState == SkillData.SkillState.Casting)
@@ -454,14 +463,15 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
                     skillDatas[i].isLocalReady = false;
                 skillDatas[index].isReady = false;
                 InvokeAnimation(index, true);
-
-                if (_nextSkillState == SkillData.SkillState.Channeling)
-                    //바로 채널링으로 이행되는 스킬은 바로 스킬 작동
-                    PlaySkillLogic(index, SkillTiming.Immediately);
+                //스킬 타이밍 : 즉시
+                PlaySkillLogic(index, SkillTiming.Immediately);
             }
             //Unique일때
             else
-                PlayUniqueState(index, true);
+            {
+                isUniqueState = true;
+                PlayUniqueState(index, isUniqueState);
+            }
         }
         else
         {
@@ -478,6 +488,12 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
                 || _nextSkillState == SkillData.SkillState.Channeling)
                 InvokeAnimation(index, true);
         }
+    }
+
+    [PunRPC]
+    public void AddPower(Vector3 power)
+    {
+        externalForce += power;
     }
 
     virtual protected void PlayUniqueState(int index, bool IsOn)
