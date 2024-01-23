@@ -18,8 +18,6 @@ public class Helper : MonoBehaviour
             }
         }
 
-     
-
         return null;
     }
 

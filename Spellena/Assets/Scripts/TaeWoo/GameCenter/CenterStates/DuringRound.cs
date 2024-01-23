@@ -15,10 +15,8 @@ namespace temp
 
         public override void StateExecution()
         {
-            //Debug.Log("<color=blue>" + "DuringRound" + "</color>");
             if (isOnce)
             {
-                //Debug.Log("<color=green>" + "DuringRound ONCE" + "</color>");
                 isOnce = !isOnce;
                 gameCenter.playerStat.GetComponent<PhotonView>().RPC("IsGameReady", RpcTarget.All, true);
             }

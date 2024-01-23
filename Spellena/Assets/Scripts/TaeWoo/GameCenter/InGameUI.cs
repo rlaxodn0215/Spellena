@@ -317,13 +317,10 @@ public class InGameUI : MonoBehaviourPunCallbacks,IPunObservable
     }
 
     [PunRPC]
-    public void ShowTeamState(string playerName, string characterName)
+    public void ShowTeamState(string playerName)
     {
         UIObjects["player_" + teamCount].SetActive(true);
         playerNames[teamCount - 1].text = playerName;
-
-        // 캐릭터 이미지 대입
-
         teamCount++;
     }
 

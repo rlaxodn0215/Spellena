@@ -12,11 +12,8 @@ namespace temp
         float tempTimer = 0.0f;
         public override void StateExecution()
         {
-            //Debug.Log("<color=blue>" + "GameReady" + "</color>");
-
             if (!isCheckTimer)
             {
-                //Debug.Log("<color=green>" + "GameReady ONCE" + "</color>");
                 isCheckTimer = !isCheckTimer;
                 tempTimer = GameCenterTest.globalTimer;
                 gameCenter.globalDesiredTimer = tempTimer + gameCenter.readyTime;
@@ -27,14 +24,10 @@ namespace temp
 
             if (GameCenterTest.globalTimer >= gameCenter.globalDesiredTimer)
             {
-                //Debug.Log("<color=yellow>" + "DuringRound start in GameReady" + "</color>");
 
                 if (GameCenterTest.roundA == 0 && GameCenterTest.roundB == 0)
                 {
-                    //Debug.Log("<color=red>" + "DuringRound start in GameReady ONCE" + "</color>");
-                    // 코루틴을 사용하여 데이터 손실 줄이기
                     MakeEnemyShader();
-                    // (어시스트)
                     StartCoroutine(SetAssistTimer());
 
                 }

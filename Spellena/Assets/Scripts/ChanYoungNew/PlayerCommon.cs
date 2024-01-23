@@ -215,8 +215,6 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
         AvatarForOther = transform.GetChild(1).gameObject;
         AvatarForMe = transform.GetChild(2).gameObject;
 
-        SetLocalPlayer();
-
         unique = transform.GetChild(0).GetChild(1).gameObject;
     }
 
@@ -234,7 +232,7 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
 
     }
 
-    virtual public void SetLocalPlayer()
+    virtual public void SetLocalPlayer(string team)
     {
         cameraOverlay.gameObject.SetActive(true);
         cameraMain.gameObject.SetActive(true);
@@ -245,6 +243,22 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
         for (int i = 0; i < _skinMeshForMe.Length; i++)
             _skinMeshForMe[i].gameObject.layer = 8;
 
+        // 플레이어 캐릭터 선택시 팀 태그 추가
+        photonView.RPC("SetTag", RpcTarget.All, team);
+    }
+
+    [PunRPC]
+    protected virtual void SetTag(string team)
+    {
+        this.tag = team;
+
+        Transform[] allChildren = GetComponentsInChildren<Transform>();
+        if (allChildren == null) return;
+
+        foreach (Transform child in allChildren)
+        {
+            child.gameObject.tag = team;
+        }
     }
 
     //입력 이벤트 -> 키보드 상태 변경 시 마다 호출

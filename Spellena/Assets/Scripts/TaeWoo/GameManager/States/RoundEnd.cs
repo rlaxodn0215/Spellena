@@ -2,76 +2,97 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
+using GameCenterDataType;
 
 namespace FSM
 {
     public class RoundEnd : BaseState
     {
+        private DuringRoundData duringRoundData;
+        private PhotonView inGameUIView;
+        private PhotonView deathUIView;
+
+        private RoundEndStandardData roundEndStandardData;
+
         public RoundEnd(StateMachine stateMachine) :
              base("RoundEnd", stateMachine)
-        {}
+        {
+            roundEndStandardData.roundEndNumber = 2;
+            roundEndStandardData.roundEndResultTime = 6;
+
+            inGameUIView =
+                ((DuringRound)(((GameCenter0)stateMachine).GameStates[GameState.DuringRound])).inGameUIView;
+            deathUIView =
+                ((DuringRound)(((GameCenter0)stateMachine).GameStates[GameState.DuringRound])).deathUIView;
+        }
 
         public override void Enter()
         {
-            ((GameManagerFSM)stateMachine).gameManagerStat.globalDesiredTimer =
-                ((GameManagerFSM)stateMachine).gameManagerStat.globalTimer + 
-                ((GameManagerFSM)stateMachine).gameManagerStat.roundEndResultTime;
+            ((GameCenter0)stateMachine).globalTimer.globalDesiredTime =
+                Time.time + roundEndStandardData.roundEndResultTime;
+
+            duringRoundData = 
+                ((DuringRound)(((GameCenter0)stateMachine).GameStates[GameState.DuringRound])).duringRoundData;
         }
 
         public override void Update()
         {
-            ((GameManagerFSM)stateMachine).gameManagerStat.globalTimer += Time.deltaTime;
+            if(Time.time >= ((GameCenter0)stateMachine).globalTimer.globalDesiredTime)
+            {
+                if (((GameCenter0)stateMachine).roundData.roundCount_A >= 2 ||
+                ((GameCenter0)stateMachine).roundData.roundCount_B >= 2)
+                {
+                    stateMachine.ChangeState(((GameCenter0)stateMachine).GameStates[GameState.GameResult]);
+                }
+
+                else
+                {
+                    stateMachine.ChangeState(((GameCenter0)stateMachine).GameStates[GameState.GameReady]);
+                }
+            }
+
         }
 
         public override void Exit()
         {
-            if (((GameManagerFSM)stateMachine).gameManagerStat.roundCount_A >= 2 ||
-                ((GameManagerFSM)stateMachine).gameManagerStat.roundCount_B >= 2)
-            {
-                stateMachine.ChangeState(((GameManagerFSM)stateMachine).gameManagerStat.
-                    GameStates[GameManagerStat.GameState.GameResult]);
-                ((GameManagerFSM)stateMachine).gameManagerStat.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "victory", false);
-                ((GameManagerFSM)stateMachine).gameManagerStat.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "defeat", false);
-            }
-
-            else
-            {
-                stateMachine.ChangeState(((GameManagerFSM)stateMachine).gameManagerStat.
-                    GameStates[GameManagerStat.GameState.GameReady]);
-                ((GameManagerFSM)stateMachine).gameManagerStat.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "roundWin", false);
-                ((GameManagerFSM)stateMachine).gameManagerStat.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "roundLoose", false);
-                ResetRound();
-                Debug.Log("ResetRound");
-            }
+            ResetRound();
         }
 
         void ResetRound()
         {
-            ((GameManagerFSM)stateMachine).gameManagerStat.teamAOccupying = 0;
-            ((GameManagerFSM)stateMachine).gameManagerStat.teamBOccupying = 0;
-            ((GameManagerFSM)stateMachine).gameManagerStat.occupyingReturnTimer = 0.0f;
-            ((GameManagerFSM)stateMachine).gameManagerStat.roundEndTimer = 0.0f;
-            ((GameManagerFSM)stateMachine).gameManagerStat.currentOccupationTeam = "";
-            ((GameManagerFSM)stateMachine).gameManagerStat.occupyingA.rate = 0.0f;
-            ((GameManagerFSM)stateMachine).gameManagerStat.occupyingB.rate = 0.0f;
-            ((GameManagerFSM)stateMachine).gameManagerStat.occupyingTeam.name = "";
-            ((GameManagerFSM)stateMachine).gameManagerStat.occupyingTeam.rate = 0.0f;
+            duringRoundData.teamAOccupying = 0;
+            duringRoundData.teamBOccupying = 0;
+            duringRoundData.occupyingReturnTimer = 0.0f;
+            duringRoundData.roundEndTimer = 0.0f;
+            duringRoundData.currentOccupationTeam = "";
+            duringRoundData.occupyingA.rate = 0.0f;
+            duringRoundData.occupyingB.rate = 0.0f;
+            duringRoundData.occupyingTeam.name = "";
+            duringRoundData.occupyingTeam.rate = 0.0f;
 
-            ((GameManagerFSM)stateMachine).gameManagerStat.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "captured_Red", false);
-            ((GameManagerFSM)stateMachine).gameManagerStat.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "captured_Blue", false);
-            ((GameManagerFSM)stateMachine).gameManagerStat.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "extraObj", false);
-            ((GameManagerFSM)stateMachine).gameManagerStat.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "redExtraUI", true);
-            ((GameManagerFSM)stateMachine).gameManagerStat.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "redExtraObj", false);
-            ((GameManagerFSM)stateMachine).gameManagerStat.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "blueExtraUI", true);
-            ((GameManagerFSM)stateMachine).gameManagerStat.inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "blueExtraObj", false);
+            ((DuringRound)(((GameCenter0)stateMachine).
+                GameStates[GameState.DuringRound])).duringRoundData = duringRoundData;
 
-            ((GameManagerFSM)stateMachine).gameManagerStat.inGameUIView.RPC("DisableAllKillLog", RpcTarget.All);
+            inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "victory", false);
+            inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "defeat", false);
+            inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "roundWin", false);
+            inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "roundLoose", false);
+
+            inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "captured_Red", false);
+            inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "captured_Blue", false);
+            inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "extraObj", false);
+            inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "redExtraUI", true);
+            inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "redExtraObj", false);
+            inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "blueExtraUI", true);
+            inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "blueExtraObj", false);
+
+            inGameUIView.RPC("DisableAllKillLog", RpcTarget.All);
 
 
             // 플레이어 초기화
-            for(int i = 0; i < ((GameManagerFSM)stateMachine).gameManagerStat.playersA.Count; i++)
+            for(int i = 0; i < ((GameCenter0)stateMachine).playerList.playersA.Count; i++)
             {
-                GameManagerStat.PlayerData playerData = ((GameManagerFSM)stateMachine).gameManagerStat.playersA[i];
+                PlayerStat playerData = ((GameCenter0)stateMachine).playerList.playersA[i];
                 playerData.isAlive = true;
                 playerData.respawnTime = 100000000.0f;
                 playerData.ultimateCount = 0;
@@ -84,20 +105,20 @@ namespace FSM
                 view.RPC("PlayerReBornForAll", RpcTarget.All, playerData.spawnPoint);
                 view.RPC("PlayerReBornPersonal", playerData.player);
 
-                ((GameManagerFSM)stateMachine).gameManagerStat.deathUIView.RPC("DisableDeathCamUI", playerData.player);
+                deathUIView.RPC("DisableDeathCamUI", playerData.player);
 
-                for (int j = 0; j < ((GameManagerFSM)stateMachine).gameManagerStat.playersA.Count; j++)
+                for (int j = 0; j < ((GameCenter0)stateMachine).playerList.playersA.Count; j++)
                 {
-                    GameManagerStat.PlayerData playerData1 = ((GameManagerFSM)stateMachine).gameManagerStat.playersA[j];
-                    ((GameManagerFSM)stateMachine).gameManagerStat.inGameUIView.RPC("ShowTeamLifeDead", playerData1.player, playerData1.name, false);
+                    PlayerStat playerData1 = ((GameCenter0)stateMachine).playerList.playersA[j];
+                    inGameUIView.RPC("ShowTeamLifeDead", playerData1.player, playerData1.name, false);
                 }
 
                 view.GetComponent<BuffDebuffChecker>().ritualStacks = 0;
             }
 
-            for (int i = 0; i < ((GameManagerFSM)stateMachine).gameManagerStat.playersB.Count; i++)
+            for (int i = 0; i < ((GameCenter0)stateMachine).playerList.playersB.Count; i++)
             {
-                GameManagerStat.PlayerData playerData = ((GameManagerFSM)stateMachine).gameManagerStat.playersB[i];
+                PlayerStat playerData = ((GameCenter0)stateMachine).playerList.playersB[i];
                 playerData.isAlive = true;
                 playerData.respawnTime = 100000000.0f;
                 playerData.ultimateCount = 0;
@@ -110,12 +131,12 @@ namespace FSM
                 view.RPC("PlayerReBornForAll", RpcTarget.All, playerData.spawnPoint);
                 view.RPC("PlayerReBornPersonal", playerData.player);
 
-                ((GameManagerFSM)stateMachine).gameManagerStat.deathUIView.RPC("DisableDeathCamUI", playerData.player);
+                deathUIView.RPC("DisableDeathCamUI", playerData.player);
 
-                for (int j = 0; j < ((GameManagerFSM)stateMachine).gameManagerStat.playersB.Count; j++)
+                for (int j = 0; j < ((GameCenter0)stateMachine).playerList.playersB.Count; j++)
                 {
-                    GameManagerStat.PlayerData playerData1 = ((GameManagerFSM)stateMachine).gameManagerStat.playersB[j];
-                    ((GameManagerFSM)stateMachine).gameManagerStat.inGameUIView.RPC("ShowTeamLifeDead", playerData1.player, playerData1.name, false);
+                    PlayerStat playerData1 = ((GameCenter0)stateMachine).playerList.playersB[j];
+                    inGameUIView.RPC("ShowTeamLifeDead", playerData1.player, playerData1.name, false);
                 }
 
                 view.GetComponent<BuffDebuffChecker>().ritualStacks = 0;

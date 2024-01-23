@@ -15,7 +15,7 @@ namespace FSM
 
         }
 
-        public override void Update()
+        public override void FixedUpdate()
         {
 
         }

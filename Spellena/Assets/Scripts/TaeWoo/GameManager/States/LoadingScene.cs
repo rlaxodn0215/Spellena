@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Photon.Pun;
 using CoroutineMaker;
+using GameCenterDataType;
 
 namespace FSM
 {
@@ -23,6 +24,8 @@ namespace FSM
         {
             photonView = stateMachine.gameObject.GetComponent<PhotonView>();
             if (photonView == null) Debug.LogError("Not Set photonView");
+            ((GameCenter0)stateMachine).playerList.playersA = new List<PlayerStat>();
+            ((GameCenter0)stateMachine).playerList.playersB = new List<PlayerStat>();
         }
 
         public static void LoadNextScene(string nextSceneName, string loadingSceneName,
@@ -47,14 +50,6 @@ namespace FSM
 
             MakeCoroutine.Start_Coroutine(LoadSceneProcess());
             SetPlayerDatas();
-        }
-        public override void Update()
-        {
-
-        }
-        public override void Exit()
-        {
-
         }
 
         void ToDoMaster()
@@ -85,9 +80,8 @@ namespace FSM
                     if (timer >= loadingTime)
                     {
                         op.allowSceneActivation = true;
-                        stateMachine.ChangeState(((GameManagerFSM)stateMachine).
-                            gameManagerStat.GameStates
-                            [GameManagerStat.GameState.CharacterSelect]);
+                        stateMachine.ChangeState(((GameCenter0)stateMachine).GameStates
+                            [GameState.CharacterSelect]);
                         yield break;
                     }
                 }
@@ -103,7 +97,7 @@ namespace FSM
                 {
                     if(PhotonNetwork.PlayerList[i].ActorNumber == redTeamActorNums[i])
                     {
-                        ((GameManagerFSM)stateMachine).gameManagerStat.playersA
+                        ((GameCenter0)stateMachine).playerList.playersA
                             .Add(InitPlayerData(PhotonNetwork.PlayerList[i], i, true));
                         break;
                     }
@@ -119,7 +113,7 @@ namespace FSM
                 {
                     if (PhotonNetwork.PlayerList[i].ActorNumber == blueTeamActorNums[i])
                     {
-                        ((GameManagerFSM)stateMachine).gameManagerStat.playersB
+                        ((GameCenter0)stateMachine).playerList.playersB
                             .Add(InitPlayerData(PhotonNetwork.PlayerList[i], i, false));
                         break;
                     }
@@ -129,9 +123,9 @@ namespace FSM
             }
         }
 
-        GameManagerStat.PlayerData InitPlayerData(Photon.Realtime.Player player, int index, bool isRedTeam)
+        PlayerStat InitPlayerData(Photon.Realtime.Player player, int index, bool isRedTeam)
         {
-            GameManagerStat.PlayerData playerData = new GameManagerStat.PlayerData();
+            PlayerStat playerData = new PlayerStat();
 
             playerData.index = index;
             playerData.name = player.NickName;
