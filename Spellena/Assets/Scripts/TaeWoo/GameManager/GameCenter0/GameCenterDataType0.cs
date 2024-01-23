@@ -34,6 +34,12 @@ namespace GameCenterDataType
 
         public int playerAssistViewID;
     }
+    public struct KillLogData
+    {
+        public bool isRed;
+        public bool isMe;
+        public float killLogTimer;
+    }
 
     public struct OccupyingTeam
     {
@@ -113,7 +119,6 @@ namespace GameCenterDataType
         //[Tooltip("대기실 준비 시간")]
         public float readyTime;
     }
-
 
     public struct DuringRoundStandardData
     {

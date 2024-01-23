@@ -41,7 +41,7 @@ public class GameCenter0 : StateMachine
         if (PhotonNetwork.IsMasterClient)
         {
             base.Update();
-            globalTimer.globalTime = Time.time;
+            globalTimer.globalTime += Time.fixedDeltaTime;
         }
     }
 

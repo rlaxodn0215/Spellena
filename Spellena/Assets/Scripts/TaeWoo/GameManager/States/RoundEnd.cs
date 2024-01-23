@@ -9,10 +9,11 @@ namespace FSM
     public class RoundEnd : BaseState
     {
         private DuringRoundData duringRoundData;
+        private RoundEndStandardData roundEndStandardData;
+
         private PhotonView inGameUIView;
         private PhotonView deathUIView;
-
-        private RoundEndStandardData roundEndStandardData;
+        private PhotonView bgmManagerView;
 
         public RoundEnd(StateMachine stateMachine) :
              base("RoundEnd", stateMachine)
@@ -24,6 +25,8 @@ namespace FSM
                 ((DuringRound)(((GameCenter0)stateMachine).GameStates[GameState.DuringRound])).inGameUIView;
             deathUIView =
                 ((DuringRound)(((GameCenter0)stateMachine).GameStates[GameState.DuringRound])).deathUIView;
+            bgmManagerView =
+                ((GameCenter0)stateMachine).bgmManagerView;
         }
 
         public override void Enter()
@@ -33,6 +36,8 @@ namespace FSM
 
             duringRoundData = 
                 ((DuringRound)(((GameCenter0)stateMachine).GameStates[GameState.DuringRound])).duringRoundData;
+
+            ShowRoundResult();
         }
 
         public override void Update()
@@ -56,6 +61,71 @@ namespace FSM
         public override void Exit()
         {
             ResetRound();
+        }
+
+        void ShowRoundResult()
+        {
+            int countA = ((GameCenter0)stateMachine).roundData.roundCount_A;
+            int countB = ((GameCenter0)stateMachine).roundData.roundCount_B;
+
+            if (duringRoundData.occupyingA.rate >= 100)
+            {
+                inGameUIView.RPC("ShowRoundPoint", RpcTarget.All, "A", countA);
+
+                for (int i = 0; i < ((GameCenter0)stateMachine).playerList.playersA.Count; i++)
+                {
+                    PlayerStat playerData = ((GameCenter0)stateMachine).playerList.playersA[i];
+
+                    if(countA < roundEndStandardData.roundEndNumber)
+                        inGameUIView.RPC("ShowRoundWin", playerData.player, countA + countB);
+                    else
+                        inGameUIView.RPC("ActiveInGameUIObj", playerData.player, "victory", true);
+
+                    bgmManagerView.RPC("PlayAudio", playerData.player, "RoundWin", 1.0f, false, true, "BGM");
+                }
+
+                for (int i = 0; i < ((GameCenter0)stateMachine).playerList.playersB.Count; i++)
+                {
+                    PlayerStat playerData = ((GameCenter0)stateMachine).playerList.playersB[i];
+
+                    if (countA < roundEndStandardData.roundEndNumber)
+                        inGameUIView.RPC("ShowRoundLoose", playerData.player, countA + countB);
+                    else
+                        inGameUIView.RPC("ActiveInGameUIObj", playerData.player, "defeat", true);
+
+                    bgmManagerView.RPC("PlayAudio", playerData.player, "RoundLoose", 1.0f, false, true, "BGM");
+                }
+
+            }
+
+            else
+            {
+                inGameUIView.RPC("ShowRoundPoint", RpcTarget.All, "B", countB);
+
+                for (int i = 0; i < ((GameCenter0)stateMachine).playerList.playersA.Count; i++)
+                {
+                    PlayerStat playerData = ((GameCenter0)stateMachine).playerList.playersA[i];
+
+                    if (countB < roundEndStandardData.roundEndNumber)
+                        inGameUIView.RPC("ShowRoundLoose", playerData.player, countA + countB);
+                    else
+                        inGameUIView.RPC("ActiveInGameUIObj", playerData.player, "defeat", true);
+
+                    bgmManagerView.RPC("PlayAudio", playerData.player, "RoundLoose", 1.0f, false, true, "BGM");
+                }
+
+                for (int i = 0; i < ((GameCenter0)stateMachine).playerList.playersB.Count; i++)
+                {
+                    PlayerStat playerData = ((GameCenter0)stateMachine).playerList.playersB[i];
+
+                    if (countA < roundEndStandardData.roundEndNumber)
+                        inGameUIView.RPC("ShowRoundWin", playerData.player, countA + countB);
+                    else
+                        inGameUIView.RPC("ActiveInGameUIObj", playerData.player, "victory", true);
+
+                    bgmManagerView.RPC("PlayAudio", playerData.player, "RoundWin", 1.0f, false, true, "BGM");
+                }
+            }
         }
 
         void ResetRound()

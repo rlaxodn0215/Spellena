@@ -52,7 +52,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
         player = PhotonNetwork.Instantiate("ChanYoung/Prefabs/PrefabsNew/ElementalOrder", spawnPoint.position, Quaternion.identity);
         if(player.GetComponent<PhotonView>().IsMine)
         {
-            player.GetComponent<PlayerCommon>().SetLocalPlayer();
+            //player.GetComponent<PlayerCommon>().SetLocalPlayer();
         }
     }
 }

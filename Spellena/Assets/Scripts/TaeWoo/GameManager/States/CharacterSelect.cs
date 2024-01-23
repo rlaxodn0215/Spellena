@@ -27,7 +27,8 @@ namespace FSM
         {
             characterSelect = ((GameCenter0)stateMachine).gameCenterObjs["CharacterSelect"].GetComponent<SelectingCharacter>();
             if (characterSelect == null) Debug.LogError("no characterSelect");
-            ((GameCenter0)stateMachine).globalTimer.globalDesiredTime = Time.time + characterSelectTimer.characterSelectTime;
+            ((GameCenter0)stateMachine).globalTimer.globalDesiredTime = 
+                ((GameCenter0)stateMachine).globalTimer.globalTime + characterSelectTimer.characterSelectTime;
         }
 
         public override void FixedUpdate()

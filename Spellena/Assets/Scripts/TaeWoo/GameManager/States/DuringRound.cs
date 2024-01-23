@@ -16,19 +16,37 @@ namespace FSM
         public PlayerStats playerStat;
         public InGameUI inGameUI;
         public PhotonView inGameUIView;
+        public OccupationArea occupationArea;
+        public AngleStatue angleStatue;
 
         public DuringRound(StateMachine stateMachine) :
             base("DuringRound", stateMachine)
         {
             InitDuringRoundData();
             InitDuringRoundStandardData();
+            SerializeInGameUI();
+        }
+
+        public override void FixedUpdate()
+        {
+            OccupyBarCounting();
+            OccupyAreaCounting();
+            CheckingPlayerReSpawn();
+            CheckingRoundEnd();
+            SerializeInGameUI();
+        }
+
+        public override void Exit()
+        {
+            RoundEndCounting();
+            SerializeInGameUI();
         }
 
         void InitDuringRoundData()
         {
             duringRoundData = new DuringRoundData();
-            ((GameCenter0)stateMachine).roundData.roundCount_A = 
-                ((GameCenter0)stateMachine).roundData.roundCount_B = 1;
+            ((GameCenter0)stateMachine).roundData.roundCount_A =
+                ((GameCenter0)stateMachine).roundData.roundCount_B = 0;
             duringRoundData.teamAOccupying = duringRoundData.teamBOccupying = 0;
             duringRoundData.currentOccupationTeam = "";
             duringRoundData.teamA = "A";
@@ -45,6 +63,9 @@ namespace FSM
             inGameUI = ((GameCenter0)stateMachine).gameCenterObjs["InGameUI"].GetComponent<InGameUI>();
             if (inGameUI == null) Debug.LogError("no inGameUI");
             inGameUIView = ((GameCenter0)stateMachine).gameCenterObjs["InGameUI"].GetComponent<PhotonView>();
+            if (inGameUI == null) Debug.LogError("no inGameUIView");
+            occupationArea = ((GameCenter0)stateMachine).gameCenterObjs["OccupationArea"].GetComponent<OccupationArea>();
+            if (inGameUI == null) Debug.LogError("no occupationArea");
         }
 
         //scriptable object 적용
@@ -62,14 +83,8 @@ namespace FSM
             duringRoundStandardData.occupyingRate = 10f;
             duringRoundStandardData.occupyingComplete = 99f;
             duringRoundStandardData.roundEndTime = 5f;
-        }
 
-        public override void FixedUpdate()
-        {
-            OccupyBarCounting();
-            OccupyAreaCounting();
-            CheckingPlayerReSpawn();
-            CheckingRoundEnd();
+            inGameUI.duringRoundStandardData = duringRoundStandardData;
         }
 
         void OccupyBarCounting()
@@ -82,24 +97,24 @@ namespace FSM
                     if (!duringRoundData.flag.BitCompare((uint)StateCheck.isFighting) &&
                         duringRoundData.teamAOccupying > 0)
                     {
-                        //inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "fighting", true);
+                        inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "fighting", true);
                         duringRoundData.flag.BitAdd((uint)StateCheck.isFighting);
                     }
                 }
                 else
                 {
 
-                    //duringRoundData.occupyingA.rate += Time.fixedDeltaTime * occupyingRate;//약 1.8초당 1씩 오름
+                    duringRoundData.occupyingA.rate += Time.fixedDeltaTime * duringRoundStandardData.occupyingRate;//약 1.8초당 1씩 오름
                     if (duringRoundData.flag.BitCompare((uint)StateCheck.isFighting))
                     {
-                        //inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "fighting", false);
+                        inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "fighting", false);
                         duringRoundData.flag.BitSub((uint)StateCheck.isFighting);
                     }
                 }
 
                 if (duringRoundData.flag.BitCompare((uint)StateCheck.OccupyBarCountOnce))
                 {
-                    //bgmManagerView.RPC("PlayAudio", RpcTarget.All, "Occupying", 0.7f, false, true, "BGM");
+                    ((GameCenter0)stateMachine).bgmManagerView.RPC("PlayAudio", RpcTarget.All, "Occupying", 0.7f, false, true, "BGM");
                     duringRoundData.flag.BitSub((uint)StateCheck.OccupyBarCountOnce);
                 }
 
@@ -115,7 +130,7 @@ namespace FSM
                     if (!duringRoundData.flag.BitCompare((uint)StateCheck.isFighting) &&
                         duringRoundData.teamBOccupying > 0)
                     {
-                        //inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "fighting", true);
+                        inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "fighting", true);
                         duringRoundData.flag.BitAdd((uint)StateCheck.isFighting);
                     }
                 }
@@ -125,14 +140,14 @@ namespace FSM
 
                     if (duringRoundData.flag.BitCompare((uint)StateCheck.isFighting))
                     {
-                        //inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "fighting", false);
+                        inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "fighting", false);
                         duringRoundData.flag.BitSub((uint)StateCheck.isFighting);
                     }
                 }
 
                 if (duringRoundData.flag.BitCompare((uint)StateCheck.OccupyBarCountOnce))
                 {
-                    //bgmManagerView.RPC("PlayAudio", RpcTarget.All, "Occupying", 0.7f, false, true, "BGM");
+                    ((GameCenter0)stateMachine).bgmManagerView.RPC("PlayAudio", RpcTarget.All, "Occupying", 0.7f, false, true, "BGM");
                     duringRoundData.flag.BitSub((uint)StateCheck.OccupyBarCountOnce);
                 }
 
@@ -143,36 +158,8 @@ namespace FSM
 
         void OccupyAreaCounting()//점령 지역에 플레이어가 몇 명 점령하고 있는지 확인
         {
-            duringRoundData.teamAOccupying = 0;
-            duringRoundData.teamBOccupying = 0;
-
-            GameObject temp;
-
-            //Debug.Log("<color=green>" + "TeamAOccupying : " + gameCenter.teamAOccupying + "TeamBOccupying : " + gameCenter.teamBOccupying + "</color>");
-
-            for (int i = 0; i < ((GameCenter0)stateMachine).playerList.playersA.Count; i++)
-            {
-                temp = Helper.FindObjectWithViewID(((GameCenter0)stateMachine).playerList.playersA[i].characterViewID);
-                if (temp == null) continue;
-
-                //if (temp.GetComponent<Character>() == null) continue;
-                //if (temp.GetComponent<Character>().isOccupying == true)
-                {
-                    duringRoundData.teamAOccupying++;
-                }
-            }
-
-            for (int i = 0; i < ((GameCenter0)stateMachine).playerList.playersB.Count; i++)
-            {
-                temp = Helper.FindObjectWithViewID(((GameCenter0)stateMachine).playerList.playersB[i].characterViewID);
-                if (temp == null) continue;
-
-                //if (temp.GetComponent<Character>() == null) continue;
-                //if (temp.GetComponent<Character>().isOccupying == true)
-                {
-                    duringRoundData.teamBOccupying++;
-                }
-            }
+            duringRoundData.teamAOccupying = occupationArea.GetTeamCount("A");
+            duringRoundData.teamBOccupying = occupationArea.GetTeamCount("B");
 
             //Debug.Log("<color=green>" + "TeamAOccupying : " + gameCenter.teamAOccupying + "TeamBOccupying : " + gameCenter.teamBOccupying + "</color>");
 
@@ -183,7 +170,7 @@ namespace FSM
                 duringRoundData.occupyingReturnTimer = 0f;
                 if (!duringRoundData.flag.BitCompare((uint)StateCheck.isFighting))
                 {
-                    //inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "fighting", true);
+                    inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "fighting", true);
                     Debug.Log("<color=blue>" + "Active fighting" + "</color>");
                     duringRoundData.roundEndTimer = duringRoundStandardData.roundEndTime;
                     duringRoundData.flag.BitAdd((uint)StateCheck.isFighting);
@@ -196,7 +183,7 @@ namespace FSM
                 duringRoundData.occupyingReturnTimer = 0f;
                 if (duringRoundData.flag.BitCompare((uint)StateCheck.isFighting))
                 {
-                    //inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "fighting", false);
+                    inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "fighting", false);
                     duringRoundData.flag.BitSub((uint)StateCheck.isFighting);
                 }
             }
@@ -206,7 +193,7 @@ namespace FSM
                 duringRoundData.occupyingReturnTimer = 0f;
                 if (duringRoundData.flag.BitCompare((uint)StateCheck.isFighting))
                 {
-                    //inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "fighting", false);
+                    inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "fighting", false);
                     Debug.Log("<color=blue>" + "DisActive fighting" + "</color>");
                     duringRoundData.flag.BitSub((uint)StateCheck.isFighting);
                 }
@@ -216,7 +203,7 @@ namespace FSM
                 duringRoundData.occupyingReturnTimer += Time.fixedDeltaTime;
                 if (duringRoundData.flag.BitCompare((uint)StateCheck.isFighting))
                 {
-                    //inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "fighting", false);
+                    inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "fighting", false);
                     Debug.Log("<color=blue>" + "DisActive fighting" + "</color>");
                     duringRoundData.flag.BitSub((uint)StateCheck.isFighting);
                 }
@@ -227,7 +214,7 @@ namespace FSM
                 if (duringRoundData.occupyingTeam.rate > 0f)
                 {
                     duringRoundData.occupyingTeam.rate -= Time.fixedDeltaTime;
-                    //bgmManagerView.RPC("StopAudio", RpcTarget.All, "Occupying");
+                    ((GameCenter0)stateMachine).bgmManagerView.RPC("StopAudio", RpcTarget.All, "Occupying");
 
                     if (duringRoundData.occupyingTeam.rate < 0f)
                     {
@@ -251,28 +238,28 @@ namespace FSM
                     duringRoundData.occupyingTeam.name = "";
                     duringRoundData.occupyingTeam.rate = 0f;
 
-                    //bgmManagerView.RPC("PlayAudio", RpcTarget.All, "Occupation", 1.0f, false, true, "BGM");
+                    ((GameCenter0)stateMachine).bgmManagerView.RPC("PlayAudio", RpcTarget.All, "Occupation", 1.0f, false, true, "BGM");
 
                     if (duringRoundData.currentOccupationTeam == "A")
                     {
-                        //inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "captured_Red", true);
-                        //inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "captured_Blue", false);
-                        //inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "extraObj", false);
-                        //inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "blueExtraObj", false);
-                        //inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "blueExtraUI", true);
+                        inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "captured_Red", true);
+                        inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "captured_Blue", false);
+                        inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "extraObj", false);
+                        inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "blueExtraObj", false);
+                        inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "blueExtraUI", true);
 
-                        //angleStatue.GetComponent<PhotonView>().RPC("ChangeTeam", RpcTarget.All, "A");
+                        angleStatue.GetComponent<PhotonView>().RPC("ChangeTeam", RpcTarget.All, "A");
                     }
 
                     else if (duringRoundData.currentOccupationTeam == "B")
                     {
-                        //inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "captured_Red", false);
-                        //inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "captured_Blue", true);
-                        //inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "extraObj", false);
-                        //inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "redExtraObj", false);
-                        //inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "redExtraUI", true);
+                        inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "captured_Red", false);
+                        inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "captured_Blue", true);
+                        inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "extraObj", false);
+                        inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "redExtraObj", false);
+                        inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "redExtraUI", true);
 
-                        //angleStatue.GetComponent<PhotonView>().RPC("ChangeTeam", RpcTarget.All, "B");
+                        angleStatue.GetComponent<PhotonView>().RPC("ChangeTeam", RpcTarget.All, "B");
 
                     }
                 }
@@ -280,7 +267,7 @@ namespace FSM
                 else
                 {
                     duringRoundData.occupyingTeam.rate += duringRoundStandardData.occupyingGaugeRate * Time.fixedDeltaTime;
-                    //bgmManagerView.RPC("PlayAudio", RpcTarget.All, "Occupying", 1.0f, true, false, "BGM");
+                    ((GameCenter0)stateMachine).bgmManagerView.RPC("PlayAudio", RpcTarget.All, "Occupying", 1.0f, true, false, "BGM");
                 }
             }
             else if (duringRoundData.occupyingTeam.name == "")
@@ -294,7 +281,7 @@ namespace FSM
             else
             {
                 duringRoundData.occupyingTeam.rate -= duringRoundStandardData.occupyingGaugeRate * Time.fixedDeltaTime;
-                //bgmManagerView.RPC("StopAudio", RpcTarget.All, "Occupying");
+                ((GameCenter0)stateMachine).bgmManagerView.RPC("StopAudio", RpcTarget.All, "Occupying");
                 if (duringRoundData.occupyingTeam.rate < 0)
                 {
                     duringRoundData.occupyingTeam.name = "";
@@ -315,7 +302,7 @@ namespace FSM
                 PhotonView view = PhotonView.Find(playerStat.characterViewID);
                 view.RPC("PlayerReBornForAll", RpcTarget.All, playerStat.spawnPoint);
                 view.RPC("PlayerReBornPersonal", playerStat.player);
-                //deathUIView.RPC("DisableDeathCamUI", playerStat.player);
+                deathUIView.RPC("DisableDeathCamUI", playerStat.player);
                 playerStat.isAlive = true;
                 playerStat.respawnTime = 10000000.0f;
 
@@ -326,19 +313,20 @@ namespace FSM
                     // 팀원 부활 알리기
                     for (int i = 0; i < ((GameCenter0)stateMachine).playerList.playersA.Count; i++)
                     {
-                        //inGameUIView.RPC("ShowTeamLifeDead", playersA[i].player, playerData.name, false);
+                        inGameUIView.RPC("ShowTeamLifeDead", 
+                            ((GameCenter0)stateMachine).playerList.playersA[i].player, playerStat.name, false);
                     }
                 }
 
                 else
                 {
-
                     ((GameCenter0)stateMachine).playerList.playersB[playerStat.index] = playerStat;
 
                     // 팀원 부활 알리기
                     for (int i = 0; i < ((GameCenter0)stateMachine).playerList.playersB.Count; i++)
                     {
-                        //inGameUIView.RPC("ShowTeamLifeDead", playersB[i].player, playerData.name, false);
+                        inGameUIView.RPC("ShowTeamLifeDead", 
+                            ((GameCenter0)stateMachine).playerList.playersB[i].player, playerStat.name, false);
                     }
                 }
             }
@@ -350,10 +338,10 @@ namespace FSM
             if (duringRoundData.occupyingA.rate >= duringRoundStandardData.occupyingComplete &&
                 duringRoundData.currentOccupationTeam == duringRoundData.teamA)
             {
-                //inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "extraObj", true);
-                //inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "redExtraUI", false);
-                //inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "redExtraObj", true);
-                //bgmManagerView.RPC("PlayAudio", RpcTarget.All, "RoundAlmostEnd", 1.0f, true, true, "BGM");
+                inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "extraObj", true);
+                inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "redExtraUI", false);
+                inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "redExtraObj", true);
+                ((GameCenter0)stateMachine).bgmManagerView.RPC("PlayAudio", RpcTarget.All, "RoundAlmostEnd", 1.0f, true, true, "BGM");
 
                 if (duringRoundData.teamBOccupying <= 0)
                     duringRoundData.roundEndTimer -= Time.fixedDeltaTime;
@@ -362,10 +350,10 @@ namespace FSM
             else if (duringRoundData.occupyingB.rate >= duringRoundStandardData.occupyingComplete &&
                 duringRoundData.currentOccupationTeam == duringRoundData.teamB)
             {
-                //inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "extraObj", true);
-                //inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "blueExtraUI", false);
-                //inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "blueExtraObj", true);
-                //bgmManagerView.RPC("PlayAudio", RpcTarget.All, "RoundAlmostEnd", 1.0f, true, true, "BGM");
+                inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "extraObj", true);
+                inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "blueExtraUI", false);
+                inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "blueExtraObj", true);
+                ((GameCenter0)stateMachine).bgmManagerView.RPC("PlayAudio", RpcTarget.All, "RoundAlmostEnd", 1.0f, true, true, "BGM");
 
                 if (duringRoundData.teamAOccupying <= 0)
                     duringRoundData.roundEndTimer -= Time.fixedDeltaTime;
@@ -378,102 +366,30 @@ namespace FSM
 
             if (duringRoundData.roundEndTimer <= 0.0f)
             {
-                Debug.Log("라운드 승패 결정!!!!!!!!!!");
-
-                if (duringRoundData.currentOccupationTeam == duringRoundData.teamA)
-                {
-                    duringRoundData.occupyingA.rate = 100;
-
-                    if(duringRoundData.roundCount_A < duringRoundStandardData.roundEndNumber)
-                    {
-                        duringRoundData.roundCount_A++;
-                        //inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "redFirstPoint", true);
-
-                        for(int i = 0; i < ((GameCenter0)stateMachine).playerList.playersA.Count; i++)
-                        {
-                            PlayerStat playerData = ((GameCenter0)stateMachine).playerList.playersA[i];
-                            //inGameUIView.RPC("ShowRoundWin", playerData.player,roundCount_A + roundCount_B);
-                            //bgmManagerView.RPC("PlayAudio", playerData.player, "RoundWin", 1.0f, false, true, "BGM");
-                        }
-
-                        for (int i = 0; i < ((GameCenter0)stateMachine).playerList.playersB.Count; i++)
-                        {
-                            PlayerStat playerData = ((GameCenter0)stateMachine).playerList.playersB[i];
-                            //inGameUIView.RPC("ShowRoundLoose", playerData.player,roundCount_A + roundCount_B);
-                            //bgmManagerView.RPC("PlayAudio", playerData.player, "RoundLoose", 1.0f, false, true, "BGM");
-                        }
-
-                    }
-
-                    else
-                    {
-                        //inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "redSecondPoint", true);
-
-                        for (int i = 0; i < ((GameCenter0)stateMachine).playerList.playersA.Count; i++)
-                        {
-                            PlayerStat playerData = ((GameCenter0)stateMachine).playerList.playersA[i];
-                            //inGameUIView.RPC("ActiveInGameUIObj", playerData.player, "victory", true);
-                            //bgmManagerView.RPC("PlayAudio", playerData.player, "RoundWin", 1.0f, false, true, "BGM");
-                        }
-
-                        for (int i = 0; i < ((GameCenter0)stateMachine).playerList.playersB.Count; i++)
-                        {
-                            PlayerStat playerData = ((GameCenter0)stateMachine).playerList.playersB[i];
-                            //inGameUIView.RPC("ActiveInGameUIObj", playerData.player, "defeat", true);
-                            //bgmManagerView.RPC("PlayAudio", playerData.player, "RoundLoose", 1.0f, false, true, "BGM");
-                        }
-                    }
-
-                }
-
-                else if (duringRoundData.currentOccupationTeam == duringRoundData.teamB)
-                {
-                    duringRoundData.occupyingB.rate = 100;
-
-                    if (duringRoundData.roundCount_B < duringRoundStandardData.roundEndNumber)
-                    {
-                        duringRoundData.roundCount_B++;
-                        //inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "blueFirstPoint", true);
-
-                        for (int i = 0; i < ((GameCenter0)stateMachine).playerList.playersA.Count; i++)
-                        {
-                            PlayerStat playerData = ((GameCenter0)stateMachine).playerList.playersA[i];
-                            //inGameUIView.RPC("ShowRoundLoose", playerData.player,roundCount_A + roundCount_B);
-                            //bgmManagerView.RPC("PlayAudio", playerData.player, "RoundLoose", 1.0f, false, true, "BGM");
-                        }
-
-                        for (int i = 0; i < ((GameCenter0)stateMachine).playerList.playersB.Count; i++)
-                        {
-                            PlayerStat playerData = ((GameCenter0)stateMachine).playerList.playersB[i];
-                            //inGameUIView.RPC("ShowRoundWin", playerData.player,roundCount_A + roundCount_B);
-                            //bgmManagerView.RPC("PlayAudio", playerData.player, "RoundWin", 1.0f, false, true, "BGM");
-                        }
-
-                    }
-
-                    else
-                    {
-                        //inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "blueSecondPoint", true);
-
-                        for (int i = 0; i < ((GameCenter0)stateMachine).playerList.playersA.Count; i++)
-                        {
-                            PlayerStat playerData = ((GameCenter0)stateMachine).playerList.playersA[i];
-                            //inGameUIView.RPC("ActiveInGameUIObj", playerData.player, "defeat", true);
-                            //bgmManagerView.RPC("PlayAudio", playerData.player, "RoundLoose", 1.0f, false, true, "BGM");
-                        }
-
-                        for (int i = 0; i < ((GameCenter0)stateMachine).playerList.playersB.Count; i++)
-                        {
-                            PlayerStat playerData = ((GameCenter0)stateMachine).playerList.playersB[i];
-                            //inGameUIView.RPC("ActiveInGameUIObj", playerData.player, "victory", true);
-                            //bgmManagerView.RPC("PlayAudio", playerData.player, "RoundWin", 1.0f, false, true, "BGM");
-                        }
-                    }
-                }
-
                 //라운드 종료
                 stateMachine.ChangeState(((GameCenter0)stateMachine).GameStates[GameState.RoundEnd]);
             }
+        }
+
+        void RoundEndCounting()
+        {
+            if (duringRoundData.currentOccupationTeam == duringRoundData.teamA)
+            {
+                duringRoundData.occupyingA.rate = 100;
+                ((GameCenter0)stateMachine).roundData.roundCount_A++;
+            }
+
+            else if (duringRoundData.currentOccupationTeam == duringRoundData.teamB)
+            {
+                duringRoundData.occupyingB.rate = 100;
+                ((GameCenter0)stateMachine).roundData.roundCount_B++;
+            }
+        }
+
+        void SerializeInGameUI()
+        {
+            inGameUI.globalTimer = ((GameCenter0)stateMachine).globalTimer.globalTime;
+            inGameUI.duringRoundData = duringRoundData;
         }
     }
 }

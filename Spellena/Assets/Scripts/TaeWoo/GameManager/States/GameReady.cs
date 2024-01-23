@@ -16,16 +16,19 @@ namespace FSM
 
         public override void Enter() 
         {
-            ((GameCenter0)stateMachine).globalTimer.globalDesiredTime 
-                = Time.time + gameReadyStandardData.readyTime;
+            ((GameCenter0)stateMachine).globalTimer.globalTime = 0.0f;
+            ((GameCenter0)stateMachine).globalTimer.globalDesiredTime = gameReadyStandardData.readyTime;
         }
+
         public override void Update() 
         { 
-            if(Time.time >= ((GameCenter0)stateMachine).globalTimer.globalDesiredTime)
+            if(((GameCenter0)stateMachine).globalTimer.globalTime >= 
+                ((GameCenter0)stateMachine).globalTimer.globalDesiredTime)
             {
                 stateMachine.ChangeState(((GameCenter0)stateMachine).GameStates[GameState.DuringRound]);
             }
         }
+
         public override void Exit() { }
     }
 }

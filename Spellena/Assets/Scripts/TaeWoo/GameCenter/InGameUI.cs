@@ -3,7 +3,7 @@ using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
-using temp;
+using GameCenterDataType;
 
 public class InGameUI : MonoBehaviourPunCallbacks,IPunObservable
 {
@@ -33,57 +33,22 @@ public class InGameUI : MonoBehaviourPunCallbacks,IPunObservable
 
     KillLogData[] playerKillLogDatas;
 
-    public struct KillLogData
-    {
-        public bool isRed;
-        public bool isMe;
-        public float killLogTimer;
-    }
+    public DuringRoundData duringRoundData;
+    public DuringRoundStandardData duringRoundStandardData;
+    public float globalTimer;
 
-    public struct OccupyingTeam
-    {
-        public string name;
-        public float rate;
-    }
-
-    public struct Occupation
-    {
-        public float rate;
-    }
-
-    // 일시적인 게임 상태 string 테이터
-    [HideInInspector]
-    public string gameStateString;
-    // 전체 타이머
-    //[HideInInspector]
-    //public float globalTimerUI;
-    // 추가시간 타이머
-    [HideInInspector]
-    public float roundEndTimerUI;
-    // 같은 팀원 수
-    [HideInInspector]
-    public int teamCount = 1;
-    //추가 시간
-    [HideInInspector]
-    public float roundEndTimeUI = 5f;
-    // A팀의 점령도
-    [HideInInspector]
-    public Occupation occupyingAUI;
-    // B팀의 점령도
-    [HideInInspector]
-    public Occupation occupyingBUI;
-    // 점령 게이지 바
-    [HideInInspector]
-    public OccupyingTeam occupyingTeamUI;
     // 데미지 CrossHair 활성 시간
     [HideInInspector]
     private float damageActiveTime = 0.75f;
     // 킬 CrossHair 활성 시간
     [HideInInspector]
     private float killActiveTime = 1f;
+
     // 킬 로그 활성 시간
     [HideInInspector]
     private float killLogActiveTime = 3f;
+    [HideInInspector]
+    public int teamCount = 1;
     // 끝 킬로그 인덱스
     [HideInInspector]
     public int endKillLogIndex;
@@ -103,45 +68,105 @@ public class InGameUI : MonoBehaviourPunCallbacks,IPunObservable
 
     void ConnectUI()
     {
-        UIObjects["crossHair"] = GameCenterTest.FindObject(gameObject, "CrossHair");
-        UIObjects["unContested"] = GameCenterTest.FindObject(gameObject, "UnContested");
-        UIObjects["captured_Red"] = GameCenterTest.FindObject(gameObject, "RedCapture");
-        UIObjects["captured_Blue"] = GameCenterTest.FindObject(gameObject, "BlueCapture");
-        UIObjects["redFillCircle"] = GameCenterTest.FindObject(gameObject, "RedOutline");
-        UIObjects["blueFillCircle"] = GameCenterTest.FindObject(gameObject, "BlueOutline");
-        UIObjects["fighting"] = GameCenterTest.FindObject(gameObject, "Fighting");
-        UIObjects["redPayload"] = GameCenterTest.FindObject(gameObject, "RedPayload_Filled");
-        UIObjects["bluePayload"] = GameCenterTest.FindObject(gameObject, "BluePayload_Filled");
-        UIObjects["redExtraUI"] = GameCenterTest.FindObject(gameObject, "RedCTF");
-        UIObjects["blueExtraUI"] = GameCenterTest.FindObject(gameObject, "BlueCTF");
-        UIObjects["redPercentage"] = GameCenterTest.FindObject(gameObject, "RedOccupyingPercent");
-        UIObjects["bluePercentage"] = GameCenterTest.FindObject(gameObject, "BlueOccupyingPercent");
-        UIObjects["extraObj"] = GameCenterTest.FindObject(gameObject, "Extra");
-        UIObjects["extraTimer"] = GameCenterTest.FindObject(gameObject, "ExtaTimer");
-        UIObjects["redExtraObj"] = GameCenterTest.FindObject(gameObject, "Red");
-        UIObjects["blueExtraObj"] = GameCenterTest.FindObject(gameObject, "Blue");
-        UIObjects["redCTF"] = GameCenterTest.FindObject(gameObject, "RedCTF_Filled");
-        UIObjects["blueCTF"] = GameCenterTest.FindObject(gameObject, "BlueCTF_Filled");
-
-        UIObjects["redFirstPoint"] = GameCenterTest.FindObject(gameObject, "RedFirstPoint");
-        UIObjects["redSecondPoint"] = GameCenterTest.FindObject(gameObject, "RedSecondPoint");
-        UIObjects["blueFirstPoint"] = GameCenterTest.FindObject(gameObject, "BlueFirstPoint");
-        UIObjects["blueSecondPoint"] = GameCenterTest.FindObject(gameObject, "BlueSecondPoint");
-
-        UIObjects["damage"] = GameCenterTest.FindObject(gameObject, "Damage");
-        UIObjects["damage_Left"] = GameCenterTest.FindObject(gameObject, "Damage_Left");
-        UIObjects["damage_Right"] = GameCenterTest.FindObject(gameObject, "Damage_Right");
-        UIObjects["killText"] = GameCenterTest.FindObject(gameObject, "KillText");
-
-        UIObjects["angelTimer"] = GameCenterTest.FindObject(gameObject, "AngelTimer");
-        UIObjects["redAngelTimer"] = GameCenterTest.FindObject(gameObject, "RedAngelTimer");
-        UIObjects["blueAngelTimer"] = GameCenterTest.FindObject(gameObject, "BlueAngelTimer");
-        UIObjects["useAngel"] = GameCenterTest.FindObject(gameObject, "UseAngel");
-
+        ConnectObjects();
         ConnectKillLogs();
         ConnectMyTeamStatus();
         ConnectOutcome();
+        ConnectUIProperties();
+    }
 
+    void ConnectObjects()
+    {
+        //for(int i = 0; i < transform.childCount; i++)
+        //{
+        //    UIObjects[transform.GetChild(i).name] = Helper.FindObject(gameObject, transform.GetChild(i).name);
+        //}
+
+        UIObjects["crossHair"] = Helper.FindObject(gameObject, "CrossHair");
+        UIObjects["unContested"] = Helper.FindObject(gameObject, "UnContested");
+        UIObjects["captured_Red"] = Helper.FindObject(gameObject, "RedCapture");
+        UIObjects["captured_Blue"] = Helper.FindObject(gameObject, "BlueCapture");
+        UIObjects["redFillCircle"] = Helper.FindObject(gameObject, "RedOutline");
+        UIObjects["blueFillCircle"] = Helper.FindObject(gameObject, "BlueOutline");
+        UIObjects["fighting"] = Helper.FindObject(gameObject, "Fighting");
+        UIObjects["redPayload"] = Helper.FindObject(gameObject, "RedPayload_Filled");
+        UIObjects["bluePayload"] = Helper.FindObject(gameObject, "BluePayload_Filled");
+        UIObjects["redExtraUI"] = Helper.FindObject(gameObject, "RedCTF");
+        UIObjects["blueExtraUI"] = Helper.FindObject(gameObject, "BlueCTF");
+        UIObjects["redPercentage"] = Helper.FindObject(gameObject, "RedOccupyingPercent");
+        UIObjects["bluePercentage"] = Helper.FindObject(gameObject, "BlueOccupyingPercent");
+        UIObjects["extraObj"] = Helper.FindObject(gameObject, "Extra");
+        UIObjects["extraTimer"] = Helper.FindObject(gameObject, "ExtaTimer");
+        UIObjects["redExtraObj"] = Helper.FindObject(gameObject, "Red");
+        UIObjects["blueExtraObj"] = Helper.FindObject(gameObject, "Blue");
+        UIObjects["redCTF"] = Helper.FindObject(gameObject, "RedCTF_Filled");
+        UIObjects["blueCTF"] = Helper.FindObject(gameObject, "BlueCTF_Filled");
+
+        UIObjects["redPoint_1"] = Helper.FindObject(gameObject, "RedPoint_1");
+        UIObjects["redPoint_2"] = Helper.FindObject(gameObject, "RedPoint_2");
+
+        UIObjects["bluePoint_1"] = Helper.FindObject(gameObject, "BluePoint_1");
+        UIObjects["bluePoint_2"] = Helper.FindObject(gameObject, "BluePoint_2");
+
+        UIObjects["damage"] = Helper.FindObject(gameObject, "Damage");
+        UIObjects["damage_Left"] = Helper.FindObject(gameObject, "Damage_Left");
+        UIObjects["damage_Right"] = Helper.FindObject(gameObject, "Damage_Right");
+        UIObjects["killText"] = Helper.FindObject(gameObject, "KillText");
+
+        UIObjects["angelTimer"] = Helper.FindObject(gameObject, "AngelTimer");
+        UIObjects["redAngelTimer"] = Helper.FindObject(gameObject, "RedAngelTimer");
+        UIObjects["blueAngelTimer"] = Helper.FindObject(gameObject, "BlueAngelTimer");
+        UIObjects["useAngel"] = Helper.FindObject(gameObject, "UseAngel");
+    }
+
+    void ConnectKillLogs()
+    {
+        int n = Helper.FindObject(gameObject, "PlayerKillLogs").transform.childCount;
+
+        endKillLogIndex = 0;
+        maxKillLogIndex = n;
+        playerKillLogDatas = new KillLogData[n];
+
+        for (int i = 1; i <= n; i++)
+        {
+            UIObjects["killLog_" + i] = Helper.FindObject(gameObject, "KillLog_" + i);
+            UIObjects["killLog_" + i + "_BackImage_Red"] = Helper.FindObject(gameObject, "KillLog_" + i + "_BackImage_Red");
+            UIObjects["killLog_" + i + "_BackImage_Blue"] = Helper.FindObject(gameObject, "KillLog_" + i + "_BackImage_Blue");
+            UIObjects["isMe_" + i] = Helper.FindObject(gameObject, "IsMe_" + i);
+            UIObjects["murder_" + i] = Helper.FindObject(gameObject, "Murder_" + i);
+            murderNames.Add(UIObjects["murder_" + i].GetComponent<Text>());
+            UIObjects["victim_" + i] = Helper.FindObject(gameObject, "Victim_" + i);
+            victimNames.Add(UIObjects["victim_" + i].GetComponent<Text>());
+        }
+    }
+
+    void ConnectMyTeamStatus()
+    {
+        int n = Helper.FindObject(gameObject, "MyTeamPlayerStatus").transform.childCount;
+
+        for(int i = 1; i <= n; i++)
+        {
+            UIObjects["player_" + i] = Helper.FindObject(gameObject, "Player_" + i);
+            UIObjects["playerName_" + i] = Helper.FindObject(gameObject, "PlayerName_" + i);
+            UIObjects["player_" + i + "_Image"] = Helper.FindObject(gameObject, "Player_" + i + "_Image");
+            playerNames.Add(UIObjects["playerName_" + i].GetComponent<Text>());
+            UIObjects["playerDead_" + i] = Helper.FindObject(gameObject, "PlayerDead_" + i);
+        }
+
+    }
+
+    void ConnectOutcome()
+    {
+        UIObjects["roundWin"] = Helper.FindObject(gameObject, "RoundWin");
+        roundWinText = UIObjects["roundWin"].GetComponentInChildren<Text>();
+        UIObjects["roundLoose"] = Helper.FindObject(gameObject, "RoundLoose");
+        roundLooseText = UIObjects["roundLoose"].GetComponentInChildren<Text>();
+        UIObjects["victory"] = Helper.FindObject(gameObject, "Victory");
+        UIObjects["defeat"] = Helper.FindObject(gameObject, "Defeat");
+    }
+
+    void ConnectUIProperties()
+    {
         redPayloadImage = UIObjects["redPayload"].GetComponent<Image>();
         bluePayloadImage = UIObjects["bluePayload"].GetComponent<Image>();
         redPercentageText = UIObjects["redPercentage"].GetComponent<Text>();
@@ -159,74 +184,28 @@ public class InGameUI : MonoBehaviourPunCallbacks,IPunObservable
         damageImage_right = UIObjects["damage_Right"].GetComponent<Image>();
     }
 
-    void ConnectKillLogs()
-    {
-        int n = GameCenterTest.FindObject(gameObject, "PlayerKillLogs").transform.childCount;
-
-        endKillLogIndex = 0;
-        maxKillLogIndex = n;
-        playerKillLogDatas = new KillLogData[n];
-
-        for (int i = 1; i <= n; i++)
-        {
-            UIObjects["killLog_" + i] = GameCenterTest.FindObject(gameObject, "KillLog_" + i);
-            UIObjects["killLog_" + i + "_BackImage_Red"] = GameCenterTest.FindObject(gameObject, "KillLog_" + i + "_BackImage_Red");
-            UIObjects["killLog_" + i + "_BackImage_Blue"] = GameCenterTest.FindObject(gameObject, "KillLog_" + i + "_BackImage_Blue");
-            UIObjects["isMe_" + i] = GameCenterTest.FindObject(gameObject, "IsMe_" + i);
-            UIObjects["murder_" + i] = GameCenterTest.FindObject(gameObject, "Murder_" + i);
-            murderNames.Add(UIObjects["murder_" + i].GetComponent<Text>());
-            UIObjects["victim_" + i] = GameCenterTest.FindObject(gameObject, "Victim_" + i);
-            victimNames.Add(UIObjects["victim_" + i].GetComponent<Text>());
-        }
-    }
-
-    void ConnectMyTeamStatus()
-    {
-        int n = GameCenterTest.FindObject(gameObject, "MyTeamPlayerStatus").transform.childCount;
-
-        for(int i = 1; i <= n; i++)
-        {
-            UIObjects["player_" + i] = GameCenterTest.FindObject(gameObject, "Player_" + i);
-            UIObjects["playerName_" + i] = GameCenterTest.FindObject(gameObject, "PlayerName_" + i);
-            UIObjects["player_" + i + "_Image"] = GameCenterTest.FindObject(gameObject, "Player_" + i + "_Image");
-            playerNames.Add(UIObjects["playerName_" + i].GetComponent<Text>());
-            UIObjects["playerDead_" + i] = GameCenterTest.FindObject(gameObject, "PlayerDead_" + i);
-        }
-
-    }
-
-    void ConnectOutcome()
-    {
-        UIObjects["roundWin"] = GameCenterTest.FindObject(gameObject, "RoundWin");
-        roundWinText = UIObjects["roundWin"].GetComponentInChildren<Text>();
-        UIObjects["roundLoose"] = GameCenterTest.FindObject(gameObject, "RoundLoose");
-        roundLooseText = UIObjects["roundLoose"].GetComponentInChildren<Text>();
-        UIObjects["victory"] = GameCenterTest.FindObject(gameObject, "Victory");
-        UIObjects["defeat"] = GameCenterTest.FindObject(gameObject, "Defeat");
-    }
-
     void FixedUpdate()
     {
-        redPayloadImage.fillAmount = occupyingAUI.rate * 0.01f;
-        bluePayloadImage.fillAmount = occupyingBUI.rate * 0.01f;
-        redPercentageText.text = string.Format((int)occupyingAUI.rate + "%");
-        bluePercentageText.text = string.Format((int)occupyingBUI.rate + "%");
-        extraTimerText.text = string.Format("{0:F2}", roundEndTimerUI);
+        redPayloadImage.fillAmount = duringRoundData.occupyingA.rate * 0.01f;
+        bluePayloadImage.fillAmount = duringRoundData.occupyingB.rate * 0.01f;
+        redPercentageText.text = string.Format((int)duringRoundData.occupyingA.rate + "%");
+        bluePercentageText.text = string.Format((int)duringRoundData.occupyingB.rate + "%");
+        extraTimerText.text = string.Format("{0:F2}", duringRoundData.roundEndTimer);
 
         DisableKillLog();
 
-        if (occupyingTeamUI.name == "A")
-            redFillCircleImage.fillAmount = occupyingTeamUI.rate * 0.01f;
-        else if (occupyingTeamUI.name == "B")
-            blueFillCircleImage.fillAmount = occupyingTeamUI.rate * 0.01f;
+        if (duringRoundData.occupyingTeam.name == "A")
+            redFillCircleImage.fillAmount = duringRoundData.occupyingTeam.rate * 0.01f;
+        else if (duringRoundData.occupyingTeam.name == "B")
+            blueFillCircleImage.fillAmount = duringRoundData.occupyingTeam.rate * 0.01f;
         else
         {
             redFillCircleImage.fillAmount = 0;
             blueFillCircleImage.fillAmount = 0;
         }
 
-        redCTFImage.fillAmount = roundEndTimerUI / roundEndTimeUI;
-        blueCTFImage.fillAmount = roundEndTimerUI / roundEndTimeUI;
+        redCTFImage.fillAmount = duringRoundData.roundEndTimer / duringRoundStandardData.roundEndTime;
+        blueCTFImage.fillAmount = duringRoundData.roundEndTimer / duringRoundStandardData.roundEndTime;
         
     }
 
@@ -258,6 +237,20 @@ public class InGameUI : MonoBehaviourPunCallbacks,IPunObservable
     {
         ActiveInGameUIObj("roundLoose", true);
         roundLooseText.text = string.Format(round + " 라운드 패배!");
+    }
+
+    [PunRPC]
+    public void ShowRoundPoint(string team, int num)
+    {
+        if(team == "A")
+        {
+            ActiveInGameUIObj("redPoint_" + num, true);
+        }
+
+        else
+        {
+            ActiveInGameUIObj("bluePoint_" + num, true);
+        }
     }
 
     [PunRPC]
@@ -351,7 +344,8 @@ public class InGameUI : MonoBehaviourPunCallbacks,IPunObservable
 
                     if(isActive)
                     {
-                        redAngelTimerImage.fillAmount = 1.0f + (GameCenterTest.globalTimer - (float)PhotonNetwork.LocalPlayer.CustomProperties["AngelStatueCoolTime"]) / angelStatueCoolTime;
+                        redAngelTimerImage.fillAmount = 1.0f + 
+                            (globalTimer - (float)PhotonNetwork.LocalPlayer.CustomProperties["AngelStatueCoolTime"]) / angelStatueCoolTime;
 
                         if(redAngelTimerImage.fillAmount >=0.99f)
                         {
@@ -374,7 +368,8 @@ public class InGameUI : MonoBehaviourPunCallbacks,IPunObservable
 
                     if (isActive)
                     {
-                        blueAngelTimerImage.fillAmount = 1.0f + (GameCenterTest.globalTimer - (float)PhotonNetwork.LocalPlayer.CustomProperties["AngelStatueCoolTime"]) / angelStatueCoolTime;
+                        blueAngelTimerImage.fillAmount = 1.0f + 
+                            (globalTimer - (float)PhotonNetwork.LocalPlayer.CustomProperties["AngelStatueCoolTime"]) / angelStatueCoolTime;
 
                         if (blueAngelTimerImage.fillAmount >= 0.99f)
                         {
@@ -412,7 +407,7 @@ public class InGameUI : MonoBehaviourPunCallbacks,IPunObservable
             playerKillLogDatas[0].isMe = false;
         }
 
-        playerKillLogDatas[0].killLogTimer = GameCenterTest.globalTimer + killLogActiveTime;
+        playerKillLogDatas[0].killLogTimer = globalTimer + killLogActiveTime;
 
         UIObjects["killLog_" + 1 + "_BackImage_Red"].SetActive(_isRed);
         UIObjects["killLog_" + 1 + "_BackImage_Blue"].SetActive(!_isRed);
@@ -469,7 +464,7 @@ public class InGameUI : MonoBehaviourPunCallbacks,IPunObservable
     {
         if (endKillLogIndex < 1) return;
 
-        if(GameCenterTest.globalTimer >= playerKillLogDatas[endKillLogIndex-1].killLogTimer)
+        if(globalTimer >= playerKillLogDatas[endKillLogIndex-1].killLogTimer)
         {
             UIObjects["killLog_" + endKillLogIndex].SetActive(false);
             //Debug.Log("<color=yellow>" + "DisableKillLog index : " + endKillLogIndex + "</color>");
@@ -499,25 +494,29 @@ public class InGameUI : MonoBehaviourPunCallbacks,IPunObservable
     {
         if (stream.IsWriting)
         {
-            stream.SendNext(gameStateString);
-            stream.SendNext(roundEndTimerUI);
-            stream.SendNext(occupyingAUI.rate);
-            stream.SendNext(occupyingBUI.rate);
-            stream.SendNext(occupyingTeamUI.name);
-            stream.SendNext(occupyingTeamUI.rate);
-            //stream.SendNext(endKillLogIndex);
-            stream.SendNext(maxKillLogIndex);
+            stream.SendNext(globalTimer);
+            stream.SendNext(duringRoundData.teamAOccupying);
+            stream.SendNext(duringRoundData.teamBOccupying);
+            stream.SendNext(duringRoundData.occupyingReturnTimer);
+            stream.SendNext(duringRoundData.roundEndTimer);
+            stream.SendNext(duringRoundData.currentOccupationTeam);
+            stream.SendNext(duringRoundData.occupyingA.rate);
+            stream.SendNext(duringRoundData.occupyingB.rate);
+            stream.SendNext(duringRoundData.occupyingTeam.name);
+            stream.SendNext(duringRoundData.occupyingTeam.rate);
         }
         else
         {
-            gameStateString = (string)stream.ReceiveNext();
-            roundEndTimerUI = (float)stream.ReceiveNext();
-            occupyingAUI.rate = (float)stream.ReceiveNext();
-            occupyingBUI.rate = (float)stream.ReceiveNext();
-            occupyingTeamUI.name = (string)stream.ReceiveNext();
-            occupyingTeamUI.rate = (float)stream.ReceiveNext();
-            //endKillLogIndex = (int)stream.ReceiveNext();
-            maxKillLogIndex = (int)stream.ReceiveNext();
+            globalTimer = (float)stream.ReceiveNext();
+            duringRoundData.teamAOccupying = (int)stream.ReceiveNext();
+            duringRoundData.teamBOccupying = (int)stream.ReceiveNext();
+            duringRoundData.occupyingReturnTimer = (float)stream.ReceiveNext();
+            duringRoundData.roundEndTimer = (float)stream.ReceiveNext();
+            duringRoundData.currentOccupationTeam = (string)stream.ReceiveNext();
+            duringRoundData.occupyingA.rate = (float)stream.ReceiveNext();
+            duringRoundData.occupyingB.rate = (float)stream.ReceiveNext();
+            duringRoundData.occupyingTeam.name = (string)stream.ReceiveNext();
+            duringRoundData.occupyingTeam.rate = (float)stream.ReceiveNext();
         }
     }
 }
