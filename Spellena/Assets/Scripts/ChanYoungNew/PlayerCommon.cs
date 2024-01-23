@@ -228,8 +228,8 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
 
         minimapMask = UI.transform.GetChild(0).gameObject;
 
-        if(photonView.IsMine)
-            SetLocalPlayer();
+        //if(photonView.IsMine)
+        //    SetLocalPlayer();
     }
 
     protected void AddSkill(int count)
@@ -246,7 +246,8 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
 
     }
 
-    virtual public void SetLocalPlayer()
+    [PunRPC]
+    virtual public void SetLocalPlayer(string team)
     {
         cameraOverlay.gameObject.SetActive(true);
         cameraMain.gameObject.SetActive(true);
