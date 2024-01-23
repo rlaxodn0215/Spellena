@@ -1,9 +1,9 @@
-using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
-public class ElementalOrderSkill1 : InstantiateObject, IPunObservable
+public class ElementalOrderSkill6 : InstantiateObject, IPunObservable
 {
     private Transform castingAura;
     private Transform mainEffect;
@@ -11,10 +11,15 @@ public class ElementalOrderSkill1 : InstantiateObject, IPunObservable
     private ParticleSystem castingAuraEffect;
     private ParticleSystem[] mainEffects;
 
-    float skillCastingTime;
-    float skillLifeTime;
-    bool isColliderOn = false;
-    bool isOnce = false;
+    private float skillCastingTime;
+    private float skillLifeTime;
+    private float hitTimer;
+    private float currentHitTimer;
+    private bool isColliderOn = false;
+    private int hitCount = 8;
+    private bool isLoop = true;
+    private float power = 10f;
+
 
     List<GameObject> hitObjects = new List<GameObject>();
 
@@ -26,8 +31,8 @@ public class ElementalOrderSkill1 : InstantiateObject, IPunObservable
 
         hitTrigger.OnHit += HitEvent;
 
-        skillCastingTime = playerData.skillCastingTime[0];
-        skillLifeTime = playerData.skillLifeTime[0];
+        skillCastingTime = playerData.skillCastingTime[5];
+        skillLifeTime = playerData.skillLifeTime[5];
         castingAura = transform.GetChild(0).GetChild(0);
         mainEffect = transform.GetChild(0).GetChild(1);
 
@@ -38,12 +43,18 @@ public class ElementalOrderSkill1 : InstantiateObject, IPunObservable
         castingAuraEffect.Play();
 
         for (int i = 0; i < mainEffects.Length; i++)
-            mainEffects[i].startLifetime = skillLifeTime;//딜레이 고려
+            mainEffects[i].startLifetime = skillLifeTime;
+
+        hitTimer = skillLifeTime / hitCount;
+        currentHitTimer = hitTimer;
+
+
+
     }
 
     private void HitEvent(GameObject hitBody)
     {
-        if (isColliderOn && PhotonNetwork.IsMasterClient)
+        if(isColliderOn && PhotonNetwork.IsMasterClient)
         {
             GameObject _rootObject = hitBody.transform.root.gameObject;
             for(int i = 0; i < hitObjects.Count; i++)
@@ -52,36 +63,47 @@ public class ElementalOrderSkill1 : InstantiateObject, IPunObservable
                     return;
             }
 
-            /*
-              플레이어 데미지
-             */
+            float _magnitude = (_rootObject.transform.position - transform.position).magnitude;
+
+            Photon.Realtime.Player _player = _rootObject.GetComponent<PhotonView>().Owner;
+            Vector3 _direction = (_rootObject.transform.position - transform.position).normalized;
+            _direction *= power;
+            _rootObject.GetComponent<PhotonView>().RPC("AddPower", _player, _direction);
+
+            if(_magnitude <= 3f)
+            {
+
+            }
+
             hitObjects.Add(_rootObject);
         }
     }
 
     private void FixedUpdate()
     {
-        if (skillCastingTime > 0f)
+        if(skillCastingTime > 0)
         {
             skillCastingTime -= Time.fixedDeltaTime;
-            //떨어지는 효과 켜짐
+
             if (skillCastingTime <= 0f)
                 mainEffect.gameObject.SetActive(true);
         }
         else
         {
             skillLifeTime -= Time.fixedDeltaTime;
-            if (skillLifeTime <= playerData.skillLifeTime[0] * 0.7f && !isColliderOn && !isOnce)
+            currentHitTimer -= Time.fixedDeltaTime;
+            if(currentHitTimer <= 0f)
             {
-                isColliderOn = true;
-                isOnce = true;
+                currentHitTimer = hitTimer;
+                hitObjects.Clear();
             }
-            else if (skillLifeTime <= playerData.skillLifeTime[0] * 0.5f && isColliderOn)
-                isColliderOn = false;
 
-            if (skillLifeTime <= -1f && photonView.IsMine)
-                PhotonNetwork.Destroy(gameObject);
-
+            if(skillLifeTime <= playerData.skillLifeTime[5] * 0.1f && isLoop)
+            {
+                isLoop = false;
+                for(int i = 0; i < mainEffects.Length; i++)
+                    mainEffects[i].loop = false;
+            }
         }
     }
 }

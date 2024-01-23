@@ -8,6 +8,8 @@ public class PlayerElementalOrder : PlayerCommon
     private float distance;
 
     private List<int> commands = new List<int>();
+    private RenderTexture renderTexture;
+    private bool isPointStrikeOn;
 
 
     protected override void InitUniqueComponents()
@@ -17,6 +19,7 @@ public class PlayerElementalOrder : PlayerCommon
             skillDatas[i].isUnique = true;
 
         castingAura = unique.transform.GetChild(0).gameObject;
+        renderTexture = cameraMinimap.GetComponent<Camera>().targetTexture;
     }
 
     private void Update()
@@ -24,9 +27,7 @@ public class PlayerElementalOrder : PlayerCommon
         if(photonView.IsMine)
         {
             if(castingAura.activeSelf)
-            {
                 SetCastingAuraPos();
-            }
         }
     }
 
@@ -51,6 +52,8 @@ public class PlayerElementalOrder : PlayerCommon
         isClicked = !isClicked;
         if(isClicked)
         {
+            if (!CheckUniqueMouseClick())
+                return;
             int _index = GetIndexByCommands();
             //엘리멘탈 오더는 평타가 없다
             if (_index >= 0)
@@ -61,6 +64,25 @@ public class PlayerElementalOrder : PlayerCommon
                     photonView.RPC("ClickMouse", RpcTarget.MasterClient, _index, true);
             }
         }
+    }
+
+    virtual protected bool CheckUniqueMouseClick()
+    {
+        if (isCameraLocked)
+            return CheckPointStrike();
+        return true;
+    }
+
+    virtual protected bool CheckPointStrike()
+    {
+        Ray _tempRay = cameraMinimap.ScreenPointToRay(Input.mousePosition);
+        RaycastHit _hit;
+        if (Physics.Raycast(_tempRay, out _hit, Mathf.Infinity, layerMaskMap))
+        {
+            pointStrike = _hit.point;
+            return true;
+        }
+        return false;
     }
 
     protected override void CancelSkill()
@@ -107,15 +129,45 @@ public class PlayerElementalOrder : PlayerCommon
     protected override void PlayUniqueState(int index, bool IsOn)
     {
 
-        if(index == 0)
+        if (index == 0)
             SetCastingAura(index, IsOn);
+        else if (index == 5)
+            SetPointStrike(index, IsOn);
+    }
+    private void SetPointStrike(int index, bool IsOn)
+    {
+        if (IsOn)
+        {
+            cameraMinimap.GetComponent<Camera>().targetTexture = null;
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+            minimapMask.SetActive(false);
+        }
+        else
+        {
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
+            cameraMinimap.GetComponent<Camera>().targetTexture = renderTexture;
+            minimapMask.SetActive(true);
+        }
+        isCameraLocked = IsOn;
     }
 
     private void SetCastingAura(int index, bool IsOn)
     {
         castingAura.SetActive(IsOn);
         if (IsOn)
+        {
             distance = playerData.skillDistance[index];
+            Color _tempColor = Color.red;
+            if (index == 0)
+            {
+                _tempColor = Color.red;
+                castingAura.transform.localScale = new Vector3(3, 3, 3);
+            }
+            _tempColor.a = 0.3f;
+            castingAura.GetComponent<ParticleSystem>().startColor = _tempColor;
+        }
     }
 
     private void SetCastingAuraPos()
@@ -157,6 +209,12 @@ public class PlayerElementalOrder : PlayerCommon
     private void PlaySkillLogic1()
     {
         //MeteorStrike, 1, 1
+        object[] _temp = new object[2];
+        _temp[0] = photonView.ViewID;
+        PhotonNetwork.Instantiate("ChanYoungNew/ElementalOrder/ElementalOrderSkill1", castingAura.transform.position,
+            Quaternion.identity, data: _temp);
+
+        Debug.Log("지금이니?");
     }
 
     private void PlaySkillLogic2()
@@ -182,6 +240,10 @@ public class PlayerElementalOrder : PlayerCommon
     private void PlaySkillLogic6()
     {
         //Eterial Storm 3, 3
+        object[] _temp = new object[2];
+        _temp[0] = photonView.ViewID;
+        PhotonNetwork.Instantiate("ChanYoungNew/ElementalOrder/ElementalOrderSkill6", pointStrike,
+            Quaternion.identity, data: _temp);
     }
 
 }

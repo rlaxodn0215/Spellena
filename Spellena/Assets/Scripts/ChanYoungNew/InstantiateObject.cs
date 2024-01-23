@@ -13,8 +13,6 @@ public class InstantiateObject : MonoBehaviourPunCallbacks, IPunObservable
     {
         data = photonView.InstantiationData;
 
-        transform.position = (Vector3)data[1];
-
         playerPhotonView = PhotonNetwork.GetPhotonView((int)data[0]);
         playerData = playerPhotonView.GetComponent<PlayerCommon>().playerData;
     }
