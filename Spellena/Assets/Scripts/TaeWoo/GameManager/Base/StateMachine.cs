@@ -4,7 +4,7 @@ namespace FSM
 {
     public class StateMachine : MonoBehaviour
     {
-        BaseState currentState;
+        protected BaseState currentState;
 
         protected void Start()
         {

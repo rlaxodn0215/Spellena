@@ -13,12 +13,13 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
     Photon.Realtime.Player player;
 
     public PlayerData playerData;
+    public GameCenter0 gameCenter;
 
     protected int hp;
     private float speed = 5f;
     private float jumpForce = 7f;
 
-    //speedRate·Î Á¢±ÙÇØ ÇÃ·¹ÀÌ¾îÀÇ ÀÌµ¿¼Óµµ Á¶Á¤
+    //speedRateï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ï¿½Óµï¿½ ï¿½ï¿½ï¿½ï¿½
     protected float speedRate = 0f;
     protected float jumpForceRate = 1.0f;
 
@@ -43,7 +44,7 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
     public bool isRunning = false;
     protected bool isClicked = false;
 
-    //°¡ÇØÁö´Â ¿ÜºÎ Èû
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Üºï¿½ ï¿½ï¿½
     protected Vector3 externalForce = Vector3.zero;
     protected LayerMask layerMaskMap;
     protected LayerMask layerMaskWall;
@@ -69,11 +70,11 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
             None, Unique, Casting, Channeling
         }
 
-        //¸¶½ºÅÍ¿¡¼­ º¸³»´Â È®ÀÎ ½ÅÈ£
+        //ï¿½ï¿½ï¿½ï¿½ï¿½Í¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½ ï¿½ï¿½È£
         public bool isReady = false;
-        //·ÎÄÃ¿¡¼­ ÁØºñ »óÅÂ È®ÀÎ
+        //ï¿½ï¿½ï¿½Ã¿ï¿½ï¿½ï¿½ ï¿½Øºï¿½ ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½
         public bool isLocalReady = false;
-        //È¦µù, ÁöÁ¡ Å¸°Ý µî Æ¯¼ö ÁØºñ »óÅÂ°¡ ÀÖ´ÂÁö È®ÀÎ
+        //È¦ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½ ï¿½ï¿½ Æ¯ï¿½ï¿½ ï¿½Øºï¿½ ï¿½ï¿½ï¿½Â°ï¿½ ï¿½Ö´ï¿½ï¿½ï¿½ È®ï¿½ï¿½
         public bool isUnique = false;
     }
 
@@ -82,9 +83,9 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
         Immediately, AfterCasting
     }
 
-    //·ÎÄÃ -> None : ºñ¾îÀÖ´Â »óÅÂ, Ready : ÁØºñ »óÅÂ
-    //¸¶½ºÅÍ -> Casting : Ä³½ºÆÃÀ¸·Î ¹Ù²î±â Àü¿¡ ¼­¹ö¿¡¼­ ÄðÅ¸ÀÓ Ã¼Å©, Channeling : Ã¤³Î¸µÀÌ ³¡³ª°í ÄðÅ¸ÀÓ Àû¿ë
-    //¸ðµç ¼­¹ö ÀÌº¥Æ® -> 
+    //ï¿½ï¿½ï¿½ï¿½ -> None : ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½, Ready : ï¿½Øºï¿½ ï¿½ï¿½ï¿½ï¿½
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ -> Casting : Ä³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù²ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å¸ï¿½ï¿½ Ã¼Å©, Channeling : Ã¤ï¿½Î¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    //ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ìºï¿½Æ® -> 
     
 
     virtual protected void Awake()
@@ -111,7 +112,7 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
     {
         for(int i = 0; i < skillDatas.Count; i++)
         {
-            //ÄðÅ¸ÀÓ °ü·Ã
+            //ï¿½ï¿½Å¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             if (skillDatas[i].skillCoolDownTime > 0f)
                 skillDatas[i].skillCoolDownTime -= Time.fixedDeltaTime;
 
@@ -123,7 +124,7 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
                 photonView.RPC("NotifySkillIsReady", player, i);
             }
 
-            //Ä³½ºÆÃ ½Ã°£ °ü·Ã
+            //Ä³ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ ï¿½ï¿½ï¿½ï¿½
             if (skillDatas[i].skillCastingTime > 0f)
             {
                 skillDatas[i].skillCastingTime -= Time.fixedDeltaTime;
@@ -131,14 +132,14 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
                 {
                     if (photonView.IsMine)
                         skillDatas[i].skillState = SkillData.SkillState.Channeling;
-                    //½ºÅ³ Ã¤³Î¸µ ½Ã°£ °°Àº Å¸ÀÌ¹Ö¿¡ µ¿½Ã¿¡ ½ÇÇàµÇ¹Ç·Î fixedDeltaTime ÇÑ ÇÁ·¹ÀÓ Ãß°¡
+                    //ï¿½ï¿½Å³ Ã¤ï¿½Î¸ï¿½ ï¿½Ã°ï¿½ ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½Ì¹Ö¿ï¿½ ï¿½ï¿½ï¿½Ã¿ï¿½ ï¿½ï¿½ï¿½ï¿½Ç¹Ç·ï¿½ fixedDeltaTime ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½
                     skillDatas[i].skillChannelingTime = playerData.skillChannelingTime[i] + Time.fixedDeltaTime;
-                    //Ä³½ºÆÃ ½Ã°£ÀÌ ÀÖ´Â ½ºÅ³Àº ÀÌ °÷¿¡¼­ ·ÎÁ÷ÀÌ ½ÇÇàµÊ
+                    //Ä³ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½Å³ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½
                     PlaySkillLogic(i, SkillTiming.AfterCasting);
                 }
             }
 
-            //Ã¤³Î¸µ ½Ã°£ °ü·Ã
+            //Ã¤ï¿½Î¸ï¿½ ï¿½Ã°ï¿½ ï¿½ï¿½ï¿½ï¿½
             if (skillDatas[i].skillChannelingTime > 0f)
             {
                 skillDatas[i].skillChannelingTime -= Time.fixedDeltaTime;
@@ -154,13 +155,13 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
     public void NotifySkillIsReady(int index)
     {
         skillDatas[index].isReady = true;
-        Debug.Log("½ºÅ³ " + index + " ÁØºñµÊ");
+        Debug.Log("ï¿½ï¿½Å³ " + index + " ï¿½Øºï¿½ï¿½");
     }
 
     [PunRPC]
     public void NotifySetSkillCoolDownTime(int index)
     {
-        //ÄðÅ¸ÀÓ Àû¿ë
+        //ï¿½ï¿½Å¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         skillDatas[index].skillCoolDownTime = 1f;
         if (photonView.IsMine)
             skillDatas[index].skillState = SkillData.SkillState.None;
@@ -219,6 +220,8 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
         AddSkill(4);
 
         player = photonView.Owner;
+        gameCenter = GameObject.Find("GameCenter").GetComponent<GameCenter0>();
+        if (gameObject == null) Debug.LogError("Can't find gameCenter");
 
         AvatarForOther = transform.GetChild(1).gameObject;
         AvatarForMe = transform.GetChild(2).gameObject;
@@ -262,9 +265,88 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
         for (int i = 0; i < _skinMeshForMe.Length; i++)
             _skinMeshForMe[i].gameObject.layer = 8;
 
+        photonView.RPC("SetTag", RpcTarget.All,team);
     }
 
-    //ÀÔ·Â ÀÌº¥Æ® -> Å°º¸µå »óÅÂ º¯°æ ½Ã ¸¶´Ù È£Ãâ
+    [PunRPC]
+    public void SetTag(string team)
+    {
+        gameObject.tag = team;
+    }
+
+    [PunRPC]
+    public void PlayerDamaged(string enemy, int damage, string damagePart, Vector3 direction, float force)
+    {
+        if (isAlive == false) return;
+
+        if (damage > 0)
+        {
+            if (damagePart == "head")
+                hp -= (int)(damage * playerData.dataHeadShotRatio);
+            else
+                hp -= damage;
+
+            UI.GetComponent<ScreenEffectManager>().PlayDamageEffect(damage);
+            externalForce = direction;
+            
+            if (hp <= 0)
+                isAlive = false;
+        }
+
+        else
+        {
+            hp -= damage;
+            if (hp > playerData.dataHp) hp = playerData.dataHp;
+        }
+
+        if (PhotonNetwork.IsMasterClient)
+        {
+            gameCenter.GetComponent<PhotonView>().RPC("UpdateTotalDamage", RpcTarget.All, player.NickName, enemy, damage);
+
+            if(hp<=0)
+            {
+                gameCenter.GetComponent<PhotonView>().RPC("UpdatePlayerDead", RpcTarget.All, player.NickName, enemy);
+            }
+        }
+
+    }
+
+    //[PunRPC]
+    //public virtual void PlayerReBornForAll(Vector3 pos)
+    //{
+    //    gameObject.transform.position = pos;
+    //    gameObject.transform.rotation = Quaternion.identity;
+    //    moveVec = Vector3.zero;
+    //    isAlive = true;
+
+    //    for (int i = 0; i < ragdollRigid.Length; i++)
+    //    {
+    //        ragdollRigid[i].transform.localPosition = ragdollPos[i];
+    //        ragdollRigid[i].transform.localRotation = ragdollRot[i];
+    //        ragdollRigid[i].velocity = new Vector3(0, 0, 0);
+    //    }
+
+    //    Alive.SetActive(true);
+    //    animator.enabled = true;
+    //    GetComponent<CapsuleCollider>().enabled = true;
+    //    Dead.SetActive(false);
+
+    //    hp = dataHp;
+    //}
+
+    //[PunRPC]
+    //public void PlayerReBornPersonal()
+    //{
+    //    GetComponent<Camera>().transform.SetParent(Alive.transform);
+
+    //    GetComponent<Camera>().transform.localPosition = cameraPos;
+    //    GetComponent<Camera>().transform.localRotation = cameraRot;
+
+    //    GetComponent<Camera>().GetComponent<MouseControl>().enabled = true;
+    //    GetComponent<Camera>().GetComponent<DeadCamera>().enabled = false;
+    //}
+
+    //ï¿½Ô·ï¿½ ï¿½Ìºï¿½Æ® -> Å°ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ È£ï¿½ï¿½
 
     virtual protected void OnMouseMove(InputValue inputValue)
     {
@@ -379,7 +461,7 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
             for (int i = 0; i < skillDatas.Count; i++)
                 skillDatas[i].isLocalReady = false;
             skillDatas[index].isLocalReady = true;
-            Debug.Log("½ºÅ³ " + (index + 1) + " : ÁØºñ");
+            Debug.Log("ï¿½ï¿½Å³ " + (index + 1) + " : ï¿½Øºï¿½");
         }
     }
 
@@ -420,7 +502,7 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
     {
         if(index >= 0)
         {
-            //¸¶½ºÅÍ Å¬¶óÀÌ¾ðÆ®¿¡¼­ ÇÑ ¹ø ´õ È®ÀÎ
+            //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ È®ï¿½ï¿½
             if (skillDatas[index].isReady)
             {
                 if (skillDatas[index].isUnique && !isUnique)
@@ -431,14 +513,14 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
         }
         else
         {
-            //ÆòÅ¸
+            //ï¿½ï¿½Å¸
         }
     }
 
     [PunRPC]
     virtual public void SetSkillPlayer(int index, int nextSkillState)
     {
-        //½ºÅ³ »ç¿ë Å¸ÀÌ¹Ö
+        //ï¿½ï¿½Å³ ï¿½ï¿½ï¿½ Å¸ï¿½Ì¹ï¿½
         SkillData.SkillState _nextSkillState = (SkillData.SkillState)nextSkillState;
         if (photonView.IsMine)
         {
@@ -464,10 +546,10 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
                     skillDatas[i].isLocalReady = false;
                 skillDatas[index].isReady = false;
                 InvokeAnimation(index, true);
-                //½ºÅ³ Å¸ÀÌ¹Ö : Áï½Ã
+                //ï¿½ï¿½Å³ Å¸ï¿½Ì¹ï¿½ : ï¿½ï¿½ï¿½
                 PlaySkillLogic(index, SkillTiming.Immediately);
             }
-            //UniqueÀÏ¶§
+            //Uniqueï¿½Ï¶ï¿½
             else
             {
                 isUniqueState = true;
@@ -502,7 +584,7 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
 
     }
 
-    //½ºÅ³ ·ÎÁ÷ ±¸ÇöÀº ¿©±â¿¡¼­ ¿À¹ö¶óÀÌµå·Î ±¸Çö
+    //ï¿½ï¿½Å³ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½â¿¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ìµï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     virtual protected void PlaySkillLogic(int index, SkillTiming timing)
     {
 

@@ -24,7 +24,6 @@ namespace FSM
         {
             InitDuringRoundData();
             InitDuringRoundStandardData();
-            SerializeInGameUI();
         }
 
         public override void FixedUpdate()
@@ -171,7 +170,6 @@ namespace FSM
                 if (!duringRoundData.flag.BitCompare((uint)StateCheck.isFighting))
                 {
                     inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "fighting", true);
-                    Debug.Log("<color=blue>" + "Active fighting" + "</color>");
                     duringRoundData.roundEndTimer = duringRoundStandardData.roundEndTime;
                     duringRoundData.flag.BitAdd((uint)StateCheck.isFighting);
                 }
@@ -204,6 +202,7 @@ namespace FSM
                 if (duringRoundData.flag.BitCompare((uint)StateCheck.isFighting))
                 {
                     inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "fighting", false);
+                    ((GameCenter0)stateMachine).bgmManagerView.RPC("StopAudio", RpcTarget.All, "Occupying");
                     Debug.Log("<color=blue>" + "DisActive fighting" + "</color>");
                     duringRoundData.flag.BitSub((uint)StateCheck.isFighting);
                 }
@@ -214,7 +213,6 @@ namespace FSM
                 if (duringRoundData.occupyingTeam.rate > 0f)
                 {
                     duringRoundData.occupyingTeam.rate -= Time.fixedDeltaTime;
-                    ((GameCenter0)stateMachine).bgmManagerView.RPC("StopAudio", RpcTarget.All, "Occupying");
 
                     if (duringRoundData.occupyingTeam.rate < 0f)
                     {
@@ -242,32 +240,19 @@ namespace FSM
 
                     if (duringRoundData.currentOccupationTeam == "A")
                     {
-                        inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "captured_Red", true);
-                        inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "captured_Blue", false);
-                        inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "extraObj", false);
-                        inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "blueExtraObj", false);
-                        inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "blueExtraUI", true);
-
-                        angleStatue.GetComponent<PhotonView>().RPC("ChangeTeam", RpcTarget.All, "A");
+                        ChangeOccupyingUI(true);
                     }
 
                     else if (duringRoundData.currentOccupationTeam == "B")
                     {
-                        inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "captured_Red", false);
-                        inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "captured_Blue", true);
-                        inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "extraObj", false);
-                        inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "redExtraObj", false);
-                        inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "redExtraUI", true);
-
-                        angleStatue.GetComponent<PhotonView>().RPC("ChangeTeam", RpcTarget.All, "B");
-
+                        ChangeOccupyingUI(false);
                     }
                 }
 
                 else
                 {
                     duringRoundData.occupyingTeam.rate += duringRoundStandardData.occupyingGaugeRate * Time.fixedDeltaTime;
-                    ((GameCenter0)stateMachine).bgmManagerView.RPC("PlayAudio", RpcTarget.All, "Occupying", 1.0f, true, false, "BGM");
+                    //((GameCenter0)stateMachine).bgmManagerView.RPC("PlayAudio", RpcTarget.All, "Occupying", 1.0f, true, false, "BGM");
                 }
             }
             else if (duringRoundData.occupyingTeam.name == "")
@@ -281,13 +266,27 @@ namespace FSM
             else
             {
                 duringRoundData.occupyingTeam.rate -= duringRoundStandardData.occupyingGaugeRate * Time.fixedDeltaTime;
-                ((GameCenter0)stateMachine).bgmManagerView.RPC("StopAudio", RpcTarget.All, "Occupying");
+                //((GameCenter0)stateMachine).bgmManagerView.RPC("StopAudio", RpcTarget.All, "Occupying");
                 if (duringRoundData.occupyingTeam.rate < 0)
                 {
                     duringRoundData.occupyingTeam.name = "";
                     duringRoundData.occupyingTeam.rate = 0;
                 }
             }
+        }
+
+        void ChangeOccupyingUI(bool isATeam)
+        {
+            inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "captured_Red", isATeam);
+            inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "captured_Blue", !isATeam);
+            inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "extraObj", !isATeam);
+            inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "blueExtraObj", !isATeam);
+            inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "blueExtraUI", isATeam);
+
+            if(isATeam)
+                angleStatue.GetComponent<PhotonView>().RPC("ChangeTeam", RpcTarget.All, "A");
+            else
+                angleStatue.GetComponent<PhotonView>().RPC("ChangeTeam", RpcTarget.All, "B");
         }
 
         void CheckingPlayerReSpawn()
@@ -300,35 +299,12 @@ namespace FSM
                 Debug.Log("부활");
                 duringRoundData.playerRespawnQue.Dequeue();
                 PhotonView view = PhotonView.Find(playerStat.characterViewID);
-                view.RPC("PlayerReBornForAll", RpcTarget.All, playerStat.spawnPoint);
-                view.RPC("PlayerReBornPersonal", playerStat.player);
+                //view.RPC("PlayerReBornForAll", RpcTarget.All, playerStat.spawnPoint);
+                //view.RPC("PlayerReBornPersonal", playerStat.player);
                 deathUIView.RPC("DisableDeathCamUI", playerStat.player);
                 playerStat.isAlive = true;
                 playerStat.respawnTime = 10000000.0f;
-
-                if (playerStat.team == "A")
-                {
-                    ((GameCenter0)stateMachine).playerList.playersA[playerStat.index] = playerStat;
-
-                    // 팀원 부활 알리기
-                    for (int i = 0; i < ((GameCenter0)stateMachine).playerList.playersA.Count; i++)
-                    {
-                        inGameUIView.RPC("ShowTeamLifeDead", 
-                            ((GameCenter0)stateMachine).playerList.playersA[i].player, playerStat.name, false);
-                    }
-                }
-
-                else
-                {
-                    ((GameCenter0)stateMachine).playerList.playersB[playerStat.index] = playerStat;
-
-                    // 팀원 부활 알리기
-                    for (int i = 0; i < ((GameCenter0)stateMachine).playerList.playersB.Count; i++)
-                    {
-                        inGameUIView.RPC("ShowTeamLifeDead", 
-                            ((GameCenter0)stateMachine).playerList.playersB[i].player, playerStat.name, false);
-                    }
-                }
+                inGameUIView.RPC("ShowTeamLifeDead", RpcTarget.All, playerStat.name, false);
             }
 
         }
@@ -338,11 +314,7 @@ namespace FSM
             if (duringRoundData.occupyingA.rate >= duringRoundStandardData.occupyingComplete &&
                 duringRoundData.currentOccupationTeam == duringRoundData.teamA)
             {
-                inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "extraObj", true);
-                inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "redExtraUI", false);
-                inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "redExtraObj", true);
-                ((GameCenter0)stateMachine).bgmManagerView.RPC("PlayAudio", RpcTarget.All, "RoundAlmostEnd", 1.0f, true, true, "BGM");
-
+                RoundEndUI(true);
                 if (duringRoundData.teamBOccupying <= 0)
                     duringRoundData.roundEndTimer -= Time.fixedDeltaTime;
             }
@@ -350,11 +322,7 @@ namespace FSM
             else if (duringRoundData.occupyingB.rate >= duringRoundStandardData.occupyingComplete &&
                 duringRoundData.currentOccupationTeam == duringRoundData.teamB)
             {
-                inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "extraObj", true);
-                inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "blueExtraUI", false);
-                inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "blueExtraObj", true);
-                ((GameCenter0)stateMachine).bgmManagerView.RPC("PlayAudio", RpcTarget.All, "RoundAlmostEnd", 1.0f, true, true, "BGM");
-
+                RoundEndUI(false);
                 if (duringRoundData.teamAOccupying <= 0)
                     duringRoundData.roundEndTimer -= Time.fixedDeltaTime;
             }
@@ -369,6 +337,15 @@ namespace FSM
                 //라운드 종료
                 stateMachine.ChangeState(((GameCenter0)stateMachine).GameStates[GameState.RoundEnd]);
             }
+        }
+
+        void RoundEndUI(bool isATeam)
+        {
+            inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "extraObj", isATeam);
+            inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "redExtraUI", !isATeam);
+            inGameUIView.RPC("ActiveInGameUIObj", RpcTarget.All, "redExtraObj", isATeam);
+
+            ((GameCenter0)stateMachine).bgmManagerView.RPC("PlayAudio", RpcTarget.All, "RoundAlmostEnd", 1.0f, true, true, "BGM");
         }
 
         void RoundEndCounting()
@@ -390,6 +367,146 @@ namespace FSM
         {
             inGameUI.globalTimer = ((GameCenter0)stateMachine).globalTimer.globalTime;
             inGameUI.duringRoundData = duringRoundData;
+        }
+
+        [PunRPC]
+        public void UpdateTotalDamage(string victim, string enemy, int damage)
+        {
+            PlayerStat temp;
+
+            if (((GameCenter0)stateMachine).playerList.playersA.ContainsKey(enemy))
+            {
+                temp = ((GameCenter0)stateMachine).playerList.playersA[enemy];
+                temp.totalDamage += damage;           
+                ((GameCenter0)stateMachine).playerList.playersA[enemy] = temp;
+
+                temp = ((GameCenter0)stateMachine).playerList.playersB[victim];
+
+                AssistData assist;
+                assist.name = enemy;
+                assist.time = ((GameCenter0)stateMachine).globalTimer.globalTime + duringRoundStandardData.assistTime;
+                temp.attackedData.Add(assist);
+
+                ((GameCenter0)stateMachine).playerList.playersB[enemy] = temp;
+            }
+
+            else
+            {
+                temp = ((GameCenter0)stateMachine).playerList.playersB[enemy];
+                temp.totalDamage += damage;
+                ((GameCenter0)stateMachine).playerList.playersB[enemy] = temp;
+
+                temp = ((GameCenter0)stateMachine).playerList.playersA[victim];
+
+                AssistData assist;
+                assist.name = enemy;
+                assist.time = ((GameCenter0)stateMachine).globalTimer.globalTime + duringRoundStandardData.assistTime;
+                temp.attackedData.Add(assist);
+
+                ((GameCenter0)stateMachine).playerList.playersA[enemy] = temp;
+            }
+        }
+
+        [PunRPC]
+        public void UpdatePlayerDead(string victim, string killer)
+        {
+            if (((GameCenter0)stateMachine).playerList.playersA.ContainsKey(victim))
+            {
+                SettingVictim(victim, "A");
+                SettingKiller(killer, victim, "B");
+            }
+
+            else
+            {
+                SettingVictim(victim, "B");
+                SettingKiller(killer, victim, "A");
+            }
+        }
+
+        void SettingVictim(string victim, string team)
+        {
+            PlayerStat temp;
+
+            if(team == "A")
+            {
+                temp = ((GameCenter0)stateMachine).playerList.playersA[victim];
+                temp.isAlive = false;
+                temp.deadCount++;
+                temp.respawnTime = ((GameCenter0)stateMachine).globalTimer.globalTime 
+                    + duringRoundStandardData.playerRespawnTime;
+                CheckDealAssist(temp.attackedData, "B", victim);
+                temp.attackedData.Clear();
+                ((GameCenter0)stateMachine).playerList.playersA[victim] = temp;
+            }
+
+            else
+            {
+                temp = ((GameCenter0)stateMachine).playerList.playersB[victim];
+                temp.isAlive = false;
+                temp.deadCount++;
+                temp.respawnTime = ((GameCenter0)stateMachine).globalTimer.globalTime
+                    + duringRoundStandardData.playerRespawnTime;
+                CheckDealAssist(temp.attackedData, "A", victim);
+                temp.attackedData.Clear();
+                ((GameCenter0)stateMachine).playerList.playersB[victim] = temp;
+            }
+
+
+        }
+
+        void CheckDealAssist(List<AssistData> datas ,string team, string victim)
+        {
+            PlayerStat temp;
+
+            if (team == "A")
+            {
+                for(int i = 0; i < datas.Count - 1; i++)
+                {
+                    if(datas[i].time <= ((GameCenter0)stateMachine).globalTimer.globalTime)
+                    {
+                        temp = ((GameCenter0)stateMachine).playerList.playersA[datas[i].name];
+                        temp.assistCount++;
+                        inGameUIView.RPC("ShowAssistUI", temp.player, victim);
+                        ((GameCenter0)stateMachine).playerList.playersA[datas[i].name] = temp;
+                    }
+                }
+            }
+
+            else
+            {
+                for (int i = 0; i < datas.Count - 1; i++)
+                {
+                    if (datas[i].time <= ((GameCenter0)stateMachine).globalTimer.globalTime)
+                    {
+                        temp = ((GameCenter0)stateMachine).playerList.playersB[datas[i].name];
+                        temp.assistCount++;
+                        inGameUIView.RPC("ShowAssistUI", temp.player, victim);
+                        ((GameCenter0)stateMachine).playerList.playersB[datas[i].name] = temp;
+                    }
+                }
+            }
+
+        }
+
+        void SettingKiller(string killer, string victim, string team)
+        {
+            PlayerStat temp;
+
+            if (team == "A")
+            {
+                temp = ((GameCenter0)stateMachine).playerList.playersA[killer];
+                temp.killCount++;
+                inGameUIView.RPC("ShowKillUI", temp.player, victim);
+                ((GameCenter0)stateMachine).playerList.playersA[killer] = temp;
+            }
+
+            else
+            {
+                temp = ((GameCenter0)stateMachine).playerList.playersB[killer];
+                temp.killCount++;
+                inGameUIView.RPC("ShowKillUI", temp.player, victim);
+                ((GameCenter0)stateMachine).playerList.playersB[killer] = temp;
+            }
         }
     }
 }

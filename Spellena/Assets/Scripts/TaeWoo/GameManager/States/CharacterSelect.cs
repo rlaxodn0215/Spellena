@@ -50,10 +50,15 @@ namespace FSM
         {
             Transform[] playerSpawnA = Helper.FindObject(((GameCenter0)stateMachine).gameCenterObjs["playerSpawnPoints"], "TeamA").GetComponentsInChildren<Transform>(true);
             Transform[] playerSpawnB = Helper.FindObject(((GameCenter0)stateMachine).gameCenterObjs["playerSpawnPoints"], "TeamB").GetComponentsInChildren<Transform>(true);
+            int index = 0;
 
-            for (int i = 0; i < ((GameCenter0)stateMachine).playerList.playersA.Count; i++)
+            Dictionary<string, PlayerStat>.Enumerator iterA
+                     = ((GameCenter0)stateMachine).playerList.playersA.GetEnumerator();
+
+            while (iterA.MoveNext())
             {
-                PlayerStat playerA = ((GameCenter0)stateMachine).playerList.playersA[i];
+                KeyValuePair<string, PlayerStat> temp = iterA.Current;
+                PlayerStat playerA = temp.Value;
 
                 ((GameCenter0)stateMachine).gameManagerView.RPC("ActiveObject", playerA.player, "GlobalUI", true);
                 ((GameCenter0)stateMachine).gameManagerView.RPC("ActiveObject", playerA.player, "CharacterSelect", false);
@@ -62,11 +67,11 @@ namespace FSM
                 if (choseCharacter == null)
                 {
                     choseCharacter = playerA.character = "Observer";
-                    ((GameCenter0)stateMachine).playerList.playersA[i] = playerA;
+                    ((GameCenter0)stateMachine).playerList.playersA[playerA.name] = playerA;
                 }
 
                 GameObject playerCharacter = PhotonNetwork.Instantiate("Characters/" + choseCharacter,
-                        playerSpawnA[i].position, Quaternion.identity);
+                        playerSpawnA[index++].position, Quaternion.identity);
                 if (playerCharacter == null) continue;
 
                 PhotonView[] views = playerCharacter.GetComponentsInChildren<PhotonView>();
@@ -90,9 +95,14 @@ namespace FSM
                 playerCharacter.GetComponent<PhotonView>().RPC("ChangeName", RpcTarget.All, playerA.name);
             }
 
-            for (int i = 0; i < ((GameCenter0)stateMachine).playerList.playersB.Count; i++)
+            Dictionary<string, PlayerStat>.Enumerator iterB
+                    = ((GameCenter0)stateMachine).playerList.playersB.GetEnumerator();
+            index = 0;
+
+            while (iterB.MoveNext())
             {
-                PlayerStat playerB = ((GameCenter0)stateMachine).playerList.playersB[i];
+                KeyValuePair<string, PlayerStat> temp = iterB.Current;
+                PlayerStat playerB = temp.Value;
 
                 ((GameCenter0)stateMachine).gameManagerView.RPC("ActiveObject", playerB.player, "inGameUIObj", true);
                 ((GameCenter0)stateMachine).gameManagerView.RPC("ActiveObject", playerB.player, "characterSelectObj", false);
@@ -101,11 +111,11 @@ namespace FSM
                 if (choseCharacter == null)
                 {
                     choseCharacter = playerB.character = "Observer";
-                    ((GameCenter0)stateMachine).playerList.playersB[i] = playerB;
+                    ((GameCenter0)stateMachine).playerList.playersB[playerB.name] = playerB;
                 }
 
                 GameObject playerCharacter = PhotonNetwork.Instantiate("Characters/" + choseCharacter,
-                        playerSpawnB[i].position, Quaternion.identity);
+                        playerSpawnB[index++].position, Quaternion.identity);
                 if (playerCharacter == null) continue;
 
                 PhotonView[] views = playerCharacter.GetComponentsInChildren<PhotonView>();
@@ -128,27 +138,30 @@ namespace FSM
 
                 playerCharacter.GetComponent<PhotonView>().RPC("ChangeName", RpcTarget.All, playerB.name);
             }
+
         }
 
         void MakingTeamStateUI()
         {
-            for (int i = 0; i < ((GameCenter0)stateMachine).playerList.playersA.Count; i++)
+            Dictionary<string, PlayerStat>.Enumerator iterA
+                       = ((GameCenter0)stateMachine).playerList.playersA.GetEnumerator();
+
+            while (iterA.MoveNext())
             {
-                for (int j = 0; j < ((GameCenter0)stateMachine).playerList.playersA.Count; j++)
-                {
-                    inGameUIView.RPC("ShowTeamState", ((GameCenter0)stateMachine).playerList.playersA[j].player,
-                        ((GameCenter0)stateMachine).playerList.playersA[j].name);
-                }
+                KeyValuePair<string, PlayerStat> temp = iterA.Current;
+                PlayerStat playerA = temp.Value;
+                inGameUIView.RPC("ShowTeamState", RpcTarget.All, playerA.name);
             }
 
-            for (int i = 0; i < ((GameCenter0)stateMachine).playerList.playersB.Count; i++)
+            Dictionary<string, PlayerStat>.Enumerator iterB
+                       = ((GameCenter0)stateMachine).playerList.playersB.GetEnumerator();
+
+            while (iterB.MoveNext())
             {
-                for (int j = 0; j < ((GameCenter0)stateMachine).playerList.playersB.Count; j++)
-                {
-                    inGameUIView.RPC("ShowTeamState", ((GameCenter0)stateMachine).playerList.playersB[j].player,
-                        ((GameCenter0)stateMachine).playerList.playersB[j].name);
-                }
-            }      
+                KeyValuePair<string, PlayerStat> temp = iterB.Current;
+                PlayerStat playerB = temp.Value;
+                inGameUIView.RPC("ShowTeamState", RpcTarget.All, playerB.name);
+            }   
         }
     } 
 }

@@ -80,7 +80,6 @@ public class GameCenter0 : StateMachine
         if (bgmManager == null) Debug.LogError("no bgmManager");
         bgmManagerView = ((GameCenter0)stateMachine).gameCenterObjs["BGMManager"].GetComponent<PhotonView>();
         if (bgmManagerView == null) Debug.LogError("no bgmManagerView");
-
     }
 
     [PunRPC]
@@ -91,5 +90,4 @@ public class GameCenter0 : StateMachine
         else
             gameCenterObjs[name].SetActive(isActive);
     }
-
 }

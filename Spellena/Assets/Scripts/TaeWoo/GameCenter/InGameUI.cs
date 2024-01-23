@@ -318,6 +318,15 @@ public class InGameUI : MonoBehaviourPunCallbacks,IPunObservable
     }
 
     [PunRPC]
+    public void InitTeamLifeDead()
+    {
+        for (int i = 0; i < playerNames.Count; i++)
+        {
+            UIObjects["playerDead_" + (i + 1)].SetActive(false);
+        }
+    }
+
+    [PunRPC]
     public void ShowTeamLifeDead(string playerName, bool isDead)
     {
         for(int i = 0; i < playerNames.Count; i++)
@@ -329,6 +338,7 @@ public class InGameUI : MonoBehaviourPunCallbacks,IPunObservable
             }
         }
     }
+
 
     public void ShowAngelTimerUI(float angelStatueCoolTime, string team ,bool isActive)
     {

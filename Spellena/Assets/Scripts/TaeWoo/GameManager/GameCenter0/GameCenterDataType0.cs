@@ -21,9 +21,10 @@ namespace GameCenterDataType
         public int totalDamage;
         public int totalHeal;
         public bool isAlive;
+        public string killerName;
 
         public float angleStatueCoolTime;
-        public string killerName;
+        public List<AssistData> attackedData;
 
         public float respawnTime;
         public Vector3 spawnPoint;
@@ -32,8 +33,14 @@ namespace GameCenterDataType
         public Vector3 damageDirection;
         public float damageForce;
 
-        public int playerAssistViewID;
     }
+
+    public struct AssistData
+    {
+        public string name;
+        public float time;
+    }
+
     public struct KillLogData
     {
         public bool isRed;
@@ -74,8 +81,8 @@ namespace GameCenterDataType
 
     public struct PlayerList
     {
-        public List<PlayerStat> playersA; // Red
-        public List<PlayerStat> playersB; // Blue 
+        public Dictionary<string, PlayerStat> playersA; // Red
+        public Dictionary<string, PlayerStat> playersB; // Blue
     }
 
     public struct RoundData
@@ -169,7 +176,7 @@ namespace GameCenterDataType
     public enum StateCheck
     {
         OccupyBarCountOnce = 0x0001,
-        isFighting = 0x0002
+        isFighting = 0x0002,
     }
 
     public struct BitFlag

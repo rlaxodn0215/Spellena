@@ -72,11 +72,15 @@ namespace FSM
             {
                 inGameUIView.RPC("ShowRoundPoint", RpcTarget.All, "A", countA);
 
-                for (int i = 0; i < ((GameCenter0)stateMachine).playerList.playersA.Count; i++)
-                {
-                    PlayerStat playerData = ((GameCenter0)stateMachine).playerList.playersA[i];
+                Dictionary<string, PlayerStat>.Enumerator iterA 
+                    = ((GameCenter0)stateMachine).playerList.playersA.GetEnumerator();
 
-                    if(countA < roundEndStandardData.roundEndNumber)
+                while(iterA.MoveNext())
+                {
+                    KeyValuePair<string, PlayerStat> temp = iterA.Current;
+                    PlayerStat playerData = temp.Value;
+
+                    if (countA < roundEndStandardData.roundEndNumber)
                         inGameUIView.RPC("ShowRoundWin", playerData.player, countA + countB);
                     else
                         inGameUIView.RPC("ActiveInGameUIObj", playerData.player, "victory", true);
@@ -84,9 +88,13 @@ namespace FSM
                     bgmManagerView.RPC("PlayAudio", playerData.player, "RoundWin", 1.0f, false, true, "BGM");
                 }
 
-                for (int i = 0; i < ((GameCenter0)stateMachine).playerList.playersB.Count; i++)
+                Dictionary<string, PlayerStat>.Enumerator iterB
+                     = ((GameCenter0)stateMachine).playerList.playersB.GetEnumerator();
+
+                while (iterB.MoveNext())
                 {
-                    PlayerStat playerData = ((GameCenter0)stateMachine).playerList.playersB[i];
+                    KeyValuePair<string, PlayerStat> temp = iterB.Current;
+                    PlayerStat playerData = temp.Value;
 
                     if (countA < roundEndStandardData.roundEndNumber)
                         inGameUIView.RPC("ShowRoundLoose", playerData.player, countA + countB);
@@ -102,9 +110,13 @@ namespace FSM
             {
                 inGameUIView.RPC("ShowRoundPoint", RpcTarget.All, "B", countB);
 
-                for (int i = 0; i < ((GameCenter0)stateMachine).playerList.playersA.Count; i++)
+                Dictionary<string, PlayerStat>.Enumerator iterA
+                     = ((GameCenter0)stateMachine).playerList.playersA.GetEnumerator();
+
+                while (iterA.MoveNext())
                 {
-                    PlayerStat playerData = ((GameCenter0)stateMachine).playerList.playersA[i];
+                    KeyValuePair<string, PlayerStat> temp = iterA.Current;
+                    PlayerStat playerData = temp.Value;
 
                     if (countB < roundEndStandardData.roundEndNumber)
                         inGameUIView.RPC("ShowRoundLoose", playerData.player, countA + countB);
@@ -114,9 +126,13 @@ namespace FSM
                     bgmManagerView.RPC("PlayAudio", playerData.player, "RoundLoose", 1.0f, false, true, "BGM");
                 }
 
-                for (int i = 0; i < ((GameCenter0)stateMachine).playerList.playersB.Count; i++)
+                Dictionary<string, PlayerStat>.Enumerator iterB
+                     = ((GameCenter0)stateMachine).playerList.playersB.GetEnumerator();
+
+                while (iterB.MoveNext())
                 {
-                    PlayerStat playerData = ((GameCenter0)stateMachine).playerList.playersB[i];
+                    KeyValuePair<string, PlayerStat> temp = iterB.Current;
+                    PlayerStat playerData = temp.Value;
 
                     if (countA < roundEndStandardData.roundEndNumber)
                         inGameUIView.RPC("ShowRoundWin", playerData.player, countA + countB);
@@ -158,11 +174,15 @@ namespace FSM
 
             inGameUIView.RPC("DisableAllKillLog", RpcTarget.All);
 
-
             // 플레이어 초기화
-            for(int i = 0; i < ((GameCenter0)stateMachine).playerList.playersA.Count; i++)
+            Dictionary<string, PlayerStat>.Enumerator iterA
+                     = ((GameCenter0)stateMachine).playerList.playersA.GetEnumerator();
+
+            while (iterA.MoveNext())
             {
-                PlayerStat playerData = ((GameCenter0)stateMachine).playerList.playersA[i];
+                KeyValuePair<string, PlayerStat> temp = iterA.Current;
+                PlayerStat playerData = temp.Value;
+
                 playerData.isAlive = true;
                 playerData.respawnTime = 100000000.0f;
                 playerData.ultimateCount = 0;
@@ -176,19 +196,20 @@ namespace FSM
                 view.RPC("PlayerReBornPersonal", playerData.player);
 
                 deathUIView.RPC("DisableDeathCamUI", playerData.player);
-
-                for (int j = 0; j < ((GameCenter0)stateMachine).playerList.playersA.Count; j++)
-                {
-                    PlayerStat playerData1 = ((GameCenter0)stateMachine).playerList.playersA[j];
-                    inGameUIView.RPC("ShowTeamLifeDead", playerData1.player, playerData1.name, false);
-                }
+                inGameUIView.RPC("InitTeamLifeDead", playerData.player);
 
                 view.GetComponent<BuffDebuffChecker>().ritualStacks = 0;
+
             }
 
-            for (int i = 0; i < ((GameCenter0)stateMachine).playerList.playersB.Count; i++)
+            Dictionary<string, PlayerStat>.Enumerator iterB
+                    = ((GameCenter0)stateMachine).playerList.playersB.GetEnumerator();
+
+            while (iterB.MoveNext())
             {
-                PlayerStat playerData = ((GameCenter0)stateMachine).playerList.playersB[i];
+                KeyValuePair<string, PlayerStat> temp = iterB.Current;
+                PlayerStat playerData = temp.Value;
+
                 playerData.isAlive = true;
                 playerData.respawnTime = 100000000.0f;
                 playerData.ultimateCount = 0;
@@ -202,15 +223,11 @@ namespace FSM
                 view.RPC("PlayerReBornPersonal", playerData.player);
 
                 deathUIView.RPC("DisableDeathCamUI", playerData.player);
-
-                for (int j = 0; j < ((GameCenter0)stateMachine).playerList.playersB.Count; j++)
-                {
-                    PlayerStat playerData1 = ((GameCenter0)stateMachine).playerList.playersB[j];
-                    inGameUIView.RPC("ShowTeamLifeDead", playerData1.player, playerData1.name, false);
-                }
+                inGameUIView.RPC("InitTeamLifeDead", playerData.player);
 
                 view.GetComponent<BuffDebuffChecker>().ritualStacks = 0;
             }
+
         }
     }
 }

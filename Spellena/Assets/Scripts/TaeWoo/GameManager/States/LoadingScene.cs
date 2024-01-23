@@ -24,8 +24,8 @@ namespace FSM
         {
             photonView = stateMachine.gameObject.GetComponent<PhotonView>();
             if (photonView == null) Debug.LogError("Not Set photonView");
-            ((GameCenter0)stateMachine).playerList.playersA = new List<PlayerStat>();
-            ((GameCenter0)stateMachine).playerList.playersB = new List<PlayerStat>();
+            ((GameCenter0)stateMachine).playerList.playersA = new Dictionary<string, PlayerStat>();
+            ((GameCenter0)stateMachine).playerList.playersB = new Dictionary<string, PlayerStat>();
         }
 
         public static void LoadNextScene(string nextSceneName, string loadingSceneName,
@@ -98,7 +98,7 @@ namespace FSM
                     if(PhotonNetwork.PlayerList[i].ActorNumber == redTeamActorNums[i])
                     {
                         ((GameCenter0)stateMachine).playerList.playersA
-                            .Add(InitPlayerData(PhotonNetwork.PlayerList[i], i, true));
+                            .Add(PhotonNetwork.PlayerList[i].NickName, InitPlayerData(PhotonNetwork.PlayerList[i], i, true));
                         break;
                     }
                 }
@@ -114,7 +114,7 @@ namespace FSM
                     if (PhotonNetwork.PlayerList[i].ActorNumber == blueTeamActorNums[i])
                     {
                         ((GameCenter0)stateMachine).playerList.playersB
-                            .Add(InitPlayerData(PhotonNetwork.PlayerList[i], i, false));
+                            .Add(PhotonNetwork.PlayerList[i].NickName, InitPlayerData(PhotonNetwork.PlayerList[i], i, false));
                         break;
                     }
                 }
@@ -130,6 +130,7 @@ namespace FSM
             playerData.index = index;
             playerData.name = player.NickName;
             playerData.player = player;
+            playerData.attackedData = new List<AssistData>();
 
             if (isRedTeam) playerData.team = "A";
             else playerData.team = "B";
