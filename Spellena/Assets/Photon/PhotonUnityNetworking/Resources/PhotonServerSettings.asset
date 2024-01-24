@@ -217,6 +217,8 @@ MonoBehaviour:
   - UpdatePlayerDead
   - UpdateTotalDamage
   - InitTeamLifeDead
+  - SetLocalAI
+  - RPCTest
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

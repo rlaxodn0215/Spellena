@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 using BehaviourTree;
 
 public class AloyBT : BehaviourTree.Tree
@@ -76,9 +77,12 @@ public class AloyBT : BehaviourTree.Tree
 
     protected override void Update()
     {
-        base.Update();
-        CoolTimer();
-        ShowState();
+        if(PhotonNetwork.IsMasterClient)
+        {
+            base.Update();
+            CoolTimer();
+            ShowState();
+        }
     }
 
     void CoolTimer()

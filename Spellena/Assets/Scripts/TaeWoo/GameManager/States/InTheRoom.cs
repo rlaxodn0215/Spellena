@@ -4,12 +4,18 @@ using UnityEngine;
 
 namespace FSM
 {
+
     public class InTheRoom : BaseState
     {
-        public InTheRoom(StateMachine stateMachine) :
-            base("InTheRoom", stateMachine)
+        public InTheRoom(StateMachine stateMachine)
+            : base("InTheRoom", stateMachine)
         {
 
+        }
+
+        public override void Exit()
+        {
+            
         }
     }
 }

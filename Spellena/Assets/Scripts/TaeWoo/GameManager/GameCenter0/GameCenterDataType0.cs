@@ -87,6 +87,10 @@ namespace GameCenterDataType
 
     public struct RoundData
     {
+        // 팀 이름
+        public string teamA;
+        public string teamB;
+
         // 라운드 점수
         public int roundCount_A;
         public int roundCount_B;
@@ -111,10 +115,6 @@ namespace GameCenterDataType
         public Occupation occupyingB;
         // 점령 게이지 바
         public OccupyingTeam occupyingTeam;
-
-        // 팀 이름
-        public string teamA;
-        public string teamB;
 
         // 플레이어 부활 큐
         public Queue<PlayerStat> playerRespawnQue;
@@ -163,7 +163,6 @@ namespace GameCenterDataType
 
     public enum GameState
     {
-        InTheLobby,
         InTheRoom,
         LoadingScene,
         CharacterSelect,

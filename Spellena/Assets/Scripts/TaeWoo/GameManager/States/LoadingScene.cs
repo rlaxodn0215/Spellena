@@ -1,91 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using Photon.Pun;
-using CoroutineMaker;
 using GameCenterDataType;
 
 namespace FSM
 {
     public class LoadingScene : BaseState
     {
-        public static string nextScene;
-        public static List<int> redTeamActorNums = new List<int>();
-        public static List<int> blueTeamActorNums = new List<int>();
-        public float loadingTime = 5.0f;
-
-        private GameObject betweenBGMObj;
-        private SettingManager settingManager;
-        private PhotonView photonView;
+        public List<int> redTeamActorNums = new List<int>();
+        public List<int> blueTeamActorNums = new List<int>();
 
         public LoadingScene(StateMachine stateMachine) :
             base("LoadingScene", stateMachine)
-        {
-            photonView = stateMachine.gameObject.GetComponent<PhotonView>();
-            if (photonView == null) Debug.LogError("Not Set photonView");
-            ((GameCenter0)stateMachine).playerList.playersA = new Dictionary<string, PlayerStat>();
-            ((GameCenter0)stateMachine).playerList.playersB = new Dictionary<string, PlayerStat>();
-        }
-
-        public static void LoadNextScene(string nextSceneName, string loadingSceneName,
-            List<int> redTeam, List<int> blueTeam)
-        {
-            nextScene = nextSceneName;
-            redTeamActorNums = redTeam;
-            blueTeamActorNums = blueTeam;
-
-            PhotonNetwork.LoadLevel(loadingSceneName);
-        }
-
-        public static void GoBackToMain(string mainSceneName, string mainLoadingScene)
-        {
-            nextScene = mainSceneName;
-            PhotonNetwork.LoadLevel(mainLoadingScene);
-        }
+        {}
 
         public override void Enter()
         {
-            if (PhotonNetwork.IsMasterClient) ToDoMaster();
-
-            MakeCoroutine.Start_Coroutine(LoadSceneProcess());
             SetPlayerDatas();
-        }
-
-        void ToDoMaster()
-        {
-            photonView.RPC("SyncNextScene", RpcTarget.AllBufferedViaServer, nextScene);
-        }
-
-        [PunRPC]
-        public void SyncNextScene(string sceneName)
-        {
-            nextScene = sceneName;
-        }
-
-        IEnumerator LoadSceneProcess()
-        {
-            AsyncOperation op = SceneManager.LoadSceneAsync(nextScene);
-            op.allowSceneActivation = false;
-
-            float timer = 0.0f;
-
-            while (!op.isDone)
-            {
-                timer += Time.deltaTime;
-                yield return null;
-
-                if (op.progress > 0.9f)
-                {
-                    if (timer >= loadingTime)
-                    {
-                        op.allowSceneActivation = true;
-                        stateMachine.ChangeState(((GameCenter0)stateMachine).GameStates
-                            [GameState.CharacterSelect]);
-                        yield break;
-                    }
-                }
-            }
         }
 
         void SetPlayerDatas()
@@ -97,8 +29,8 @@ namespace FSM
                 {
                     if(PhotonNetwork.PlayerList[i].ActorNumber == redTeamActorNums[i])
                     {
-                        ((GameCenter0)stateMachine).playerList.playersA
-                            .Add(PhotonNetwork.PlayerList[i].NickName, InitPlayerData(PhotonNetwork.PlayerList[i], i, true));
+                        ((GameCenter0)stateMachine).players.Add(PhotonNetwork.PlayerList[i].NickName, 
+                            InitPlayerData(PhotonNetwork.PlayerList[i], i, true));
                         break;
                     }
                 }
@@ -113,8 +45,8 @@ namespace FSM
                 {
                     if (PhotonNetwork.PlayerList[i].ActorNumber == blueTeamActorNums[i])
                     {
-                        ((GameCenter0)stateMachine).playerList.playersB
-                            .Add(PhotonNetwork.PlayerList[i].NickName, InitPlayerData(PhotonNetwork.PlayerList[i], i, false));
+                        ((GameCenter0)stateMachine).players.Add(PhotonNetwork.PlayerList[i].NickName, 
+                            InitPlayerData(PhotonNetwork.PlayerList[i], i, false));
                         break;
                     }
                 }

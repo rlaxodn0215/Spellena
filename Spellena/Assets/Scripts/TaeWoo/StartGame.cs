@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
+using FSM;
+using GameCenterDataType;
 
 public class StartGame : MonoBehaviour
 {
@@ -19,7 +21,8 @@ public class StartGame : MonoBehaviour
     [PunRPC]
     public void StartGameToAll()
     {
-        LoadSceneManager.LoadNextScene("TaeWooScene_3", MakeTeamActorNumList(redTeam), MakeTeamActorNumList(blueTeam));
+        LoadSceneManager.LoadNextScene("TaeWooScene_3", "TaeWoo_LoadingScene",
+            MakeTeamActorNumList(redTeam), MakeTeamActorNumList(blueTeam));
     }
 
     List<int> MakeTeamActorNumList(GameObject teamObj)

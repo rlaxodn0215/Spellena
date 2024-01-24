@@ -164,7 +164,7 @@ public class GameResultUI : MonoBehaviourPunCallbacks
             //LoadSceneManager.GoBackToMenu("SiHyun RoomLobby Test");
             PhotonNetwork.LeaveRoom();
 
-            LoadSceneManager.GoBackToMenu("SiHyun MainLobby Test");
+            LoadSceneManager.GoBackToMenu("SiHyun MainLobby Test", "TaeWoo_BackToMainLoadingScene");
         }
     }
 }

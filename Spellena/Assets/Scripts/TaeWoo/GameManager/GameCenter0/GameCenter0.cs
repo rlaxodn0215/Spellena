@@ -16,6 +16,10 @@ public class GameCenter0 : StateMachine
     = new Dictionary<GameState, BaseState>();
 
     [HideInInspector]
+    public Dictionary<string, PlayerStat> players
+        = new Dictionary<string, PlayerStat>();
+
+    [HideInInspector]
     public PhotonView gameManagerView;
     [HideInInspector]
     public PhotonView bgmManagerView;
@@ -25,12 +29,12 @@ public class GameCenter0 : StateMachine
     [HideInInspector]
     public GlobalTimer globalTimer;
     [HideInInspector]
-    public PlayerList playerList;
-    [HideInInspector]
     public RoundData roundData;
 
     void Awake()
     {
+        DontDestroyOnLoad(this.gameObject);
+
         LinkingCenterObjects(this);
         LinkingGameStates(this);
         LinkingProperties(this);
@@ -40,14 +44,16 @@ public class GameCenter0 : StateMachine
     {
         if (PhotonNetwork.IsMasterClient)
         {
-            base.Update();
+            base.FixedUpdate();
             globalTimer.globalTime += Time.fixedDeltaTime;
+            //Debug.Log(currentState.name);
         }
+
     }
 
     protected override BaseState GetInitalState()
     {
-        return GameStates[GameState.InTheLobby];
+        return GameStates[GameState.InTheRoom];
     }
 
     void LinkingCenterObjects(StateMachine stateMachine)
@@ -56,12 +62,12 @@ public class GameCenter0 : StateMachine
         {
             gameCenterObjs[gameObject.transform.GetChild(i).name] 
                 = gameObject.transform.GetChild(i).gameObject;
+            gameCenterObjs[gameObject.transform.GetChild(i).name].SetActive(false);
         }
     }
 
     void LinkingGameStates(StateMachine stateMachine)
     {
-        GameStates[GameState.InTheLobby] = new InTheLobby(stateMachine);
         GameStates[GameState.InTheRoom] = new InTheRoom(stateMachine);
         GameStates[GameState.LoadingScene] = new LoadingScene(stateMachine);
         GameStates[GameState.CharacterSelect] = new CharacterSelect(stateMachine);

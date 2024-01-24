@@ -14,6 +14,7 @@ namespace FSM
         public CharacterSelectTimer characterSelectTimer;
 
         private PhotonView inGameUIView;
+        private PhotonView characterSelectView;
 
         public CharacterSelect(StateMachine stateMachine) :
             base("CharacterSelect", stateMachine)
@@ -21,6 +22,8 @@ namespace FSM
             characterSelectTimer.characterSelectTime = 1f;
             inGameUIView = ((GameCenter0)stateMachine).gameCenterObjs["InGameUI"].GetComponent<PhotonView>();
             if (inGameUIView == null) Debug.LogError("no inGameUIView");
+            characterSelectView = ((GameCenter0)stateMachine).gameCenterObjs["CharacterSelect"].GetComponent<PhotonView>();
+            if (characterSelectView == null) Debug.LogError("no characterSelectView");
         }
 
         public override void Enter()
@@ -29,10 +32,14 @@ namespace FSM
             if (characterSelect == null) Debug.LogError("no characterSelect");
             ((GameCenter0)stateMachine).globalTimer.globalDesiredTime = 
                 ((GameCenter0)stateMachine).globalTimer.globalTime + characterSelectTimer.characterSelectTime;
+            ActiveInGameObjs();
         }
 
         public override void FixedUpdate()
         {
+            characterSelectView.RPC("ReceiveTimerCount", RpcTarget.AllBuffered, 
+                ((GameCenter0)stateMachine).globalTimer.globalDesiredTime - ((GameCenter0)stateMachine).globalTimer.globalTime);
+
             if (((GameCenter0)stateMachine).globalTimer.globalTime >=
                 ((GameCenter0)stateMachine).globalTimer.globalDesiredTime)
             {
@@ -46,122 +53,106 @@ namespace FSM
             MakingTeamStateUI();
         }
 
+        void ActiveInGameObjs()
+        {
+            Dictionary<string, GameObject>.Enumerator iter
+                     = ((GameCenter0)stateMachine).gameCenterObjs.GetEnumerator();
+
+            while (iter.MoveNext())
+            {
+                KeyValuePair<string, GameObject> temp = iter.Current;
+                GameObject obj = temp.Value;
+                obj.SetActive(true);
+            }
+
+            ((GameCenter0)stateMachine).gameCenterObjs["InGameUI"].SetActive(false);
+        }
+
         void MakingCharacter()
         {
-            Transform[] playerSpawnA = Helper.FindObject(((GameCenter0)stateMachine).gameCenterObjs["playerSpawnPoints"], "TeamA").GetComponentsInChildren<Transform>(true);
-            Transform[] playerSpawnB = Helper.FindObject(((GameCenter0)stateMachine).gameCenterObjs["playerSpawnPoints"], "TeamB").GetComponentsInChildren<Transform>(true);
-            int index = 0;
+            Transform[] playerSpawnA = Helper.FindObject(((GameCenter0)stateMachine).gameCenterObjs["PlayerSpawnPoints"], "TeamA").GetComponentsInChildren<Transform>(true);
+            Transform[] playerSpawnB = Helper.FindObject(((GameCenter0)stateMachine).gameCenterObjs["PlayerSpawnPoints"], "TeamB").GetComponentsInChildren<Transform>(true);
+            int indexA = 0, indexB = 0;
 
-            Dictionary<string, PlayerStat>.Enumerator iterA
-                     = ((GameCenter0)stateMachine).playerList.playersA.GetEnumerator();
+            Dictionary<string, PlayerStat>.Enumerator iter
+                     = ((GameCenter0)stateMachine).players.GetEnumerator();
 
-            while (iterA.MoveNext())
+            while (iter.MoveNext())
             {
-                KeyValuePair<string, PlayerStat> temp = iterA.Current;
-                PlayerStat playerA = temp.Value;
+                KeyValuePair<string, PlayerStat> temp = iter.Current;
+                PlayerStat player = temp.Value;
+                Debug.Log("<color=red>" + player.name + "</color>");
 
-                ((GameCenter0)stateMachine).gameManagerView.RPC("ActiveObject", playerA.player, "GlobalUI", true);
-                ((GameCenter0)stateMachine).gameManagerView.RPC("ActiveObject", playerA.player, "CharacterSelect", false);
+                ((GameCenter0)stateMachine).gameManagerView.RPC("ActiveObject", player.player, "InGameUI", true);
+                ((GameCenter0)stateMachine).gameManagerView.RPC("ActiveObject", player.player, "CharacterSelect", false);
 
-                string choseCharacter = playerA.character;
+                string choseCharacter = player.character;
+                //if (choseCharacter == null)
+                //{
+                //    choseCharacter = player.character = "Observer";
+                //    ((GameCenter0)stateMachine).players[player.name] = player;
+                //}
+
                 if (choseCharacter == null)
                 {
-                    choseCharacter = playerA.character = "Observer";
-                    ((GameCenter0)stateMachine).playerList.playersA[playerA.name] = playerA;
+                    choseCharacter = player.character = "Aloy";
+                    ((GameCenter0)stateMachine).players[player.name] = player;
                 }
 
-                GameObject playerCharacter = PhotonNetwork.Instantiate("Characters/" + choseCharacter,
-                        playerSpawnA[index++].position, Quaternion.identity);
+                Vector3 pos;
+
+                if(player.team == ((GameCenter0)stateMachine).roundData.teamA)
+                {
+                    pos = playerSpawnA[indexA++].position;
+                }
+
+                else
+                {
+                    pos = playerSpawnB[indexB++].position;
+                }
+
+                GameObject playerCharacter = PhotonNetwork.Instantiate("Characters/" + choseCharacter,pos, Quaternion.identity);
                 if (playerCharacter == null) continue;
 
                 PhotonView[] views = playerCharacter.GetComponentsInChildren<PhotonView>();
-                for (int j = 0; j < views.Length; j++)
+                for (int i = 0; i < views.Length; i++)
                 {
-                    views[j].TransferOwnership(playerA.player.ActorNumber);
+                    views[i].TransferOwnership(player.player.ActorNumber);
                 }
 
                 if (choseCharacter != "Observer")
                 {
-                    playerCharacter.GetComponent<PhotonView>().RPC("SetLocalPlayer", playerA.player);
+                    playerCharacter.GetComponent<PhotonView>().RPC("SetLocalPlayer", player.player);
+                }
+
+                else if(choseCharacter == "Aloy")
+                {
+                    playerCharacter.GetComponent<PhotonView>().RPC("SetLocalAI", player.player);
+                    inGameUIView.RPC("DisActiveCrosshair", player.player);
                 }
 
                 else
                 {
                     playerCharacter.GetComponent<PhotonView>().RPC("SetTag", RpcTarget.All, "TeamA");
-                    playerCharacter.GetComponent<PhotonView>().RPC("ActiveObserver", playerA.player);
-                    inGameUIView.RPC("DisActiveCrosshair", playerA.player);
+                    playerCharacter.GetComponent<PhotonView>().RPC("ActiveObserver", player.player);
+                    inGameUIView.RPC("DisActiveCrosshair", player.player);
                 }
 
-                playerCharacter.GetComponent<PhotonView>().RPC("ChangeName", RpcTarget.All, playerA.name);
+                playerCharacter.GetComponent<PhotonView>().RPC("ChangeName", RpcTarget.All, player.name);
             }
-
-            Dictionary<string, PlayerStat>.Enumerator iterB
-                    = ((GameCenter0)stateMachine).playerList.playersB.GetEnumerator();
-            index = 0;
-
-            while (iterB.MoveNext())
-            {
-                KeyValuePair<string, PlayerStat> temp = iterB.Current;
-                PlayerStat playerB = temp.Value;
-
-                ((GameCenter0)stateMachine).gameManagerView.RPC("ActiveObject", playerB.player, "inGameUIObj", true);
-                ((GameCenter0)stateMachine).gameManagerView.RPC("ActiveObject", playerB.player, "characterSelectObj", false);
-
-                string choseCharacter = playerB.character;
-                if (choseCharacter == null)
-                {
-                    choseCharacter = playerB.character = "Observer";
-                    ((GameCenter0)stateMachine).playerList.playersB[playerB.name] = playerB;
-                }
-
-                GameObject playerCharacter = PhotonNetwork.Instantiate("Characters/" + choseCharacter,
-                        playerSpawnB[index++].position, Quaternion.identity);
-                if (playerCharacter == null) continue;
-
-                PhotonView[] views = playerCharacter.GetComponentsInChildren<PhotonView>();
-                for (int j = 0; j < views.Length; j++)
-                {
-                    views[j].TransferOwnership(playerB.player.ActorNumber);
-                }
-
-                if (choseCharacter != "Observer")
-                {
-                    playerCharacter.GetComponent<PhotonView>().RPC("SetLocalPlayer", playerB.player);
-                }
-
-                else
-                {
-                    playerCharacter.GetComponent<PhotonView>().RPC("SetTag", RpcTarget.All, "TeamB");
-                    playerCharacter.GetComponent<PhotonView>().RPC("ActiveObserver", playerB.player);
-                    inGameUIView.RPC("DisActiveCrosshair", playerB.player);
-                }
-
-                playerCharacter.GetComponent<PhotonView>().RPC("ChangeName", RpcTarget.All, playerB.name);
-            }
-
         }
 
         void MakingTeamStateUI()
         {
-            Dictionary<string, PlayerStat>.Enumerator iterA
-                       = ((GameCenter0)stateMachine).playerList.playersA.GetEnumerator();
+            Dictionary<string, PlayerStat>.Enumerator iter
+                       = ((GameCenter0)stateMachine).players.GetEnumerator();
 
-            while (iterA.MoveNext())
+            while (iter.MoveNext())
             {
-                KeyValuePair<string, PlayerStat> temp = iterA.Current;
-                PlayerStat playerA = temp.Value;
-                inGameUIView.RPC("ShowTeamState", RpcTarget.All, playerA.name);
-            }
-
-            Dictionary<string, PlayerStat>.Enumerator iterB
-                       = ((GameCenter0)stateMachine).playerList.playersB.GetEnumerator();
-
-            while (iterB.MoveNext())
-            {
-                KeyValuePair<string, PlayerStat> temp = iterB.Current;
-                PlayerStat playerB = temp.Value;
-                inGameUIView.RPC("ShowTeamState", RpcTarget.All, playerB.name);
-            }   
+                KeyValuePair<string, PlayerStat> temp = iter.Current;
+                PlayerStat player = temp.Value;
+                inGameUIView.RPC("ShowTeamState", RpcTarget.All, player.name);
+            }  
         }
     } 
 }

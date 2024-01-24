@@ -46,10 +46,10 @@ namespace FSM
             duringRoundData = new DuringRoundData();
             ((GameCenter0)stateMachine).roundData.roundCount_A =
                 ((GameCenter0)stateMachine).roundData.roundCount_B = 0;
+            ((GameCenter0)stateMachine).roundData.teamA = "A";
+            ((GameCenter0)stateMachine).roundData.teamB = "B";
             duringRoundData.teamAOccupying = duringRoundData.teamBOccupying = 0;
             duringRoundData.currentOccupationTeam = "";
-            duringRoundData.teamA = "A";
-            duringRoundData.teamB = "B";
             duringRoundData.playerRespawnQue = new Queue<PlayerStat>();
             duringRoundData.flag = new BitFlag(0x0000);
 
@@ -89,7 +89,7 @@ namespace FSM
         void OccupyBarCounting()
         {
             //지역이 점령되어있으면 점령한 팀의 점령비율이 높아진다.
-            if (duringRoundData.currentOccupationTeam == duringRoundData.teamA)
+            if (duringRoundData.currentOccupationTeam == ((GameCenter0)stateMachine).roundData.teamA)
             {
                 if (duringRoundData.teamBOccupying > 0)
                 {
@@ -121,7 +121,7 @@ namespace FSM
                     duringRoundData.occupyingA.rate = duringRoundStandardData.occupyingComplete;
             }
 
-            else if (duringRoundData.currentOccupationTeam == duringRoundData.teamB)
+            else if (duringRoundData.currentOccupationTeam == ((GameCenter0)stateMachine).roundData.teamB)
             {
 
                 if (duringRoundData.teamAOccupying > 0)
@@ -177,7 +177,7 @@ namespace FSM
 
             else if (duringRoundData.teamAOccupying > 0)//A팀 점령
             {
-                ChangeOccupyingRate(duringRoundData.teamAOccupying, duringRoundData.teamA);
+                ChangeOccupyingRate(duringRoundData.teamAOccupying, ((GameCenter0)stateMachine).roundData.teamA);
                 duringRoundData.occupyingReturnTimer = 0f;
                 if (duringRoundData.flag.BitCompare((uint)StateCheck.isFighting))
                 {
@@ -187,7 +187,7 @@ namespace FSM
             }
             else if (duringRoundData.teamBOccupying > 0)//B팀 점령
             {
-                ChangeOccupyingRate(duringRoundData.teamBOccupying, duringRoundData.teamB);
+                ChangeOccupyingRate(duringRoundData.teamBOccupying, ((GameCenter0)stateMachine).roundData.teamB);
                 duringRoundData.occupyingReturnTimer = 0f;
                 if (duringRoundData.flag.BitCompare((uint)StateCheck.isFighting))
                 {
@@ -238,12 +238,12 @@ namespace FSM
 
                     ((GameCenter0)stateMachine).bgmManagerView.RPC("PlayAudio", RpcTarget.All, "Occupation", 1.0f, false, true, "BGM");
 
-                    if (duringRoundData.currentOccupationTeam == "A")
+                    if (duringRoundData.currentOccupationTeam == ((GameCenter0)stateMachine).roundData.teamA)
                     {
                         ChangeOccupyingUI(true);
                     }
 
-                    else if (duringRoundData.currentOccupationTeam == "B")
+                    else
                     {
                         ChangeOccupyingUI(false);
                     }
@@ -312,7 +312,7 @@ namespace FSM
         void CheckingRoundEnd()
         {
             if (duringRoundData.occupyingA.rate >= duringRoundStandardData.occupyingComplete &&
-                duringRoundData.currentOccupationTeam == duringRoundData.teamA)
+                duringRoundData.currentOccupationTeam == ((GameCenter0)stateMachine).roundData.teamA)
             {
                 RoundEndUI(true);
                 if (duringRoundData.teamBOccupying <= 0)
@@ -320,7 +320,7 @@ namespace FSM
             }
 
             else if (duringRoundData.occupyingB.rate >= duringRoundStandardData.occupyingComplete &&
-                duringRoundData.currentOccupationTeam == duringRoundData.teamB)
+                duringRoundData.currentOccupationTeam == ((GameCenter0)stateMachine).roundData.teamB)
             {
                 RoundEndUI(false);
                 if (duringRoundData.teamAOccupying <= 0)
@@ -350,13 +350,13 @@ namespace FSM
 
         void RoundEndCounting()
         {
-            if (duringRoundData.currentOccupationTeam == duringRoundData.teamA)
+            if (duringRoundData.currentOccupationTeam == ((GameCenter0)stateMachine).roundData.teamA)
             {
                 duringRoundData.occupyingA.rate = 100;
                 ((GameCenter0)stateMachine).roundData.roundCount_A++;
             }
 
-            else if (duringRoundData.currentOccupationTeam == duringRoundData.teamB)
+            else
             {
                 duringRoundData.occupyingB.rate = 100;
                 ((GameCenter0)stateMachine).roundData.roundCount_B++;
@@ -372,141 +372,63 @@ namespace FSM
         [PunRPC]
         public void UpdateTotalDamage(string victim, string enemy, int damage)
         {
-            PlayerStat temp;
+            if (!((GameCenter0)stateMachine).players.ContainsKey(enemy)) return;
+            PlayerStat temp = ((GameCenter0)stateMachine).players[enemy];
 
-            if (((GameCenter0)stateMachine).playerList.playersA.ContainsKey(enemy))
-            {
-                temp = ((GameCenter0)stateMachine).playerList.playersA[enemy];
-                temp.totalDamage += damage;           
-                ((GameCenter0)stateMachine).playerList.playersA[enemy] = temp;
+            temp.totalDamage += damage;
+            ((GameCenter0)stateMachine).players[enemy] = temp;
 
-                temp = ((GameCenter0)stateMachine).playerList.playersB[victim];
+            temp = ((GameCenter0)stateMachine).players[victim];
 
-                AssistData assist;
-                assist.name = enemy;
-                assist.time = ((GameCenter0)stateMachine).globalTimer.globalTime + duringRoundStandardData.assistTime;
-                temp.attackedData.Add(assist);
+            AssistData assist;
+            assist.name = enemy;
+            assist.time = ((GameCenter0)stateMachine).globalTimer.globalTime + duringRoundStandardData.assistTime;
+            temp.attackedData.Add(assist);
 
-                ((GameCenter0)stateMachine).playerList.playersB[enemy] = temp;
-            }
-
-            else
-            {
-                temp = ((GameCenter0)stateMachine).playerList.playersB[enemy];
-                temp.totalDamage += damage;
-                ((GameCenter0)stateMachine).playerList.playersB[enemy] = temp;
-
-                temp = ((GameCenter0)stateMachine).playerList.playersA[victim];
-
-                AssistData assist;
-                assist.name = enemy;
-                assist.time = ((GameCenter0)stateMachine).globalTimer.globalTime + duringRoundStandardData.assistTime;
-                temp.attackedData.Add(assist);
-
-                ((GameCenter0)stateMachine).playerList.playersA[enemy] = temp;
-            }
+            ((GameCenter0)stateMachine).players[victim] = temp;
         }
 
         [PunRPC]
         public void UpdatePlayerDead(string victim, string killer)
         {
-            if (((GameCenter0)stateMachine).playerList.playersA.ContainsKey(victim))
-            {
-                SettingVictim(victim, "A");
-                SettingKiller(killer, victim, "B");
-            }
-
-            else
-            {
-                SettingVictim(victim, "B");
-                SettingKiller(killer, victim, "A");
-            }
+            SettingVictim(victim);
+            SettingKiller(killer, victim);
         }
 
-        void SettingVictim(string victim, string team)
+        void SettingVictim(string victim)
+        {
+            PlayerStat temp = ((GameCenter0)stateMachine).players[victim];
+            temp.isAlive = false;
+            temp.deadCount++;
+            temp.respawnTime = ((GameCenter0)stateMachine).globalTimer.globalTime
+                + duringRoundStandardData.playerRespawnTime;
+            CheckDealAssist(temp.attackedData, victim);
+            temp.attackedData.Clear();
+            ((GameCenter0)stateMachine).players[victim] = temp;
+        }
+
+        void CheckDealAssist(List<AssistData> datas, string victim)
         {
             PlayerStat temp;
 
-            if(team == "A")
+            for (int i = 0; i < datas.Count - 1; i++)
             {
-                temp = ((GameCenter0)stateMachine).playerList.playersA[victim];
-                temp.isAlive = false;
-                temp.deadCount++;
-                temp.respawnTime = ((GameCenter0)stateMachine).globalTimer.globalTime 
-                    + duringRoundStandardData.playerRespawnTime;
-                CheckDealAssist(temp.attackedData, "B", victim);
-                temp.attackedData.Clear();
-                ((GameCenter0)stateMachine).playerList.playersA[victim] = temp;
-            }
-
-            else
-            {
-                temp = ((GameCenter0)stateMachine).playerList.playersB[victim];
-                temp.isAlive = false;
-                temp.deadCount++;
-                temp.respawnTime = ((GameCenter0)stateMachine).globalTimer.globalTime
-                    + duringRoundStandardData.playerRespawnTime;
-                CheckDealAssist(temp.attackedData, "A", victim);
-                temp.attackedData.Clear();
-                ((GameCenter0)stateMachine).playerList.playersB[victim] = temp;
-            }
-
-
-        }
-
-        void CheckDealAssist(List<AssistData> datas ,string team, string victim)
-        {
-            PlayerStat temp;
-
-            if (team == "A")
-            {
-                for(int i = 0; i < datas.Count - 1; i++)
+                if (datas[i].time <= ((GameCenter0)stateMachine).globalTimer.globalTime)
                 {
-                    if(datas[i].time <= ((GameCenter0)stateMachine).globalTimer.globalTime)
-                    {
-                        temp = ((GameCenter0)stateMachine).playerList.playersA[datas[i].name];
-                        temp.assistCount++;
-                        inGameUIView.RPC("ShowAssistUI", temp.player, victim);
-                        ((GameCenter0)stateMachine).playerList.playersA[datas[i].name] = temp;
-                    }
+                    temp = ((GameCenter0)stateMachine).players[datas[i].name];
+                    temp.assistCount++;
+                    inGameUIView.RPC("ShowAssistUI", temp.player, victim);
+                    ((GameCenter0)stateMachine).players[datas[i].name] = temp;
                 }
             }
-
-            else
-            {
-                for (int i = 0; i < datas.Count - 1; i++)
-                {
-                    if (datas[i].time <= ((GameCenter0)stateMachine).globalTimer.globalTime)
-                    {
-                        temp = ((GameCenter0)stateMachine).playerList.playersB[datas[i].name];
-                        temp.assistCount++;
-                        inGameUIView.RPC("ShowAssistUI", temp.player, victim);
-                        ((GameCenter0)stateMachine).playerList.playersB[datas[i].name] = temp;
-                    }
-                }
-            }
-
         }
 
-        void SettingKiller(string killer, string victim, string team)
+        void SettingKiller(string killer, string victim)
         {
-            PlayerStat temp;
-
-            if (team == "A")
-            {
-                temp = ((GameCenter0)stateMachine).playerList.playersA[killer];
-                temp.killCount++;
-                inGameUIView.RPC("ShowKillUI", temp.player, victim);
-                ((GameCenter0)stateMachine).playerList.playersA[killer] = temp;
-            }
-
-            else
-            {
-                temp = ((GameCenter0)stateMachine).playerList.playersB[killer];
-                temp.killCount++;
-                inGameUIView.RPC("ShowKillUI", temp.player, victim);
-                ((GameCenter0)stateMachine).playerList.playersB[killer] = temp;
-            }
+            PlayerStat temp = ((GameCenter0)stateMachine).players[killer];
+            temp.killCount++;
+            inGameUIView.RPC("ShowKillUI", temp.player, victim);
+            ((GameCenter0)stateMachine).players[killer] = temp;
         }
     }
 }

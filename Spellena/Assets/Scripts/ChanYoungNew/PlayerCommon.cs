@@ -13,7 +13,8 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
     Photon.Realtime.Player player;
 
     public PlayerData playerData;
-    public GameCenter0 gameCenter;
+    //[HideInInspector]
+    //public GameCenter0 gameCenter;
 
     protected int hp;
     private float speed = 5f;
@@ -220,12 +221,11 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
         AddSkill(4);
 
         player = photonView.Owner;
-        gameCenter = GameObject.Find("GameCenter").GetComponent<GameCenter0>();
-        if (gameObject == null) Debug.LogError("Can't find gameCenter");
+        //gameCenter = GameObject.Find("GameCenter").GetComponent<GameCenter0>();
+        //if (gameObject == null) Debug.LogError("Can't find gameCenter");
 
         AvatarForOther = transform.GetChild(1).gameObject;
         AvatarForMe = transform.GetChild(2).gameObject;
-
 
         unique = transform.GetChild(0).GetChild(1).gameObject;
 
@@ -269,6 +269,13 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
     }
 
     [PunRPC]
+    public void SetLocalAI(string team)
+    {
+        cameraMain.gameObject.SetActive(true);
+        photonView.RPC("SetTag", RpcTarget.All, team);
+    }
+
+    [PunRPC]
     public void SetTag(string team)
     {
         gameObject.tag = team;
@@ -301,11 +308,11 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
 
         if (PhotonNetwork.IsMasterClient)
         {
-            gameCenter.GetComponent<PhotonView>().RPC("UpdateTotalDamage", RpcTarget.All, player.NickName, enemy, damage);
+            //gameCenter.GetComponent<PhotonView>().RPC("UpdateTotalDamage", RpcTarget.All, player.NickName, enemy, damage);
 
             if(hp<=0)
             {
-                gameCenter.GetComponent<PhotonView>().RPC("UpdatePlayerDead", RpcTarget.All, player.NickName, enemy);
+                //gameCenter.GetComponent<PhotonView>().RPC("UpdatePlayerDead", RpcTarget.All, player.NickName, enemy);
             }
         }
 
