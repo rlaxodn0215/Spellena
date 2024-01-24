@@ -14,6 +14,8 @@ public class PlayerCommonOverlayAnimation : MonoBehaviour
 
     protected float rightHandWeight = 0f;
     protected float leftHandWeight = 0f;
+    protected float rightHandRotWeight = 0f;
+    protected float leftHandRotWeight = 0f;
 
     private int animationListener;
 

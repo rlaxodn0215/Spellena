@@ -56,8 +56,10 @@ public class ElementalOrderSkill4 : InstantiateObject, IPunObservable
         if (isColliderOn && PhotonNetwork.IsMasterClient)
         {
             GameObject _rootObject = hitBody.transform.root.gameObject;
+            /*
             if (_rootObject.tag == tag)
                 return;
+            */
             for (int i = 0; i < hitObjects.Count; i++)
             {
                 if (hitObjects[i] == _rootObject)
@@ -67,7 +69,19 @@ public class ElementalOrderSkill4 : InstantiateObject, IPunObservable
             /*
               플레이어 데미지
              */
-            //_rootObject.GetComponent<PhotonView>().RPC("AddForce", )
+            Photon.Realtime.Player _player = _rootObject.GetComponent<PhotonView>().Owner;
+
+            Vector3 _direction;
+
+            if (hitCount <= chargeCount)
+            {
+                _direction = (transform.position - _rootObject.transform.position) * 7f;
+                _rootObject.GetComponent<PhotonView>().RPC("AddPower", _player, _direction);
+            }
+            else
+            {
+                _rootObject.GetComponent<PhotonView>().RPC("AddYPower", _player, 10f);
+            }
             hitObjects.Add(_rootObject);
         }
     }
@@ -95,6 +109,7 @@ public class ElementalOrderSkill4 : InstantiateObject, IPunObservable
                     currentHitTimer = hitTimer;
                     mainEffects[hitCount].gameObject.SetActive(true);
                     hitCount++;
+                    hitObjects.Clear();
                 }
             }
 

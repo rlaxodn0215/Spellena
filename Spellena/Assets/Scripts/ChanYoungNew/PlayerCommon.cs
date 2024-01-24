@@ -499,6 +499,14 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
         externalForce += power;
     }
 
+    [PunRPC]
+    public void AddYPower(float power)
+    {
+        Vector3 _velocity = rigidbodyMain.velocity;
+        _velocity.y += power;
+        rigidbodyMain.velocity = _velocity;
+    }
+
     virtual protected void PlayUniqueState(int index, bool IsOn)
     {
 

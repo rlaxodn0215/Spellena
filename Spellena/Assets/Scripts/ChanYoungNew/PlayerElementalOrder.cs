@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
+using UnityEditor.XR;
+
 public class PlayerElementalOrder : PlayerCommon
 {
     private GameObject castingAura;
@@ -9,7 +11,9 @@ public class PlayerElementalOrder : PlayerCommon
 
     private List<int> commands = new List<int>();
     private RenderTexture renderTexture;
-    private bool isPointStrikeOn;
+
+    public GameObject rightOverlayOrbs;
+    public GameObject leftOverlayOrbs;
 
 
     protected override void InitUniqueComponents()
@@ -33,15 +37,27 @@ public class PlayerElementalOrder : PlayerCommon
 
     protected override void OnSkill1()
     {
-        AddCommand(1);
+        if (photonView.IsMine)
+        {
+            AddCommand(1);
+            photonView.RPC("SyncCommandEffect", RpcTarget.All, commands.ToArray());
+        }
     }
     protected override void OnSkill2()
     {
-        AddCommand(2);
+        if (photonView.IsMine)
+        {
+            AddCommand(2);
+            photonView.RPC("SyncCommandEffect", RpcTarget.All, commands.ToArray());
+        }
     }
     protected override void OnSkill3()
     {
-        AddCommand(3);
+        if (photonView.IsMine)
+        {
+            AddCommand(3);
+            photonView.RPC("SyncCommandEffect", RpcTarget.All, commands.ToArray());
+        }
     }
     protected override void OnSkill4()
     {
@@ -89,6 +105,7 @@ public class PlayerElementalOrder : PlayerCommon
     {
         base.CancelSkill();
         commands.Clear();
+        photonView.RPC("SyncCommandEffect", RpcTarget.All, commands.ToArray());
     }
 
 
@@ -123,13 +140,16 @@ public class PlayerElementalOrder : PlayerCommon
     {
         base.SetSkillPlayer(index, nextSkillState);
         if (photonView.IsMine && (SkillData.SkillState)nextSkillState == SkillData.SkillState.Casting)
+        {
             commands.Clear();
+            photonView.RPC("SyncCommandEffect", RpcTarget.All, commands.ToArray());
+        }
     }
 
     protected override void PlayUniqueState(int index, bool IsOn)
     {
 
-        if (index == 0 || index == 1 || index == 4)
+        if (index == 0 || index == 1 || index == 2 || index == 4)
             SetCastingAura(index, IsOn);
         else if (index == 3 || index == 5)
             SetPointStrike(index, IsOn);
@@ -164,6 +184,11 @@ public class PlayerElementalOrder : PlayerCommon
             {
                 _tempColor = Color.red;
                 castingAura.transform.localScale = new Vector3(3, 3, 3);
+            }
+            else if(index == 2)
+            {
+                _tempColor = Color.red;
+                castingAura.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
             }
             else if(index == 4)
             {
@@ -228,13 +253,19 @@ public class PlayerElementalOrder : PlayerCommon
         _temp[0] = photonView.ViewID;
         _temp[1] = tag;
         PhotonNetwork.Instantiate("ChanYoungNew/ElementalOrder/ElementalOrderSkill2", castingAura.transform.position,
-    Quaternion.identity, data: _temp);
+        Quaternion.identity, data: _temp);
         //RagnaEdge 1, 2
     }
 
     private void PlaySkillLogic3()
     {
         //BurstFlare 1, 3
+        object[] _temp = new object[2];
+        _temp[0] = photonView.ViewID;
+        _temp[1] = tag;
+
+        PhotonNetwork.Instantiate("ChanYoungNew/ElementalOrder/ElementalOrderSkill3", castingAura.transform.position,
+        transform.rotation, data: _temp);
     }
 
     private void PlaySkillLogic4()
@@ -266,6 +297,34 @@ public class PlayerElementalOrder : PlayerCommon
         _temp[1] = tag;
         PhotonNetwork.Instantiate("ChanYoungNew/ElementalOrder/ElementalOrderSkill6", pointStrike,
             Quaternion.identity, data: _temp);
+    }
+
+    [PunRPC]
+    public void SyncCommandEffect(int[] syncCommand)
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            bool _IsOn = rightOverlayOrbs.transform.GetChild(i).gameObject.activeSelf;
+            if (syncCommand.Length <= 0)
+                rightOverlayOrbs.transform.GetChild(i).gameObject.SetActive(false);
+            else if (_IsOn && i != syncCommand[0] - 1)
+                rightOverlayOrbs.transform.GetChild(i).gameObject.SetActive(false);
+            else if (!_IsOn && i == syncCommand[0] - 1)
+                rightOverlayOrbs.transform.GetChild(i).gameObject.SetActive(true);
+        }
+
+
+        for (int i = 0; i < 3; i++)
+        {
+            bool _IsOn = leftOverlayOrbs.transform.GetChild(i).gameObject.activeSelf;
+            if (syncCommand.Length <= 1)
+                leftOverlayOrbs.transform.GetChild(i).gameObject.SetActive(false);
+            else if (_IsOn && i != syncCommand[1] - 1)
+                leftOverlayOrbs.transform.GetChild(i).gameObject.SetActive(false);
+            else if (!_IsOn && i == syncCommand[1] - 1)
+                leftOverlayOrbs.transform.GetChild(i).gameObject.SetActive(true);
+        }
+
     }
 
 }
