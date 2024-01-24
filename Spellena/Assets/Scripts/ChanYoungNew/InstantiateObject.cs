@@ -15,6 +15,7 @@ public class InstantiateObject : MonoBehaviourPunCallbacks, IPunObservable
 
         playerPhotonView = PhotonNetwork.GetPhotonView((int)data[0]);
         playerData = playerPhotonView.GetComponent<PlayerCommon>().playerData;
+        tag = (string)data[1];
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
