@@ -58,7 +58,7 @@ public class ElementalOrderSkill6 : InstantiateObject, IPunObservable
         {
             GameObject _rootObject = hitBody.transform.root.gameObject;
 
-            if (_rootObject.tag != tag)
+            if (_rootObject.tag == tag)
                 return;
 
             for(int i = 0; i < hitObjects.Count; i++)
