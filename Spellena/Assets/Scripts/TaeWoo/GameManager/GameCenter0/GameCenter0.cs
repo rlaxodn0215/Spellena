@@ -46,7 +46,7 @@ public class GameCenter0 : StateMachine
         {
             base.FixedUpdate();
             globalTimer.globalTime += Time.fixedDeltaTime;
-            //Debug.Log(currentState.name);
+            Debug.Log(currentState.name);
         }
 
     }

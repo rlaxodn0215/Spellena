@@ -72,16 +72,18 @@ namespace FSM
         {
             Transform[] playerSpawnA = Helper.FindObject(((GameCenter0)stateMachine).gameCenterObjs["PlayerSpawnPoints"], "TeamA").GetComponentsInChildren<Transform>(true);
             Transform[] playerSpawnB = Helper.FindObject(((GameCenter0)stateMachine).gameCenterObjs["PlayerSpawnPoints"], "TeamB").GetComponentsInChildren<Transform>(true);
-            int indexA = 0, indexB = 0;
+            int indexA = 1, indexB = 1;
 
             Dictionary<string, PlayerStat>.Enumerator iter
                      = ((GameCenter0)stateMachine).players.GetEnumerator();
+
+            Debug.Log(((GameCenter0)stateMachine).players.Count);
 
             while (iter.MoveNext())
             {
                 KeyValuePair<string, PlayerStat> temp = iter.Current;
                 PlayerStat player = temp.Value;
-                Debug.Log("<color=red>" + player.name + "</color>");
+                //Debug.Log("<color=red>" + player.name + "</color>");
 
                 ((GameCenter0)stateMachine).gameManagerView.RPC("ActiveObject", player.player, "InGameUI", true);
                 ((GameCenter0)stateMachine).gameManagerView.RPC("ActiveObject", player.player, "CharacterSelect", false);
@@ -96,12 +98,13 @@ namespace FSM
                 if (choseCharacter == null)
                 {
                     choseCharacter = player.character = "Aloy";
-                    ((GameCenter0)stateMachine).players[player.name] = player;
+                    // 이름 할당이 안됨...
+                    //((GameCenter0)stateMachine).players[player.name] = player;
                 }
 
                 Vector3 pos;
 
-                if(player.team == ((GameCenter0)stateMachine).roundData.teamA)
+                if (player.team == ((GameCenter0)stateMachine).roundData.teamA)
                 {
                     pos = playerSpawnA[indexA++].position;
                 }
@@ -111,7 +114,7 @@ namespace FSM
                     pos = playerSpawnB[indexB++].position;
                 }
 
-                GameObject playerCharacter = PhotonNetwork.Instantiate("Characters/" + choseCharacter,pos, Quaternion.identity);
+                GameObject playerCharacter = PhotonNetwork.Instantiate("Characters/" + choseCharacter, pos, Quaternion.identity);
                 if (playerCharacter == null) continue;
 
                 PhotonView[] views = playerCharacter.GetComponentsInChildren<PhotonView>();
@@ -120,22 +123,24 @@ namespace FSM
                     views[i].TransferOwnership(player.player.ActorNumber);
                 }
 
-                if (choseCharacter != "Observer")
-                {
-                    playerCharacter.GetComponent<PhotonView>().RPC("SetLocalPlayer", player.player);
-                }
-
-                else if(choseCharacter == "Aloy")
+                if (choseCharacter == "Aloy")
                 {
                     playerCharacter.GetComponent<PhotonView>().RPC("SetLocalAI", player.player);
+                    GameObject aloyPoolManager = PhotonNetwork.Instantiate("PoolManagers/AloyPoolManager", Vector3.zero, Quaternion.identity);
+                    aloyPoolManager.GetComponent<PhotonView>().TransferOwnership(player.player.ActorNumber);
+                    inGameUIView.RPC("DisActiveCrosshair", player.player);
+                }
+
+                else if (choseCharacter != "Observer") 
+                {
+                    playerCharacter.GetComponent<PhotonView>().RPC("SetTag", RpcTarget.All, "TeamA");
+                    playerCharacter.GetComponent<PhotonView>().RPC("ActiveObserver", player.player);
                     inGameUIView.RPC("DisActiveCrosshair", player.player);
                 }
 
                 else
                 {
-                    playerCharacter.GetComponent<PhotonView>().RPC("SetTag", RpcTarget.All, "TeamA");
-                    playerCharacter.GetComponent<PhotonView>().RPC("ActiveObserver", player.player);
-                    inGameUIView.RPC("DisActiveCrosshair", player.player);
+                    playerCharacter.GetComponent<PhotonView>().RPC("SetLocalPlayer", player.player);
                 }
 
                 playerCharacter.GetComponent<PhotonView>().RPC("ChangeName", RpcTarget.All, player.name);
