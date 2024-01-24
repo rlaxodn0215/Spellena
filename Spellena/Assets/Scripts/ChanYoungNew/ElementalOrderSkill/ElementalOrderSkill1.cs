@@ -46,6 +46,8 @@ public class ElementalOrderSkill1 : InstantiateObject, IPunObservable
         if (isColliderOn && PhotonNetwork.IsMasterClient)
         {
             GameObject _rootObject = hitBody.transform.root.gameObject;
+            if (_rootObject.tag == tag)
+                return;
             for(int i = 0; i < hitObjects.Count; i++)
             {
                 if (hitObjects[i] == _rootObject)

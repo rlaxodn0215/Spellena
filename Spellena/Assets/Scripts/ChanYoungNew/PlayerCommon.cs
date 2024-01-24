@@ -30,6 +30,7 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
     public Camera cameraOverlay;
     public Camera cameraMinimap;
     public GameObject UI;
+    protected GameObject aim;
 
     protected GameObject minimapMask;
 
@@ -227,6 +228,8 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
         unique = transform.GetChild(0).GetChild(1).gameObject;
 
         minimapMask = UI.transform.GetChild(0).gameObject;
+
+        aim = UI.transform.GetChild(3).gameObject;
 
         if(photonView.IsMine)
             SetLocalPlayer();

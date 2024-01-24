@@ -9,7 +9,9 @@ public class HitTrigger : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-        if(other.transform.root.gameObject.layer == 15)//플레이어면
+        if (other.transform.root.gameObject.layer == 15)//플레이어면
+        {
             OnHit?.Invoke(other.gameObject);
+        }
     }
 }

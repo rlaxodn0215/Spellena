@@ -129,9 +129,9 @@ public class PlayerElementalOrder : PlayerCommon
     protected override void PlayUniqueState(int index, bool IsOn)
     {
 
-        if (index == 0)
+        if (index == 0 || index == 1 || index == 4)
             SetCastingAura(index, IsOn);
-        else if (index == 5)
+        else if (index == 3 || index == 5)
             SetPointStrike(index, IsOn);
     }
     private void SetPointStrike(int index, bool IsOn)
@@ -160,10 +160,15 @@ public class PlayerElementalOrder : PlayerCommon
         {
             distance = playerData.skillDistance[index];
             Color _tempColor = Color.red;
-            if (index == 0)
+            if (index == 0 || index == 1)
             {
                 _tempColor = Color.red;
                 castingAura.transform.localScale = new Vector3(3, 3, 3);
+            }
+            else if(index == 4)
+            {
+                _tempColor = Color.green;
+                castingAura.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
             }
             _tempColor.a = 0.3f;
             castingAura.GetComponent<ParticleSystem>().startColor = _tempColor;
@@ -173,12 +178,11 @@ public class PlayerElementalOrder : PlayerCommon
     private void SetCastingAuraPos()
     {
         Ray _ray = new Ray();
-        _ray.origin = transform.position + new Vector3(0, 0.5f, 0);
-        _ray.direction = transform.forward;
+        _ray = cameraMain.ScreenPointToRay(aim.transform.position);
 
         RaycastHit _hit;
-        if (Physics.Raycast(_ray, out _hit, distance, layerMaskWall))
-            _ray.origin = _hit.point;
+        if (Physics.Raycast(_ray, out _hit, distance, layerMaskWall | layerMaskMap))
+            _ray.origin = _hit.point + new Vector3(0, 0.1f, 0);
         else
             _ray.origin = transform.position + transform.forward * distance;
         _ray.direction = Vector3.down;
@@ -211,6 +215,7 @@ public class PlayerElementalOrder : PlayerCommon
         //MeteorStrike, 1, 1
         object[] _temp = new object[2];
         _temp[0] = photonView.ViewID;
+        _temp[1] = tag;
         PhotonNetwork.Instantiate("ChanYoungNew/ElementalOrder/ElementalOrderSkill1", castingAura.transform.position,
             Quaternion.identity, data: _temp);
 
@@ -219,6 +224,11 @@ public class PlayerElementalOrder : PlayerCommon
 
     private void PlaySkillLogic2()
     {
+        object[] _temp = new object[2];
+        _temp[0] = photonView.ViewID;
+        _temp[1] = tag;
+        PhotonNetwork.Instantiate("ChanYoungNew/ElementalOrder/ElementalOrderSkill2", castingAura.transform.position,
+    Quaternion.identity, data: _temp);
         //RagnaEdge 1, 2
     }
 
@@ -230,11 +240,22 @@ public class PlayerElementalOrder : PlayerCommon
     private void PlaySkillLogic4()
     {
         //GaiaTied 2, 2
+        object[] _temp = new object[2];
+        _temp[0] = photonView.ViewID;
+        _temp[1] = tag;
+
+        PhotonNetwork.Instantiate("ChanYoungNew/ElementalOrder/ElementalOrderSkill4", pointStrike,
+        Quaternion.identity, data: _temp);
     }
 
     private void PlaySkillLogic5()
     {
         //TerraBreak 2, 3
+        object[] _temp = new object[2];
+        _temp[0] = photonView.ViewID;
+        _temp[1] = tag;
+        PhotonNetwork.Instantiate("ChanYoungNew/ElementalOrder/ElementalOrderSkill5", castingAura.transform.position,
+            transform.rotation, data: _temp);
     }
 
     private void PlaySkillLogic6()
@@ -242,6 +263,7 @@ public class PlayerElementalOrder : PlayerCommon
         //Eterial Storm 3, 3
         object[] _temp = new object[2];
         _temp[0] = photonView.ViewID;
+        _temp[1] = tag;
         PhotonNetwork.Instantiate("ChanYoungNew/ElementalOrder/ElementalOrderSkill6", pointStrike,
             Quaternion.identity, data: _temp);
     }

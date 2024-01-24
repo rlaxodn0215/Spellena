@@ -18,7 +18,7 @@ public class ElementalOrderSkill6 : InstantiateObject, IPunObservable
     private bool isColliderOn = false;
     private int hitCount = 8;
     private bool isLoop = true;
-    private float power = 10f;
+    private float power = 12f;
 
 
     List<GameObject> hitObjects = new List<GameObject>();
@@ -57,6 +57,10 @@ public class ElementalOrderSkill6 : InstantiateObject, IPunObservable
         if(isColliderOn && PhotonNetwork.IsMasterClient)
         {
             GameObject _rootObject = hitBody.transform.root.gameObject;
+
+            if (_rootObject.tag != tag)
+                return;
+
             for(int i = 0; i < hitObjects.Count; i++)
             {
                 if (hitObjects[i] == _rootObject)
@@ -72,7 +76,7 @@ public class ElementalOrderSkill6 : InstantiateObject, IPunObservable
 
             if(_magnitude <= 3f)
             {
-
+                //µ¥¹ÌÁö!
             }
 
             hitObjects.Add(_rootObject);
@@ -86,7 +90,10 @@ public class ElementalOrderSkill6 : InstantiateObject, IPunObservable
             skillCastingTime -= Time.fixedDeltaTime;
 
             if (skillCastingTime <= 0f)
+            {
                 mainEffect.gameObject.SetActive(true);
+                isColliderOn = true;
+            }
         }
         else
         {
@@ -104,6 +111,9 @@ public class ElementalOrderSkill6 : InstantiateObject, IPunObservable
                 for(int i = 0; i < mainEffects.Length; i++)
                     mainEffects[i].loop = false;
             }
+
+            if (skillLifeTime <= 0f && photonView.IsMine)
+                PhotonNetwork.Destroy(gameObject);
         }
     }
 }
