@@ -22,7 +22,10 @@ public class PlayerCommonOverlayAnimation : MonoBehaviour
     virtual protected void Start()
     {
         playerCommon = transform.root.GetComponent<PlayerCommon>();
+
         playerCommon.PlayAnimation += SetAnimationParameter;
+
+
         playerData = playerCommon.playerData;
         overlayAnimator = GetComponent<Animator>();
         animationListener = animationListener = overlayAnimator.GetCurrentAnimatorStateInfo(1).fullPathHash;
@@ -111,11 +114,13 @@ public class PlayerCommonOverlayAnimation : MonoBehaviour
         }
     }
 
-    virtual protected void SetAnimationParameter(int index)
+    virtual protected void SetAnimationParameter(string type, int index)
     {
         if(!rootPhotonView.IsMine || index == -1)
             return;
-        else
+
+
+        if(type == "Skill")
         {
             for (int i = 0; i < playerData.skillCastingTime.Count; i++)
             {
@@ -126,6 +131,10 @@ public class PlayerCommonOverlayAnimation : MonoBehaviour
 
             string _stateName = "Skill" + (index + 1);
             overlayAnimator.SetBool(_stateName, true);
+        }
+        else if(type == "Plain")
+        {
+
         }
     }
 

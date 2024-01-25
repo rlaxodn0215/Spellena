@@ -159,11 +159,11 @@ public class PlayerCommonAnimation : MonoBehaviourPunCallbacks, IPunObservable
         animator.SetLookAtWeight(1f);
     }
 
-    protected void SetAnimationParameter(int index)
+    protected void SetAnimationParameter(string type, int index)
     {
         if (index == -1)
             return;
-        else
+        if(type == "Skill")
         {
             for(int i = 0; i < playerData.skillCastingTime.Count; i++)
             {
@@ -174,6 +174,10 @@ public class PlayerCommonAnimation : MonoBehaviourPunCallbacks, IPunObservable
 
             string _stateName = "Skill" + (index + 1);
             animator.SetBool(_stateName, true);
+        }
+        else if(type == "Plain")
+        {
+
         }
     }
 
