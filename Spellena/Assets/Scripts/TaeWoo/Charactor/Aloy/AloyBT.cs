@@ -58,7 +58,7 @@ public class AloyBT : BehaviourTree.Tree
         Node root = new Selector(new List<Node>
         {
             new CheckEnemy(
-                new RandomSelector(new List<Node>
+                new Parallel(new List<Node>
                     {
                         aloyBasicAttack,
                         aloyPreciseShot,

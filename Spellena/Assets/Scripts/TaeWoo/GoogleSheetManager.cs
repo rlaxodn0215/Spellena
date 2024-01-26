@@ -41,25 +41,26 @@ public class GoogleSheetManager : EditorWindow
         cultistData = (CultistData)EditorGUILayout.ObjectField("CultistData", cultistData, typeof(CultistData), true);
         if (GUILayout.Button("데이터 불러오고 저장하기"))
         {
-            InitData();
-
+            SettingData();
             Debug.Log("데이터 불러오고 저장 성공!");
         }
 
     }
 
-    void InitData()
+    void SettingData()
     {
         for (int i = 0; i < googleSheetData.gooleSheets.Length; i++)
         {
-            URL = googleSheetData.gooleSheets[i].address + googleSheetData.exportFormattsv + googleSheetData.andRange
-                + googleSheetData.gooleSheets[i].range_1 + ":" + googleSheetData.gooleSheets[i].range_2;
+            URL = googleSheetData.gooleSheets[i].address + 
+                googleSheetData.exportFormattsv + googleSheetData.andRange
+                + googleSheetData.gooleSheets[i].range_1 + ":" + 
+                googleSheetData.gooleSheets[i].range_2;
 
             UnityWebRequest www = UnityWebRequest.Get(URL);
             www.SendWebRequest();
             while (!www.isDone)
             {
-                //Debug.Log("데이터 가져오는 중...");                                
+                // 데이터 가져오는 중...";                               
             }
 
             if (www.result != UnityWebRequest.Result.Success)
@@ -71,7 +72,6 @@ public class GoogleSheetManager : EditorWindow
             string Data = www.downloadHandler.text;
             Debug.Log(googleSheetData.name + " 데이터 가져오기 성공");
 
-            //SaveToText(Data, i);
             DividText(Data);
             GiveData(i);
         }

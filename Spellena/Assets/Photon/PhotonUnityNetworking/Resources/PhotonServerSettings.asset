@@ -219,6 +219,9 @@ MonoBehaviour:
   - InitTeamLifeDead
   - SetLocalAI
   - RPCTest
+  - AddYPower
+  - SyncCommandEffect
+  - EditPlayerDictionary
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

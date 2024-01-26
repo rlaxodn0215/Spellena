@@ -1,23 +1,21 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace BehaviourTree
 {
-    public class RandomSelector : Node
+    public class Parallel : Node
     {
-        int randomIndex = 0;
+        int index = 0;
 
-        public RandomSelector() : base() { }
+        public Parallel() : base() { }
 
-        public RandomSelector(List<Node> children) : base(children) { }
+        public Parallel(List<Node> children) : base(children) { }
 
         public override NodeState Evaluate()
         {
-            if(GetData("IsNoSkillDoing") == null)
-                randomIndex = Random.Range(0, children.Count);
+            if (GetData("IsNoSkillDoing") == null)
+                index = (index + 1) % children.Count;
 
-            Node node = children[randomIndex];
+            Node node = children[index];
 
             SetDataToRoot("Status", "RandomSelector");
 

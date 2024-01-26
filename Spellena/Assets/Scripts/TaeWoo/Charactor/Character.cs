@@ -927,6 +927,11 @@ namespace Player
             gameObject.SetActive(false);
         }
 
+        float weight = 1.0f;
+        float bodyWeight = 0.9f;
+        float lerpSpeed = 20;
+
+
         protected virtual void OnAnimatorIK()
         {
             SetLookAtObj();
@@ -937,13 +942,14 @@ namespace Player
             if (animator == null) return;
             if (photonView.IsMine)
             {
-                animator.SetLookAtWeight(1f, 0.9f);
+                animator.SetLookAtWeight(weight, bodyWeight);
                 animator.SetLookAtPosition(sight.transform.position);
             }
             else
             {
-                Vector3 newVec = Vector3.Lerp(currentSight, networkSight, Time.deltaTime * 20);
-                animator.SetLookAtWeight(1f, 0.9f);
+                Vector3 newVec = Vector3.Lerp(currentSight, networkSight, 
+                    Time.deltaTime * lerpSpeed);
+                animator.SetLookAtWeight(weight, lerpSpeed);
                 animator.SetLookAtPosition(newVec);
                 currentSight = newVec;
             }
@@ -954,31 +960,11 @@ namespace Player
             if (stream.IsWriting)
             {
                 // 데이터를 보내는 부분
-                //stream.SendNext(hp);
-                //stream.SendNext(isOccupying);
-                /*
-                for (int i = 0; i < playerActionDatas.Count; i++)
-                {
-                    stream.SendNext(playerActionDatas[i].isExecuting);
-                }
-                */
-                //stream.SendNext(moveVec);
-                //stream.SendNext(isGrounded);
                 stream.SendNext(sight.transform.position);
             }
             else
             {
                 // 데이터를 받는 부분
-                //hp = (int)stream.ReceiveNext();
-                //isOccupying = (bool)stream.ReceiveNext();
-                /*
-                for (int i = 0; i < playerActionDatas.Count; i++)
-                {
-                    playerActionDatas[i].isExecuting = (bool)stream.ReceiveNext();
-                }
-                */
-                //moveVec = (Vector3)stream.ReceiveNext();
-                //isGrounded = (bool)stream.ReceiveNext();
                 networkSight = (Vector3)stream.ReceiveNext();
             }
         }
