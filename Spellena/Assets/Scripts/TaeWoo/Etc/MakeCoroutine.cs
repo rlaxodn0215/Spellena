@@ -12,16 +12,16 @@ namespace CoroutineMaker
             StartCoroutine(coro);
         }
 
-        void Update()
-        {
-            if (enumerator != null)
-            {
-                if (enumerator.Current == null) // 코루틴의 현재 진행 상태
-                {
-                    Destroy(gameObject);
-                }
-            }
-        }
+        //void Update()
+        //{
+        //    if (enumerator != null)
+        //    {
+        //        if (enumerator.Current == null) // 코루틴의 현재 진행 상태
+        //        {
+        //            Destroy(gameObject);
+        //        }
+        //    }
+        //}
 
         public void Stop()
         {

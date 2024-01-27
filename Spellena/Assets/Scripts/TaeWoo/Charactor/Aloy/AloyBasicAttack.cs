@@ -94,38 +94,20 @@ public class AloyBasicAttack : Node
         {
             temp = (MoveWay)Random.Range(0, 4);
             Ray ray;
+            Vector3 dir = Vector3.zero;
 
             switch (temp)
             {
                 // Forward
-                case MoveWay.Forward:
-                    ray = new Ray(playerTransform.position + Vector3.up,
-                        playerTransform.forward);
-                    break;
-                // Back
-                case MoveWay.Back:
-                    ray = new Ray(playerTransform.position + Vector3.up,
-                        -playerTransform.forward);
-                    break;
-                // Left
-                case MoveWay.Left:
-                    ray = new Ray(playerTransform.position + Vector3.up,
-                        -playerTransform.right);
-                    break;
-                // Right
-                case MoveWay.Right:
-                    ray = new Ray(playerTransform.position + Vector3.up,
-                        playerTransform.right);
-                    break;
-                default:
-                    Debug.LogError("잘못된 랜덤 수 발생!!");
-                    ray = new Ray(playerTransform.position + Vector3.up,
-                        playerTransform.forward);
-                    break;
+                case MoveWay.Forward: dir = playerTransform.forward; break;
+                case MoveWay.Back:dir = -playerTransform.forward; break;
+                case MoveWay.Left:dir = -playerTransform.right; break;
+                case MoveWay.Right:dir = playerTransform.right; break;
             }
 
-            notMoveable = Physics.Raycast(ray, 0.5f, LayerMask.NameToLayer("Wall"));
+            ray = new Ray(playerTransform.position + Vector3.up, dir);
 
+            notMoveable = Physics.Raycast(ray, 0.5f, LayerMask.NameToLayer("Wall"));
         }
 
 
@@ -181,38 +163,29 @@ public class AloyBasicAttack : Node
         playerTransform.forward =
             Vector3.Lerp(playerTransform.forward, targetDir, rotateSpeed * Time.deltaTime);
 
+        bool isDrawing;
+
         if (coolTime.CheckCoolTime() && 
             animator.GetCurrentAnimatorStateInfo(2).IsName("Aim") &&
             Mathf.Acos(Vector3.Dot(playerTransform.forward, targetDir)) * Mathf.Rad2Deg <= 10.0f)
         {
             coolTime.UpdateCurCoolTime(0.0f);
-            Debug.Log("AloyBasicAttack to " + "<color=magenta>"
-            + enemyTransform.name + "</color>");
+            Debug.Log("AloyBasicAttack to " + "<color=magenta>"+ enemyTransform.name + "</color>");
             bowAnimator.SetBool("Shoot", true);
             animator.SetBool("Shoot", true);
 
-            basicAttackArrows.GetObject(attackTransform);
+            basicAttackArrows.GetPoolObject(PoolObjectName.Arrow,attackTransform);
 
-            if (bowAnimator.GetCurrentAnimatorStateInfo(0).IsName("Shoot"))
-            {
-                arrowAniObj.SetActive(false);
-            }
+            isDrawing = !bowAnimator.GetCurrentAnimatorStateInfo(0).IsName("Shoot");
         }
-
         else
         {
             bowAnimator.SetBool("Shoot", false);
             animator.SetBool("Shoot", false);
+            isDrawing = bowAnimator.GetCurrentAnimatorStateInfo(0).IsName("Draw");
 
-            if (bowAnimator.GetCurrentAnimatorStateInfo(0).IsName("Draw"))
-            {
-                arrowAniObj.SetActive(true);
-            }
-
-            else
-            {
-                arrowAniObj.SetActive(false);
-            }
         }
+
+        arrowAniObj.SetActive(isDrawing);
     }
 }

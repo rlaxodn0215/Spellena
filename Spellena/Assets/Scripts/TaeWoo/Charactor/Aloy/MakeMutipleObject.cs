@@ -39,7 +39,7 @@ public class MakeMutipleObject : MonoBehaviour
             {
                 Vector3 pos = transform.position + GetRandomVector(randomPos);
                 Quaternion rot = transform.rotation * Quaternion.Euler(GetRandomVector(randomRot));
-                poolManager.GetObject(pos, rot);
+                poolManager.GetPoolObject(PoolObjectName.Strike, pos, rot);
                 time2 = Time.time;
                 count++;
             }

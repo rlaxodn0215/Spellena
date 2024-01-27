@@ -228,7 +228,7 @@ public class AloyPreciseShot : Node
 
         for (int i = 0; i < 5; i++)
         {
-            preciseAttackArrows.GetObject(attackTransform);
+            preciseAttackArrows.GetPoolObject(PoolObjectName.Ball,attackTransform);
             yield return new WaitForSeconds(0.3f);
         }
 

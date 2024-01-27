@@ -77,7 +77,7 @@ public class AloyBT : BehaviourTree.Tree
 
     protected override void Update()
     {
-        if(PhotonNetwork.IsMasterClient)
+        //if(PhotonNetwork.IsMasterClient)
         {
             base.Update();
             CoolTimer();

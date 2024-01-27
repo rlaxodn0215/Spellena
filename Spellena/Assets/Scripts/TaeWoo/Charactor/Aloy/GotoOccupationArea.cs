@@ -40,6 +40,7 @@ public class GotoOccupationArea : Node
 
     public override NodeState Evaluate()
     {
+        // 제게
         SetDataToRoot("Status", "GotoOccupationArea");
 
         RandomOccupationPosition();
@@ -55,6 +56,7 @@ public class GotoOccupationArea : Node
 
     private void RandomOccupationPosition()
     {
+        Random.InitState(7); //seed를 초기화하여 모두 동일하게 작용
         if (agent.remainingDistance <= agent.stoppingDistance)
         {
             randomIndex = Random.Range(0, occupationPoints.Count);

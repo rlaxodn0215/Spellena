@@ -6,31 +6,25 @@ namespace Managers
 {
     public class PoolObject : MonoBehaviour
     {
-        public delegate void Callback_Disapear(int id);
+        public delegate void Callback_Disapear(PoolObjectName name, int id);
         Callback_Disapear onDisapear;
 
-        public int ObjID { get; private set; }
+        public int objID { get; private set; }
+        protected PoolObjectName objectName;
         protected Transform objTrans;
 
-        public void SetID(int _id)
+        public void SetPoolObjectData(int _id, PoolObjectName _name, Transform _transform)
         {
-            ObjID = _id;
+            objID = _id;
+            objectName = _name;
+            objTrans = transform;
         }
-
-        public void SetStartTransform(Transform _transform)
-        {
-            objTrans = _transform;
-        }
-
         public virtual void InitPoolObject() { }
         public virtual void SetPoolObject(Vector3 direction) { }
 
         protected virtual void DisActive()
         {
-            transform.position = objTrans.position;
-            transform.rotation = objTrans.rotation;
-            gameObject.SetActive(false);
-            onDisapear(ObjID);  
+            onDisapear(objectName, objID);  
         }
 
         public void SetCallback(Callback_Disapear callback_OnDisapear)

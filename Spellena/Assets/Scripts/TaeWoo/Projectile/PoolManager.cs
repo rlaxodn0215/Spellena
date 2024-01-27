@@ -4,109 +4,135 @@ using UnityEngine;
 
 namespace Managers
 {
-    public class PoolManager : MonoBehaviour
+    public enum PoolObjectName
     {
-        [SerializeField]
-        GameObject obj;
+        Arrow,
+        Ball,
+        Strike
+    }
 
-        [SerializeField]
-        Transform objRoot;
+    public struct PoolObjectData
+    {
+        public GameObject obj;
+        public int initObjectNum;
+        public Transform spawnPosition;
 
-        [SerializeField]
-        int initObjectNum;
+        [HideInInspector]
+        public int addObjectNum;
+        [HideInInspector]
+        public List<PoolObject> objs;
+        [HideInInspector]
+        public Queue<int> objIDs;
+    }
 
-        [SerializeField]
-        private List<PoolObject> objs = new List<PoolObject>();
+    public class PoolManager : SingletonTemplate<PoolManager>
+    {
 
-        [SerializeField]
-        private Queue<int> objIDs = new Queue<int>();
+        //public scriptableobject
 
-        int addObjectNum;
+        private Dictionary<PoolObjectName, PoolObjectData> poolDatas
+             = new Dictionary<PoolObjectName, PoolObjectData>();
 
-        // Start is called before the first frame update
         void Start()
         {
-            CreateObjects(initObjectNum);
+            InitPoolDatas();
+            CreateObjects();
         }
 
-        void CreateObjects(int objectNum)
+        void InitPoolDatas()
         {
-            //Debug.Log("[PoolManager] CreatePlayers : #" + objectNum);
-            addObjectNum = objectNum;
-            for (int i = 0; i < objectNum; i++)
+
+        }
+
+        void CreateObjects()
+        {
+            if(poolDatas.Count == 0)
             {
-                int id = i + 1;
-                objs.Add(CreatePoolObject(id));
+                Debug.Log("소환할 PoolObject가 없습니다.");
+                return;
+            }
+
+            Dictionary<PoolObjectName, PoolObjectData>.Enumerator iter = poolDatas.GetEnumerator();
+
+            while(iter.MoveNext())
+            {
+                KeyValuePair<PoolObjectName, PoolObjectData> temp = iter.Current;
+                PoolObjectData data = temp.Value;
+
+                data.addObjectNum = data.initObjectNum;
+                
+                for(int i = 0; i < data.initObjectNum; i++)
+                {
+                    int id = i + 1;
+                    data.objs.Add(CreateNewPoolObject(temp.Key, data, id));
+                }
+
+                poolDatas[temp.Key] = data;
             }
         }
 
-        PoolObject CreatePoolObject(int id)
+        PoolObject CreateNewPoolObject(PoolObjectName name , PoolObjectData pObjData, int id)
         {
-            GameObject gb = Instantiate(obj, objRoot); //부모 아래에 소환
-            gb.name = obj.name + "_" + id;
-            gb.transform.position = objRoot.position;
-            gb.transform.rotation = objRoot.rotation;
+            GameObject gb = Instantiate(pObjData.obj, pObjData.spawnPosition); //부모 아래에 소환
+            gb.name = pObjData.obj.name + "_" + id;
+
+            gb.transform.position = pObjData.spawnPosition.position;
+            gb.transform.rotation = pObjData.spawnPosition.rotation;
 
             PoolObject poolObj = gb.GetComponent<PoolObject>();
-            if (poolObj == null) Debug.LogError("PoolObject 컴포넌트가 없습니다");
-            poolObj.SetID(id);
-            poolObj.SetStartTransform(transform);
-            poolObj.SetCallback(AddID);
+            if (poolObj == null) poolObj = gb.AddComponent<PoolObject>();
+
+            poolObj.SetPoolObjectData(id, name, transform);
+            poolObj.SetCallback(DisActiveObject);
             poolObj.InitPoolObject();
 
             gb.SetActive(false);
 
-            objIDs.Enqueue(id);
-
-            //Debug.Log("[PoolManager] Created Object ID : " + id);
+            pObjData.objIDs.Enqueue(id);
 
             return poolObj;
         }
 
-        PoolObject CreateNewPoolObject(int id)
+        public PoolObject GetPoolObject(PoolObjectName name)
         {
-            GameObject gb = Instantiate(obj, objRoot); //부모 아래에 소환
-            gb.name = obj.name + "_" + id;
-            gb.transform.position = objRoot.position;
-            gb.transform.rotation = objRoot.rotation;
-
-            PoolObject poolObj = gb.GetComponent<PoolObject>();
-            if (poolObj == null) Debug.LogError("PoolObject 컴포넌트가 없습니다");
-            poolObj.SetID(id);
-            poolObj.SetStartTransform(transform);
-            poolObj.SetCallback(AddID);
-            poolObj.InitPoolObject();
-
-            gb.SetActive(false);
-            //Debug.Log("[PoolManager] Created new Object ID : " + id);
-
-            return poolObj;
-        }
-
-        public PoolObject GetObject()
-        {
-            if (objIDs.Count > 0)
+            if(!poolDatas.ContainsKey(name))
             {
-                PoolObject ob = objs.Find(item => item.ObjID == objIDs.Peek());
-                objIDs.Dequeue();
+                Debug.LogError("해당 이름의 PoolObject를 찾을 수 없습니다.");
+                return null;
+            }
+
+            PoolObjectData data = poolDatas[name];
+
+            if (data.objIDs.Count > 0)
+            {
+                PoolObject ob = data.objs.Find(item => item.objID == data.objIDs.Peek());
+                data.objIDs.Dequeue();
                 ob.gameObject.SetActive(true);
                 return ob;
             }
 
             else
             {
-                PoolObject ob = CreateNewPoolObject(++addObjectNum);
-                objs.Add(ob);
+                PoolObject ob = CreateNewPoolObject(name ,data, ++data.addObjectNum);
+                data.objs.Add(ob);
                 return ob;
             }
         }
 
-        public PoolObject GetObject(Vector3 pos, Quaternion rot)
+        public PoolObject GetPoolObject(PoolObjectName name, Vector3 pos, Quaternion rot)
         {
-            if (objIDs.Count > 0)
+            if (!poolDatas.ContainsKey(name))
             {
-                PoolObject ob = objs.Find(item => item.ObjID == objIDs.Peek());
-                objIDs.Dequeue();
+                Debug.LogError("해당 이름의 PoolObject를 찾을 수 없습니다.");
+                return null;
+            }
+
+            PoolObjectData data = poolDatas[name];
+
+            if (data.objIDs.Count > 0)
+            {
+                PoolObject ob = data.objs.Find(item => item.objID == data.objIDs.Peek());
+                data.objIDs.Dequeue();
                 ob.transform.position = pos;
                 ob.transform.rotation = rot;
                 ob.gameObject.SetActive(true);
@@ -115,21 +141,28 @@ namespace Managers
 
             else
             {
-                PoolObject ob = CreateNewPoolObject(++addObjectNum);
+                PoolObject ob = CreateNewPoolObject(name, data, ++data.addObjectNum);
                 ob.transform.position = pos;
                 ob.transform.rotation = rot;
-                objs.Add(ob);
-                ob.gameObject.SetActive(true);
+                data.objs.Add(ob);
                 return ob;
             }
         }
 
-        public PoolObject GetObject(Transform _transform)
+        public PoolObject GetPoolObject(PoolObjectName name, Transform _transform)
         {
-            if (objIDs.Count > 0)
+            if (!poolDatas.ContainsKey(name))
             {
-                PoolObject ob = objs.Find(item => item.ObjID == objIDs.Peek());
-                objIDs.Dequeue();
+                Debug.LogError("해당 이름의 PoolObject를 찾을 수 없습니다.");
+                return null;
+            }
+
+            PoolObjectData data = poolDatas[name];
+
+            if (data.objIDs.Count > 0)
+            {
+                PoolObject ob = data.objs.Find(item => item.objID == data.objIDs.Peek());
+                data.objIDs.Dequeue();
                 ob.transform.position = _transform.position;
                 ob.transform.rotation = _transform.rotation;
                 ob.gameObject.SetActive(true);
@@ -138,18 +171,29 @@ namespace Managers
 
             else
             {
-                PoolObject ob = CreateNewPoolObject(++addObjectNum);
+                PoolObject ob = CreateNewPoolObject(name, data, ++data.addObjectNum);
                 ob.transform.position = _transform.position;
                 ob.transform.rotation = _transform.rotation;
-                objs.Add(ob);
-                ob.gameObject.SetActive(true);
+                data.objs.Add(ob);
                 return ob;
             }
         }
 
-        void AddID(int id)
+        public void DisActiveObject(PoolObjectName name, int id)
         {
-            objIDs.Enqueue(id);
+            if (!poolDatas.ContainsKey(name))
+            {
+                Debug.LogError("해당 이름의 PoolObject를 찾을 수 없습니다.");
+                return;
+            }
+
+            Transform trans = poolDatas[name].objs.Find(item => item.objID == id).transform;
+
+            trans.position = poolDatas[name].spawnPosition.position;
+            trans.rotation = poolDatas[name].spawnPosition.rotation;
+            trans.gameObject.SetActive(false);
+
+            poolDatas[name].objIDs.Enqueue(id);
         }
 
     }
