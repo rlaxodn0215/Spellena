@@ -10,11 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bddbb0ccd969b864bae228082841599f, type: 3}
-  m_Name: PlayerElementalOrderData
+  m_Name: PlayerCultist
   m_EditorClassIdentifier: 
   skillCastingTime:
-  - 1
-  - 1
   - 1
   - 1
   - 1
@@ -24,23 +22,29 @@ MonoBehaviour:
   - 0
   - 0
   - 0
-  - 0
-  - 0
   skillLifeTime:
-  - 5
-  - 5
-  - 5
-  - 5
   - 1
-  - 5
+  - 1
+  - 1
+  - 1
   skillDistance:
-  - 5
-  - 5
-  - 5
-  - 5
-  - 5
-  - 5
-  plainCastingTime: []
-  plainChannelingTime: []
-  plainLifeTime: []
-  plainDistance: []
+  - 1
+  - 1
+  - 1
+  - 1
+  plainCastingTime:
+  - 1
+  - 1
+  - 1
+  plainChannelingTime:
+  - 1
+  - 1
+  - 1
+  plainLifeTime:
+  - 1
+  - 1
+  - 1
+  plainDistance:
+  - 1
+  - 1
+  - 1

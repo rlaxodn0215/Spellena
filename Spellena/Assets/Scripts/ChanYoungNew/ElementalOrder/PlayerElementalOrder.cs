@@ -18,7 +18,6 @@ public class PlayerElementalOrder : PlayerCommon
 
     protected override void InitUniqueComponents()
     {
-        AddSkill(2);
         for(int i = 0; i < skillDatas.Count; i++)
             skillDatas[i].isUnique = true;
 
