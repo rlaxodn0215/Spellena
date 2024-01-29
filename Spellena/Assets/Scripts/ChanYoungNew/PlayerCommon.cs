@@ -258,8 +258,8 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-        AddSkill(playerData.skillLifeTime.Count);
-        AddPlain(playerData.plainLifeTime.Count);
+        AddSkill(playerData.skillCastingTime.Count);
+        AddPlain(playerData.plainCastingTime.Count);
 
 
         player = photonView.Owner;
@@ -420,7 +420,6 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
                 if (plainDatas.Count > 0)
                 {
                     _index = ChangePlainIndex(plainIndex, 0);//type 0 -> 일반 클릭
-                    Debug.Log(_index);
 
                     if(_index >= 0)
                     {
@@ -530,6 +529,7 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
         }
         else if(isPlain)
         {
+            Debug.Log(index);
             if (plainDatas[index].isReady)
             {
                 if (plainDatas[index].isUnique && !isUnique)

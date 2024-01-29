@@ -20,12 +20,12 @@ MonoBehaviour:
   - 1
   - 1
   skillChannelingTime:
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
   skillLifeTime:
   - 5
   - 5
@@ -40,3 +40,7 @@ MonoBehaviour:
   - 5
   - 5
   - 5
+  plainCastingTime: []
+  plainChannelingTime: []
+  plainLifeTime: []
+  plainDistance: []

@@ -5280,7 +5280,7 @@ Animator:
   m_GameObject: {fileID: 500847876573278966}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: c6e10270136692045a207b7a40f2ebcf, type: 3}
-  m_Controller: {fileID: 9100000, guid: 96116b3218f6224409b7a16ca2fd8fb9, type: 2}
+  m_Controller: {fileID: 9100000, guid: 69940d91a6f81dd4d8ce0281b13b0f78, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -5376,6 +5376,24 @@ MonoBehaviour:
   - Type: 4
     SynchronizeType: 0
     Name: Skill6
+  - Type: 1
+    SynchronizeType: 0
+    Name: Skill1Channeling
+  - Type: 1
+    SynchronizeType: 0
+    Name: Skill2Channeling
+  - Type: 1
+    SynchronizeType: 0
+    Name: Skill3Channeling
+  - Type: 1
+    SynchronizeType: 0
+    Name: Skill4Channeling
+  - Type: 1
+    SynchronizeType: 0
+    Name: Skill5Channeling
+  - Type: 1
+    SynchronizeType: 0
+    Name: Skill6Channeling
   m_SynchronizeLayers:
   - SynchronizeType: 2
     LayerIndex: 0
@@ -11480,7 +11498,7 @@ Animator:
   m_GameObject: {fileID: 1371153770937859058}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: c6e10270136692045a207b7a40f2ebcf, type: 3}
-  m_Controller: {fileID: 9100000, guid: 7230417dfc10b3244b2a51d8a3d5d6e6, type: 2}
+  m_Controller: {fileID: 9100000, guid: 00d6fb4fbbc306148beea055fcae030e, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -86821,7 +86839,7 @@ GameObject:
   - component: {fileID: 1798861549145216973}
   - component: {fileID: 5829004315709796972}
   - component: {fileID: 2231847886922839929}
-  - component: {fileID: 8821371876956625231}
+  - component: {fileID: 4373631021777615180}
   m_Layer: 15
   m_Name: Cultist
   m_TagString: Untagged
@@ -86944,7 +86962,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 1798861549145216973}
   - {fileID: 2231847886922839929}
-  - {fileID: 8821371876956625231}
+  - {fileID: 4373631021777615180}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -86960,7 +86978,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f4ddb26faa772f40b2c77c38c264bd0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &8821371876956625231
+--- !u!114 &4373631021777615180
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -86969,7 +86987,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 6928355610982451250}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5b8b090ddb97d2741aebafd4da472894, type: 3}
+  m_Script: {fileID: 11500000, guid: 61e3406141931444881e12e145c46c55, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   playerData: {fileID: 11400000, guid: 0f09add39aafaa346aeb39fa9c9f3271, type: 2}
