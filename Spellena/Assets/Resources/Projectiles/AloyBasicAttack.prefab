@@ -34344,17 +34344,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ed37751545dff843bfcb09204063978, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isUsed: 0
   damage: 10
   arrowVelocity: 45
   lifeTiming: 5
   rotateSpeed: 15
   ableHitParticle: 1
   ableArrowStuck: 1
-  isUltimate: 0
-  hitParticleObject: {fileID: 3492691017000508022, guid: aee36ebbd3e183d4795b7b75b450c4ef, type: 3}
-  arrowStuckObject: {fileID: 7579633284073917657, guid: 11a10d644ab03ed42b3f69f67c9a394a, type: 3}
   hitParticleDestoryTime: 1.2
   arrowStuckDestoryTime: 2.5
+  hitEffectName: 1
+  stuckObjectName: 2
 --- !u!136 &7344494867581566971
 CapsuleCollider:
   m_ObjectHideFlags: 0

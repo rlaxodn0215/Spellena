@@ -4,6 +4,19 @@ using UnityEngine;
 using Photon.Pun;
 using BehaviourTree;
 
+static class PlayerAniState
+{
+    public static string Move = "Move";
+    public static string CheckEnemy = "CheckEnemy";
+    public static string AvoidRight = "AvoidRight";
+    public static string AvoidLeft = "AvoidLeft";
+    public static string AvoidForward = "AvoidForward";
+    public static string AvoidBack = "AvoidBack";
+    public static string Aim = "Aim";
+    public static string Draw = "Draw";
+    public static string Shoot = "Shoot";
+}
+
 public class AloyBT : BehaviourTree.Tree
 {
     public Transform occupationPoint;
@@ -12,42 +25,44 @@ public class AloyBT : BehaviourTree.Tree
     public GameObject arrowAniObj;
 
     public Transform aimingTransform;
-    public Transform arrowStrikeTransform;
+    public Transform arrowStrikeStart;
+    public Transform downArrowTrans;
 
     private Animator animator;
 
-    private GameObject aloyPoolObj;
-    private List<CheckGauge> gaugeList = new List<CheckGauge>();
+    private List<Gauge> gaugeList = new List<Gauge>();
 
     private GotoOccupationArea gotoOccupationArea;
+
     private AloyBasicAttack aloyBasicAttack;
     private AloyPreciseShot aloyPreciseShot;
     private AloyPurifyBeam aloyPurifyBeam;
     private AloyArrowStrike aloyArrowStrike;
+
+    private Coroutine coolTimeCoroutine;
 
     void InitData()
     {
         animator = GetComponent<Animator>();
         if (animator == null) Debug.LogError("Animator가 할당되지 않았습니다");
 
-        gaugeList.Add(new CheckGauge(2.0f));
-        gaugeList.Add(new CheckGauge(8.0f));
-        gaugeList.Add(new CheckGauge(10.0f));
-        gaugeList.Add(new CheckGauge(20.0f));
-
-        aloyPoolObj = GameObject.Find("AloyPoolManager");
-        if (aloyPoolObj == null) Debug.LogError("AloyPoolManager을 찾을 수 없습니다");
+        gaugeList.Add(new Gauge(2.0f));
+        gaugeList.Add(new Gauge(8.0f));
+        gaugeList.Add(new Gauge(10.0f));
+        gaugeList.Add(new Gauge(20.0f));
 
         gotoOccupationArea = new GotoOccupationArea
             (transform, occupationPoint, arrowAniObj);
         aloyBasicAttack = new AloyBasicAttack
-            (transform, aimingTransform, bowAniObj, arrowAniObj, aloyPoolObj, gaugeList[0]);
+            (transform, aimingTransform, bowAniObj, arrowAniObj, gaugeList[0]);
         aloyPreciseShot = new AloyPreciseShot
-            (transform, aimingTransform, bowAniObj, arrowAniObj, aloyPoolObj, gaugeList[1]);
+            (transform, aimingTransform, bowAniObj, arrowAniObj, gaugeList[1]);
         aloyPurifyBeam = new AloyPurifyBeam
             (transform, aimingTransform, bowAniObj, arrowAniObj, gaugeList[2]);
         aloyArrowStrike = new AloyArrowStrike
-            (transform, arrowStrikeTransform, bowAniObj, arrowAniObj, aloyPoolObj, gaugeList[3]);
+            (transform, arrowStrikeStart, downArrowTrans, bowAniObj, arrowAniObj, gaugeList[3]);
+
+        coolTimeCoroutine = StartCoroutine(CoolTimer());
     }
 
     //Start()
@@ -55,10 +70,10 @@ public class AloyBT : BehaviourTree.Tree
     {
         InitData();
 
-        Node root = new Selector(new List<Node>
+        Node root = new Selector(NodeName.Selector ,new List<Node>
         {
             new CheckEnemy(
-                new Parallel(new List<Node>
+                new Parallel(NodeName.Parallel, new List<Node>
                     {
                         aloyBasicAttack,
                         aloyPreciseShot,
@@ -71,7 +86,7 @@ public class AloyBT : BehaviourTree.Tree
         }
         );
 
-        root.SetDataToRoot("Status", "None");  
+        root.SetDataToRoot(DataContext.NodeStatus, root);  
         return root;
     }
 
@@ -80,16 +95,20 @@ public class AloyBT : BehaviourTree.Tree
         //if(PhotonNetwork.IsMasterClient)
         {
             base.Update();
-            CoolTimer();
             ShowState();
         }
     }
 
-    void CoolTimer()
+    IEnumerator CoolTimer()
     {
-        for (int i = 0; i < gaugeList.Count; i++)
+        while (true)
         {
-            gaugeList[i].UpdateCurCoolTime();
+            for (int i = 0; i < gaugeList.Count; i++)
+            {
+                gaugeList[i].UpdateCurCoolTime(Time.deltaTime);
+            }
+
+            yield return null;
         }
     }
 
@@ -101,14 +120,26 @@ public class AloyBT : BehaviourTree.Tree
     void SetLookAtObj()
     {
         if (animator == null) return;
-        if (root.GetData("Enemy") == null) return;
+        if (root.GetData(DataContext.EnemyTransform) == null) return;
         animator.SetLookAtWeight(1f, 0.9f);
-        animator.SetLookAtPosition(((Transform)root.GetData("Enemy")).position);
-        aimingTransform.LookAt(((Transform)root.GetData("Enemy")).position);
+
+        if(root.GetData(DataContext.NotSensingEnemy) == null)
+        {
+            animator.SetLookAtPosition(((CheckEnemy)root.GetData(DataContext.EnemyTransform)).enemyTransform.position);
+            aimingTransform.LookAt(((CheckEnemy)root.GetData(DataContext.EnemyTransform)).enemyTransform.position);
+        }
+
+        else if (root.GetData(DataContext.NotSensingEnemy).nodeName
+            == aloyArrowStrike.nodeName)
+        {
+            animator.SetLookAtPosition(((AloyArrowStrike)root.GetData(DataContext.NotSensingEnemy)).attackTransform.position);
+            aimingTransform.LookAt(((AloyArrowStrike)root.GetData(DataContext.NotSensingEnemy)).attackTransform.position);
+        }
+
     }
 
     void ShowState()
     {
-        Debug.Log("<color=orange>" + (string)root.GetData("Status") + "</color>");
+        Debug.Log("<color=orange>" + root.GetData(DataContext.NodeStatus).nodeName + "</color>");
     }
 }

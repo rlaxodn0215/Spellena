@@ -40,9 +40,10 @@ namespace Player
         }
 
         [PunRPC]
-        public void InstanitateObject(string address,Vector3 pos)
+        public void InstanitateObject(string address, Vector3 pos)
         {
-            PhotonNetwork.Instantiate(address, pos, Quaternion.identity);        
+            if (PhotonNetwork.IsMasterClient)
+                PhotonNetwork.Instantiate(address, pos, Quaternion.identity);        
         }
 
         [PunRPC]
@@ -60,7 +61,7 @@ namespace Player
         [PunRPC]
         public void DestorySpawnObject()
         {
-            if (this != null && PhotonNetwork.IsMasterClient)
+            if (PhotonNetwork.IsMasterClient)
             {
                 PhotonNetwork.Destroy(gameObject.transform.root.gameObject);
             }
@@ -69,7 +70,7 @@ namespace Player
         [PunRPC]
         public void DestorySpawnObject(Vector3 hitPos, int index, bool isTransparent)
         {
-            if (this !=null && PhotonNetwork.IsMasterClient)
+            if (PhotonNetwork.IsMasterClient)
             {
                 if(!isTransparent)
                     PhotonNetwork.Destroy(gameObject.transform.root.gameObject);

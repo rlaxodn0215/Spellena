@@ -20,7 +20,7 @@ public class GotoOccupationArea : Node
     public GotoOccupationArea() { }
 
     public GotoOccupationArea(Transform _playerTransform,
-        Transform _occupationPoint, GameObject _arrowAniObj)
+        Transform _occupationPoint, GameObject _arrowAniObj) : base(NodeName.GotoOccupationArea, null)
     {
         playerTransform = _playerTransform;
         arrowAniObj = _arrowAniObj;
@@ -41,7 +41,7 @@ public class GotoOccupationArea : Node
     public override NodeState Evaluate()
     {
         // Á¦°Ô
-        SetDataToRoot("Status", "GotoOccupationArea");
+        SetDataToRoot(DataContext.NodeStatus, this);
 
         RandomOccupationPosition();
 

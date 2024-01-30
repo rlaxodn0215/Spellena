@@ -10,6 +10,8 @@ public class CheckEnemy : Condition
     private LayerMask targetMask;
 
     private Animator bowAnimator;
+
+    public Transform enemyTransform;
     
     public CheckEnemy() : base()
     {
@@ -66,21 +68,24 @@ public class CheckEnemy : Condition
                     {
                         // 태그가 다른 적 구분
                         Debug.DrawLine(SightPos, targetPos, Color.red);
-                        if (GetData("EnemyCheck") == null)
+                        if (GetData(DataContext.EnemyTransform) == null &&
+                            GetData(DataContext.NotSensingEnemy) == null)
                         {
-                            SetDataToRoot("Enemy", player.transform);
+                            enemyTransform = player.transform;
+                            SetDataToRoot(DataContext.EnemyTransform, this);
                             animator.SetBool("CheckEnemy", true);
                             bowAnimator.SetBool("Draw", true);
                         }
 
                         return true;
+
                     }
                 }
 
             }
         }
 
-        ClearData("Enemy");
+        ClearData(DataContext.EnemyTransform);
         animator.SetBool("CheckEnemy", false);
         bowAnimator.SetBool("Draw", false);
 

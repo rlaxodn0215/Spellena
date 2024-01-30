@@ -6,7 +6,7 @@ namespace BehaviourTree
     public class Selector : Node
     {
         public Selector() : base() { }
-        public Selector(List<Node> children) : base(children) { }
+        public Selector(NodeName name, List<Node> children) : base(name, children) { }
 
         public override NodeState Evaluate()
         {
@@ -27,7 +27,7 @@ namespace BehaviourTree
                 }
             }
 
-            SetDataToRoot("Status", "Selector");
+            SetDataToRoot(DataContext.NodeStatus, this);
             state = NodeState.Failure;
             return state;
         }

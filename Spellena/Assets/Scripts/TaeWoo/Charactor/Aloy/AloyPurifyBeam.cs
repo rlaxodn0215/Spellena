@@ -30,7 +30,7 @@ public class AloyPurifyBeam : Node
     private float colliderHeight;
     private Vector3 colliderCenter;
 
-    private CheckGauge coolTime;
+    private Gauge coolTime;
     private NavMeshAgent agent;
     private Animator animator;
 
@@ -38,7 +38,7 @@ public class AloyPurifyBeam : Node
     private float rotateSpeed = 8.0f;
     private float range = 8.5f;
 
-    private CheckGauge checkAvoid;
+    private Gauge checkAvoid;
 
     private MakeCoroutine coroutine;
 
@@ -48,10 +48,11 @@ public class AloyPurifyBeam : Node
     public AloyPurifyBeam() { }
 
     public AloyPurifyBeam(Transform _playerTransform, Transform _aimingTransform, 
-        GameObject _bowAniObj, GameObject _arrowAniObj, CheckGauge _coolTime)
+        GameObject _bowAniObj, GameObject _arrowAniObj, Gauge _coolTime): base(NodeName.Skill_3, null)
     {
         playerTransform = _playerTransform;
         attackTransform = _aimingTransform.GetChild(2);
+
         beamParticle = attackTransform.transform.GetChild(0).gameObject;
         if (beamParticle == null) Debug.LogError("beamParticle�� �Ҵ���� �ʾҽ��ϴ�");
         beamParticleHit = attackTransform.transform.GetChild(1).gameObject;
@@ -67,7 +68,7 @@ public class AloyPurifyBeam : Node
         coolTime = _coolTime;
         arrowAniObj = _arrowAniObj;
 
-        checkAvoid = new CheckGauge(avoidTiming);
+        checkAvoid = new Gauge(avoidTiming);
 
         collider = attackTransform.GetChild(0).GetComponent<CapsuleCollider>();
         if (collider == null) Debug.LogError("collider�� �Ҵ���� �ʾҽ��ϴ�");
@@ -82,12 +83,12 @@ public class AloyPurifyBeam : Node
 
     public override NodeState Evaluate()
     {
-        if (GetData("Enemy") != null)
+        if (GetData(DataContext.EnemyTransform) != null)
         {
-            enemyTransform = (Transform)GetData("Enemy");
+            enemyTransform = ((CheckEnemy)GetData(DataContext.EnemyTransform)).enemyTransform;
             Avoiding();
             Attack();
-            SetDataToRoot("Status", "AloyPurifyBeam");
+            SetDataToRoot(DataContext.NodeStatus, this);
             RangeChanging();
             return NodeState.Running;
         }
@@ -177,23 +178,23 @@ public class AloyPurifyBeam : Node
     void Avoiding()
     {
         agent.isStopped = true;
-        animator.SetBool("Move", false);
-        checkAvoid.UpdateCurCoolTime();
+        animator.SetBool(PlayerAniState.Move, false);
+        checkAvoid.UpdateCurCoolTime(Time.deltaTime);
         Moving();
     }
 
     void Moving()
     {
-        if (checkAvoid.CheckCoolTime() &&
-            animator.GetCurrentAnimatorStateInfo(2).IsName("Aim"))
+        if (checkAvoid.IsCoolTimeFinish() &&
+            animator.GetCurrentAnimatorStateInfo(2).IsName(PlayerAniState.Aim))
         {
-            checkAvoid.UpdateCurCoolTime(0.0f);
+            checkAvoid.ChangeCurCoolTime(0.0f);
             way = CheckingMoveable();
 
-            animator.SetBool("AvoidForward", false);
-            animator.SetBool("AvoidBack", false);
-            animator.SetBool("AvoidLeft", false);
-            animator.SetBool("AvoidRight", false);
+            animator.SetBool(PlayerAniState.AvoidForward, false);
+            animator.SetBool(PlayerAniState.AvoidBack, false);
+            animator.SetBool(PlayerAniState.AvoidLeft, false);
+            animator.SetBool(PlayerAniState.AvoidRight, false);
         }
 
         switch (way)
@@ -201,22 +202,22 @@ public class AloyPurifyBeam : Node
             // Forward
             case MoveWay.Forward:
                 playerTransform.Translate(avoidSpeed * 0.5f * Vector3.forward * Time.deltaTime);
-                animator.SetBool("AvoidForward", true);
+                animator.SetBool(PlayerAniState.AvoidForward, true);
                 break;
             // Back
             case MoveWay.Back:
                 playerTransform.Translate(avoidSpeed * 0.5f * Vector3.back * Time.deltaTime);
-                animator.SetBool("AvoidBack", true);
+                animator.SetBool(PlayerAniState.AvoidBack, true);
                 break;
             // Left
             case MoveWay.Left:
                 playerTransform.Translate(avoidSpeed * Vector3.left * Time.deltaTime);
-                animator.SetBool("AvoidLeft", true);
+                animator.SetBool(PlayerAniState.AvoidLeft, true);
                 break;
             // Right
             case MoveWay.Right:
                 playerTransform.Translate(avoidSpeed * Vector3.right * Time.deltaTime);
-                animator.SetBool("AvoidRight", true);
+                animator.SetBool(PlayerAniState.AvoidRight, true);
                 break;
             default:
                 Debug.LogError("�߸��� ���� �� �߻�!!");
@@ -233,7 +234,7 @@ public class AloyPurifyBeam : Node
         playerTransform.forward =
             Vector3.Lerp(playerTransform.forward, targetDir, rotateSpeed * Time.deltaTime);
 
-        if (coolTime.CheckCoolTime() && distance <= range)
+        if (coolTime.IsCoolTimeFinish() && distance <= range)
         {
             coolTime.UpdateCurCoolTime(0.0f);
 
@@ -245,10 +246,10 @@ public class AloyPurifyBeam : Node
 
         else
         {
-            bowAnimator.SetBool("Shoot", false);
-            animator.SetBool("Shoot", false);
+            bowAnimator.SetBool(PlayerAniState.Shoot, false);
+            animator.SetBool(PlayerAniState.Shoot, false);
 
-            if (bowAnimator.GetCurrentAnimatorStateInfo(0).IsName("Draw"))
+            if (bowAnimator.GetCurrentAnimatorStateInfo(0).IsName(PlayerAniState.Draw))
             {
                 arrowAniObj.SetActive(true);
             }
@@ -263,7 +264,7 @@ public class AloyPurifyBeam : Node
 
     IEnumerator ShootBeam()
     {
-        SetDataToRoot("IsNoSkillDoing", true);
+        SetDataToRoot(DataContext.IsNoSkillDoing, this);
 
         bowAnimator.SetBool("Draw", true);
         animator.SetBool("CheckEnemy", true);
@@ -279,7 +280,7 @@ public class AloyPurifyBeam : Node
 
         yield return new WaitForSeconds(0.8f);
 
-        ClearData("IsNoSkillDoing");
+        ClearData(DataContext.IsNoSkillDoing);
         coroutine.Stop();
 
     }

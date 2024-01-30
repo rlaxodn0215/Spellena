@@ -5719,15 +5719,15 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 910105643955544146}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0, y: 2, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7332924599158122579}
   - {fileID: 2021181553807253425}
   m_Father: {fileID: 2543627734747946567}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &936599355874872424
 GameObject:
@@ -5913,6 +5913,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3566718048853479396}
   - component: {fileID: 3241501069849023244}
+  - component: {fileID: 430735702}
   m_Layer: 0
   m_Name: Erika_Archer_Clothes_Mesh
   m_TagString: Untagged
@@ -6058,6 +6059,19 @@ SkinnedMeshRenderer:
     m_Center: {x: -0.0006984696, y: 0.6162627, z: 0.08138063}
     m_Extent: {x: 0.058117524, y: 0.010011911, z: 0.0120593235}
   m_DirtyAABB: 0
+--- !u!114 &430735702
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1034975415593459300}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0a8920b82d18ac43916689133626857, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  material: {fileID: 2100000, guid: 57636851bb4b15f4c95c01177cc9c373, type: 2}
 --- !u!1 &1048316645584620638
 GameObject:
   m_ObjectHideFlags: 0
@@ -12034,6 +12048,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ed37751545dff843bfcb09204063978, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isUsed: 0
   damage: 10
   arrowVelocity: 45
   lifeTiming: 2
@@ -27006,6 +27021,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1022518754797842991}
   - component: {fileID: 2691383890879376582}
+  - component: {fileID: 690878801}
   m_Layer: 0
   m_Name: Erika_Archer_Arrow_Mesh
   m_TagString: Untagged
@@ -27151,6 +27167,19 @@ SkinnedMeshRenderer:
     m_Center: {x: -0.00031778216, y: -0.20200256, z: -0.05904293}
     m_Extent: {x: 0.71871686, y: 0.95933247, z: 0.24650946}
   m_DirtyAABB: 0
+--- !u!114 &690878801
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2589769328760485696}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0a8920b82d18ac43916689133626857, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  material: {fileID: 2100000, guid: 57636851bb4b15f4c95c01177cc9c373, type: 2}
 --- !u!1 &2659071697908348757
 GameObject:
   m_ObjectHideFlags: 0
@@ -27253,8 +27282,8 @@ Transform:
   - {fileID: 3566718048853479396}
   - {fileID: 2264806084162766576}
   - {fileID: 8006438331241332435}
-  - {fileID: 6258363137479037546}
   - {fileID: 2831441130423673692}
+  - {fileID: 6258363137479037546}
   - {fileID: 962683132}
   m_Father: {fileID: 4860488176028835501}
   m_RootOrder: 0
@@ -27332,7 +27361,7 @@ MonoBehaviour:
   bowAniObj: {fileID: 4861061606177528500}
   arrowAniObj: {fileID: 1983351677866400748}
   aimingTransform: {fileID: 2831441130423673692}
-  arrowStrikeTransform: {fileID: 6258363137479037546}
+  ultimateTrans: {fileID: 0}
 --- !u!114 &1386519064
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -52907,6 +52936,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8426457502214329092}
   - component: {fileID: 546839521340010251}
+  - component: {fileID: 1835320472}
   m_Layer: 0
   m_Name: Erika_Archer_Bow_Mesh
   m_TagString: Untagged
@@ -53052,6 +53082,19 @@ SkinnedMeshRenderer:
     m_Center: {x: 0.00003616512, y: 0.6214652, z: 0.06154312}
     m_Extent: {x: 0.047747273, y: 0.01752147, z: 0.01738866}
   m_DirtyAABB: 0
+--- !u!114 &1835320472
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4332850941076956649}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0a8920b82d18ac43916689133626857, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  material: {fileID: 2100000, guid: 57636851bb4b15f4c95c01177cc9c373, type: 2}
 --- !u!1 &4365280063706741848
 GameObject:
   m_ObjectHideFlags: 0
@@ -53685,7 +53728,6 @@ GameObject:
   - component: {fileID: 4860488176028835501}
   - component: {fileID: 553186251}
   - component: {fileID: 553186250}
-  - component: {fileID: 553186253}
   - component: {fileID: 553186252}
   m_Layer: 0
   m_Name: Aloy
@@ -53731,7 +53773,6 @@ MonoBehaviour:
   observableSearch: 2
   ObservedComponents:
   - {fileID: 553186250}
-  - {fileID: 553186253}
   - {fileID: 1386519064}
   sceneViewId: 0
   InstantiationId: 0
@@ -53752,25 +53793,6 @@ MonoBehaviour:
   m_SynchronizeRotation: 1
   m_SynchronizeScale: 0
   m_UseLocal: 1
---- !u!114 &553186253
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4860488176028835500}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5b8b090ddb97d2741aebafd4da472894, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playerData: {fileID: 0}
-  cameraMain: {fileID: 0}
-  cameraOverlay: {fileID: 0}
-  cameraMinimap: {fileID: 0}
-  UI: {fileID: 0}
-  moveDirection: {x: 0, y: 0}
-  isRunning: 0
 --- !u!54 &553186252
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -53783,7 +53805,7 @@ Rigidbody:
   m_Drag: 0
   m_AngularDrag: 0.05
   m_UseGravity: 0
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 1
@@ -59912,10 +59934,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7d928fa87c619c43a1b701d5bb93855, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  obj: {fileID: 5473417342477334856, guid: b7b9f18d080835e4889a221499da8ded, type: 3}
-  objRoot: {fileID: 7332924599158122579}
-  initObjectNum: 1
-  objs: []
+  managerData: {fileID: 0}
 --- !u!1 &5025809315500458586
 GameObject:
   m_ObjectHideFlags: 0
@@ -85682,6 +85701,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2264806084162766576}
   - component: {fileID: 4306060206176594116}
+  - component: {fileID: 1888582768}
   m_Layer: 0
   m_Name: Erika_Archer_Eyelashes_Mesh
   m_TagString: Untagged
@@ -85827,6 +85847,19 @@ SkinnedMeshRenderer:
     m_Center: {x: 0.0003015697, y: 0.53186095, z: -0.01513828}
     m_Extent: {x: 0.9046439, y: 0.20570171, z: 0.12918903}
   m_DirtyAABB: 0
+--- !u!114 &1888582768
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6853438778456795188}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0a8920b82d18ac43916689133626857, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  material: {fileID: 2100000, guid: 57636851bb4b15f4c95c01177cc9c373, type: 2}
 --- !u!1 &6859389659225818707
 GameObject:
   m_ObjectHideFlags: 0
@@ -120602,7 +120635,7 @@ Transform:
   - {fileID: 4860488174324742447}
   - {fileID: 4103876424958473159}
   m_Father: {fileID: 2543627734747946567}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7955706610693834777
 GameObject:

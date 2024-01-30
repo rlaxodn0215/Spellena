@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf4591fe21e75ed46a314a68f7b740c6, type: 3}
+  m_Name: PoolManagerData
+  m_EditorClassIdentifier: 
+  poolObjectDatas:
+  - name: 0
+    obj: {fileID: 7579633284073917657, guid: 2c6fd5ed52c3f5e4891a7c6e4e206720, type: 3}
+    initObjectNum: 10
+  - name: 1
+    obj: {fileID: 3492691017000508022, guid: aee36ebbd3e183d4795b7b75b450c4ef, type: 3}
+    initObjectNum: 10
+  - name: 2
+    obj: {fileID: 7579633284073917657, guid: 11a10d644ab03ed42b3f69f67c9a394a, type: 3}
+    initObjectNum: 10
+  - name: 3
+    obj: {fileID: 6069143791621258020, guid: d1cfe1886772c844dad3bd813b24ca40, type: 3}
+    initObjectNum: 10
+  - name: 4
+    obj: {fileID: 6069143791621258020, guid: d4c3ac21f11bb9b45bc5dfb2421c2efc, type: 3}
+    initObjectNum: 10
+  - name: 5
+    obj: {fileID: 8956526843649204478, guid: dff0ced03066f714989f5363f8d4b3e8, type: 3}
+    initObjectNum: 10
+  - name: 6
+    obj: {fileID: 4353298380709256508, guid: 0a6fac95b851ff64588077fe111d963f, type: 3}
+    initObjectNum: 10
+  - name: 7
+    obj: {fileID: 8956526843649204478, guid: 6eba381eb994a6a47b2b773229b01c65, type: 3}
+    initObjectNum: 10

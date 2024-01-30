@@ -20,25 +20,23 @@ public class AloyBasicAttack : Node
     private Animator bowAnimator;
     private GameObject arrowAniObj;
 
-    private PoolManager basicAttackArrows;
-
     private Transform playerTransform;
     private Transform attackTransform;
     private Transform enemyTransform;
 
-    private CheckGauge coolTime;
+    private Gauge coolTime;
     private NavMeshAgent agent;
     private Animator animator;
 
     private float avoidTiming = 1.0f;
     private float rotateSpeed = 0.5f;
 
-    private CheckGauge checkAvoid;
+    private Gauge avoidTimer;
 
     public AloyBasicAttack() { }
 
-    public AloyBasicAttack(Transform _playerTransform, Transform _aimingTransform, GameObject _bowAniObj, GameObject _arrowAniObj,
-        GameObject _arrowPool, CheckGauge _coolTime)
+    public AloyBasicAttack(Transform _playerTransform, Transform _aimingTransform,
+        GameObject _bowAniObj, GameObject _arrowAniObj, Gauge _coolTime) : base(NodeName.Skill_1, null)
     {
         playerTransform = _playerTransform;
         attackTransform = _aimingTransform.GetChild(0);
@@ -53,20 +51,17 @@ public class AloyBasicAttack : Node
         coolTime = _coolTime;
         arrowAniObj = _arrowAniObj;
 
-        basicAttackArrows = _arrowPool.transform.GetChild(0).GetComponent<PoolManager>();
-        if (basicAttackArrows == null) Debug.LogError("basicAttackArrows 할당되지 않았습니다");
-
-        checkAvoid = new CheckGauge(avoidTiming);
+        avoidTimer = new Gauge(avoidTiming);
     }
 
     public override NodeState Evaluate()
     {
-        if (GetData("Enemy") != null)
+        if (GetData(DataContext.EnemyTransform) != null)
         {
-            enemyTransform = (Transform)GetData("Enemy");
+            enemyTransform = ((CheckEnemy)GetData(DataContext.EnemyTransform)).enemyTransform;
             Avoiding();
             Attack();
-            SetDataToRoot("Status", "AloyBasicAttack");
+            SetDataToRoot(DataContext.NodeStatus, this);
             return NodeState.Running;
         }
 
@@ -80,8 +75,8 @@ public class AloyBasicAttack : Node
     void Avoiding()
     {
         agent.isStopped = true;
-        animator.SetBool("Move", false);
-        checkAvoid.UpdateCurCoolTime();
+        animator.SetBool(PlayerAniState.Move, false);
+        avoidTimer.UpdateCurCoolTime(Time.deltaTime);
         Moving();
     }
 
@@ -116,16 +111,16 @@ public class AloyBasicAttack : Node
 
     void Moving()
     {
-        if (checkAvoid.CheckCoolTime() )
+        if (avoidTimer.IsCoolTimeFinish())
         {
-            checkAvoid.UpdateCurCoolTime(0.0f);
+            avoidTimer.UpdateCurCoolTime(0.0f);
 
             way = CheckingMoveable();
 
-            animator.SetBool("AvoidForward", false);
-            animator.SetBool("AvoidBack", false);
-            animator.SetBool("AvoidLeft", false);
-            animator.SetBool("AvoidRight", false);
+            animator.SetBool(PlayerAniState.AvoidForward, false);
+            animator.SetBool(PlayerAniState.AvoidBack, false);
+            animator.SetBool(PlayerAniState.AvoidLeft, false);
+            animator.SetBool(PlayerAniState.AvoidRight, false);
         }
 
         switch (way)
@@ -133,22 +128,22 @@ public class AloyBasicAttack : Node
             // Forward
             case MoveWay.Forward:
                 playerTransform.Translate(avoidSpeed * 0.5f * Vector3.forward * Time.deltaTime);
-                animator.SetBool("AvoidForward", true);
+                animator.SetBool(PlayerAniState.AvoidForward, true);
                 break;
             // Back
             case MoveWay.Back:
                 playerTransform.Translate(avoidSpeed * 0.5f * Vector3.back * Time.deltaTime);
-                animator.SetBool("AvoidBack", true);
+                animator.SetBool(PlayerAniState.AvoidBack, true);
                 break;
             // Left
             case MoveWay.Left:
                 playerTransform.Translate(avoidSpeed * Vector3.left * Time.deltaTime);
-                animator.SetBool("AvoidLeft", true);
+                animator.SetBool(PlayerAniState.AvoidLeft, true);
                 break;
             // Right
             case MoveWay.Right:
                 playerTransform.Translate(avoidSpeed * Vector3.right * Time.deltaTime);
-                animator.SetBool("AvoidRight", true);
+                animator.SetBool(PlayerAniState.AvoidRight, true);
                 break;
             default:
                 Debug.LogError("잘못된 랜덤 수 발생!!");
@@ -165,24 +160,24 @@ public class AloyBasicAttack : Node
 
         bool isDrawing;
 
-        if (coolTime.CheckCoolTime() && 
-            animator.GetCurrentAnimatorStateInfo(2).IsName("Aim") &&
+        if (coolTime.IsCoolTimeFinish() && 
+            animator.GetCurrentAnimatorStateInfo(2).IsName(PlayerAniState.Aim) &&
             Mathf.Acos(Vector3.Dot(playerTransform.forward, targetDir)) * Mathf.Rad2Deg <= 10.0f)
         {
-            coolTime.UpdateCurCoolTime(0.0f);
+            coolTime.ChangeCurCoolTime(0.0f);
             Debug.Log("AloyBasicAttack to " + "<color=magenta>"+ enemyTransform.name + "</color>");
-            bowAnimator.SetBool("Shoot", true);
-            animator.SetBool("Shoot", true);
+            bowAnimator.SetBool(PlayerAniState.Shoot, true);
+            animator.SetBool(PlayerAniState.Shoot, true);
 
-            basicAttackArrows.GetPoolObject(PoolObjectName.Arrow,attackTransform);
+            PoolManager.Instance.GetObject(PoolObjectName.Arrow, attackTransform.position, attackTransform.rotation);
 
-            isDrawing = !bowAnimator.GetCurrentAnimatorStateInfo(0).IsName("Shoot");
+            isDrawing = !bowAnimator.GetCurrentAnimatorStateInfo(0).IsName(PlayerAniState.Shoot);
         }
         else
         {
-            bowAnimator.SetBool("Shoot", false);
-            animator.SetBool("Shoot", false);
-            isDrawing = bowAnimator.GetCurrentAnimatorStateInfo(0).IsName("Draw");
+            bowAnimator.SetBool(PlayerAniState.Shoot, false);
+            animator.SetBool(PlayerAniState.Shoot, false);
+            isDrawing = bowAnimator.GetCurrentAnimatorStateInfo(0).IsName(PlayerAniState.Draw);
 
         }
 

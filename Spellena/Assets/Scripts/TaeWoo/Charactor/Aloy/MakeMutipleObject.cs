@@ -11,8 +11,6 @@ public class MakeMutipleObject : MonoBehaviour
     public Vector3 randomPos;
     public Vector3 randomRot;
 
-    private PoolManager poolManager;
-
     float time1;
     float time2;
     int count;
@@ -23,14 +21,6 @@ public class MakeMutipleObject : MonoBehaviour
         count = 0;
     }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        poolManager = GetComponent<PoolManager>();
-        if (poolManager == null) Debug.LogError("No PoolManager");
-    }
-
-    // Update is called once per frame
     void Update()
     {
         if (Time.time > time1 + startDelay)
@@ -39,7 +29,7 @@ public class MakeMutipleObject : MonoBehaviour
             {
                 Vector3 pos = transform.position + GetRandomVector(randomPos);
                 Quaternion rot = transform.rotation * Quaternion.Euler(GetRandomVector(randomRot));
-                poolManager.GetPoolObject(PoolObjectName.Strike, pos, rot);
+                PoolManager.Instance.GetObject(PoolObjectName.Strike, pos, rot);
                 time2 = Time.time;
                 count++;
             }

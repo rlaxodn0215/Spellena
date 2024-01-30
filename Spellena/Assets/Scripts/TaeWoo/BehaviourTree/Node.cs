@@ -10,22 +10,48 @@ namespace BehaviourTree
         Failure
     }
 
+    public enum NodeName
+    {
+        Sequence,
+        Selector,
+        Parallel,
+        GotoOccupationArea,
+        Skill_1,
+        Skill_2,
+        Skill_3,
+        Skill_4
+    }
+
+    public enum DataContext
+    {
+        NodeStatus,
+        IsNoSkillDoing,
+        NotSensingEnemy,
+        EnemyTransform,
+    }
+
     public class Node
     {
         protected NodeState state;
 
+        public NodeName nodeName;
         public Node parent;
+
         protected List<Node> children = new List<Node>();
 
-        private Dictionary<string, object> dataContext = new Dictionary<string, object>();
+        private Dictionary<DataContext, Node> dataContext 
+            = new Dictionary<DataContext, Node>();
 
         public Node()
         {
             parent = null;
         }
 
-        public Node(List<Node> children)
+        public Node(NodeName name, List<Node> children)
         {
+            nodeName = name;
+
+            if(children != null)
             foreach (Node child in children)
                 Attach(child);
         }
@@ -41,12 +67,12 @@ namespace BehaviourTree
             return NodeState.Failure;
         }
 
-        public void SetData(string key, object value)
+        public void SetData(DataContext key, Node value)
         {
             dataContext[key] = value;
         }
 
-        public void SetDataToRoot(string key, object value)
+        public void SetDataToRoot(DataContext key, Node value)
         {
             Node temp = parent;
             Node root = this;
@@ -60,9 +86,9 @@ namespace BehaviourTree
             root.dataContext[key] = value;
         }
 
-        public object GetData(string key)
+        public Node GetData(DataContext key)
         {
-            object value = null;
+            Node value = null;
             if (dataContext.TryGetValue(key, out value))
                 return value;
 
@@ -79,7 +105,7 @@ namespace BehaviourTree
             return null;
         }
 
-        public bool ClearData(string key)
+        public bool ClearData(DataContext key)
         {
             if (dataContext.ContainsKey(key))
             {

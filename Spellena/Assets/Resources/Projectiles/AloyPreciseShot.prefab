@@ -47,17 +47,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ed37751545dff843bfcb09204063978, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isUsed: 0
   damage: 20
   arrowVelocity: 80
   lifeTiming: 10
   rotateSpeed: 0
   ableHitParticle: 1
   ableArrowStuck: 0
-  isUltimate: 0
-  hitParticleObject: {fileID: 6069143791621258020, guid: d4c3ac21f11bb9b45bc5dfb2421c2efc, type: 3}
-  arrowStuckObject: {fileID: 0}
   hitParticleDestoryTime: 1.5
   arrowStuckDestoryTime: 0
+  hitEffectName: 4
+  stuckObject: 0
 --- !u!135 &-6155840532229347061
 SphereCollider:
   m_ObjectHideFlags: 0

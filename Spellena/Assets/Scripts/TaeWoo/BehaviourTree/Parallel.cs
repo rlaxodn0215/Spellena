@@ -8,16 +8,16 @@ namespace BehaviourTree
 
         public Parallel() : base() { }
 
-        public Parallel(List<Node> children) : base(children) { }
+        public Parallel(NodeName name, List<Node> children) : base(name, children) { }
 
         public override NodeState Evaluate()
         {
-            if (GetData("IsNoSkillDoing") == null)
+            if (GetData(DataContext.IsNoSkillDoing) == null)
                 index = (index + 1) % children.Count;
 
             Node node = children[index];
 
-            SetDataToRoot("Status", "RandomSelector");
+            SetDataToRoot(DataContext.NodeStatus, this);
 
             switch (node.Evaluate())
             {

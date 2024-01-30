@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.Networking;
 using System.IO;
+using System.Text;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -51,10 +52,9 @@ public class GoogleSheetManager : EditorWindow
     {
         for (int i = 0; i < googleSheetData.gooleSheets.Length; i++)
         {
-            URL = googleSheetData.gooleSheets[i].address + 
-                googleSheetData.exportFormattsv + googleSheetData.andRange
-                + googleSheetData.gooleSheets[i].range_1 + ":" + 
-                googleSheetData.gooleSheets[i].range_2;
+            URL = MakeURL(googleSheetData.gooleSheets[i].address, 
+                googleSheetData.exportFormattsv,googleSheetData.andRange, 
+                googleSheetData.gooleSheets[i].range_1, googleSheetData.gooleSheets[i].range_2);
 
             UnityWebRequest www = UnityWebRequest.Get(URL);
             www.SendWebRequest();
@@ -71,10 +71,19 @@ public class GoogleSheetManager : EditorWindow
 
             string Data = www.downloadHandler.text;
             Debug.Log(googleSheetData.name + " 데이터 가져오기 성공");
-
+            
             DividText(Data);
             GiveData(i);
         }
+    }
+
+    string MakeURL(string address, string exportFormattsv,
+        string andRange, string range1, string range2)
+    {
+        StringBuilder sb = new StringBuilder();
+        sb.Append(address).Append(exportFormattsv).Append(andRange)
+            .Append(range1).Append(":").Append(range2);
+        return sb.ToString();
     }
 
     void SaveToText(string data, int index)

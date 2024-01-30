@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Managers
@@ -9,22 +8,36 @@ namespace Managers
         public delegate void Callback_Disapear(PoolObjectName name, int id);
         Callback_Disapear onDisapear;
 
-        public int objID { get; private set; }
+        public int ObjID { get; private set; }
+        [HideInInspector]
+        public bool isUsed;
         protected PoolObjectName objectName;
         protected Transform objTrans;
 
-        public void SetPoolObjectData(int _id, PoolObjectName _name, Transform _transform)
+        public void SetPoolObjectData(int _id, PoolObjectName _name, Transform _trans)
         {
-            objID = _id;
+            ObjID = _id;
             objectName = _name;
-            objTrans = transform;
+            objTrans = _trans;
         }
         public virtual void InitPoolObject() { }
-        public virtual void SetPoolObject(Vector3 direction) { }
+        public virtual void SetPoolObjectTransform(Transform trans) { }
 
-        protected virtual void DisActive()
+        public virtual void DisActive()
         {
-            onDisapear(objectName, objID);  
+            onDisapear(objectName, ObjID);  
+        }
+
+        public virtual void DisActive(float time)
+        {
+            if(isActiveAndEnabled)
+            StartCoroutine(DisActiveTimer(time));
+        }
+
+        IEnumerator DisActiveTimer(float time)
+        {
+            yield return new WaitForSeconds(time);
+            DisActive();
         }
 
         public void SetCallback(Callback_Disapear callback_OnDisapear)
