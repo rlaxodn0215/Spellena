@@ -29,6 +29,10 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     public Transform playerItemParentA;
     public Transform playerItemParentB;
 
+    bool isRoomListUpdated = false;
+
+    private const string playerItemPrefabPath = "SiHyun/Prefabs/PlayerItem";
+
     private void Start()
     {
         PhotonNetwork.JoinLobby();
@@ -46,14 +50,6 @@ public class LobbyManager : MonoBehaviourPunCallbacks
                 IsOpen = true,
                 IsVisible = true,
             };
-            ExitGames.Client.Photon.Hashtable customProperties =
-                new ExitGames.Client.Photon.Hashtable() 
-                { 
-                    { "GameState", "Waiting" },
-                    { "MasterName", PhotonNetwork.LocalPlayer.NickName }
-                };
-            roomOptions.CustomRoomProperties = customProperties;
-            roomOptions.CustomRoomPropertiesForLobby = new string[] { "GameState", "MasterName" };
 
             PhotonNetwork.CreateRoom(roomInputField.text, roomOptions);
         }
@@ -62,31 +58,28 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
     {
-        if(Time.time >=nextUpdateTime)
+        if(Time.time >=nextUpdateTime && !isRoomListUpdated)
         {
             Debug.Log("방 목록 업데이트");
             UpdateRoomList(roomList);
             nextUpdateTime = Time.time + timeBetweenUpdates;
+            isRoomListUpdated = true;
         }
     }
 
     void UpdateRoomList(List<RoomInfo> list)
     {
-        foreach(RoomItem item in roomItemList)
+        /*foreach(RoomItem item in roomItemList)
         {
             Destroy(item.gameObject);
         }
-        roomItemList.Clear();
+        roomItemList.Clear();*/
 
         foreach(RoomInfo room in list)
         {
-            string masterClientName = room.CustomProperties.ContainsKey("MasterName")
-                ? (string)room.CustomProperties["MasterName"] : "N/A";
-            string gameState = room.CustomProperties.ContainsKey("GameState")
-                ? (string)room.CustomProperties["GameState"] : "Waiting";
-
             RoomItem newRoom = Instantiate(roomItemPrefab, contentObjects);
-            newRoom.SetRoomInfo(room.Name, room.PlayerCount, room.MaxPlayers, masterClientName, gameState);
+            Photon.Realtime.Player masterClient = PhotonNetwork.CurrentRoom.GetPlayer(room.masterClientId);
+            newRoom.SetRoomInfo(room.Name, room.PlayerCount, room.MaxPlayers, masterClient.NickName);
             roomItemList.Add(newRoom);
         }
     }
@@ -121,69 +114,31 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
     public override void OnPlayerLeftRoom(Photon.Realtime.Player otherPlayer)
     {
+
     }
 
     public override void OnLeftRoom()
     {
         roomPanel.SetActive(false);
         lobbyPanel.SetActive(true);
+
+        PhotonNetwork.GetCustomRoomList(null, "");
+
+        isRoomListUpdated = false;
     }
 
-    public override void OnConnectedToMaster()
+    /*public override void OnConnectedToMaster()
     {
         PhotonNetwork.JoinLobby();
-    }
+    }*/
 
     void CreateLocalPlayerItem(Photon.Realtime.Player _localPlayer)
     {
         if (PlayerItem.localPlayerItemInstance == null)
         {
             GameObject _playerItemObj = 
-                PhotonNetwork.Instantiate("SiHyun/Prefabs/PlayerItem", Vector3.zero, Quaternion.identity);
+                PhotonNetwork.Instantiate(playerItemPrefabPath, Vector3.zero, Quaternion.identity);
             _playerItemObj.transform.SetParent(playerItemParentA);
-
-            /*
-            if (_playerItem.photonView.IsMine)
-            {
-                _playerItem.SetPlayerInfo(_localPlayer, PunTeams.Team.red);
-            }
-            */
-
-            /*
-            CanvasScaler canvasScaler = playerItemParentA.GetComponentInParent<CanvasScaler>();
-            if (canvasScaler != null)
-            {
-                float referenceWidth = canvasScaler.referenceResolution.x;
-                float referenceHeight = canvasScaler.referenceResolution.y;
-
-                // 기준 해상도에서의 cellSize 및 spacing
-                Vector2 baseCellSize = new Vector2(427f, 93f);
-                Vector2 baseSpacing = new Vector2(0f, 3f);
-
-                // 화면 크기에 따라 조절된 cellSize 및 spacing 계산
-                float scaleFactorX = canvasScaler.referenceResolution.x / Screen.width;
-                float scaleFactorY = canvasScaler.referenceResolution.y / Screen.height;
-
-                Vector2 adjustedCellSize = 
-                    new Vector2(baseCellSize.x / scaleFactorX, baseCellSize.y / scaleFactorY);
-                Vector2 adjustedSpacing = 
-                    new Vector2(baseSpacing.x / scaleFactorX, baseSpacing.y / scaleFactorY);
-
-                GridLayoutGroup _gridLayout = playerItemParentA.GetComponent<GridLayoutGroup>();
-
-                if (_gridLayout != null)
-                {
-                    _gridLayout.cellSize = adjustedCellSize;
-                    _gridLayout.spacing = adjustedSpacing;
-
-                    float verticalSpacing = _gridLayout.spacing.y;
-                    float horizontalSpacing = _gridLayout.spacing.x;
-
-                    AdjustChildObjectSizesAndPositions(playerItemParentA.gameObject, adjustedCellSize,
-                        _gridLayout.constraintCount, verticalSpacing, horizontalSpacing);
-                }
-            }
-            */
         }
     }
 
@@ -192,76 +147,13 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         if (PlayerItem.localPlayerItemInstance == null)
         {
             GameObject _playerItemObj = 
-                PhotonNetwork.Instantiate("SiHyun/Prefabs/PlayerItem", Vector3.zero, Quaternion.identity);
+                PhotonNetwork.Instantiate(playerItemPrefabPath, Vector3.zero, Quaternion.identity);
             PlayerItem _playerItem = _playerItemObj.GetComponent<PlayerItem>();
             _playerItem.transform.SetParent(playerItemParentA);
 
             if(_playerItem.photonView.IsMine)
             {
-                //_playerItem.SetPlayerInfo(_newPlayer.UserId, _newPlayer.NickName);
                 _playerItem.SetPlayerInfo(_newPlayer, PunTeams.Team.red);
-            }
-
-
-            /*
-            CanvasScaler canvasScaler = playerItemParentA.GetComponentInParent<CanvasScaler>();
-            if (canvasScaler != null)
-            {
-                float referenceWidth = canvasScaler.referenceResolution.x;
-                float referenceHeight = canvasScaler.referenceResolution.y;
-
-                // 기준 해상도에서의 cellSize 및 spacing
-                Vector2 baseCellSize = new Vector2(427f, 93f);
-                Vector2 baseSpacing = new Vector2(0f, 3f);
-
-                // 화면 크기에 따라 조절된 cellSize 및 spacing 계산
-                float scaleFactorX = canvasScaler.referenceResolution.x / Screen.width;
-                float scaleFactorY = canvasScaler.referenceResolution.y / Screen.height;
-
-                Vector2 adjustedCellSize = 
-                    new Vector2(baseCellSize.x / scaleFactorX, baseCellSize.y / scaleFactorY);
-                Vector2 adjustedSpacing =
-                    new Vector2(baseSpacing.x / scaleFactorX, baseSpacing.y / scaleFactorY);
-
-                GridLayoutGroup _gridLayout = playerItemParentA.GetComponent<GridLayoutGroup>();
-
-                if (_gridLayout != null)
-                {
-                    _gridLayout.cellSize = adjustedCellSize;
-                    _gridLayout.spacing = adjustedSpacing;
-                    float verticalSpacing = _gridLayout.spacing.y;
-                    float horizontalSpacing = _gridLayout.spacing.x;
-
-                    AdjustChildObjectSizesAndPositions(playerItemParentA.gameObject, adjustedCellSize,
-                        _gridLayout.constraintCount,verticalSpacing , horizontalSpacing);
-                }
-            }
-            */
-        }
-    }
-
-    void AdjustChildObjectSizesAndPositions(GameObject parentObject, Vector2 cellSize,
-        int constraintCount, float verticalSpacing, float horizontalSpacing)
-    {
-        // 자식 오브젝트들의 크기 조절
-        foreach (Transform child in parentObject.transform)
-        {
-            RectTransform childRectTransform = child.GetComponent<RectTransform>();
-
-            // 자식 오브젝트의 크기를 부모의 셀 크기에 맞게 설정
-            if (childRectTransform != null)
-            {
-                childRectTransform.sizeDelta = new Vector2(cellSize.x, cellSize.y);
-
-                // 자식 오브젝트의 위치 계산
-                int index = child.GetSiblingIndex();
-                int row = index / constraintCount;
-                int col = index % constraintCount;
-
-                float posX = col * (cellSize.x + verticalSpacing);
-                float posY = -row * (cellSize.y + horizontalSpacing);
-
-                childRectTransform.anchoredPosition = new Vector2(posX, posY);
             }
         }
     }

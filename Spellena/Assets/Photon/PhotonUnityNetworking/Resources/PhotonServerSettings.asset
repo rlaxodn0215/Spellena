@@ -209,19 +209,15 @@ MonoBehaviour:
   - NotifySetSkillCoolDownTime
   - SetSkillPlayer
   - PlayAnimationState
-  - ShowRoundPoint
   - AddPower
-  - PlayerDamage
-  - SetLocalPlayer
-  - UpdatePlayerStat
-  - UpdatePlayerDead
-  - UpdateTotalDamage
-  - InitTeamLifeDead
-  - SetLocalAI
-  - RPCTest
   - AddYPower
   - SyncCommandEffect
-  - EditPlayerDictionary
+  - SetPlainPlayer
+  - NotifyPlainIsReady
+  - InitTeamLifeDead
+  - ShowRoundPoint
+  - UpdatePlayerDead
+  - UpdateTotalDamage
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

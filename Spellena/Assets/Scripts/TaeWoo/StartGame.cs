@@ -15,6 +15,7 @@ public class StartGame : MonoBehaviour
         if(PhotonNetwork.IsMasterClient)
         {
             GetComponent<PhotonView>().RPC("StartGameToAll", RpcTarget.AllBufferedViaServer);
+            PhotonNetwork.CurrentRoom.IsVisible = false;
         }
     }
 

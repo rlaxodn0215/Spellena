@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
+using Unity.VisualScripting;
 
 public class PlayerCommonOverlayAnimation : MonoBehaviour
 {
@@ -17,12 +18,23 @@ public class PlayerCommonOverlayAnimation : MonoBehaviour
     protected float rightHandRotWeight = 0f;
     protected float leftHandRotWeight = 0f;
 
+    public enum AnimationType
+    {
+        None, SkillCasting, SkillChanneling, PlainCasting, PlainChanneling
+    }
+
+    protected AnimationType currentAnimationType = AnimationType.None;
+    protected int currentAnimationIndex = -1;
+
     private int animationListener;
 
     virtual protected void Start()
     {
         playerCommon = transform.root.GetComponent<PlayerCommon>();
+
         playerCommon.PlayAnimation += SetAnimationParameter;
+
+
         playerData = playerCommon.playerData;
         overlayAnimator = GetComponent<Animator>();
         animationListener = animationListener = overlayAnimator.GetCurrentAnimatorStateInfo(1).fullPathHash;
@@ -62,73 +74,134 @@ public class PlayerCommonOverlayAnimation : MonoBehaviour
 
     virtual protected void SetAnimationTime(AnimatorStateInfo info)
     {
-        Debug.Log("Å©¾Æ¾Ç");
-        float _time = 0f;
+        string _temp;
         string _parameter = "";
-        string _skill = "";
-
-        int _check = 0;
-
-        for (int i = 0; i < playerData.skillCastingTime.Count; i++)
+        float _time = -1f;
+        if (currentAnimationType == AnimationType.None)
         {
-            string _temp = "Skill" + (i + 1) + "Casting";
-            if (info.IsName(_temp))
+            for(int i = 0; i < playerData.skillCastingTime.Count; i++)
             {
-                _time = playerData.skillCastingTime[i];
-                _parameter = _temp;
-                _skill = "Skill" + (i + 1);
-                _check = 1;
-                break;
-            }
-        }
-
-        if (_check == 0)
-        {
-            for (int i = 0; i < playerData.skillChannelingTime.Count; i++)
-            {
-                string _temp = "Skill" + (i + 1) + "Channeling";
-                if (info.IsName(_temp))
+                _temp = "Skill" + (i + 1);
+                bool _isSkill = overlayAnimator.GetBool(_temp);
+                if (_isSkill)
                 {
-                    _time = playerData.skillChannelingTime[i];
-                    _parameter = _temp;
-                    _skill = "Skill" + (i + 1);
-                    _check = 1;
+                    if (playerData.skillCastingTime[i] <= 0)
+                    {
+                        _time = playerData.skillChannelingTime[i];
+                        _parameter = _temp + "Channeling";
+                        currentAnimationType = AnimationType.SkillChanneling;
+                        Debug.Log(_time);
+                    }
+                    else
+                    {
+                        _time = playerData.skillCastingTime[i];
+                        _parameter = _temp + "Casting";
+                        currentAnimationType = AnimationType.SkillCasting;
+                    }
+                    currentAnimationIndex = i;
+                    overlayAnimator.SetBool(_temp, false);
                     break;
                 }
             }
+
+            for(int i = 0; i < playerData.plainCastingTime.Count; i++)
+            {
+                _temp = "Plain" + (i + 1);
+                bool _isPlain = overlayAnimator.GetBool(_temp);
+                if(_isPlain)
+                {
+                    if (playerData.plainCastingTime[i] <= 0)
+                    {
+                        _time = playerData.plainChannelingTime[i];
+                        _parameter = _temp + "Channeling";
+                        currentAnimationType = AnimationType.PlainChanneling;
+                    }
+                    else
+                    {
+                        _time = playerData.plainCastingTime[i];
+                        _parameter = _temp + "Casting";
+                        currentAnimationType = AnimationType.PlainCasting;
+                    }
+                    currentAnimationIndex = i;
+                    break;
+                }
+                overlayAnimator.SetBool(_temp, false);
+            }    
+        }
+        else if(currentAnimationType == AnimationType.SkillCasting)
+        {
+            if (playerData.skillChannelingTime[currentAnimationIndex] <= 0)
+            {
+                currentAnimationType = AnimationType.None;
+                currentAnimationIndex = -1;
+            }
+            else
+            {
+                _time = playerData.skillChannelingTime[currentAnimationIndex];
+                _parameter = "Skill" + (currentAnimationIndex + 1) + "Channeling";
+                currentAnimationType = AnimationType.SkillChanneling;
+            }
+        }
+        else if(currentAnimationType == AnimationType.PlainCasting)
+        {
+            if (playerData.plainChannelingTime[currentAnimationIndex] <= 0)
+            {
+                currentAnimationType = AnimationType.None;
+                currentAnimationIndex = -1;
+            }
+            else
+            {
+                _time = playerData.plainChannelingTime[currentAnimationIndex];
+                _parameter = "Plain" + (currentAnimationIndex + 1) + "Channeling";
+                currentAnimationType = AnimationType.PlainChanneling;
+            }
+        }
+        else if(currentAnimationType == AnimationType.SkillChanneling ||
+            currentAnimationType == AnimationType.PlainChanneling)
+        {
+            currentAnimationType = AnimationType.None;
+            currentAnimationIndex = -1;
         }
 
-        overlayAnimator.SetBool(_skill, false);
-
-        float _length = info.length;
-        if (_length <= 1.01 && _length >= 0.99)
-            return;
-
-        if(_check == 1)
+        if (_time > 0f)
         {
+            float _length = info.length;
+            if (_length <= 1.01 && _length >= 0.99)
+                return;
+
             float _speed = _length / _time;
             overlayAnimator.SetFloat(_parameter, _speed);
         }
     }
 
-    virtual protected void SetAnimationParameter(int index)
+    virtual protected void SetAnimationParameter(string type, int index)
     {
         if(!rootPhotonView.IsMine || index == -1)
             return;
-        else
+
+        string _type = ""; string _stateName = "";
+
+        if(type == "Skill")
         {
             for (int i = 0; i < playerData.skillCastingTime.Count; i++)
             {
-                string _type = "Skill" + (i + 1);
+                _type = "Skill" + (i + 1);
                 overlayAnimator.SetBool(_type, false);
             }
 
+            _stateName = "Skill" + (index + 1);
+            overlayAnimator.SetBool(_stateName, true);
+        }
+        else if(type == "Plain")
+        {
+            for(int i = 0; i < playerData.plainCastingTime.Count; i++)
+            {
+                _type = "Plain" + (i + 1);
+                overlayAnimator.SetBool(_type, false);
+            }
 
-            string _stateName = "Skill" + (index + 1);
+            _stateName = "Plain" + (index + 1);
             overlayAnimator.SetBool(_stateName, true);
         }
     }
-
-
-
 }
