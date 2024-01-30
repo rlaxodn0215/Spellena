@@ -214,6 +214,10 @@ MonoBehaviour:
   - SyncCommandEffect
   - SetPlainPlayer
   - NotifyPlainIsReady
+  - InitTeamLifeDead
+  - ShowRoundPoint
+  - UpdatePlayerDead
+  - UpdateTotalDamage
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

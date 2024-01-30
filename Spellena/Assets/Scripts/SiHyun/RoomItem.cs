@@ -23,26 +23,12 @@ public class RoomItem : MonoBehaviour
         manager = FindObjectOfType<LobbyManager>();
     }
 
-    public void SetRoomInfo(string _roomName, int _playerCount, int _maxPlayer, string _masterClientName,
-        string _gameState)
+    public void SetRoomInfo(string _roomName, int _playerCount, int _maxPlayer, string _masterClientName)
     {
         roomName = _roomName;
         roomNameText.text = _roomName.Length > maxChar ? _roomName.Substring(0, maxChar) + "..." : _roomName;
         playerCountText.text = $"{_playerCount} / {_maxPlayer}";
         masterPlayerName.text = _masterClientName;
-
-        if(_gameState == "InGame")
-        {
-            entryStatusText.text = "입장 불가";
-            blackOut.SetActive(true);
-            entryIcon.sprite = entryNotPossible;
-        }
-        else if(_gameState == "Waiting")
-        {
-            entryStatusText.text = "입장 가능";
-            blackOut.SetActive(false);
-            entryIcon.sprite = admissionPossible;
-        }
     }
 
     public void OnClickItem()
