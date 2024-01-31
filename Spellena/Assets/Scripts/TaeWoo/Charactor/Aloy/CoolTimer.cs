@@ -17,6 +17,11 @@ public class CoolTimer
          curCoolTime = _curCoolTime;
     }
 
+    public void ChangeDataCoolTime(float _dataCoolTime)
+    {
+        dataCoolTime = _dataCoolTime;
+    }
+
     public bool IsCoolTimeFinish()
     {
         return curCoolTime >= dataCoolTime;
