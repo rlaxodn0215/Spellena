@@ -1,32 +1,36 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using Managers;
 
 public class Arrow : PoolObject
 {
+    enum ArrowCoolTime
+    {
+        LifeTime,
+        HitParticleDestoryTime,
+        ArrowStuckDestoryTime
+    }
+
     public int damage;
     public float arrowVelocity;
-    public float lifeTiming;
     public float rotateSpeed;
     public bool ableHitParticle;
     public bool ableArrowStuck;
-    public float hitParticleDestoryTime;
-    public float arrowStuckDestoryTime;
+
+    public float[] times;
     public PoolObjectName hitEffectName;
     public PoolObjectName stuckObjectName;
 
-    private CoolTimer lifeTime;
-    private CoolTimer stuckTime;
+    private List<CoolTimer> timers = new List<CoolTimer>();
     private new Rigidbody rigidbody;
     private Coroutine lifeTimeCoroutine;
 
     public override void InitPoolObject()
     {
-        lifeTime = new CoolTimer(lifeTiming);
-        stuckTime = new CoolTimer(arrowStuckDestoryTime);
+        for (int i = 0; i < times.Length; i++) timers.Add(new CoolTimer(times[i]));
         rigidbody = GetComponent<Rigidbody>();
-        if (rigidbody == null) 
-            rigidbody = gameObject.AddComponent<Rigidbody>();
+        if (rigidbody == null) rigidbody = gameObject.AddComponent<Rigidbody>();
     }
     public override void SetPoolObjectTransform(Transform trans)
     {
@@ -34,24 +38,9 @@ public class Arrow : PoolObject
     }
     void OnEnable()
     {
-        if (rigidbody != null)
-        {
-            rigidbody.velocity = transform.forward * arrowVelocity;
-            lifeTimeCoroutine = StartCoroutine(LifeTimeUpdate());
-        }
-    }
-
-    IEnumerator LifeTimeUpdate()
-    {
-        while(!lifeTime.IsCoolTimeFinish())
-        {
-            lifeTime.UpdateCoolTime(Time.deltaTime);
-            transform.Rotate(Vector3.right, rotateSpeed * Time.deltaTime);
-            yield return null;
-        }
-
-        StopCoroutine(lifeTimeCoroutine);
-        DisActive();
+        if (rigidbody == null) rigidbody = gameObject.AddComponent<Rigidbody>();
+        rigidbody.velocity = transform.forward * arrowVelocity;
+        lifeTimeCoroutine = StartCoroutine(TimerUpdate(ArrowCoolTime.LifeTime, this));
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -59,14 +48,13 @@ public class Arrow : PoolObject
         if (collision.transform.name == gameObject.name) return;       
         if (ableArrowStuck)  MakeHitEffect(stuckObjectName,collision, true);
         if (ableHitParticle) MakeHitEffect(hitEffectName,collision, false);
-        StopCoroutine(lifeTimeCoroutine);
         DisActive();
     }
 
     void MakeHitEffect(PoolObjectName name, Collision collision, bool isFollowHitObject)
     {
-        PoolObject ob = PoolManager.Instance.GetObject
-                (name, collision.GetContact(0).point, transform.rotation);
+        PoolObject ob = PoolManager.Instance.
+            GetObject(name, collision.GetContact(0).point, transform.rotation);
         if (isFollowHitObject)
         {
             Vector3 distance = collision.GetContact(0).point - collision.transform.position;
@@ -74,25 +62,41 @@ public class Arrow : PoolObject
         }
         else
         {
-            ob.DisActive(hitParticleDestoryTime);
+            ob.StartCoroutine(TimerUpdate(ArrowCoolTime.HitParticleDestoryTime, ob));
         }
+    }
+
+    IEnumerator TimerUpdate(ArrowCoolTime name, PoolObject ob)
+    {
+        while (!timers[(int)name].IsCoolTimeFinish())
+        {
+            timers[(int)name].UpdateCoolTime(Time.deltaTime);
+            if(name == ArrowCoolTime.LifeTime)
+                ob.transform.Rotate(Vector3.right, rotateSpeed * Time.deltaTime);
+            yield return null;
+        }
+
+        timers[(int)name].ChangeCoolTime(0.0f);
+        ob.DisActive();
     }
 
     IEnumerator FollowHitObject(Transform hitObj, PoolObject stuckObj, Vector3 distance)
     {
-        while (!stuckTime.IsCoolTimeFinish())
+        while (!timers[(int)ArrowCoolTime.ArrowStuckDestoryTime].IsCoolTimeFinish())
         {
-            stuckTime.UpdateCoolTime(Time.deltaTime);
+            timers[(int)ArrowCoolTime.ArrowStuckDestoryTime].UpdateCoolTime(Time.deltaTime);
             stuckObj.transform.position = hitObj.position + distance;
             yield return null;
         }
 
+        timers[(int)ArrowCoolTime.ArrowStuckDestoryTime].ChangeCoolTime(0.0f);
         stuckObj.DisActive();
     }
 
     public override void DisActive()
     {
-        lifeTime.ChangeCoolTime(0.0f);
+        StopCoroutine(lifeTimeCoroutine);
+        timers[(int)ArrowCoolTime.LifeTime].ChangeCoolTime(0.0f);
         rigidbody.velocity = Vector3.zero;
         rigidbody.angularVelocity = Vector3.zero;
         base.DisActive();

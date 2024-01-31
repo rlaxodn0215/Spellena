@@ -50,14 +50,14 @@ MonoBehaviour:
   isUsed: 0
   damage: 20
   arrowVelocity: 80
-  lifeTiming: 10
   rotateSpeed: 0
   ableHitParticle: 1
   ableArrowStuck: 0
-  hitParticleDestoryTime: 1.5
-  arrowStuckDestoryTime: 0
+  times:
+  - 3
+  - 1
   hitEffectName: 4
-  stuckObject: 0
+  stuckObjectName: 0
 --- !u!135 &-6155840532229347061
 SphereCollider:
   m_ObjectHideFlags: 0

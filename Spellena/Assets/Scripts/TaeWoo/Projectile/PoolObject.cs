@@ -28,18 +28,6 @@ namespace Managers
             onDisapear(objectName, ObjID);  
         }
 
-        public virtual void DisActive(float time)
-        {
-            if(isActiveAndEnabled)
-            StartCoroutine(DisActiveTimer(time));
-        }
-
-        IEnumerator DisActiveTimer(float time)
-        {
-            yield return new WaitForSeconds(time);
-            DisActive();
-        }
-
         public void SetCallback(Callback_Disapear callback_OnDisapear)
         {
             onDisapear = callback_OnDisapear;

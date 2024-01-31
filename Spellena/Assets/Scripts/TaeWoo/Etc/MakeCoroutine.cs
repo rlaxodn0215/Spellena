@@ -25,6 +25,7 @@ namespace CoroutineMaker
 
         public void Stop()
         {
+            if(enumerator !=null)
             StopCoroutine(enumerator.ToString());
             Destroy(gameObject);
         }

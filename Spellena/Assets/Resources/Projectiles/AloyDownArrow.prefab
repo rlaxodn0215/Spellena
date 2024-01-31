@@ -9848,12 +9848,13 @@ MonoBehaviour:
   isUsed: 0
   damage: 30
   arrowVelocity: 100
-  lifeTiming: 3
   rotateSpeed: 0
   ableHitParticle: 1
   ableArrowStuck: 1
-  hitParticleDestoryTime: 1
-  arrowStuckDestoryTime: 3
+  times:
+  - 3
+  - 1
+  - 100
   hitEffectName: 6
   stuckObjectName: 7
 --- !u!136 &3615579227885699967

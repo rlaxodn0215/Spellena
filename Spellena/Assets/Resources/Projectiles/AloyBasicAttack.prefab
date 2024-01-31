@@ -34347,12 +34347,13 @@ MonoBehaviour:
   isUsed: 0
   damage: 10
   arrowVelocity: 45
-  lifeTiming: 5
   rotateSpeed: 15
   ableHitParticle: 1
   ableArrowStuck: 1
-  hitParticleDestoryTime: 1.2
-  arrowStuckDestoryTime: 2.5
+  times:
+  - 3
+  - 1
+  - 2.5
   hitEffectName: 1
   stuckObjectName: 2
 --- !u!136 &7344494867581566971
