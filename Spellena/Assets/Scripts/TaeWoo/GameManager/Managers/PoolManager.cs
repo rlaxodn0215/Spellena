@@ -197,7 +197,6 @@ namespace Managers
 
             if(temp.isUsed)
             {
-                temp.transform.parent = this.transform;
                 temp.isUsed = false;
                 temp.gameObject.SetActive(false);
                 poolDatas[name].objIDs.Add(id);
