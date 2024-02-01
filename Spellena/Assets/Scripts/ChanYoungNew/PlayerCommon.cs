@@ -6,6 +6,9 @@ using Photon.Realtime;
 using UnityEngine.InputSystem;
 using System;
 
+
+using GlobalEnum;
+
 public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
 {
     Photon.Realtime.Player player;
@@ -48,45 +51,33 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
     protected LayerMask layerMaskWall;
 
     public event Action<Vector2, bool> UpdateLowerAnimation;
-    public event Action<string, int> PlayAnimation;
+    public event Action<AnimationChangeType, CallType, int> PlayAnimation;
 
     protected List<SkillData> skillDatas = new List<SkillData>();
+    private List<int> skillListener = new List<int>(); 
     protected List<SkillData> plainDatas = new List<SkillData>();
+    private List<int> plainListener = new List<int>();
+
     protected int plainIndex = -1;
 
     protected bool isCameraLocked = false;
+    protected PlayerInput playerInput;
     protected Vector3 pointStrike;
 
     protected class SkillData
     {
-        public float skillCoolDownTime;
-        public float skillUniqueTime;
-        public float skillCastingTime;
-        public float skillChannelingTime;
-
-        public SkillState skillState = SkillState.None;
-        public enum SkillState
+        public enum State
         {
-            None, Unique, Casting, Channeling
+            None, Unique, Casting, Holding, Channeling
         }
+        public int routeIndex = 0;
+        public List<State> statesRoute = new List<State>();
 
-        //마스터에서 보내는 확인 신호
+        public float progressTime = 0f;
+        public float coolDownTime = 0f;
         public bool isReady = false;
-        //로컬에서 준비 상태 확인
         public bool isLocalReady = false;
-        //홀딩, 지점 타격 등 특수 준비 상태가 있는지 확인
-        public bool isUnique = false;
     }
-
-    public enum SkillTiming
-    {
-        Immediately, AfterCasting
-    }
-
-    //로컬 -> None : 비어있는 상태, Ready : 준비 상태
-    //마스터 -> Casting : 캐스팅으로 바뀌기 전에 서버에서 쿨타임 체크, Channeling : 채널링이 끝나고 쿨타임 적용
-    //모든 서버 이벤트 -> 
-    
 
     virtual protected void Awake()
     {
@@ -98,114 +89,188 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
 
     virtual protected void FixedUpdate()
     {
+        ProgressTime();
+        ListenStateChange();
+
         if (photonView.IsMine)
         {
             MovePlayer();
             CheckPlayerFunction();
         }
+    }
 
-        ProgressTime();
+    virtual protected void Update()
+    {
+    }
 
+    [PunRPC]
+    public void NotifyReady(int callType, int index)
+    {
+        if ((CallType)callType == CallType.Skill)
+        {
+            skillDatas[index].isReady = true;
+            Debug.Log("스킬 : " + (index + 1) + " 준비");
+        }
+        else
+        {
+            plainDatas[index].isReady = true;
+            Debug.Log("평타 : " + (index + 1) + " 준비");
+        }
     }
 
     virtual protected void ProgressTime()
     {
-        for(int i = 0; i < skillDatas.Count; i++)
+        for (int i = 0; i < skillDatas.Count; i++)
         {
-            //쿨타임 관련
-            if (skillDatas[i].skillCoolDownTime > 0f)
-                skillDatas[i].skillCoolDownTime -= Time.fixedDeltaTime;
+            if (skillDatas[i].coolDownTime > 0f)
+                skillDatas[i].coolDownTime -= Time.fixedDeltaTime;
 
-            if (PhotonNetwork.IsMasterClient
-                && skillDatas[i].skillCoolDownTime <= 0f && skillDatas[i].isReady == false
-                && skillDatas[i].skillCastingTime <= 0f && skillDatas[i].skillChannelingTime <= 0f)
+            if (PhotonNetwork.IsMasterClient && skillDatas[i].isReady == false
+                && skillDatas[i].coolDownTime <= 0f && skillDatas[i].progressTime <= 0f)
             {
                 skillDatas[i].isReady = true;
-                photonView.RPC("NotifySkillIsReady", player, i);
+                photonView.RPC("NotifyReady", player, (int)CallType.Skill, i);
             }
 
-            //캐스팅 시간 관련
-            if (skillDatas[i].skillCastingTime > 0f)
+            if (skillDatas[i].progressTime > 0f)
             {
-                skillDatas[i].skillCastingTime -= Time.fixedDeltaTime;
-                if (skillDatas[i].skillCastingTime <= 0f)
-                {
-                    if (photonView.IsMine)
-                        skillDatas[i].skillState = SkillData.SkillState.Channeling;
-                    //스킬 채널링 시간 같은 타이밍에 동시에 실행되므로 fixedDeltaTime 한 프레임 추가
-                    skillDatas[i].skillChannelingTime = playerData.skillChannelingTime[i] + Time.fixedDeltaTime;
-                    //캐스팅 시간이 있는 스킬은 이 곳에서 로직이 실행됨
-                    PlaySkillLogic(i, SkillTiming.AfterCasting);
-                }
-            }
-
-            //채널링 시간 관련
-            if (skillDatas[i].skillChannelingTime > 0f)
-            {
-                skillDatas[i].skillChannelingTime -= Time.fixedDeltaTime;
-                if (skillDatas[i].skillChannelingTime <= 0 && PhotonNetwork.IsMasterClient)
-                    photonView.RPC("NotifySetSkillCoolDownTime", RpcTarget.All, i);
+                skillDatas[i].progressTime -= Time.fixedDeltaTime;
+                //다음 상태로 이전되면서 상태 전환 이벤트 발생
+                if (skillDatas[i].progressTime <= 0f)
+                    ChangeNextRoot(CallType.Skill, i);
+                    ChangeNextRoot(CallType.Skill, i);
             }
         }
 
         for(int i = 0; i < plainDatas.Count; i++)
         {
-            if(PhotonNetwork.IsMasterClient
-                && plainDatas[i].skillCoolDownTime <= 0f && plainDatas[i].isReady == false
-                && plainDatas[i].skillCastingTime <= 0f && plainDatas[i].skillChannelingTime <= 0f)
+            if (PhotonNetwork.IsMasterClient && plainDatas[i].isReady == false)
             {
-                skillDatas[i].isReady = true;
-                photonView.RPC("NotifyPlainIsReady", player, i);
+                plainDatas[i].isReady = true;
+                photonView.RPC("NotifyReady", player, (int)CallType.Plain, i);
             }
 
-
-            //평타 관련 -> 평타는 쿨타임이 없지만 캐스팅 채널링 시간이 끝나야 사용가능하다
-            if (plainDatas[i].skillCastingTime > 0f)
+            if (plainDatas[i].progressTime > 0f)
             {
-                plainDatas[i].skillCastingTime -= Time.fixedDeltaTime;
-                if (plainDatas[i].skillCastingTime <= 0f)
-                {
-                    if (photonView.IsMine)
-                        skillDatas[i].skillState = SkillData.SkillState.Channeling;
-                    skillDatas[i].skillChannelingTime = playerData.plainChannelingTime[i] + Time.fixedDeltaTime;
-                    PlayPlainLogic(i, SkillTiming.AfterCasting);
-                }
-            }
-
-            if (plainDatas[i].skillChannelingTime > 0f)
-            {
-                plainDatas[i].skillChannelingTime -= Time.fixedDeltaTime;
-                NotifyPlainIsOver(i);
+                plainDatas[i].progressTime -= Time.fixedDeltaTime;
+                if (plainDatas[i].progressTime <= 0f)
+                    ChangeNextRoot(CallType.Plain, i);
             }
         }
     }
-    [PunRPC]
-    public void NotifyPlainIsReady(int index)
-    {
-        plainDatas[index].isReady = true;
-        Debug.Log("평타 " + index + " 준비됨");
-        plainDatas[index].skillState = SkillData.SkillState.None;
-    }
-    
 
-    [PunRPC]
-    public void NotifySkillIsReady(int index)
+    private void ListenStateChange()
     {
-        skillDatas[index].isReady = true;
-        Debug.Log("스킬 " + index + " 준비됨");
+        for(int i = 0; i < skillDatas.Count; i++)
+        {
+            if (skillDatas[i].routeIndex != skillListener[i])
+            {
+                int _diff = skillDatas[i].routeIndex - skillListener[i];
+                bool _isForce = false;
+                if (!(_diff == 1 || _diff == 1 - skillDatas[i].statesRoute.Count))
+                    _isForce = true;
+                CallStateChangeEvent(CallType.Skill, i, _isForce);
+                Debug.Log(_diff);
+
+                skillListener[i] = skillDatas[i].routeIndex;
+            }
+        }
+
+        for(int i = 0; i < plainDatas.Count; i++)
+        {
+            if (plainDatas[i].routeIndex != plainListener[i])
+            {
+                int _diff = plainDatas[i].routeIndex - plainListener[i];
+                bool _isForce = false;
+                if (!(_diff == 1 || _diff == 1 - plainDatas[i].statesRoute.Count))
+                    _isForce = true;
+
+                CallStateChangeEvent(CallType.Plain, i, _isForce);
+
+                plainListener[i] = plainDatas[i].routeIndex;
+            }
+        }
     }
 
-    [PunRPC]
-    public void NotifySetSkillCoolDownTime(int index)
+    //스킬, 평타 상태 변경 시 호출됨
+    virtual protected void CallStateChangeEvent(CallType callType, int index, bool isForce)
     {
-        //쿨타임 적용
-        skillDatas[index].skillCoolDownTime = 1f;
-        if (photonView.IsMine)
-            skillDatas[index].skillState = SkillData.SkillState.None;
+        //정상적인 상태 이동
+        if (callType == CallType.Skill)
+        {
+            if (!isForce)
+                PlayNormalSkillLogic(index);
+            else
+                PlayForceSkillLogic(index);
+
+        }
+        else
+        {
+            if (!isForce)
+                PlayNormalPlainLogic(index);
+            else
+                PlayForcePlainLogic(index);
+        }
+
     }
 
-    virtual protected void NotifyPlainIsOver(int index)
+
+    //쿨타임 적용, 애니메이션 실행도 이쪽에서 오버라이드해서 구현
+    virtual protected void PlayNormalSkillLogic(int index)
     {
+
+    }
+
+    virtual protected void PlayForceSkillLogic(int index)
+    {
+
+    }
+
+    virtual protected void PlayNormalPlainLogic(int index)
+    {
+
+    }
+
+    virtual protected void PlayForcePlainLogic(int index)
+    {
+
+    }
+
+    //스킬, 평타를 다음 상태로 전환
+    virtual protected void ChangeNextRoot(CallType callType, int index)
+    {
+        if(callType == CallType.Skill)
+        {
+            skillDatas[index].routeIndex++;
+            if (skillDatas[index].routeIndex >= skillDatas[index].statesRoute.Count)
+                skillDatas[index].routeIndex = 0;
+        }
+        else
+        {
+            plainDatas[index].routeIndex++;
+            if (plainDatas[index].routeIndex >= plainDatas[index].statesRoute.Count)
+                plainDatas[index].routeIndex = 0;
+        }
+    }
+
+    protected void AddSkill(int count)
+    {
+        for (int i = 0; i < count; i++)
+        {
+            SkillData _skillData = new SkillData();
+            skillDatas.Add(_skillData);
+            skillListener.Add(0);
+        }
+    }
+
+    protected void AddPlain(int count)
+    {
+        for (int i = 0; i < count; i++)
+        {
+            SkillData _plainData = new SkillData();
+            plainDatas.Add(_plainData);
+            plainListener.Add(0);
+        }
     }
 
     virtual protected void CheckPlayerFunction()
@@ -258,10 +323,6 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-        AddSkill(playerData.skillCastingTime.Count);
-        AddPlain(playerData.plainCastingTime.Count);
-
-
         player = photonView.Owner;
 
         AvatarForOther = transform.GetChild(1).gameObject;
@@ -276,24 +337,13 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
 
         if(photonView.IsMine)
             SetLocalPlayer();
-    }
 
-    protected void AddSkill(int count)
-    {
-        for (int i = 0; i < count; i++)
-        {
-            SkillData _skillData = new SkillData();
-            skillDatas.Add(_skillData);
-        }
-    }
 
-    protected void AddPlain(int count)
-    {
-        for (int i = 0; i < count; i++)
-        {
-            SkillData _plainData = new SkillData();
-            plainDatas.Add(_plainData);
-        }
+        //스킬
+        AddSkill(playerData.skillCastingTime.Count);
+        AddPlain(playerData.plainCastingTime.Count);
+
+        playerInput = GetComponent<PlayerInput>();
     }
 
     virtual protected void InitUniqueComponents()
@@ -355,37 +405,27 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
 
     virtual protected void OnSkill1()
     {
-        if (photonView.IsMine)
-            if (skillDatas[0].isReady)
-                SetSkillReady(0);
+        SetSkillReady(0);
     }
 
     virtual protected void OnSkill2()
     {
-        if (photonView.IsMine)
-            if (skillDatas[1].isReady)
-                SetSkillReady(1);
+        SetSkillReady(1);
     }
 
     virtual protected void OnSkill3()
     {
-        if (photonView.IsMine)
-            if (skillDatas[2].isReady)
-                SetSkillReady(2);
+        SetSkillReady(2);
     }
 
     virtual protected void OnSkill4()
     {
-        if (photonView.IsMine)
-            if (skillDatas[3].isReady)
-                SetSkillReady(3);
+        SetSkillReady(3);
     }
 
     virtual protected void OnButtonCancel()
     {
-        if (photonView.IsMine)
-            if(!IsSkillProgressing())
-                CancelSkill();
+        CancelSkill();
     }
 
 
@@ -394,39 +434,24 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
         isClicked = !isClicked;
         if (isClicked)
         {
-            int _index = GetIndexofSkillReady();
-            bool _isUnique = false;
+            //스킬 진행 중에는 다른 기능 사용 불가
+            if (IsProgressing())
+                return;
 
-            if (_index >= 0)
+            int _index = GetIndexofSkillReady();//스킬 사용 확인
+            if(_index >= 0)
             {
-                if (skillDatas[_index].skillState == SkillData.SkillState.Unique)
-                    _isUnique = true;
-                photonView.RPC("ClickMouse", RpcTarget.MasterClient, _index, _isUnique, false);
+                //이미 스킬 쿨타임을 확인하기 때문에 바로 스킬 상태를 변경해도됨
+                ChangeNextRoot(CallType.Skill, _index);
             }
             else
             {
-                for(int i = 0; i < skillDatas.Count; i++)
+                if(plainDatas.Count > 0)
                 {
-                    if (skillDatas[i].skillState >= SkillData.SkillState.Casting)
-                        return;
-                }
-
-                for(int i = 0; i < plainDatas.Count; i++)
-                {
-                    if (plainDatas[i].skillState >= SkillData.SkillState.Casting)
-                        return;
-                }
-
-                if (plainDatas.Count > 0)
-                {
-                    _index = ChangePlainIndex(plainIndex, 0);//type 0 -> 일반 클릭
+                    _index = ChangePlainIndex(plainIndex, 0);
 
                     if(_index >= 0)
-                    {
-                        if (plainDatas[_index].skillState == SkillData.SkillState.Unique)
-                            _isUnique = true;
-                    }
-                    photonView.RPC("ClickMouse", RpcTarget.MasterClient, _index, _isUnique, true);
+                        ChangeNextRoot(CallType.Plain, _index);
                 }
             }
         }
@@ -453,7 +478,7 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
 
     virtual protected void SetSkillReady(int index)
     {
-        if (!IsSkillProgressing())
+        if (!IsProgressing() && skillDatas[index].isReady)
         {
             for (int i = 0; i < skillDatas.Count; i++)
                 skillDatas[i].isLocalReady = false;
@@ -464,13 +489,11 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
 
     virtual protected void CancelSkill()
     {
-        for(int i = 0; i < skillDatas.Count; i++)
+        if(!IsProgressing())
         {
-            if (skillDatas[i].skillState <= SkillData.SkillState.Unique)
+            for(int i = 0; i < skillDatas.Count; i++)
             {
-                if (skillDatas[i].skillState == SkillData.SkillState.Unique)
-                    PlayUniqueState(i, false);
-                skillDatas[i].skillState = SkillData.SkillState.None;
+                skillDatas[i].routeIndex = 0;
                 skillDatas[i].isLocalReady = false;
             }
         }
@@ -492,160 +515,23 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
         return -1;
     }
 
-    protected bool IsSkillProgressing()
+    protected bool IsProgressing()
     {
         for (int i = 0; i < skillDatas.Count; i++)
-            if (skillDatas[i].skillState > SkillData.SkillState.Unique)
+            if (skillDatas[i].progressTime > 0f)
                 return true;
 
         for (int i = 0; i < plainDatas.Count; i++)
-            if (plainDatas[i].skillState > SkillData.SkillState.Unique)
+            if (plainDatas[i].progressTime > 0f)
                 return true;
         return false;
     }
 
 
-    //평타 로직 -> 오버라이드 해서 사용
-    virtual protected void PlayPlainLogic(int index, SkillTiming skillTiming)
-    {
-        Debug.Log("로직 : " + index);
-    }
-
-
-
-    [PunRPC]
-    virtual public void ClickMouse(int index, bool isUnique, bool isPlain)
-    {
-        if(index >= 0 && !isPlain)
-        {
-            //마스터 클라이언트에서 한 번 더 확인
-            if (skillDatas[index].isReady)
-            {
-                if (skillDatas[index].isUnique && !isUnique)
-                    photonView.RPC("SetSkillPlayer", player, index, (int)SkillData.SkillState.Unique);
-                else
-                    photonView.RPC("SetSkillPlayer", RpcTarget.All, index, (int)SkillData.SkillState.Casting);
-            }
-        }
-        else if(isPlain)
-        {
-            Debug.Log(index);
-            if (plainDatas[index].isReady)
-            {
-                if (plainDatas[index].isUnique && !isUnique)
-                    photonView.RPC("SetPlainPlayer", player, index, (int)SkillData.SkillState.Unique);
-                else
-                    photonView.RPC("SetPlainPlayer", RpcTarget.All, index, (int)SkillData.SkillState.Casting);
-            }
-        }
-    }
-
     //평타 진행 구조 -> 오버라이드 해서 사용
     virtual protected int ChangePlainIndex(int start, int type)
     {
         return -1;
-    }
-
-    [PunRPC]
-    virtual public void SetPlainPlayer(int index, int nextSkillState)
-    {
-        SkillData.SkillState _nextSkillState = (SkillData.SkillState)nextSkillState;
-        if(photonView.IsMine)
-        {
-            plainDatas[index].skillState = _nextSkillState;
-            if(_nextSkillState == SkillData.SkillState.Casting)
-            {
-                if (playerData.plainCastingTime[index] <= 0f)
-                {
-                    _nextSkillState = SkillData.SkillState.Channeling;
-                    plainDatas[index].skillState = _nextSkillState;
-                    plainDatas[index].skillChannelingTime = playerData.skillChannelingTime[index];
-                }
-                else
-                    plainDatas[index].skillChannelingTime = playerData.plainCastingTime[index];
-
-                plainDatas[index].isReady = false;
-                InvokeAnimation(index, true, "Plain");
-                PlayPlainLogic(index, SkillTiming.Immediately);
-
-                plainIndex = index;
-            }
-        }
-        else
-        {
-            if(PhotonNetwork.IsMasterClient)
-                plainDatas[index].isReady = false;
-
-            if (playerData.plainCastingTime[index] <= 0f)
-            {
-                _nextSkillState = SkillData.SkillState.Channeling;
-                plainDatas[index].skillState = _nextSkillState;
-                plainDatas[index].skillChannelingTime = playerData.skillChannelingTime[index];
-            }
-            else
-                plainDatas[index].skillChannelingTime = playerData.plainCastingTime[index];
-
-            if(_nextSkillState == SkillData.SkillState.Casting ||
-                _nextSkillState == SkillData.SkillState.Channeling)
-                InvokeAnimation(index, true, "Plain");
-        }
-    }
-
-    [PunRPC]
-    virtual public void SetSkillPlayer(int index, int nextSkillState)
-    {
-        //스킬 사용 타이밍
-        SkillData.SkillState _nextSkillState = (SkillData.SkillState)nextSkillState;
-        if (photonView.IsMine)
-        {
-            if (isUniqueState)
-            {
-                isUniqueState = false;
-                PlayUniqueState(index, isUniqueState);
-            }
-
-            skillDatas[index].skillState = _nextSkillState;
-            if (_nextSkillState == SkillData.SkillState.Casting)
-            {
-                if (playerData.skillCastingTime[index] <= 0f)
-                {
-                    _nextSkillState = SkillData.SkillState.Channeling;
-                    skillDatas[index].skillState = _nextSkillState;
-                    skillDatas[index].skillChannelingTime = playerData.skillChannelingTime[index];
-                }
-                else
-                    skillDatas[index].skillCastingTime = playerData.skillCastingTime[index];
-
-                for (int i = 0; i < skillDatas.Count; i++)
-                    skillDatas[i].isLocalReady = false;
-                skillDatas[index].isReady = false;
-                InvokeAnimation(index, true, "Skill");
-                //스킬 타이밍 : 즉시
-                PlaySkillLogic(index, SkillTiming.Immediately);
-            }
-            //Unique일때
-            else
-            {
-                isUniqueState = true;
-                PlayUniqueState(index, isUniqueState);
-            }
-        }
-        else
-        {
-            if (PhotonNetwork.IsMasterClient)
-                skillDatas[index].isReady = false;
-
-            if (playerData.skillCastingTime[index] <= 0f)
-            {
-                _nextSkillState = SkillData.SkillState.Channeling;
-                skillDatas[index].skillChannelingTime = playerData.skillChannelingTime[index];
-            }
-            else
-                skillDatas[index].skillCastingTime = playerData.skillCastingTime[index];
-            if (_nextSkillState == SkillData.SkillState.Casting
-                || _nextSkillState == SkillData.SkillState.Channeling)
-                InvokeAnimation(index, true, "Skill");
-        }
     }
 
     [PunRPC]
@@ -662,25 +548,24 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
         rigidbodyMain.velocity = _velocity;
     }
 
-    virtual protected void PlayUniqueState(int index, bool IsOn)
+    [PunRPC]
+    virtual public void NotifyUseSkill(int callType, int index ,int routeIndex)
     {
-
-    }
-
-    //스킬 로직 구현은 여기에서 오버라이드로 구현
-    virtual protected void PlaySkillLogic(int index, SkillTiming timing)
-    {
-
-    }
-
-    virtual protected void InvokeAnimation(int index, bool isPlay, string type)
-    {
-        if (isPlay)
-            PlayAnimation.Invoke(type, index);
+        if((CallType)callType == CallType.Skill)
+            skillDatas[index].routeIndex = routeIndex;
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         throw new NotImplementedException();
+    }
+
+    virtual protected void PlayLogic(CallType callType, SkillData.State state, int index)
+    {
+    }
+
+    protected void CallPlayAnimation(AnimationChangeType changeType, CallType callType, int index)
+    {
+        PlayAnimation.Invoke(changeType, callType, index);
     }
 }

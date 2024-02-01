@@ -1,5 +1,7 @@
 using Photon.Pun;
 using UnityEngine;
+using GlobalEnum;
+using System.Collections.Generic;
 
 public class PlayerCommonAnimation : MonoBehaviourPunCallbacks, IPunObservable
 {
@@ -20,22 +22,35 @@ public class PlayerCommonAnimation : MonoBehaviourPunCallbacks, IPunObservable
     protected float rightHandWeight = 0f;
     protected float leftHandWeight = 0f;
 
-
     protected string nextAnimationState = string.Empty;
     private Quaternion networkRotation;
+
+
     public enum AnimationType
     {
-        None, SkillCasting, SkillChanneling, PlainCasting, PlainChanneling
+        None, Casting, Channeling
     }
 
-    protected AnimationType currentAnimationType = AnimationType.None;
+    public class AnimationRoute
+    {
+        public List<AnimationType> route = new List<AnimationType>();
+        public List<float> routeTime = new List<float>();
+        public int routeIndex = 0;
+    }
+
+    protected List<AnimationRoute> skillRoutes = new List<AnimationRoute>();
+    protected List<AnimationRoute> plainRoutes = new List<AnimationRoute>();
+    protected CallType currentAnimationType = CallType.None;
+    protected int currentRoute = -1;
     protected int currentAnimationIndex = -1;
+    protected string parameterName = "";
 
     int animationListener;
 
     virtual protected void Start()
     {
         InitCommonComponents();
+        InitUniqueComponents();
     }
 
     virtual protected void Update()
@@ -68,9 +83,36 @@ public class PlayerCommonAnimation : MonoBehaviourPunCallbacks, IPunObservable
         handSightMain = cameraMain.transform.GetChild(1);
         animator = GetComponent<Animator>();
         playerData = playerCommon.playerData;
-        playerCommon.PlayAnimation += SetAnimationParameter;
+
+        playerCommon.PlayAnimation += PlayAnimation;
 
         animationListener = animator.GetCurrentAnimatorStateInfo(1).fullPathHash;
+
+        AddSkillRoute(playerData.skillCastingTime.Count);
+        AddPlainRoute(playerData.plainCastingTime.Count);
+    }
+
+    virtual protected void InitUniqueComponents()
+    {
+
+    }
+
+    protected void AddSkillRoute(int count)
+    {
+        for(int i = 0; i < count; i++)
+        {
+            AnimationRoute _route = new AnimationRoute();
+            skillRoutes.Add(_route);
+        }
+    }
+
+    protected void AddPlainRoute(int count)
+    {
+        for (int i = 0; i < count; i++)
+        {
+            AnimationRoute _route = new AnimationRoute();
+            plainRoutes.Add(_route);
+        }
     }
 
     virtual protected void UpdateLowerAnimation(Vector2 moveDirection, bool isRunning)
@@ -102,107 +144,87 @@ public class PlayerCommonAnimation : MonoBehaviourPunCallbacks, IPunObservable
     virtual protected void PlayAnimationChangeEvent()
     {
         AnimatorStateInfo _info = animator.GetNextAnimatorStateInfo(1);
-        SetAnimationTime(_info);
+        ChangeAnimationRoot(_info);
     }
-    virtual protected void SetAnimationTime(AnimatorStateInfo info)
+
+    virtual protected void ChangeAnimationRoot(AnimatorStateInfo info)
     {
-        string _temp;
-        string _parameter = "";
+        if(currentAnimationType == CallType.Skill)
+        {
+            skillRoutes[currentAnimationIndex].routeIndex++;
+            CallAnimationEvent();
+            if (skillRoutes[currentAnimationIndex].routeIndex >= skillRoutes[currentAnimationIndex].route.Count)
+            {
+                skillRoutes[currentAnimationIndex].routeIndex = 0;
+
+                currentAnimationType = CallType.None;
+                currentAnimationIndex = -1;
+            }
+            else
+                SetAnimationSpeed(info);
+        }
+        else if(currentAnimationType == CallType.Plain)
+        {
+            plainRoutes[currentAnimationIndex].routeIndex++;
+            CallAnimationEvent();
+            if (plainRoutes[currentAnimationIndex].routeIndex >= plainRoutes[currentAnimationIndex].route.Count)
+            {
+                plainRoutes[currentAnimationIndex].routeIndex = 0;
+
+                currentAnimationType = CallType.None;
+                currentAnimationIndex = -1;
+            }
+            else
+                SetAnimationSpeed(info);
+        }
+    }
+
+    virtual protected void CallAnimationEvent()
+    {
+
+    }
+
+    virtual protected void SetAnimationSpeed(AnimatorStateInfo info)
+    {
+        float _length = info.length;
         float _time = -1f;
-        if (currentAnimationType == AnimationType.None)
-        {
-            for (int i = 0; i < playerData.skillCastingTime.Count; i++)
-            {
-                _temp = "Skill" + (i + 1);
-                bool _isSkill = animator.GetBool(_temp);
-                if (_isSkill)
-                {
-                    if (playerData.skillCastingTime[i] <= 0)
-                    {
-                        _time = playerData.skillChannelingTime[i];
-                        _parameter = _temp + "Channeling";
-                        currentAnimationType = AnimationType.SkillChanneling;
-                    }
-                    else
-                    {
-                        _time = playerData.skillCastingTime[i];
-                        _parameter = _temp + "Casting";
-                        currentAnimationType = AnimationType.SkillCasting;
-                    }
-                    currentAnimationIndex = i;
-                    animator.SetBool(_temp, false);
-                    break;
-                }
-            }
+        string _parameter = "";
 
-            for (int i = 0; i < playerData.plainCastingTime.Count; i++)
-            {
-                _temp = "Plain" + (i + 1);
-                bool _isPlain = animator.GetBool(_temp);
-                if (_isPlain)
-                {
-                    if (playerData.plainCastingTime[i] <= 0)
-                    {
-                        _time = playerData.plainChannelingTime[i];
-                        _parameter = _temp + "Channeling";
-                        currentAnimationType = AnimationType.PlainChanneling;
-                    }
-                    else
-                    {
-                        _time = playerData.plainCastingTime[i];
-                        _parameter = _temp + "Casting";
-                        currentAnimationType = AnimationType.PlainCasting;
-                    }
-                    currentAnimationIndex = i;
-                    break;
-                }
-                animator.SetBool(_temp, false);
-            }
-        }
-        else if (currentAnimationType == AnimationType.SkillCasting)
+        if (_length > 0.99f && _length < 1.01f)
+            return;
+
+        if (currentAnimationType == CallType.Skill)
         {
-            if (playerData.skillChannelingTime[currentAnimationIndex] <= 0)
-            {
-                currentAnimationType = AnimationType.None;
-                currentAnimationIndex = -1;
-            }
-            else
-            {
-                _time = playerData.skillChannelingTime[currentAnimationIndex];
-                _parameter = "Skill" + (currentAnimationIndex + 1) + "Channeling";
-                currentAnimationType = AnimationType.SkillChanneling;
-            }
+            _parameter = "Skill" + (currentAnimationIndex + 1);
+            _time = skillRoutes[currentAnimationIndex].routeTime[skillRoutes[currentAnimationIndex].routeIndex];
+
+            AnimationType _tempType = skillRoutes[currentAnimationIndex].route[skillRoutes[currentAnimationIndex].routeIndex];
+
+            AddAnimationType(ref _parameter, _tempType);
         }
-        else if (currentAnimationType == AnimationType.PlainCasting)
+        else if (currentAnimationType == CallType.Plain)
         {
-            if (playerData.plainChannelingTime[currentAnimationIndex] <= 0)
-            {
-                currentAnimationType = AnimationType.None;
-                currentAnimationIndex = -1;
-            }
-            else
-            {
-                _time = playerData.plainChannelingTime[currentAnimationIndex];
-                _parameter = "Plain" + (currentAnimationIndex + 1) + "Channeling";
-                currentAnimationType = AnimationType.PlainChanneling;
-            }
-        }
-        else if (currentAnimationType == AnimationType.SkillChanneling ||
-            currentAnimationType == AnimationType.PlainChanneling)
-        {
-            currentAnimationType = AnimationType.None;
-            currentAnimationIndex = -1;
+            _parameter = "Plain" + (currentAnimationIndex + 1);
+            _time = plainRoutes[currentAnimationIndex].routeTime[plainRoutes[currentAnimationIndex].routeIndex];
+
+            AnimationType _tempType = plainRoutes[currentAnimationIndex].route[plainRoutes[currentAnimationIndex].routeIndex];
+
+            AddAnimationType(ref _parameter, _tempType);
         }
 
-        if (_time > 0f)
+        if(_time > 0f)
         {
-            float _length = info.length;
-            if (_length <= 1.01 && _length >= 0.99)
-                return;
-
             float _speed = _length / _time;
             animator.SetFloat(_parameter, _speed);
         }
+    }
+
+    protected void AddAnimationType(ref string parameter, AnimationType targetType)
+    {
+        if (targetType == AnimationType.Casting)
+            parameter += "Casting";
+        else if (targetType == AnimationType.Channeling)
+            parameter += "Channeling";
     }
 
     virtual protected void OnAnimatorIK()
@@ -211,37 +233,42 @@ public class PlayerCommonAnimation : MonoBehaviourPunCallbacks, IPunObservable
         animator.SetLookAtWeight(1f);
     }
 
-    virtual protected void SetAnimationParameter(string type, int index)
+
+    virtual protected void PlayAnimation(AnimationChangeType changeType, CallType callType, int index)
     {
-        if (index == -1)
+        if (index < 0)
             return;
+        string _parameter = "";
+        CallType _callType = CallType.None;
 
-        string _type = ""; string _stateName = "";
-
-        if (type == "Skill")
+        if (callType == CallType.Skill)
         {
-            for (int i = 0; i < playerData.skillCastingTime.Count; i++)
-            {
-                _type = "Skill" + (i + 1);
-                animator.SetBool(_type, false);
-            }
-
-            _stateName = "Skill" + (index + 1);
-            animator.SetBool(_stateName, true);
+            _callType = CallType.Skill;
+            _parameter += "Skill";
         }
-        else if (type == "Plain")
+        else if (callType == CallType.Plain)
         {
-            for (int i = 0; i < playerData.plainCastingTime.Count; i++)
-            {
-                _type = "Plain" + (i + 1);
-                animator.SetBool(_type, false);
-            }
+            _callType = CallType.Plain;
+            _parameter += "Plain";
+        }
 
-            _stateName = "Plain" + (index + 1);
-            animator.SetBool(_stateName, true);
+        if (changeType == AnimationChangeType.Invoke)
+        {
+            _parameter += (index + 1);
+            animator.SetBool(_parameter, true);
+            currentAnimationType = _callType;
+            currentAnimationIndex = index;
+        }
+        else if (changeType == AnimationChangeType.Change)
+        {
+            ChangeAnimation();
         }
     }
 
+    virtual protected void ChangeAnimation()
+    {
+
+    }
 
     virtual public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {

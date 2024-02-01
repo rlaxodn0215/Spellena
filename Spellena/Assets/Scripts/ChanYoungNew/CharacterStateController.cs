@@ -2,9 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
-using UnityEditorInternal;
 using System;
-
 public class CharacterStateController : MonoBehaviourPunCallbacks, IPunObservable
 {
     public Action<string, float> PlayScreenEffect;
@@ -16,6 +14,7 @@ public class CharacterStateController : MonoBehaviourPunCallbacks, IPunObservabl
 
     List<BuffState> state = new List<BuffState>();
     List<float> leftTime = new List<float>();
+    List<PhotonView> targetView = new List<PhotonView> ();
 
     void Start()
     {
@@ -36,6 +35,7 @@ public class CharacterStateController : MonoBehaviourPunCallbacks, IPunObservabl
                 {
                     leftTime.RemoveAt(i);
                     state.RemoveAt(i);
+                    targetView.RemoveAt(i);
                     i = -1;
                 }
             }
@@ -44,8 +44,9 @@ public class CharacterStateController : MonoBehaviourPunCallbacks, IPunObservabl
         }
     }
 
-    public void AddState(string stateName, float stateTime)
+    public void AddState(string stateName, float stateTime, int sender)
     {
+        PhotonView _sendView = PhotonNetwork.GetPhotonView(sender);
         BuffState _tempState = BuffState.None;
         if (stateName == "Horror")
         {
@@ -57,13 +58,17 @@ public class CharacterStateController : MonoBehaviourPunCallbacks, IPunObservabl
             int _checkState = CheckState(_tempState);
             if (_checkState >= 0)
             {
-                if(leftTime[_checkState] < stateTime)
+                if (leftTime[_checkState] < stateTime)
+                {
                     leftTime[_checkState] = stateTime;
+                    targetView[_checkState] = _sendView;
+                }
             }
             else
             {
                 state.Add(_tempState);
                 leftTime.Add(stateTime);
+                targetView.Add(_sendView);
             }
         }
     }
@@ -73,14 +78,27 @@ public class CharacterStateController : MonoBehaviourPunCallbacks, IPunObservabl
         for(int i = 0; i < state.Count; i++)
         {
             if (state[i] == BuffState.Horror)
-                PlayHorror();
+                PlayHorror(i);
 
         }
     }
 
-    private void PlayHorror()
+    private void PlayHorror(int index)
     {
-        //공포 효과 -> 컬티스트를 바라봄
+        Vector3 _direction = targetView[index].transform.position - transform.position;
+        _direction = new Vector3(0, _direction.y, 0);
+        transform.LookAt(targetView[index].transform.position + new Vector3(0, 1, 0));
+        Vector3 _euler = transform.rotation.eulerAngles;
+
+        transform.rotation = Quaternion.Euler(0, _euler.y, 0);
+
+        float _angle = GlobalOperation.Instance.NormalizeAngle(_euler.x);
+        if (_angle > 60)
+            _angle = 60;
+        else if (_angle < -60)
+            _angle = -60;
+
+        GetComponent<PlayerCommon>().cameraMain.transform.rotation = Quaternion.Euler(_angle, 0, 0);
     }
 
     private int CheckState(BuffState buffState)
