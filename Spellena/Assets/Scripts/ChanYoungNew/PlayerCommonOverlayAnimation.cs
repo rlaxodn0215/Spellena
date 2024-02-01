@@ -1,14 +1,13 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
-using Unity.VisualScripting;
+using GlobalEnum;
+using System.Collections.Generic;
 
 public class PlayerCommonOverlayAnimation : MonoBehaviour
 {
     PlayerCommon playerCommon;
     protected Animator overlayAnimator;
-    private PlayerData playerData;
+    protected PlayerData playerData;
     private PhotonView rootPhotonView;
     protected GameObject cameraOverlay;
     protected Transform sightOverlay;
@@ -18,30 +17,31 @@ public class PlayerCommonOverlayAnimation : MonoBehaviour
     protected float rightHandRotWeight = 0f;
     protected float leftHandRotWeight = 0f;
 
-    public enum AnimationType
+    public class AnimationRoute
     {
-        None, SkillCasting, SkillChanneling, PlainCasting, PlainChanneling
+        public List<AnimationType> route = new List<AnimationType>();
+        public List<float> routeTime = new List<float>();
+        public int routeIndex = 0;
     }
 
-    protected AnimationType currentAnimationType = AnimationType.None;
+    protected List<AnimationRoute> skillRoutes = new List<AnimationRoute>();
+    protected List<AnimationRoute> plainRoutes = new List<AnimationRoute>();
+    protected CallType currentAnimationType = CallType.None;
+    protected int currentRoute = -1;
     protected int currentAnimationIndex = -1;
+    protected string parameterName = "";
+
+    public enum AnimationType
+    {
+        None, Casting, Channeling
+    }
 
     private int animationListener;
 
     virtual protected void Start()
     {
-        playerCommon = transform.root.GetComponent<PlayerCommon>();
-
-        playerCommon.PlayAnimation += SetAnimationParameter;
-
-
-        playerData = playerCommon.playerData;
-        overlayAnimator = GetComponent<Animator>();
-        animationListener = animationListener = overlayAnimator.GetCurrentAnimatorStateInfo(1).fullPathHash;
-        rootPhotonView = transform.root.GetComponent<PhotonView>();
-        cameraOverlay = playerCommon.cameraOverlay.gameObject;
-        sightOverlay = cameraOverlay.transform.GetChild(0);
-
+        InitCommonComponents();
+        InitUniqueComponents();
     }
 
     virtual protected void Update()
@@ -50,6 +50,45 @@ public class PlayerCommonOverlayAnimation : MonoBehaviour
         {
             if (ListenAnimatorState())
                 PlayAnimationChangeEvent();
+        }
+    }
+
+    protected void InitCommonComponents()
+    {
+        playerCommon = transform.root.GetComponent<PlayerCommon>();
+
+        playerData = playerCommon.playerData;
+        overlayAnimator = GetComponent<Animator>();
+        animationListener = animationListener = overlayAnimator.GetCurrentAnimatorStateInfo(1).fullPathHash;
+        rootPhotonView = transform.root.GetComponent<PhotonView>();
+        cameraOverlay = playerCommon.cameraOverlay.gameObject;
+        sightOverlay = cameraOverlay.transform.GetChild(0);
+
+        playerCommon.PlayAnimation += PlayAnimation;
+        AddSkillRoute(playerData.skillCastingTime.Count);
+        AddPlainRoute(playerData.plainCastingTime.Count);
+    }
+
+    virtual protected void InitUniqueComponents()
+    {
+
+    }
+
+    protected void AddSkillRoute(int count)
+    {
+        for (int i = 0; i < count; i++)
+        {
+            AnimationRoute _route = new AnimationRoute();
+            skillRoutes.Add(_route);
+        }
+    }
+
+    protected void AddPlainRoute(int count)
+    {
+        for (int i = 0; i < count; i++)
+        {
+            AnimationRoute _route = new AnimationRoute();
+            plainRoutes.Add(_route);
         }
     }
 
@@ -69,139 +108,127 @@ public class PlayerCommonOverlayAnimation : MonoBehaviour
     virtual protected void PlayAnimationChangeEvent()
     {
         AnimatorStateInfo _info = overlayAnimator.GetNextAnimatorStateInfo(1);
-        SetAnimationTime(_info);
+        ChangeAnimationRoot(_info);
     }
 
-    virtual protected void SetAnimationTime(AnimatorStateInfo info)
-    {
-        string _temp;
-        string _parameter = "";
-        float _time = -1f;
-        if (currentAnimationType == AnimationType.None)
-        {
-            for(int i = 0; i < playerData.skillCastingTime.Count; i++)
-            {
-                _temp = "Skill" + (i + 1);
-                bool _isSkill = overlayAnimator.GetBool(_temp);
-                if (_isSkill)
-                {
-                    if (playerData.skillCastingTime[i] <= 0)
-                    {
-                        _time = playerData.skillChannelingTime[i];
-                        _parameter = _temp + "Channeling";
-                        currentAnimationType = AnimationType.SkillChanneling;
-                        Debug.Log(_time);
-                    }
-                    else
-                    {
-                        _time = playerData.skillCastingTime[i];
-                        _parameter = _temp + "Casting";
-                        currentAnimationType = AnimationType.SkillCasting;
-                    }
-                    currentAnimationIndex = i;
-                    overlayAnimator.SetBool(_temp, false);
-                    break;
-                }
-            }
 
-            for(int i = 0; i < playerData.plainCastingTime.Count; i++)
-            {
-                _temp = "Plain" + (i + 1);
-                bool _isPlain = overlayAnimator.GetBool(_temp);
-                if(_isPlain)
-                {
-                    if (playerData.plainCastingTime[i] <= 0)
-                    {
-                        _time = playerData.plainChannelingTime[i];
-                        _parameter = _temp + "Channeling";
-                        currentAnimationType = AnimationType.PlainChanneling;
-                    }
-                    else
-                    {
-                        _time = playerData.plainCastingTime[i];
-                        _parameter = _temp + "Casting";
-                        currentAnimationType = AnimationType.PlainCasting;
-                    }
-                    currentAnimationIndex = i;
-                    break;
-                }
-                overlayAnimator.SetBool(_temp, false);
-            }    
-        }
-        else if(currentAnimationType == AnimationType.SkillCasting)
+    virtual protected void ChangeAnimationRoot(AnimatorStateInfo info)
+    {
+        if (currentAnimationType == CallType.Skill)
         {
-            if (playerData.skillChannelingTime[currentAnimationIndex] <= 0)
+            skillRoutes[currentAnimationIndex].routeIndex++;
+            CallAnimationEvent();
+            if (skillRoutes[currentAnimationIndex].routeIndex >= skillRoutes[currentAnimationIndex].route.Count)
             {
-                currentAnimationType = AnimationType.None;
+                skillRoutes[currentAnimationIndex].routeIndex = 0;
+
+                currentAnimationType = CallType.None;
                 currentAnimationIndex = -1;
             }
             else
-            {
-                _time = playerData.skillChannelingTime[currentAnimationIndex];
-                _parameter = "Skill" + (currentAnimationIndex + 1) + "Channeling";
-                currentAnimationType = AnimationType.SkillChanneling;
-            }
+                SetAnimationSpeed(info);
         }
-        else if(currentAnimationType == AnimationType.PlainCasting)
+        else if (currentAnimationType == CallType.Plain)
         {
-            if (playerData.plainChannelingTime[currentAnimationIndex] <= 0)
+            plainRoutes[currentAnimationIndex].routeIndex++;
+            CallAnimationEvent();
+            if (plainRoutes[currentAnimationIndex].routeIndex >= plainRoutes[currentAnimationIndex].route.Count)
             {
-                currentAnimationType = AnimationType.None;
+                plainRoutes[currentAnimationIndex].routeIndex = 0;
+
+                currentAnimationType = CallType.None;
                 currentAnimationIndex = -1;
             }
             else
-            {
-                _time = playerData.plainChannelingTime[currentAnimationIndex];
-                _parameter = "Plain" + (currentAnimationIndex + 1) + "Channeling";
-                currentAnimationType = AnimationType.PlainChanneling;
-            }
+                SetAnimationSpeed(info);
         }
-        else if(currentAnimationType == AnimationType.SkillChanneling ||
-            currentAnimationType == AnimationType.PlainChanneling)
+    }
+    virtual protected void CallAnimationEvent()
+    {
+
+    }
+
+    virtual protected void SetAnimationSpeed(AnimatorStateInfo info)
+    {
+        float _length = info.length;
+        float _time = -1f;
+        string _parameter = "";
+
+
+        if (currentAnimationType == CallType.Skill)
         {
-            currentAnimationType = AnimationType.None;
-            currentAnimationIndex = -1;
+            _parameter = "Skill" + (currentAnimationIndex + 1);
+            _time = skillRoutes[currentAnimationIndex].routeTime[skillRoutes[currentAnimationIndex].routeIndex];
+
+            AnimationType _tempType = skillRoutes[currentAnimationIndex].route[skillRoutes[currentAnimationIndex].routeIndex];
+
+            if (_length > _time - 0.01f && _length < _time + 0.01f)
+                return;
+
+
+            AddAnimationType(ref _parameter, _tempType);
+        }
+        else if (currentAnimationType == CallType.Plain)
+        {
+            _parameter = "Plain" + (currentAnimationIndex + 1);
+            _time = plainRoutes[currentAnimationIndex].routeTime[plainRoutes[currentAnimationIndex].routeIndex];
+
+            AnimationType _tempType = plainRoutes[currentAnimationIndex].route[plainRoutes[currentAnimationIndex].routeIndex];
+
+            if (_length > _time - 0.01f && _length < _time + 0.01f)
+                return;
+
+            AddAnimationType(ref _parameter, _tempType);
         }
 
         if (_time > 0f)
         {
-            float _length = info.length;
-            if (_length <= 1.01 && _length >= 0.99)
-                return;
-
             float _speed = _length / _time;
             overlayAnimator.SetFloat(_parameter, _speed);
         }
     }
 
-    virtual protected void SetAnimationParameter(string type, int index)
+    protected void AddAnimationType(ref string parameter, AnimationType targetType)
     {
-        if(!rootPhotonView.IsMine || index == -1)
+        if (targetType == AnimationType.Casting)
+            parameter += "Casting";
+        else if (targetType == AnimationType.Channeling)
+            parameter += "Channeling";
+    }
+
+    virtual protected void PlayAnimation(AnimationChangeType changeType, CallType callType, int index)
+    {
+        if (index < 0)
             return;
+        string _parameter = "";
+        CallType _callType = CallType.None;
 
-        string _type = ""; string _stateName = "";
-
-        if(type == "Skill")
+        if (callType == CallType.Skill)
         {
-            for (int i = 0; i < playerData.skillCastingTime.Count; i++)
-            {
-                _type = "Skill" + (i + 1);
-                overlayAnimator.SetBool(_type, false);
-            }
-
-            _stateName = "Skill" + (index + 1);
-            overlayAnimator.SetBool(_stateName, true);
+            _callType = CallType.Skill;
+            _parameter += "Skill";
         }
-        else if(type == "Plain")
+        else if (callType == CallType.Plain)
         {
-            for(int i = 0; i < playerData.plainCastingTime.Count; i++)
-            {
-                _type = "Plain" + (i + 1);
-                overlayAnimator.SetBool(_type, false);
-            }
-
-            _stateName = "Plain" + (index + 1);
-            overlayAnimator.SetBool(_stateName, true);
+            _callType = CallType.Plain;
+            _parameter += "Plain";
         }
+
+        if (changeType == AnimationChangeType.Invoke)
+        {
+            _parameter += (index + 1);
+            overlayAnimator.SetBool(_parameter, true);
+            currentAnimationType = _callType;
+            currentAnimationIndex = index;
+        }
+        else
+        {
+            ChangeAnimation();
+        }
+    }
+
+    virtual protected void ChangeAnimation()
+    {
+
     }
 }

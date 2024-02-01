@@ -1,3 +1,4 @@
+using GlobalEnum;
 using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
@@ -34,6 +35,30 @@ public class PlayerElementalOrderOverlayAnimation : PlayerCommonOverlayAnimation
         base.Update();
         rightHandPos = sightOverlay.position + transform.right * 0.3f;
         leftHandPos = sightOverlay.position - transform.right * 0.3f;
+    }
+
+    protected override void InitUniqueComponents()
+    {
+        for (int i = 0; i < skillRoutes.Count; i++)
+        {
+            skillRoutes[i].route.Add(AnimationType.None);
+            skillRoutes[i].routeTime.Add(0);
+
+            skillRoutes[i].route.Add(AnimationType.Casting);
+            skillRoutes[i].routeTime.Add(playerData.skillCastingTime[i]);
+        }
+    }
+
+    protected override void CallAnimationEvent()
+    {
+        if (currentAnimationType == CallType.Skill)
+        {
+            if (skillRoutes[currentAnimationIndex].routeIndex == 1)//캐스팅 중일 때
+            {
+                string _parameter = "Skill" + (currentAnimationIndex + 1);
+                overlayAnimator.SetBool(_parameter, false);
+            }
+        }
     }
 
     private void OnAnimatorIK()

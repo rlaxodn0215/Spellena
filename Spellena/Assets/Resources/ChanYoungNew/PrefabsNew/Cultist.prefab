@@ -5370,12 +5370,6 @@ MonoBehaviour:
   - Type: 4
     SynchronizeType: 0
     Name: Skill4
-  - Type: 4
-    SynchronizeType: 0
-    Name: Skill5
-  - Type: 4
-    SynchronizeType: 0
-    Name: Skill6
   - Type: 1
     SynchronizeType: 0
     Name: Skill1Channeling
@@ -5388,12 +5382,6 @@ MonoBehaviour:
   - Type: 1
     SynchronizeType: 0
     Name: Skill4Channeling
-  - Type: 1
-    SynchronizeType: 0
-    Name: Skill5Channeling
-  - Type: 1
-    SynchronizeType: 0
-    Name: Skill6Channeling
   m_SynchronizeLayers:
   - SynchronizeType: 2
     LayerIndex: 0
@@ -11498,7 +11486,7 @@ Animator:
   m_GameObject: {fileID: 1371153770937859058}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: c6e10270136692045a207b7a40f2ebcf, type: 3}
-  m_Controller: {fileID: 9100000, guid: 00d6fb4fbbc306148beea055fcae030e, type: 2}
+  m_Controller: {fileID: 9100000, guid: 95f98d0e12aab2d4ba8139cb8e67bf5c, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
