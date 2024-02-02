@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
-using UnityEditor.XR;
+using GlobalEnum;
 
 public class PlayerElementalOrder : PlayerCommon
 {
@@ -18,15 +18,20 @@ public class PlayerElementalOrder : PlayerCommon
 
     protected override void InitUniqueComponents()
     {
-        for(int i = 0; i < skillDatas.Count; i++)
-            skillDatas[i].isUnique = true;
-
         castingAura = unique.transform.GetChild(0).gameObject;
         renderTexture = cameraMinimap.GetComponent<Camera>().targetTexture;
+
+        for(int i = 0; i < skillDatas.Count; i++)
+        {
+            skillDatas[i].statesRoute.Add(SkillData.State.None);
+            skillDatas[i].statesRoute.Add(SkillData.State.Unique);
+            skillDatas[i].statesRoute.Add(SkillData.State.Casting);
+        }
     }
 
-    private void Update()
+    protected override void Update()
     {
+        base.Update();
         if(photonView.IsMine)
         {
             if(castingAura.activeSelf)
@@ -34,9 +39,33 @@ public class PlayerElementalOrder : PlayerCommon
         }
     }
 
+    protected override void OnMouseButton()
+    {
+        isClicked = !isClicked;
+        if (isClicked)
+        {
+            //스킬 진행 중에는 다른 기능 사용 불가
+            if (IsProgressing())
+                return;
+            int _unique = CheckUniqueState();
+            if(_unique == 3 || _unique == 5)
+            {
+                if (!CheckPointStrike())
+                    return;
+            }
+
+            int _index = GetIndexByCommands();//스킬 사용 확인
+            if (_index >= 0)
+            {
+                if (skillDatas[_index].isReady)
+                    ChangeNextRoot(CallType.Skill, _index);
+            }
+        }
+    }
+
     protected override void OnSkill1()
     {
-        if (photonView.IsMine)
+        if (!IsProgressing())
         {
             AddCommand(1);
             photonView.RPC("SyncCommandEffect", RpcTarget.All, commands.ToArray());
@@ -44,7 +73,7 @@ public class PlayerElementalOrder : PlayerCommon
     }
     protected override void OnSkill2()
     {
-        if (photonView.IsMine)
+        if (!IsProgressing())
         {
             AddCommand(2);
             photonView.RPC("SyncCommandEffect", RpcTarget.All, commands.ToArray());
@@ -52,7 +81,7 @@ public class PlayerElementalOrder : PlayerCommon
     }
     protected override void OnSkill3()
     {
-        if (photonView.IsMine)
+        if (!IsProgressing())
         {
             AddCommand(3);
             photonView.RPC("SyncCommandEffect", RpcTarget.All, commands.ToArray());
@@ -62,33 +91,17 @@ public class PlayerElementalOrder : PlayerCommon
     {
     }
 
-    protected override void OnMouseButton()
+    private int CheckUniqueState()
     {
-        isClicked = !isClicked;
-        if(isClicked)
+        for(int i = 0; i < skillDatas.Count; i++)
         {
-            if (!CheckUniqueMouseClick())
-                return;
-            int _index = GetIndexByCommands();
-            //엘리멘탈 오더는 평타가 없다
-            if (_index >= 0)
-            {
-                if (skillDatas[_index].skillState == SkillData.SkillState.None)
-                    photonView.RPC("ClickMouse", RpcTarget.MasterClient, _index, false);
-                else if (skillDatas[_index].skillState == SkillData.SkillState.Unique)
-                    photonView.RPC("ClickMouse", RpcTarget.MasterClient, _index, true);
-            }
+            if (skillDatas[i].statesRoute[skillDatas[i].routeIndex] == SkillData.State.Unique)
+                return i;
         }
+        return -1;
     }
 
-    virtual protected bool CheckUniqueMouseClick()
-    {
-        if (isCameraLocked)
-            return CheckPointStrike();
-        return true;
-    }
-
-    virtual protected bool CheckPointStrike()
+    private bool CheckPointStrike()
     {
         Ray _tempRay = cameraMinimap.ScreenPointToRay(Input.mousePosition);
         RaycastHit _hit;
@@ -134,26 +147,85 @@ public class PlayerElementalOrder : PlayerCommon
             commands.Add(command);
     }
 
-    [PunRPC]
-    public override void SetSkillPlayer(int index, int nextSkillState)
+    //이 함수 실행 후 리스너가 변경됨
+    protected override void PlayNormalSkillLogic(int index)
     {
-        base.SetSkillPlayer(index, nextSkillState);
-        if (photonView.IsMine && (SkillData.SkillState)nextSkillState == SkillData.SkillState.Casting)
+        if (skillDatas[index].statesRoute[skillDatas[index].routeIndex] == SkillData.State.Unique)
         {
+            if (index == 0 || index == 1 || index == 2 || index == 4)
+                SetCastingAura(index, true);
+            else if (index == 3 || index == 5)
+                SetPointStrike(true);
+        }
+        else if (skillDatas[index].statesRoute[skillDatas[index].routeIndex] == SkillData.State.Casting)
+        {
+            skillDatas[index].isReady = false;
+            skillDatas[index].isLocalReady = false;
+            skillDatas[index].progressTime = playerData.skillCastingTime[index];
+
+            //스킬 시전 알림 -> 다른 클라이언트들은 Unique 상태가 존재하지 않아 강제적으로 2계단을 건너뛰는 것으로 인식됨 routeIndex는 이미 바뀌어있음
+            photonView.RPC("NotifyUseSkill", RpcTarget.Others, (int)CallType.Skill, index, skillDatas[index].routeIndex);
+
+            //스킬 로직 실행 -> 자신의 클라이언트는 정상적으로 다음 상태로 이동하는 것이기 때문에 강제적으로 이동한 것이 아님
+            PlayLogic(CallType.Skill, skillDatas[index].statesRoute[skillDatas[index].routeIndex], index);
+            CallPlayAnimation(AnimationChangeType.Invoke, CallType.Skill, index);
+
+            SetCastingAura(index, false);
+            SetPointStrike(false);
+
             commands.Clear();
             photonView.RPC("SyncCommandEffect", RpcTarget.All, commands.ToArray());
         }
+        else if (skillDatas[index].statesRoute[skillDatas[index].routeIndex] == SkillData.State.None)
+        {
+            skillDatas[index].coolDownTime = playerData.skillCoolDownTime[index];
+        }
     }
 
-    protected override void PlayUniqueState(int index, bool IsOn)
+    protected override void PlayForceSkillLogic(int index)
     {
-
-        if (index == 0 || index == 1 || index == 2 || index == 4)
-            SetCastingAura(index, IsOn);
-        else if (index == 3 || index == 5)
-            SetPointStrike(index, IsOn);
+        if (photonView.IsMine)
+        {
+            SetCastingAura(index, false);
+            SetPointStrike(false);
+        }
+        else//다른 클라이언트에서 변경될 때
+        {
+            if (skillDatas[index].statesRoute[skillDatas[index].routeIndex] == SkillData.State.Casting)
+            {
+                skillDatas[index].progressTime = playerData.skillCastingTime[index];
+                if(PhotonNetwork.IsMasterClient)
+                {
+                    skillDatas[index].isReady = false;
+                }
+            }
+        }
     }
-    private void SetPointStrike(int index, bool IsOn)
+
+    protected override void PlayLogic(CallType callType, SkillData.State state, int index)
+    {
+        if (callType == CallType.Skill)
+        {
+            if (state == SkillData.State.Casting)
+            {
+                if (index == 0)
+                    PlaySkillLogic1();
+                else if (index == 1)
+                    PlaySkillLogic2();
+                else if (index == 2)
+                    PlaySkillLogic3();
+                else if (index == 3)
+                    PlaySkillLogic4();
+                else if (index == 4)
+                    PlaySkillLogic5();
+                else if (index == 5)
+                    PlaySkillLogic6();
+            }
+        }
+    }
+
+
+    private void SetPointStrike(bool IsOn)
     {
         if (IsOn)
         {
@@ -215,25 +287,6 @@ public class PlayerElementalOrder : PlayerCommon
             castingAura.transform.position = _hit.point + new Vector3(0, 0.05f, 0);
     }
 
-    protected override void PlaySkillLogic(int index, SkillTiming timing)
-    {
-        if (timing != SkillTiming.Immediately)
-            return;
-
-        if (index == 0)
-            PlaySkillLogic1();
-        else if(index == 1)
-            PlaySkillLogic2();
-        else if (index == 2)
-            PlaySkillLogic3();
-        else if (index == 3)
-            PlaySkillLogic4();
-        else if (index == 4)
-            PlaySkillLogic5();
-        else if (index == 5)
-            PlaySkillLogic6();
-    }
-
     private void PlaySkillLogic1()
     {
         //MeteorStrike, 1, 1
@@ -242,8 +295,6 @@ public class PlayerElementalOrder : PlayerCommon
         _temp[1] = tag;
         PhotonNetwork.Instantiate("ChanYoungNew/ElementalOrder/ElementalOrderSkill1", castingAura.transform.position,
             Quaternion.identity, data: _temp);
-
-        Debug.Log("지금이니?");
     }
 
     private void PlaySkillLogic2()
@@ -297,6 +348,9 @@ public class PlayerElementalOrder : PlayerCommon
         PhotonNetwork.Instantiate("ChanYoungNew/ElementalOrder/ElementalOrderSkill6", pointStrike,
             Quaternion.identity, data: _temp);
     }
+
+
+
 
     [PunRPC]
     public void SyncCommandEffect(int[] syncCommand)

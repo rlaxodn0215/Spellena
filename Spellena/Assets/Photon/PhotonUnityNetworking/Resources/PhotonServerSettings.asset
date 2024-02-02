@@ -218,6 +218,9 @@ MonoBehaviour:
   - ShowRoundPoint
   - UpdatePlayerDead
   - UpdateTotalDamage
+  - CancelHolding
+  - NotifyReady
+  - NotifyUseSkill
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

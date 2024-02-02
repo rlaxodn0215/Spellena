@@ -14,6 +14,7 @@ public class PlayerData : ScriptableObject
     public List<float> skillChannelingTime;
     public List<float> skillLifeTime;
     public List<float> skillDistance;
+    public List<float> skillCoolDownTime;
 
     public List<float> plainCastingTime;
     public List<float> plainChannelingTime;
