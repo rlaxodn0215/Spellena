@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 
-namespace BehaviourTree
+namespace BehaviorTree
 {
     //OR 와 같은 역활
     public class Selector : Node
     {
         public Selector() : base() { }
-        public Selector(NodeName name, List<Node> children) : base(name, children) { }
+        public Selector(Tree tree, NodeName name, List<Node> children) : base(tree, name, children) { }
 
         public override NodeState Evaluate()
         {

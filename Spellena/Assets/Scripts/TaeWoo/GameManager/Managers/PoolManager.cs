@@ -85,12 +85,12 @@ namespace Managers
             PoolObject poolObj = gb.GetComponent<PoolObject>();
             if (poolObj == null) poolObj = gb.AddComponent<PoolObject>();
 
+            gb.SetActive(false);
             poolObj.SetPoolObjectData(id, name, transform);
             poolObj.SetCallback(DisActiveObject);
             poolObj.InitPoolObject();
             poolObj.isUsed = false;
             pObjData.objIDs.Add(id);
-            gb.SetActive(false);
 
             return poolObj;
         }

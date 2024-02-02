@@ -4,7 +4,7 @@ using Photon.Realtime;
 using System.Collections.Generic;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 using Player;
-using BehaviourTree;
+using BehaviorTree;
 
 public class Helper : MonoBehaviour
 {

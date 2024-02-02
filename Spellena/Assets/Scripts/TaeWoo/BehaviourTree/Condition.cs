@@ -1,6 +1,7 @@
 using System;
+using System.Collections.Generic;
 
-namespace BehaviourTree
+namespace BehaviorTree
 {
     public class Condition : Node 
     {
@@ -11,10 +12,11 @@ namespace BehaviourTree
             condition = null;
         }
 
-        public Condition(Func<bool> _condition, Node _TNodes)
+        public Condition(Tree _tree, NodeName nodeName, Func<bool> _condition, Node _TNode)
+            :base(_tree, nodeName, new List<Node> { _TNode})
         {
             condition += _condition;
-            Attach(_TNodes);
+            tree = _tree;
         }
 
         public override NodeState Evaluate()

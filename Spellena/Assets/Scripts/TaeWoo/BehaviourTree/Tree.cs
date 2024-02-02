@@ -1,22 +1,24 @@
 using UnityEngine;
 
-namespace BehaviourTree
+namespace BehaviorTree
 {
-    public abstract class Tree : MonoBehaviour
+    public class Tree : MonoBehaviour
     {
         protected Node root = null;
-
-        protected void Start()
+        public CharacterData data;
+        protected virtual void Start()
         {
             root = SetupTree();
         }
 
         protected virtual void Update()
         {
-            if (root != null)
-                root.Evaluate();
+            if (root != null) root.Evaluate();
         }
 
-        protected abstract Node SetupTree();
+        protected virtual Node SetupTree() 
+        {
+            return root;
+        }
     }
 }

@@ -38,9 +38,12 @@ public class Arrow : PoolObject
     }
     void OnEnable()
     {
-        if (rigidbody == null) rigidbody = gameObject.AddComponent<Rigidbody>();
-        rigidbody.velocity = transform.forward * arrowVelocity;
-        lifeTimeCoroutine = StartCoroutine(TimerUpdate(ArrowCoolTime.LifeTime, this));
+        if (ObjID > 0)
+        {
+            if (rigidbody == null) rigidbody = gameObject.AddComponent<Rigidbody>();
+            rigidbody.velocity = transform.forward * arrowVelocity;
+            lifeTimeCoroutine = StartCoroutine(TimerUpdate(ArrowCoolTime.LifeTime, this));
+        }
     }
 
     private void OnCollisionEnter(Collision collision)

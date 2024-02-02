@@ -1,7 +1,6 @@
-using System.Collections;
 using System.Collections.Generic;
 
-namespace BehaviourTree
+namespace BehaviorTree
 {
     public enum NodeState
     {
@@ -12,10 +11,12 @@ namespace BehaviourTree
 
     public enum NodeName
     {
+        NONE,
         Sequence,
         Selector,
         Parallel,
-        GotoOccupationArea,
+        Condition_1,
+        Function_1,
         Skill_1,
         Skill_2,
         Skill_3,
@@ -25,18 +26,16 @@ namespace BehaviourTree
     public enum DataContext
     {
         NodeStatus,
-        IsNoSkillDoing,
-        NotSensingEnemy,
-        EnemyTransform,
+        FixNode,
     }
 
     public class Node
     {
         protected NodeState state;
+        public NodeName nodeName = NodeName.NONE;
 
-        public NodeName nodeName;
+        public Tree tree;
         public Node parent;
-
         protected List<Node> children = new List<Node>();
 
         private Dictionary<DataContext, Node> dataContext 
@@ -47,8 +46,9 @@ namespace BehaviourTree
             parent = null;
         }
 
-        public Node(NodeName name, List<Node> children)
+        public Node(Tree useTree ,NodeName name, List<Node> children)
         {
+            tree = useTree;
             nodeName = name;
 
             if(children != null)

@@ -2,71 +2,79 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-using BehaviourTree;
-using CoroutineMaker;
+using BehaviorTree;
+using DefineDatas;
 
-public class GotoOccupationArea : Node
+public class GotoOccupationArea : AbilityNode
 {
-    private Transform playerTransform;
-    private NavMeshAgent agent;
-
     private List<Transform> occupationPoints = new List<Transform>();
-    private Vector3 movePoint;
+    private NavMeshAgent agent;
     private Animator animator;
     private GameObject arrowAniObj;
-
+    private bool isNull;
     private int randomIndex = 0;
 
-    public GotoOccupationArea() { }
-
-    public GotoOccupationArea(Transform _playerTransform,
-        Transform _occupationPoint, GameObject _arrowAniObj) : base(NodeName.GotoOccupationArea, null)
+    public GotoOccupationArea(BehaviorTree.Tree tree, AbilityMaker abilityMaker, float coolTime)
+        : base(tree, NodeName.Function_1, coolTime)
     {
-        playerTransform = _playerTransform;
-        arrowAniObj = _arrowAniObj;
+        arrowAniObj = abilityMaker.abilityObjectTransforms[(int)AbilityMaker.AbilityObjectName.ArrowAniObject].gameObject;
+        agent = abilityMaker.abilityObjectTransforms[(int)AbilityMaker.AbilityObjectName.CharacterTransform].GetComponent<NavMeshAgent>();
+        animator = abilityMaker.abilityObjectTransforms[(int)AbilityMaker.AbilityObjectName.CharacterTransform].GetComponent<Animator>();
+        agent.speed = abilityMaker.data.moveSpeed;
+        agent.angularSpeed = abilityMaker.data.rotateSpeed;
 
-        agent = playerTransform.GetComponent<NavMeshAgent>();
-        if (agent == null) Debug.LogError("NavMeshAgent가 할당되지 않았습니다");
-        animator = playerTransform.GetComponent<Animator>();
-        if (animator == null) Debug.LogError("Animator가 할당되지 않았습니다");
-
-        for(int i = 0; i < _occupationPoint.childCount; i++)
+        for(int i = 0; i < abilityMaker.abilityObjectTransforms[(int)AbilityMaker.AbilityObjectName.OccupationPoint].childCount; i++)
         {
-            occupationPoints.Add(_occupationPoint.GetChild(i));
+            occupationPoints.Add(abilityMaker.abilityObjectTransforms[(int)AbilityMaker.AbilityObjectName.OccupationPoint].GetChild(i));
         }
 
-        agent.destination = occupationPoints[randomIndex].position;
+        isNull = NullCheck();
     }
-
     public override NodeState Evaluate()
     {
-        // 제게
+        if (isNull)
+        {
+            state = NodeState.Failure;
+            return state;
+        }
         SetDataToRoot(DataContext.NodeStatus, this);
-
         RandomOccupationPosition();
-
-        animator.SetBool("Move", true);
+        animator.SetBool(PlayerAniState.Move, true);
         arrowAniObj.SetActive(false);
-
         Debug.Log("GotoOccupationArea.. Point " + randomIndex);
-
         state = NodeState.Running;
         return state;
     }
 
     private void RandomOccupationPosition()
-    {
-        Random.InitState(7); //seed를 초기화하여 모두 동일하게 작용
+    {       
         if (agent.remainingDistance <= agent.stoppingDistance)
         {
             randomIndex = Random.Range(0, occupationPoints.Count);
             agent.destination = occupationPoints[randomIndex].position;
-            agent.speed = 3;
         }
-
         else
         {
             agent.isStopped = false;
         }
+    }
+    private bool NullCheck()
+    {
+        if (arrowAniObj == null)
+        {
+            Debug.LogError("ArrowAniObj 할당되지 않았습니다");
+            return true;
+        }
+        if (agent == null)
+        {
+            Debug.LogError("NavMeshAgent가 할당되지 않았습니다");
+            return true;
+        }
+        if (animator == null)
+        {
+            Debug.LogError("Animator가 할당되지 않았습니다");
+            return true;
+        }
+        return false;
     }
 }

@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 
-namespace BehaviourTree
+namespace BehaviorTree
 {
     //AND 와 같은 역활
     public class Sequence : Node
     {
         public Sequence() : base() { }
-        public Sequence(NodeName name, List<Node> children) : base(name, children) { }
+        public Sequence(Tree tree, NodeName name, List<Node> children) : base(tree, name, children) { }
 
         public override NodeState Evaluate()
         {

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace BehaviourTree
+namespace BehaviorTree
 {
     public class Parallel : Node
     {
@@ -8,11 +8,11 @@ namespace BehaviourTree
 
         public Parallel() : base() { }
 
-        public Parallel(NodeName name, List<Node> children) : base(name, children) { }
+        public Parallel(Tree tree, NodeName name, List<Node> children) : base(tree, name, children) { }
 
         public override NodeState Evaluate()
         {
-            if (GetData(DataContext.IsNoSkillDoing) == null)
+            if (GetData(DataContext.FixNode) == null)
                 index = (index + 1) % children.Count;
 
             Node node = children[index];
