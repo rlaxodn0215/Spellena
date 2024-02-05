@@ -77,8 +77,6 @@ namespace FSM
             Dictionary<string, PlayerStat>.Enumerator iter
                      = ((GameCenter0)stateMachine).players.GetEnumerator();
 
-            Debug.Log(((GameCenter0)stateMachine).players.Count);
-
             while (iter.MoveNext())
             {
                 KeyValuePair<string, PlayerStat> temp = iter.Current;
@@ -89,18 +87,18 @@ namespace FSM
                 ((GameCenter0)stateMachine).gameManagerView.RPC("ActiveObject", player.player, "CharacterSelect", false);
 
                 string choseCharacter = player.character;
-                //if (choseCharacter == null)
-                //{
-                //    choseCharacter = player.character = "Observer";
-                //    ((GameCenter0)stateMachine).players[player.name] = player;
-                //}
-
                 if (choseCharacter == null)
                 {
-                    choseCharacter = player.character = "Aloy";
-                    // 이름 할당이 안됨...
-                    //((GameCenter0)stateMachine).players[player.name] = player;
+                    choseCharacter = player.character = "ElementalOrder";
+                    ((GameCenter0)stateMachine).players[player.name] = player;
                 }
+
+                //if (choseCharacter == null)
+                //{
+                //    choseCharacter = player.character = "Aloy";
+                //    // 이름 할당이 안됨...
+                //    //((GameCenter0)stateMachine).players[player.name] = player;
+                //}
 
                 Vector3 pos;
 
@@ -131,7 +129,7 @@ namespace FSM
                     inGameUIView.RPC("DisActiveCrosshair", player.player);
                 }
 
-                else if (choseCharacter != "Observer") 
+                else if (choseCharacter == "Observer") 
                 {
                     playerCharacter.GetComponent<PhotonView>().RPC("SetTag", RpcTarget.All, "TeamA");
                     playerCharacter.GetComponent<PhotonView>().RPC("ActiveObserver", player.player);

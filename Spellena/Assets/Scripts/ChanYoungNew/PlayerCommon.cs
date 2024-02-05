@@ -5,8 +5,6 @@ using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine.InputSystem;
 using System;
-
-
 using GlobalEnum;
 
 public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable

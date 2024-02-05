@@ -64,7 +64,7 @@ namespace FSM
             inGameUIView = ((GameCenter0)stateMachine).gameCenterObjs["InGameUI"].GetComponent<PhotonView>();
             if (inGameUI == null) Debug.LogError("no inGameUIView");
             occupationArea = ((GameCenter0)stateMachine).gameCenterObjs["OccupationArea"].GetComponent<OccupationArea>();
-            if (inGameUI == null) Debug.LogError("no occupationArea");
+            if (occupationArea == null) Debug.LogError("no occupationArea");
         }
 
         //scriptable object Àû¿ë
