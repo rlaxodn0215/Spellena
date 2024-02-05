@@ -221,6 +221,7 @@ MonoBehaviour:
   - CancelHolding
   - NotifyReady
   - NotifyUseSkill
+  - TeleportPlayer
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
