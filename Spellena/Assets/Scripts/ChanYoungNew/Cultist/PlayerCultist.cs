@@ -9,6 +9,10 @@ using static UnityEditor.Progress;
 public class PlayerCultist : PlayerCommon
 {
     private GameObject chaser;
+    protected ParticleSystem skill3CastingEffect;
+    protected ParticleSystem skill3ChannelingEffect;
+    protected ParticleSystem skill3OverlayCastingEffect;
+
     protected override void InitUniqueComponents()
     {
         for(int i = 0; i < skillDatas.Count; i++)
@@ -32,6 +36,10 @@ public class PlayerCultist : PlayerCommon
         plainDatas[1].statesRoute.Add(SkillData.State.Holding);
         plainDatas[1].statesRoute.Add(SkillData.State.Casting);
         plainDatas[2].statesRoute.Add(SkillData.State.Casting);
+
+
+        skill3CastingEffect = unique.transform.GetChild(0).GetComponent<ParticleSystem>();
+        skill3ChannelingEffect = unique.transform.GetChild(1).GetComponent<ParticleSystem>();
     }
 
     protected override void PlayNormalSkillLogic(int index)
@@ -39,7 +47,8 @@ public class PlayerCultist : PlayerCommon
         if (skillDatas[index].statesRoute[skillDatas[index].routeIndex] == SkillData.State.Casting)
         {
             skillDatas[index].progressTime = playerData.skillCastingTime[index];
-            PlayLogic(CallType.Skill, SkillData.State.Casting, index);
+            if(photonView.IsMine)
+                PlayLogic(CallType.Skill, SkillData.State.Casting, index);
             CallPlayAnimation(AnimationChangeType.Invoke, CallType.Skill, index);
         }
         else if (skillDatas[index].statesRoute[skillDatas[index].routeIndex] == SkillData.State.Channeling)
@@ -66,10 +75,12 @@ public class PlayerCultist : PlayerCommon
                     else if (index == 1)
                         PlaySkillLogic2();
                     else if (index == 2)
-                        PlaySkillLogic3();
+                        PlaySkillLogic3(state);
                 }
                 else if(state == SkillData.State.Casting)
                 {
+                    if (index == 2)
+                        PlaySkillLogic3(state);
                     if(index == 3)
                         PlaySkillLogic4();
                     Debug.Log("캐스팅");
@@ -151,10 +162,26 @@ public class PlayerCultist : PlayerCommon
         Debug.Log("스킬 끈다잉?");
     }
 
-    private void PlaySkillLogic3()
+    private void PlaySkillLogic3(SkillData.State state)
     {
         //상대의 카메라를 내리는 효과를 킴
         //모든 플레이어에게 Ray를 쏴서 맞는 사람만 시선이 내려감
+        if(state == SkillData.State.Casting)
+        {
+            skill3CastingEffect.Stop(false, ParticleSystemStopBehavior.StopEmittingAndClear);
+            skill3OverlayCastingEffect.Stop(false, ParticleSystemStopBehavior.StopEmittingAndClear);
+            skill3CastingEffect.Play(false);
+            skill3OverlayCastingEffect.Play(false);
+            skill3CastingEffect.startLifetime = skillDatas[2].progressTime;
+            skill3OverlayCastingEffect.startLifetime = skillDatas[2].progressTime;
+        }
+        else if(state == SkillData.State.Channeling)
+        {
+            skill3ChannelingEffect.Stop(false, ParticleSystemStopBehavior.StopEmittingAndClear);
+            skill3ChannelingEffect.Play(false);
+            skill3ChannelingEffect.startLifetime = skillDatas[2].progressTime;
+        }
+
     }
 
     private void PlaySkillLogic4()

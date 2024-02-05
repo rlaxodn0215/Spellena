@@ -12,14 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bddbb0ccd969b864bae228082841599f, type: 3}
   m_Name: PlayerCultist
   m_EditorClassIdentifier: 
+  dataHp: 0
+  dataHeadShotRatio: 0
+  dataSpeed: 0
   skillCastingTime:
   - 1
   - 1
   - 1
   - 1
   skillChannelingTime:
-  - 0
-  - 0
+  - 1
+  - 5
   - 0
   - 0
   skillLifeTime:
@@ -32,6 +35,7 @@ MonoBehaviour:
   - 1
   - 1
   - 1
+  skillCoolDownTime: []
   plainCastingTime:
   - 1
   - 1
