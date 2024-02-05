@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -11,15 +10,20 @@ public class GotoOccupationArea : AbilityNode
     private NavMeshAgent agent;
     private Animator animator;
     private GameObject arrowAniObj;
-    private bool isNull;
     private int randomIndex = 0;
 
     public GotoOccupationArea(BehaviorTree.Tree tree, AbilityMaker abilityMaker, float coolTime)
         : base(tree, NodeName.Function_1, coolTime)
     {
         arrowAniObj = abilityMaker.abilityObjectTransforms[(int)AbilityMaker.AbilityObjectName.ArrowAniObject].gameObject;
+        if (arrowAniObj == null) ErrorDataMaker.SaveErrorData(ErrorCode.GotoOccupationArea_arrowAniObj_NULL);
+
         agent = abilityMaker.abilityObjectTransforms[(int)AbilityMaker.AbilityObjectName.CharacterTransform].GetComponent<NavMeshAgent>();
+        if (agent == null) ErrorDataMaker.SaveErrorData(ErrorCode.GotoOccupationArea_agent_NULL);
+
         animator = abilityMaker.abilityObjectTransforms[(int)AbilityMaker.AbilityObjectName.CharacterTransform].GetComponent<Animator>();
+        if (animator == null) ErrorDataMaker.SaveErrorData(ErrorCode.GotoOccupationArea_animator_NULL);
+
         agent.speed = abilityMaker.data.moveSpeed;
         agent.angularSpeed = abilityMaker.data.rotateSpeed;
 
@@ -27,16 +31,9 @@ public class GotoOccupationArea : AbilityNode
         {
             occupationPoints.Add(abilityMaker.abilityObjectTransforms[(int)AbilityMaker.AbilityObjectName.OccupationPoint].GetChild(i));
         }
-
-        isNull = NullCheck();
     }
     public override NodeState Evaluate()
     {
-        if (isNull)
-        {
-            state = NodeState.Failure;
-            return state;
-        }
         SetDataToRoot(DataContext.NodeStatus, this);
         RandomOccupationPosition();
         animator.SetBool(PlayerAniState.Move, true);
@@ -57,24 +54,5 @@ public class GotoOccupationArea : AbilityNode
         {
             agent.isStopped = false;
         }
-    }
-    private bool NullCheck()
-    {
-        if (arrowAniObj == null)
-        {
-            Debug.LogError("ArrowAniObj 할당되지 않았습니다");
-            return true;
-        }
-        if (agent == null)
-        {
-            Debug.LogError("NavMeshAgent가 할당되지 않았습니다");
-            return true;
-        }
-        if (animator == null)
-        {
-            Debug.LogError("Animator가 할당되지 않았습니다");
-            return true;
-        }
-        return false;
     }
 }

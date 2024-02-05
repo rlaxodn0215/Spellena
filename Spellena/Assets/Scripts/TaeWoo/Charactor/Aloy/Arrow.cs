@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Managers;
+using DefineDatas;
 
 public class Arrow : PoolObject
 {
@@ -79,7 +80,7 @@ public class Arrow : PoolObject
             yield return null;
         }
 
-        timers[(int)name].ChangeCoolTime(0.0f);
+        timers[(int)name].ChangeCoolTime(DefineNumber.ZeroCount);
         ob.DisActive();
     }
 
@@ -92,14 +93,14 @@ public class Arrow : PoolObject
             yield return null;
         }
 
-        timers[(int)ArrowCoolTime.ArrowStuckDestoryTime].ChangeCoolTime(0.0f);
+        timers[(int)ArrowCoolTime.ArrowStuckDestoryTime].ChangeCoolTime(DefineNumber.ZeroCount);
         stuckObj.DisActive();
     }
 
     public override void DisActive()
     {
         StopCoroutine(lifeTimeCoroutine);
-        timers[(int)ArrowCoolTime.LifeTime].ChangeCoolTime(0.0f);
+        timers[(int)ArrowCoolTime.LifeTime].ChangeCoolTime(DefineNumber.ZeroCount);
         rigidbody.velocity = Vector3.zero;
         rigidbody.angularVelocity = Vector3.zero;
         base.DisActive();

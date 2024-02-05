@@ -5,11 +5,7 @@ namespace BehaviorTree
     public class Parallel : Node
     {
         int index = 0;
-
-        public Parallel() : base() { }
-
         public Parallel(Tree tree, NodeName name, List<Node> children) : base(tree, name, children) { }
-
         public override NodeState Evaluate()
         {
             if (GetData(DataContext.FixNode) == null)

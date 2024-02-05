@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using BehaviorTree;
-
+using DefineDatas;
 public class AbilityMaker : MonoBehaviour
 {
     public enum AbilityObjectName
@@ -15,16 +15,14 @@ public class AbilityMaker : MonoBehaviour
         DownArrowTransform,
         OccupationPoint,
     }
-
     public enum SkillName
     {
-        ShootNormalArrow,
-        ShootBallArrow,
-        LaserArrow,
-        ArrowRain,
+        NormalArrowAttack,
+        BallArrowAttack,
+        LaserArrowAttack,
+        ArrowRainAttack,
         NONE
     }
-
     public enum FunctionName
     {
         GotoOccupationArea,
@@ -32,7 +30,6 @@ public class AbilityMaker : MonoBehaviour
     }
 
     public List<Transform> abilityObjectTransforms;
-
     [HideInInspector]
     public BehaviorTree.CharacterData data;
     private BehaviorTree.Tree tree;
@@ -41,27 +38,15 @@ public class AbilityMaker : MonoBehaviour
     {
         InitalizeSkillData();
     }
-
     void InitalizeSkillData()
     {
         tree = GetComponent<BehaviorTree.Tree>();
-        if (tree == null)
-        {
-            Debug.LogError("Tree가 할당되지 않았습니다");
-            return;
-        }
-
+        if (tree == null)ErrorDataMaker.SaveErrorData(ErrorCode.AbilityMaker_Tree_NULL);
         data = tree.data;
-        if (data == null)
-        {
-            Debug.LogError("Data가 할당되지 않았습니다");
-            return;
-        }
+        if (data == null)ErrorDataMaker.SaveErrorData(ErrorCode.AbilityMaker_data_NULL);
     }
-
     public AbilityNode MakeFunction(FunctionName functionName)
     {
-        if (tree == null) return null;
         switch (functionName)
         {
             case FunctionName.GotoOccupationArea:
@@ -71,20 +56,18 @@ public class AbilityMaker : MonoBehaviour
         }
         return null;
     }
-
     public AbilityNode MakeSkill(SkillName skillName)
     {
-        if (tree == null || data == null) return null;
         switch (skillName)
         {
-            case SkillName.ShootNormalArrow:
-                return new ShootNormalArrow(tree, this, data.coolTimes[(int)skillName]);
-            case SkillName.ShootBallArrow:
-                return new ShootBallArrow(tree, this, data.coolTimes[(int)skillName]);
-            case SkillName.LaserArrow:
-                return new LaserArrow(tree, this, data.coolTimes[(int)skillName]);
-            case SkillName.ArrowRain:
-                return new ArrowRain(tree, this, data.coolTimes[(int)skillName]);
+            case SkillName.NormalArrowAttack:
+                return new NormalArrowAttack(tree, this, data.coolTimes[(int)skillName]);
+            case SkillName.BallArrowAttack:
+                return new BallArrowAttack(tree, this, data.coolTimes[(int)skillName]);
+            case SkillName.LaserArrowAttack:
+                return new LaserArrowAttack(tree, this, data.coolTimes[(int)skillName]);
+            case SkillName.ArrowRainAttack:
+                return new ArrowRainAttack(tree, this, data.coolTimes[(int)skillName]);
             case SkillName.NONE:
                 return new AbilityNode();
         }

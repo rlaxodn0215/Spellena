@@ -5,7 +5,7 @@ using BehaviorTree;
 using CoroutineMaker;
 using UnityEngine.AI;
 using DefineDatas;
-public class ArrowRain : AbilityNode
+public class ArrowRainAttack : AbilityNode
 {
     private Animator bowAnimator;
     private GameObject arrowAniObj;
@@ -24,7 +24,7 @@ public class ArrowRain : AbilityNode
     private MakeCoroutine coroutine;
     private float rotateSpeed = 7.5f;
 
-    public ArrowRain(BehaviorTree.Tree tree, AbilityMaker abilityMaker, float coolTime): base(tree, NodeName.Skill_4, coolTime)
+    public ArrowRainAttack(BehaviorTree.Tree tree, AbilityMaker abilityMaker, float coolTime): base(tree, NodeName.Skill_4, coolTime)
     {
         playerTransform = abilityMaker.abilityObjectTransforms[(int)AbilityMaker.AbilityObjectName.CharacterTransform];
         attackTransform = abilityMaker.abilityObjectTransforms[(int)AbilityMaker.AbilityObjectName.ArrowStrikeStartPoint];

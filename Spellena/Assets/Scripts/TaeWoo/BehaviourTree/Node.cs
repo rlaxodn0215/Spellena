@@ -46,7 +46,7 @@ namespace BehaviorTree
             parent = null;
         }
 
-        public Node(Tree useTree ,NodeName name, List<Node> children)
+        public Node(Tree useTree, NodeName name, List<Node> children)
         {
             tree = useTree;
             nodeName = name;

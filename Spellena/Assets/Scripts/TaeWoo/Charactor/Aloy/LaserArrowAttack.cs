@@ -6,7 +6,7 @@ using BehaviorTree;
 using CoroutineMaker;
 using DefineDatas;
 
-public class LaserArrow : AbilityNode
+public class LaserArrowAttack : AbilityNode
 {
     public enum MoveWay
     {
@@ -45,7 +45,7 @@ public class LaserArrow : AbilityNode
     private CapsuleCollider collider;
 
 
-    public LaserArrow(BehaviorTree.Tree tree, AbilityMaker abilityMaker, float coolTime): base(tree, NodeName.Skill_3, coolTime)
+    public LaserArrowAttack(BehaviorTree.Tree tree, AbilityMaker abilityMaker, float coolTime): base(tree, NodeName.Skill_3, coolTime)
     {
         playerTransform = abilityMaker.abilityObjectTransforms[(int)AbilityMaker.AbilityObjectName.CharacterTransform];
         attackTransform = abilityMaker.abilityObjectTransforms[(int)AbilityMaker.AbilityObjectName.AimingTransform].GetChild(2);

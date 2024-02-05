@@ -10,12 +10,10 @@ namespace BehaviorTree
         {
             root = SetupTree();
         }
-
         protected virtual void Update()
         {
             if (root != null) root.Evaluate();
         }
-
         protected virtual Node SetupTree() 
         {
             return root;

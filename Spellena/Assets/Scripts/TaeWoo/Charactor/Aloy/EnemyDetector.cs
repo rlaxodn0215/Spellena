@@ -17,22 +17,27 @@ public class EnemyDetector: Condition
     private LayerMask targetMask;
     private Ray ray;
     private RaycastHit hit;
-    private bool isNull;
 
     public EnemyDetector(BehaviorTree.Tree tree, EnemyDetectType detectType, Node _TNode, AbilityMaker abilityMaker)
         : base(tree,NodeName.Condition_1, null, _TNode)
     {
         condition += DefineDetectType(detectType);
+        if (condition == null) ErrorDataMaker.SaveErrorData(ErrorCode.EnemyDetector_condition_NULL);
+
         playerTransform = abilityMaker.abilityObjectTransforms[(int)AbilityMaker.AbilityObjectName.CharacterTransform];
+        if (playerTransform == null) ErrorDataMaker.SaveErrorData(ErrorCode.EnemyDetector_playerTransform_NULL);
+
         bowAnimator = abilityMaker.abilityObjectTransforms[(int)AbilityMaker.AbilityObjectName.BowAniObject].GetComponent<Animator>();
+        if (bowAnimator == null) ErrorDataMaker.SaveErrorData(ErrorCode.EnemyDetector_bowAnimator_NULL);
+
         animator = playerTransform.GetComponent<Animator>();
+        if (animator == null) ErrorDataMaker.SaveErrorData(ErrorCode.EnemyDetector_animator_NULL);
+
         viewAngle = abilityMaker.data.sightAngle;
         viewRadius = abilityMaker.data.sightDistance;
         targetMask = LayerMask.GetMask(LayerMaskName.Player);
         ray = new Ray();
-        isNull = NullCheck();
     }
-
     Func<bool> DefineDetectType(EnemyDetectType detectType)
     {
         switch(detectType)
@@ -46,8 +51,7 @@ public class EnemyDetector: Condition
 
     public bool CheckEnemyInSight()
     {
-        if (isNull) return false;
-        Vector3 SightPos = playerTransform.position + Vector3.up * 1.5f;
+        Vector3 SightPos = playerTransform.position + Vector3.up * DefineNumber.SightHeightRatio;
         float lookingAngle = playerTransform.eulerAngles.y;  //캐릭터가 바라보는 방향의 각도
         Vector3 rightDir = AngleToDir(playerTransform.eulerAngles.y + viewAngle * 0.5f);
         Vector3 leftDir = AngleToDir(playerTransform.eulerAngles.y - viewAngle * 0.5f);
@@ -89,30 +93,6 @@ public class EnemyDetector: Condition
         ((AloyBT)tree).lookTransform = null;
         animator.SetBool(PlayerAniState.CheckEnemy, false);
         bowAnimator.SetBool(PlayerAniState.Draw, false);
-        return false;
-    }
-    private bool NullCheck()
-    {
-        if(condition == null)
-        {
-            Debug.LogError("condition이 할당되지 않았습니다");
-            return true;
-        }
-        if(playerTransform == null)
-        {
-            Debug.LogError("playerTransform 할당되지 않았습니다");
-            return true;
-        }
-        if (bowAnimator == null)
-        {
-            Debug.LogError("bowAnimator가 할당되지 않았습니다");
-            return true;
-        }
-        if (animator == null)
-        {
-            Debug.LogError("Animator가 할당되지 않았습니다");
-            return true;
-        }
         return false;
     }
     private Vector3 AngleToDir(float angle)

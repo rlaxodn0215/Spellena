@@ -6,19 +6,16 @@ namespace BehaviorTree
     public class Condition : Node 
     {
         protected Func<bool> condition;
-
         public Condition() : base()
         {
             condition = null;
         }
-
         public Condition(Tree _tree, NodeName nodeName, Func<bool> _condition, Node _TNode)
             :base(_tree, nodeName, new List<Node> { _TNode})
         {
             condition += _condition;
             tree = _tree;
         }
-
         public override NodeState Evaluate()
         {
             if(condition())
