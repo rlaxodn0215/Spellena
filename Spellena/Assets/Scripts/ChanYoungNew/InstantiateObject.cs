@@ -22,4 +22,10 @@ public class InstantiateObject : MonoBehaviourPunCallbacks, IPunObservable
     {
         throw new System.NotImplementedException();
     }
+
+    [PunRPC]
+    public void DestroyObject()
+    {
+        PhotonNetwork.Destroy(gameObject);
+    }
 }

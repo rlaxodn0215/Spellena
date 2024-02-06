@@ -163,9 +163,6 @@ public class PlayerElementalOrder : PlayerCommon
             skillDatas[index].isLocalReady = false;
             skillDatas[index].progressTime = playerData.skillCastingTime[index];
 
-            //스킬 시전 알림 -> 다른 클라이언트들은 Unique 상태가 존재하지 않아 강제적으로 2계단을 건너뛰는 것으로 인식됨 routeIndex는 이미 바뀌어있음
-            photonView.RPC("NotifyUseSkill", RpcTarget.Others, (int)CallType.Skill, index, skillDatas[index].routeIndex);
-
             //스킬 로직 실행 -> 자신의 클라이언트는 정상적으로 다음 상태로 이동하는 것이기 때문에 강제적으로 이동한 것이 아님
             PlayLogic(CallType.Skill, skillDatas[index].statesRoute[skillDatas[index].routeIndex], index);
             CallPlayAnimation(AnimationChangeType.Invoke, CallType.Skill, index);
@@ -174,7 +171,12 @@ public class PlayerElementalOrder : PlayerCommon
             SetPointStrike(false);
 
             commands.Clear();
-            photonView.RPC("SyncCommandEffect", RpcTarget.All, commands.ToArray());
+            //스킬 시전 알림 -> 다른 클라이언트들은 Unique 상태가 존재하지 않아 강제적으로 2계단을 건너뛰는 것으로 인식됨 routeIndex는 이미 바뀌어있음
+            if (photonView.IsMine)
+            {
+                photonView.RPC("NotifyUseSkill", RpcTarget.Others, (int)CallType.Skill, index, skillDatas[index].routeIndex);
+                photonView.RPC("SyncCommandEffect", RpcTarget.All, commands.ToArray());
+            }
         }
         else if (skillDatas[index].statesRoute[skillDatas[index].routeIndex] == SkillData.State.None)
         {
@@ -195,9 +197,7 @@ public class PlayerElementalOrder : PlayerCommon
             {
                 skillDatas[index].progressTime = playerData.skillCastingTime[index];
                 if(PhotonNetwork.IsMasterClient)
-                {
                     skillDatas[index].isReady = false;
-                }
             }
         }
     }
