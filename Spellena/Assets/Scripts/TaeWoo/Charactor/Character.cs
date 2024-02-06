@@ -110,8 +110,8 @@ namespace Player
         public bool canInteraction = false;
 
         protected bool isGrounded = false;
-        private Transform avatarForOther;
-        private Transform avatarForMe;
+        protected Transform avatarForOther;
+        protected Transform avatarForMe;
         private RaycastHit slopeHit;
         private Vector3 cameraPos;
         private Quaternion cameraRot;

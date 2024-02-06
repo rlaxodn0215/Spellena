@@ -89,7 +89,7 @@ public class EterialStormObject : SpawnObject,IPunObservable
     void BalanceAnimation()
     {
         rangeArea.GetComponent<ParticleSystem>().startLifetime = elementalOrderData.eterialStormCastingTime;
-        for(int i = 0; i < 5; i++)
+        for(int i = 0; i < 14; i++)
         {
             hitEffect.transform.GetChild(i).GetComponent<ParticleSystem>().startLifetime = castingTime;
         }
@@ -174,7 +174,7 @@ public class EterialStormObject : SpawnObject,IPunObservable
     {
         GameObject _rootObject = other.transform.root.gameObject;
 
-        if(tag == _rootObject.tag)
+        if(tag != _rootObject.tag)
         {
             return;
         }

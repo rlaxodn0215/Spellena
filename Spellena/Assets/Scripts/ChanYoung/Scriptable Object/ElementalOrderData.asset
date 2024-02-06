@@ -22,11 +22,11 @@ MonoBehaviour:
   sitBackSpeed: 2
   jumpHeight: 7
   headShotRatio: 3
-  ragnaEdgeFloorDamage: 150
+  ragnaEdgeFloorDamage: 100
   ragnaEdgeCylinderDamage: 150
   rangaEdgeCoolDownTime: 10
   ragnaEdgeCastingTime: 2
-  ragnaEdgeFloorLifeTime: 2.5
+  ragnaEdgeFloorLifeTime: 4
   ragnaEdgeCylinderLifeTime: 1.5
   rangaEdgeCylinderDebuff: burn
   burstFlareBullet: 5
