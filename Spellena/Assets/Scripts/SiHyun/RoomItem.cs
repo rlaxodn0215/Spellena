@@ -10,13 +10,12 @@ public class RoomItem : MonoBehaviour
     public Text entryStatusText;
     public Text playerCountText;
     public Image entryIcon;
-    public GameObject blackOut;
     public Sprite admissionPossible;
     public Sprite entryNotPossible;
     public int maxChar = 10;
     LobbyManager manager;
 
-    private string roomName;
+    string roomName;
 
     private void Start()
     {

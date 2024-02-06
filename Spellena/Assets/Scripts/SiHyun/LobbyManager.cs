@@ -29,7 +29,6 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     public Transform playerItemParentA;
     public Transform playerItemParentB;
 
-    bool isRoomListUpdated = false;
 
     private const string playerItemPrefabPath = "SiHyun/Prefabs/PlayerItem";
 
@@ -58,28 +57,27 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
     {
-        if(Time.time >=nextUpdateTime && !isRoomListUpdated)
+        if(Time.time >=nextUpdateTime)
         {
             Debug.Log("방 목록 업데이트");
             UpdateRoomList(roomList);
             nextUpdateTime = Time.time + timeBetweenUpdates;
-            isRoomListUpdated = true;
         }
     }
 
     void UpdateRoomList(List<RoomInfo> list)
     {
-        /*foreach(RoomItem item in roomItemList)
+        foreach (RoomItem item in roomItemList)
         {
             Destroy(item.gameObject);
         }
-        roomItemList.Clear();*/
+        roomItemList.Clear();
 
-        foreach(RoomInfo room in list)
+        foreach (RoomInfo room in list)
         {
             RoomItem newRoom = Instantiate(roomItemPrefab, contentObjects);
-            Photon.Realtime.Player masterClient = PhotonNetwork.CurrentRoom.GetPlayer(room.masterClientId);
-            newRoom.SetRoomInfo(room.Name, room.PlayerCount, room.MaxPlayers, masterClient.NickName);
+            //Photon.Realtime.Player masterClient = PhotonNetwork.CurrentRoom.GetPlayer(room.masterClientId);
+            newRoom.SetRoomInfo(room.Name, room.PlayerCount, room.MaxPlayers, ""/*masterClient.NickName*/);
             roomItemList.Add(newRoom);
         }
     }
@@ -121,16 +119,12 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     {
         roomPanel.SetActive(false);
         lobbyPanel.SetActive(true);
-
-        PhotonNetwork.GetCustomRoomList(null, "");
-
-        isRoomListUpdated = false;
     }
 
-    /*public override void OnConnectedToMaster()
+    public override void OnConnectedToMaster()
     {
         PhotonNetwork.JoinLobby();
-    }*/
+    }
 
     void CreateLocalPlayerItem(Photon.Realtime.Player _localPlayer)
     {
