@@ -19,7 +19,7 @@ namespace Player
     public class ElementalOrder : Character, IPunObservable
     {
         public ElementalOrderData elementalOrderData;
-        public GameObject avatarForOther;
+        public GameObject avatarForOtherObject;
 
         public GameObject overlayCamera;
         public GameObject minimapCamera;
@@ -141,7 +141,7 @@ namespace Player
 
             dataHp = elementalOrderData.hp;
             topAnimator = animator;
-            animator = animatorForOther = avatarForOther.GetComponent<Animator>();
+            animator = animatorForOther = GetComponent<Animator>();
         }
 
         void InitAwake()
@@ -192,6 +192,10 @@ namespace Player
             base.IsLocalPlayer();
             overlayCamera.SetActive(true);
             minimapCamera.SetActive(true);
+
+            avatarForOther.gameObject.layer = LayerMask.NameToLayer("Me");
+            avatarForOther.gameObject.GetComponent<SkinnedMeshRenderer>().enabled = false;
+            avatarForMe.gameObject.layer = LayerMask.NameToLayer("OverlayCameraForMe");
         }
 
         [PunRPC]

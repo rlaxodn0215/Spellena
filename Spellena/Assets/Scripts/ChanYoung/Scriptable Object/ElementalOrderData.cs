@@ -41,7 +41,7 @@ public class ElementalOrderData : ScriptableObject
     public float gaiaTiedCoolDownTime;
     public float gaiaTiedCastingTime;
     public float gaiaTiedMaxDistace;
-    public float[] gaiaTiedLifeTime;
+    public float gaiaTiedLifeTime;
 
     //½ºÅ³4
     public float meteorStrikeDamage;
