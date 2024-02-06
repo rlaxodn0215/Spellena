@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using GameCenterDataType;
+using GameCenterTest0;
 
 public class InGameUI : MonoBehaviourPunCallbacks,IPunObservable
 {
