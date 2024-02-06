@@ -358,11 +358,16 @@ public class GoogleSheetManager : EditorWindow
         elementalOrderData.gaiaTiedCoolDownTime = float.Parse(dividData[9, 8]);
         elementalOrderData.gaiaTiedCastingTime = float.Parse(dividData[10, 3]);
         elementalOrderData.gaiaTiedMaxDistace = float.Parse(dividData[12, 3]);
+
+        /*
         elementalOrderData.gaiaTiedLifeTime = new float[6];
         for (int i = 0; i < 6; i++)
         {
             elementalOrderData.gaiaTiedLifeTime[i] = float.Parse(dividData[16, 3 + i]);
         }
+        */
+        //스프레드 시트 연동 일시정지
+        
         //스킬 4
         elementalOrderData.meteorStrikeDamage = float.Parse(dividData[8, 10]);
         elementalOrderData.meteorStrikeCoolDownTime = float.Parse(dividData[9, 10]);

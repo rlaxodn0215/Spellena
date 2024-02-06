@@ -1,40 +1,27 @@
 using Photon.Pun;
 using Player;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using UnityEngine;
 
 public class RagnaEdgeObject : SpawnObject
 {
     public ElementalOrderData elementalOrderData;
+    public GameObject rangeArea;
+    public Transform explodes;
+    public GameObject hitCollider;
 
-    public GameObject floor;
-    public GameObject cylinder;
-    public GameObject hitColliderObject;
-    public GameObject RangeArea;
+    
 
-    float floorDamage;
-    float cylinderDamage;
-
+    float damage;
     float castingTime;
-    float currentCastingTime = 0f;
-    float floorLifeTime;
-    float currentFloorLifeTime = 0f;
-    float cylinderLifeTime;
-    float currentCylinderLifeTime = 0f;
+    int hitCount = 5;
+    int currentHitCount;
+    float hitTimer;
+    float currentHitTimer;
+    float lifeTime;
+    bool isColliderOn = false;
 
-    bool isCylinderColliderOn = false;
-    bool isFloorColliderOn = false;
-    bool isReverse = false;
-
-    Vector3 localScaleLerp;
-    Vector3 localPositionLerp;
-
-    List<string> hitFloorObjects = new List<string>();
-    List<string> hitCylinderObjects = new List<string>();
-
+    List<GameObject> hitObjects = new List<GameObject>();
     AudioSource[] audioSources;
 
     void Start()
@@ -45,259 +32,101 @@ public class RagnaEdgeObject : SpawnObject
     void FixedUpdate()
     {
         CheckTimer();
-        //LerpCylinder();
-    }
-
-    void LerpCylinder()
-    {
-        cylinder.transform.localScale = Vector3.Lerp(cylinder.transform.localScale, localScaleLerp, Time.deltaTime * 10);
-        cylinder.transform.localPosition = Vector3.Lerp(cylinder.transform.localPosition, localPositionLerp, Time.deltaTime * 10);
-    }
-
-    void CheckTimer()
-    {
-        if (currentCastingTime > 0f)
-        {
-            currentCastingTime -= Time.deltaTime;
-        }
-        else
-        {
-            if(isCylinderColliderOn == true)
-            {
-                if (isReverse == false)
-                {
-                    cylinder.transform.localScale = new Vector3(cylinder.transform.localScale.x,
-                        cylinder.transform.localScale.y + Time.deltaTime * 4 / cylinderLifeTime * 1.1f, cylinder.transform.localScale.z);
-                    if (cylinder.transform.localScale.y > 2f)
-                        ReverseCylinder();
-                }
-                else
-                {
-                    if (cylinder.transform.localScale.y > 0f)
-                    {
-                        cylinder.transform.localScale = new Vector3(cylinder.transform.localScale.x,
-                            cylinder.transform.localScale.y - Time.deltaTime * 4 / cylinderLifeTime * 1.1f, cylinder.transform.localScale.z);
-                    }
-                }
-                cylinder.transform.localPosition = new Vector3(cylinder.transform.localPosition.x,
-                    cylinder.transform.localScale.y, cylinder.transform.localPosition.z);
-                currentCylinderLifeTime -= Time.deltaTime;
-
-                if (currentCylinderLifeTime < 0f)
-                {
-                    if(PhotonNetwork.IsMasterClient)
-                        RequestRPC("RequestDestroy");
-                }
-            }
-            else if(isFloorColliderOn == false)
-            {
-                ActiveFloor();
-            }
-            else
-            {
-                currentFloorLifeTime -= Time.deltaTime;
-                if (currentFloorLifeTime <= 0f)
-                    ActiveCylinder();
-            }
-        }
-
-        //RequestRPC("UpdateData");
     }
 
     void Init()
     {
         audioSources = GetComponents<AudioSource>();
 
-        for(int i = 0; i < audioSources.Length; i++)
+        for (int i = 0; i < audioSources.Length; i++)
         {
             audioSources[i].volume = SettingManager.Instance.effectVal * SettingManager.Instance.soundVal;
         }
 
-        floorDamage = elementalOrderData.ragnaEdgeFloorDamage;
-        cylinderDamage = elementalOrderData.ragnaEdgeCylinderDamage;
+        damage = elementalOrderData.ragnaEdgeFloorDamage;
         castingTime = elementalOrderData.ragnaEdgeCastingTime;
-        floorLifeTime = elementalOrderData.ragnaEdgeFloorLifeTime;
-        cylinderLifeTime = elementalOrderData.ragnaEdgeCylinderLifeTime;
-
-        cylinder.SetActive(false);
-        hitColliderObject.GetComponent<TriggerEventer>().hitTriggerEvent += TriggerFloorEvent;
-        cylinder.GetComponent<TriggerEventer>().hitTriggerEvent += TriggerCylinderEvent;
-
-        currentCastingTime = castingTime;
-        currentFloorLifeTime = floorLifeTime;
-        currentCylinderLifeTime = cylinderLifeTime;
-
-        localPositionLerp = cylinder.transform.localPosition;
-        localScaleLerp = cylinder.transform.localScale;
+        hitTimer = elementalOrderData.ragnaEdgeFloorLifeTime / 5f;
+        lifeTime = elementalOrderData.ragnaEdgeFloorLifeTime;
+        currentHitTimer = hitTimer;
 
         BalanceAnimation();
+
+        hitCollider.GetComponent<TriggerEventer>().hitTriggerEvent += TriggerEvent;
+    }
+
+
+    void CheckTimer()
+    {
+        if (castingTime > 0f)
+        {
+            castingTime -= Time.fixedDeltaTime;
+            if (castingTime <= 0f)
+            {
+                PlayExplode();
+                isColliderOn = true;
+            }
+        }
+        else
+        {
+            lifeTime -= Time.fixedDeltaTime;
+            currentHitTimer -= Time.fixedDeltaTime;
+            if(currentHitTimer <= 0f)
+                PlayExplode();
+
+            if (lifeTime <= 0f && photonView.IsMine)
+                PhotonNetwork.Destroy(gameObject);
+        }
+    }
+
+    private void PlayExplode()
+    {
+        if (currentHitCount <= 4)
+        {
+            explodes.GetChild(currentHitCount).gameObject.SetActive(true);
+            currentHitCount++;
+            hitObjects.Clear();
+            currentHitTimer = hitTimer;
+        }
+    }
+
+    private void TriggerEvent(GameObject hitObject)
+    {
+        if (PhotonNetwork.IsMasterClient && isColliderOn)
+        {
+            GameObject _rootObject = hitObject.transform.root.gameObject;
+            if(_rootObject.layer == 15 && _rootObject.tag == tag)
+            {
+                for(int i = 0; i < hitObjects.Count; i++)
+                {
+                    if (hitObjects[i] == _rootObject)
+                        return;
+                }
+
+                Vector3 _direction = (_rootObject.transform.position - transform.position).normalized;
+                hitObjects.Add(_rootObject);
+                _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.All,
+                playerName, (int)(elementalOrderData.ragnaEdgeFloorDamage), hitObject.name, _direction, 20f);
+            }
+        }
     }
 
     void BalanceAnimation()
     {
-        RangeArea.GetComponent<ParticleSystem>().startLifetime = castingTime * 0.85f;
+        rangeArea.GetComponent<ParticleSystem>().startLifetime = castingTime * 0.85f;
 
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < 5; i++)
         {
-            floor.transform.GetChild(i).GetComponent<ParticleSystem>().startLifetime = floorLifeTime;
-        }
-    }
+            ParticleSystem[] _temp = explodes.transform.GetChild(i).GetComponentsInChildren<ParticleSystem>();
 
-    void RequestRPC(string tunnelCommand)
-    {
-        object[] _tempData;
-        if(tunnelCommand == "UpdateData")
-        {
-            _tempData = new object[8];
-            _tempData[0] = tunnelCommand;
-            _tempData[1] = currentCastingTime;
-            _tempData[2] = currentFloorLifeTime;
-            _tempData[3] = currentCylinderLifeTime;
-            _tempData[4] = cylinder.transform.localScale;
-            _tempData[5] = cylinder.transform.localPosition;
-            _tempData[6] = hitFloorObjects.ToArray();
-            _tempData[7] = hitCylinderObjects.ToArray();
-        }
-        else
-        {
-            _tempData = new object[2];
-            _tempData[0] = tunnelCommand;
-        }
-
-        photonView.RPC("CallRPCTunnelElementalOrderSpell1", RpcTarget.AllBuffered, _tempData);
-    }
-
-    [PunRPC]
-    public void CallRPCTunnelElementalOrderSpell1(object[] data)
-    {
-        if ((string)data[0] == "ReverseCylinder")
-            ReverseCylinder();
-        else if ((string)data[0] == "ActiveCylinder")
-            ActiveCylinder();
-        else if ((string)data[0] == "ActiveFloor")
-            ActiveFloor();
-        else if ((string)data[0] == "UpdateData")
-            UpdateData(data);
-        else if ((string)data[0] == "RequestDestroy")
-            RequestDestroy();
-
-    }
-
-    void TriggerFloorEvent(GameObject hitObject)
-    {
-        if (PhotonNetwork.IsMasterClient)
-        {
-            if (isFloorColliderOn)
+            for (int j = 0; j < _temp.Length; j++)
             {
-                if (hitObject.transform.root.gameObject.name != hitObject.name)
-                {
-                    GameObject _rootObject = hitObject.transform.root.gameObject;
-                    if (_rootObject.GetComponent<Character>() != null)
-                    {
-                        if (tag != _rootObject.tag)
-                        {
-                            for (int i = 0; i < hitFloorObjects.Count; i++)
-                            {
-                                if (hitFloorObjects[i] == _rootObject.name)
-                                    return;
-                            }
-
-                            hitFloorObjects.Add(_rootObject.name);
-                            _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.All,
-                                playerName, (int)elementalOrderData.ragnaEdgeFloorDamage, hitObject.name, transform.forward, 20f);
-                        }   
-                    }
-                }
+                _temp[j].startLifetime = hitTimer;
             }
+
+            explodes.transform.GetChild(i).GetComponent<AudioSource>().volume =
+                SettingManager.Instance.effectVal * SettingManager.Instance.soundVal;
         }
     }
 
-    void TriggerCylinderEvent(GameObject hitObject)
-    {
-        if (PhotonNetwork.IsMasterClient)
-        {
-            if (isCylinderColliderOn)
-            {
-                if (hitObject.transform.root.gameObject.name != hitObject.name)
-                {
-                    GameObject _rootObject = hitObject.transform.root.gameObject;
-                    if (_rootObject.GetComponent<Character>() != null)
-                    {
-                        for (int i = 0; i < hitCylinderObjects.Count; i++)
-                        {
-                            if (hitCylinderObjects[i] == _rootObject.name)
-                                return;
-                        }
 
-                        if (tag != _rootObject.tag)
-                        {
-                            hitCylinderObjects.Add(_rootObject.name);
-                            _rootObject.GetComponent<PhotonView>().RPC("PlayerDamaged", RpcTarget.All,
-                                playerName, (int)elementalOrderData.ragnaEdgeCylinderDamage, hitObject.name, transform.forward, 20f);
-                        }
-                    }
-                }
-            }
-        }
-    }
-    
-    void ReverseCylinder()
-    {
-        isReverse = true;
-    }
-    
-    void ActiveCylinder()
-    {
-        isCylinderColliderOn = true;
-        cylinder.SetActive(true);
-        isFloorColliderOn = false;
-
-        for(int i = 0; i < audioSources.Length; i++)
-        {
-            if (audioSources[i].clip.name == "EO-EDGE")
-            {
-                audioSources[i].volume = SettingManager.Instance.effectVal * SettingManager.Instance.soundVal;
-                audioSources[i].Play();
-            }
-        }
-
-        
-
-    }
-    
-    void ActiveFloor()
-    {
-        isFloorColliderOn = true;
-        for (int i = 0; i < 3; i++)
-        {
-            floor.transform.GetChild(i).GetComponent<ParticleSystem>().Play();
-        }
-
-        for (int i = 0; i < audioSources.Length; i++)
-        {
-            if (audioSources[i].clip.name == "EO-RAGNA2")
-            {
-                audioSources[i].volume = SettingManager.Instance.effectVal * SettingManager.Instance.soundVal;
-                audioSources[i].Play();
-            }
-        }
-
-    }
-    
-    void UpdateData(object[] data)
-    {
-        currentCastingTime = (float)data[1];
-        currentFloorLifeTime = (float)data[2];
-        currentCylinderLifeTime = (float)data[3];
-        localScaleLerp = (Vector3)data[4];
-        localPositionLerp = (Vector3)data[5];
-        hitFloorObjects = ((string[])data[6]).ToList();
-        hitCylinderObjects = ((string[])data[7]).ToList();
-    }
-    
-    void RequestDestroy()
-    {
-        if (photonView.IsMine)
-            PhotonNetwork.Destroy(gameObject);
-    }
 }
