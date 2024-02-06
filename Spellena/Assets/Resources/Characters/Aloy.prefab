@@ -121354,7 +121354,6 @@ GameObject:
   - component: {fileID: 126526847013088462}
   - component: {fileID: 2201619690404042302}
   - component: {fileID: 1503749395690966994}
-  - component: {fileID: 4785970401467738348}
   - component: {fileID: 8259013388521052597}
   - component: {fileID: 3061295276326681022}
   m_Layer: 0
@@ -121482,49 +121481,6 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   data: {fileID: 0}
---- !u!114 &4785970401467738348
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8098259432235423427}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9b8c4a61274f60b4ea5fb4299cfdbf14, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ShowLayerWeightsInspector: 1
-  ShowParameterInspector: 1
-  m_SynchronizeParameters:
-  - Type: 4
-    SynchronizeType: 2
-    Name: Move
-  - Type: 4
-    SynchronizeType: 2
-    Name: CheckEnemy
-  - Type: 4
-    SynchronizeType: 2
-    Name: AvoidRight
-  - Type: 4
-    SynchronizeType: 2
-    Name: AvoidLeft
-  - Type: 4
-    SynchronizeType: 2
-    Name: AvoidBack
-  - Type: 4
-    SynchronizeType: 2
-    Name: AvoidForward
-  - Type: 4
-    SynchronizeType: 2
-    Name: Shoot
-  m_SynchronizeLayers:
-  - SynchronizeType: 2
-    LayerIndex: 0
-  - SynchronizeType: 2
-    LayerIndex: 1
-  - SynchronizeType: 2
-    LayerIndex: 2
 --- !u!114 &8259013388521052597
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -121543,8 +121499,7 @@ MonoBehaviour:
   Synchronization: 3
   OwnershipTransfer: 1
   observableSearch: 2
-  ObservedComponents:
-  - {fileID: 4785970401467738348}
+  ObservedComponents: []
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -121562,7 +121517,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 80
   m_CollisionDetection: 0
 --- !u!1 &8191056422607536316
 GameObject:
