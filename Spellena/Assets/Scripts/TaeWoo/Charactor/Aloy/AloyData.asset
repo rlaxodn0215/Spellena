@@ -17,7 +17,7 @@ MonoBehaviour:
   moveSpeed: 3.5
   rotateSpeed: 120
   avoidSpeed: 1.2
-  avoidTiming: 1
+  avoidTiming: 0.5
   coolTimes:
   - 2
   - 8

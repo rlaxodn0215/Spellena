@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using BehaviorTree;
 using DefineDatas;
-
+using System;
 public class AloyBT : BehaviorTree.Tree
 {
     // 캐릭터 스킬 설정
@@ -23,11 +23,13 @@ public class AloyBT : BehaviorTree.Tree
 
     void InitData()
     {
-        Random.InitState(DefineNumber.RandonInitNum);
+        UnityEngine.Random.InitState(DefineNumber.RandomInitNum);
         animator = GetComponent<Animator>();
+        if (animator == null) ErrorDataMaker.SaveErrorData(ErrorCode.AloyBT_animator_NULL);
         abilityMaker = GetComponent<AbilityMaker>();
-        aimingTrasform = abilityMaker.abilityObjectTransforms
-            [(int)AbilityMaker.AbilityObjectName.AimingTransform];
+        if (abilityMaker == null) ErrorDataMaker.SaveErrorData(ErrorCode.AloyBT_abilityMaker_NULL);
+        aimingTrasform = abilityMaker.abilityObjectTransforms[(int)AbilityMaker.AbilityObjectName.AimingTransform];
+        if(aimingTrasform == null) ErrorDataMaker.SaveErrorData(ErrorCode.AloyBT_aimingTrasform_NULL);
         for (int i = 0; i < characterSkills.Count; i++)
             skills.Add(abilityMaker.MakeSkill(characterSkills[i]));      
         for (int i = 0; i < characterFunctions.Count; i++)
@@ -36,7 +38,6 @@ public class AloyBT : BehaviorTree.Tree
     protected override Node SetupTree()
     {
         InitData();
-        if (NullCheck()) return null;
         Node root = new Selector(this, NodeName.Selector ,new List<Node>
         {
             new EnemyDetector(this, EnemyDetector.EnemyDetectType.CheckEnemyInSight, 
@@ -46,26 +47,8 @@ public class AloyBT : BehaviorTree.Tree
         );
         root.SetDataToRoot(DataContext.NodeStatus, root);
         StartCoroutine(CoolTimer());
+        ErrorCheck();
         return root;
-    }
-    bool NullCheck()
-    {
-        if (animator == null)
-        {
-            Debug.LogError("animator가 할당되지 않았습니다");
-            return true;
-        }
-        if (abilityMaker == null)
-        {
-            Debug.LogError("abilityMaker가 할당되지 않았습니다");
-            return true;
-        }
-        if (aimingTrasform == null)
-        {
-            Debug.LogError("aimingTrasform가 할당되지 않았습니다");
-            return true;
-        }
-        return false;
     }
 
     List<Node> MakeSkillNode()
@@ -75,12 +58,26 @@ public class AloyBT : BehaviorTree.Tree
             temp.Add(skills[i]);
         return temp;
     }
-
-    protected override void Update()
+    void ErrorCheck()
     {
-        base.Update();
-        ShowNodeState();
+        try
+        {
+            if (ErrorDataMaker.isErrorOccur) 
+                throw new Exception("에러 발생 시간 : " + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss"));
+        }
+
+        catch (Exception e)
+        {
+            ErrorDataMaker.SaveErrorData(e.Message);
+            Application.Quit();
+        }
     }
+
+    //protected override void Update()
+    //{
+    //    base.Update();
+    //    ShowNodeState();
+    //}
 
     IEnumerator CoolTimer()
     {
@@ -110,9 +107,9 @@ public class AloyBT : BehaviorTree.Tree
         aimingTrasform.LookAt(lookTransform.position);
     }
 
-    // 현재 어떤 Node에 있는지 확인
-    void ShowNodeState()
-    {
-        Debug.Log("<color=orange>" + root.GetData(DataContext.NodeStatus).nodeName + "</color>");
-    }
+    //// 현재 어떤 Node에 있는지 확인
+    //void ShowNodeState()
+    //{
+    //    Debug.Log("<color=orange>" + root.GetData(DataContext.NodeStatus).nodeName + "</color>");
+    //}
 }

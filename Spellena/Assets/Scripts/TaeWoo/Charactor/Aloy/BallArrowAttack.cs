@@ -7,7 +7,7 @@ using Managers;
 using CoroutineMaker;
 using DefineDatas;
 
-public class ShootBallArrow : AbilityNode
+public class BallArrowAttack : AbilityNode
 {
     public enum MoveWay
     {
@@ -36,7 +36,7 @@ public class ShootBallArrow : AbilityNode
 
     private MakeCoroutine coroutine;
 
-    public ShootBallArrow(BehaviorTree.Tree tree, AbilityMaker abilityMaker,float coolTime) : base(tree, NodeName.Skill_2, coolTime)
+    public BallArrowAttack(BehaviorTree.Tree tree, AbilityMaker abilityMaker,float coolTime) : base(tree, NodeName.Skill_2, coolTime)
     {
         playerTransform = abilityMaker.abilityObjectTransforms[(int)AbilityMaker.AbilityObjectName.CharacterTransform];
         attackTransform = abilityMaker.abilityObjectTransforms[(int)AbilityMaker.AbilityObjectName.AimingTransform].GetChild(1);
