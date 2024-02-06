@@ -169,7 +169,7 @@ namespace Player
                 minimapCamera.SetActive(true);
 
                 Transform[] transforms = DimensionSword.GetComponentsInChildren<Transform>(true);
-
+                avatarForOther.gameObject.GetComponent<SkinnedMeshRenderer>().enabled = false;
                 foreach (var tran in transforms)
                 {
                     if (tran.GetComponent<MeshRenderer>())
