@@ -35,7 +35,7 @@ namespace Managers
         void Start()
         {
             InitPoolDatas();
-            CreateObjects();
+            CreateObjects();           
         }
 
         void InitPoolDatas()

@@ -3,7 +3,7 @@ using Photon.Pun;
 using System.Collections.Generic;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 
-namespace temp
+namespace GameCenterTest0
 {
     public class GameCenterTest : MonoBehaviourPunCallbacks
     {
@@ -244,8 +244,8 @@ namespace temp
 
                 photonView.RPC("SerializeGameCenterDatas", RpcTarget.OthersBuffered, ToDoSerlize());
 
-                //if (inGameUI != null)
-                    //GiveDataToUI();
+                if (inGameUI != null)
+                    GiveDataToUI();
             }
 
             if (currentGameState == GameState.CharacterSelect)
@@ -496,17 +496,19 @@ namespace temp
             }
         }
 
-        //public void GiveDataToUI()
-        //{
-        //    if (inGameUI == null) return;
+        public void GiveDataToUI()
+        {
+            if (inGameUI == null) return;
 
-        //    inGameUI.roundEndTimerUI = roundEndTimer;
-        //    inGameUI.roundEndTimeUI = roundEndTime;
-        //    inGameUI.occupyingAUI.rate = occupyingA.rate;
-        //    inGameUI.occupyingBUI.rate = occupyingB.rate;
-        //    inGameUI.occupyingTeamUI.name = occupyingTeam.name;
-        //    inGameUI.occupyingTeamUI.rate = occupyingTeam.rate;
-        //}
+            inGameUI.roundEndTimerUI = roundEndTimer;
+            inGameUI.roundEndTimeUI = roundEndTime;
+            inGameUI.occupyingAUI.rate = occupyingA.rate;
+            inGameUI.occupyingBUI.rate = occupyingB.rate;
+            inGameUI.occupyingTeamUI.name = occupyingTeam.name;
+            inGameUI.occupyingTeamUI.rate = occupyingTeam.rate;
+        }
+
+
 
     }
 }

@@ -11,8 +11,8 @@ public class SelectingCharacterEffect : MonoBehaviour,IPointerEnterHandler,IPoin
 
     void Start()
     {
-        cursorEffect = GameCenterTest.FindObject(gameObject, "CursorEffect");
-        selectEffect = GameCenterTest.FindObject(gameObject, "SelectEffect");  
+        cursorEffect = Helper.FindObject(gameObject, "CursorEffect");
+        selectEffect = Helper.FindObject(gameObject, "SelectEffect");  
     }
 
     public void OnPointerEnter(PointerEventData eventData)

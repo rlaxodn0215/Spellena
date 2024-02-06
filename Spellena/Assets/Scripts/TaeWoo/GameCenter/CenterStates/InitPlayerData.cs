@@ -3,7 +3,7 @@ using Photon.Pun;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 // initPlayerData
-namespace temp
+namespace GameCenterTest0
 {
     public class InitPlayerData : CenterState
     {

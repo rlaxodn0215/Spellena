@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Photon.Pun;
-using temp;
+using GameCenterTest0;
 
 namespace Player
 {
@@ -617,7 +617,7 @@ namespace Player
                         outline.enabled = true;
                     }
 
-                    GameObject miniMapSign = GameCenterTest.FindObject(character.gameObject, "Cylinder");
+                    GameObject miniMapSign = Helper.FindObject(character.gameObject, "Cylinder");
                     if (miniMapSign == null) continue;
                     miniMapSign.SetActive(false);
                 }

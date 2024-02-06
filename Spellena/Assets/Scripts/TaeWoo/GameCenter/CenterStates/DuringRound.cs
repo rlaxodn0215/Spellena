@@ -5,7 +5,7 @@ using Player;
 using Photon.Pun;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 
-namespace temp
+namespace GameCenterTest0
 {
     public class DuringRound : CenterState
     {

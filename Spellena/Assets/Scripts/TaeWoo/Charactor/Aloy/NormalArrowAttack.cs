@@ -120,7 +120,7 @@ public class NormalArrowAttack : AbilityNode
             playerTransform.Rotate(Vector3.up, DefineNumber.AvoidRotateAngle);
             checkAvoidWay = 0x0000;
         }
-        AvoidWay temp = (AvoidWay)(1 << UnityEngine.Random.Range(0, DefineNumber.AvoidWayCount) * DefineNumber.BitMove4);
+        AvoidWay temp = (AvoidWay)(1 << Random.Range(0, DefineNumber.AvoidWayCount) * DefineNumber.BitMove4);
         if ((checkAvoidWay & (uint)temp) == (uint)temp) return CheckAvoidable();
         switch (temp)
         {

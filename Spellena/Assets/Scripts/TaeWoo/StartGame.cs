@@ -22,8 +22,7 @@ public class StartGame : MonoBehaviour
     [PunRPC]
     public void StartGameToAll()
     {
-        LoadSceneManager.LoadNextScene("TaeWooScene_3", "TaeWoo_LoadingScene",
-            MakeTeamActorNumList(redTeam), MakeTeamActorNumList(blueTeam));
+        LoadSceneManager.LoadNextScene("TaeWooScene_3", MakeTeamActorNumList(redTeam), MakeTeamActorNumList(blueTeam));
     }
 
     List<int> MakeTeamActorNumList(GameObject teamObj)

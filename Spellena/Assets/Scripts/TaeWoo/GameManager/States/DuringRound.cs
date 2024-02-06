@@ -64,7 +64,7 @@ namespace FSM
             inGameUIView = ((GameCenter0)stateMachine).gameCenterObjs["InGameUI"].GetComponent<PhotonView>();
             if (inGameUI == null) Debug.LogError("no inGameUIView");
             occupationArea = ((GameCenter0)stateMachine).gameCenterObjs["OccupationArea"].GetComponent<OccupationArea>();
-            if (inGameUI == null) Debug.LogError("no occupationArea");
+            if (occupationArea == null) Debug.LogError("no occupationArea");
         }
 
         //scriptable object Àû¿ë
@@ -83,7 +83,7 @@ namespace FSM
             duringRoundStandardData.occupyingComplete = 99f;
             duringRoundStandardData.roundEndTime = 5f;
 
-            inGameUI.duringRoundStandardData = duringRoundStandardData;
+            //inGameUI.duringRoundStandardData = duringRoundStandardData;
         }
 
         void OccupyBarCounting()
@@ -365,8 +365,8 @@ namespace FSM
 
         void SerializeInGameUI()
         {
-            inGameUI.globalTimer = ((GameCenter0)stateMachine).globalTimer.globalTime;
-            inGameUI.duringRoundData = duringRoundData;
+            //inGameUI.globalTimer = ((GameCenter0)stateMachine).globalTimer.globalTime;
+            //inGameUI.duringRoundData = duringRoundData;
         }
 
         [PunRPC]

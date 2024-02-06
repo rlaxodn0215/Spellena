@@ -10,11 +10,11 @@ public class CharacterInstruction : MonoBehaviour
 
     void Start()
     {
-        UIObjects["Aeterna"] = GameCenterTest.FindObject(gameObject, "Aeterna");
-        UIObjects["ElementalOrder"] = GameCenterTest.FindObject(gameObject, "ElementalOrder");
-        UIObjects["Dracoson"] = GameCenterTest.FindObject(gameObject, "Dracoson");
-        UIObjects["Cultist"] = GameCenterTest.FindObject(gameObject, "Cultist");
-        UIObjects["KeySettings"] = GameCenterTest.FindObject(gameObject, "KeySettings");
+        UIObjects["Aeterna"] = Helper.FindObject(gameObject, "Aeterna");
+        UIObjects["ElementalOrder"] = Helper.FindObject(gameObject, "ElementalOrder");
+        UIObjects["Dracoson"] = Helper.FindObject(gameObject, "Dracoson");
+        UIObjects["Cultist"] = Helper.FindObject(gameObject, "Cultist");
+        UIObjects["KeySettings"] = Helper.FindObject(gameObject, "KeySettings");
     }
 
     void Update()

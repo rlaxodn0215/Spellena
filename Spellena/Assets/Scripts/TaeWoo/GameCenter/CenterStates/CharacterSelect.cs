@@ -4,7 +4,7 @@ using UnityEngine;
 using Photon.Pun;
 using Player;
 
-namespace temp
+namespace GameCenterTest0
 {
     public class CharacterSelect : CenterState
     {
