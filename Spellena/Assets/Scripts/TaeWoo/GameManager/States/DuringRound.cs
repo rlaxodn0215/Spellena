@@ -83,7 +83,7 @@ namespace FSM
             duringRoundStandardData.occupyingComplete = 99f;
             duringRoundStandardData.roundEndTime = 5f;
 
-            inGameUI.duringRoundStandardData = duringRoundStandardData;
+            //inGameUI.duringRoundStandardData = duringRoundStandardData;
         }
 
         void OccupyBarCounting()
@@ -365,8 +365,8 @@ namespace FSM
 
         void SerializeInGameUI()
         {
-            inGameUI.globalTimer = ((GameCenter0)stateMachine).globalTimer.globalTime;
-            inGameUI.duringRoundData = duringRoundData;
+            //inGameUI.globalTimer = ((GameCenter0)stateMachine).globalTimer.globalTime;
+            //inGameUI.duringRoundData = duringRoundData;
         }
 
         [PunRPC]
