@@ -20,7 +20,7 @@ public class DimensionSlashAttackCollider : MonoBehaviourPunCallbacks
        if(PhotonNetwork.IsMasterClient)
        {
             if (other.GetComponent<AeternaSword>() || other.GetComponent<AeternaSwordTrigger>()) return;
-            if (other.name == dimensionSlash.playerName) return;
+            if (other.transform.root.name == dimensionSlash.playerName) return;
 
             if (dimensionSlash.CompareTag("TeamA") && other.transform.root.CompareTag("TeamA") ||
                 dimensionSlash.CompareTag("TeamB") && other.transform.root.CompareTag("TeamB"))
