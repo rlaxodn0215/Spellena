@@ -38,9 +38,9 @@ namespace temp
 
         void LinkDatas()
         {
-            actAudioSource = GameCenterTest.FindObject(gameObject, "CharacterActSound").GetComponent<AudioSource>();
-            speakAudioSource = GameCenterTest.FindObject(gameObject, "CharacterSpeakSound").GetComponent<AudioSource>();
-            skillAudioSource = GameCenterTest.FindObject(gameObject, "CharacterSkillSound").GetComponent<AudioSource>();
+            actAudioSource = Helper.FindObject(gameObject, "CharacterActSound").GetComponent<AudioSource>();
+            speakAudioSource = Helper.FindObject(gameObject, "CharacterSpeakSound").GetComponent<AudioSource>();
+            skillAudioSource = Helper.FindObject(gameObject, "CharacterSkillSound").GetComponent<AudioSource>();
 
             foreach (AudioData data in actAudios)
             {

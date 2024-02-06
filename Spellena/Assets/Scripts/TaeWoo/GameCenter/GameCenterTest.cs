@@ -3,7 +3,7 @@ using Photon.Pun;
 using System.Collections.Generic;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 
-namespace temp
+namespace GameCenterTest0
 {
     public class GameCenterTest : MonoBehaviourPunCallbacks
     {
@@ -507,6 +507,8 @@ namespace temp
         //    inGameUI.occupyingTeamUI.name = occupyingTeam.name;
         //    inGameUI.occupyingTeamUI.rate = occupyingTeam.rate;
         //}
+
+
 
     }
 }

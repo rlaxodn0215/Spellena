@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 using UnityEngine.SceneManagement;
-using FSM;
 using GameCenterDataType;
+using GameCenterTest0;
 
 public class LoadSceneManager : MonoBehaviourPunCallbacks
 {
@@ -14,7 +14,7 @@ public class LoadSceneManager : MonoBehaviourPunCallbacks
 
     public float loadingTime = 5.0f;
 
-    private GameCenter0 gameCenter;
+    private GameCenterTest gameCenter;
     private SettingManager settingManager;
 
     public static void LoadNextScene(string sceneName, string loadingSceneName,
@@ -35,7 +35,7 @@ public class LoadSceneManager : MonoBehaviourPunCallbacks
 
     private void Awake()
     {
-        gameCenter = GameObject.Find("GameCenter").GetComponent<GameCenter0>();
+        gameCenter = GameObject.Find("GameCenter").GetComponent<GameCenterTest>();
     }
 
     void OnEnable()

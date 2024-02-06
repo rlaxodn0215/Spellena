@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 
-namespace temp
+namespace GameCenterTest0
 {
     public class GameResult : CenterState
     {
