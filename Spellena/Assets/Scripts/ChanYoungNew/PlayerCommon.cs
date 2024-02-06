@@ -563,7 +563,6 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
-        throw new NotImplementedException();
     }
 
     virtual protected void PlayLogic(CallType callType, SkillData.State state, int index)
