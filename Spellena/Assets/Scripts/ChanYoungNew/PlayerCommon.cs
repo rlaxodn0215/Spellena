@@ -44,11 +44,13 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
     public Vector2 moveDirection;
     public bool isRunning = false;
     protected bool isClicked = false;
+    protected bool isClicked2 = false;
 
     //가해지는 외부 힘
     protected Vector3 externalForce = Vector3.zero;
     protected LayerMask layerMaskMap;
     protected LayerMask layerMaskWall;
+    protected LayerMask layerMaskPlayer;
 
     public event Action<Vector2, bool> UpdateLowerAnimation;
     public event Action<AnimationChangeType, CallType, int> PlayAnimation;
@@ -138,7 +140,6 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
                 //다음 상태로 이전되면서 상태 전환 이벤트 발생
                 if (skillDatas[i].progressTime <= 0f)
                     ChangeNextRoot(CallType.Skill, i);
-                    ChangeNextRoot(CallType.Skill, i);
             }
         }
 
@@ -170,7 +171,6 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
                 if (!(_diff == 1 || _diff == 1 - skillDatas[i].statesRoute.Count))
                     _isForce = true;
                 CallStateChangeEvent(CallType.Skill, i, _isForce);
-                Debug.Log(_diff);
 
                 skillListener[i] = skillDatas[i].routeIndex;
             }
@@ -319,6 +319,7 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
     {
         layerMaskMap = LayerMask.GetMask("Map");
         layerMaskWall = LayerMask.GetMask("Wall");
+        layerMaskPlayer = LayerMask.GetMask("Player");
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -450,8 +451,11 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
                 {
                     _index = ChangePlainIndex(plainIndex, 0);
 
-                    if(_index >= 0)
+                    if (_index >= 0)
+                    {
                         ChangeNextRoot(CallType.Plain, _index);
+                        plainIndex = _index;
+                    }
                 }
             }
         }
@@ -551,8 +555,10 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
     [PunRPC]
     virtual public void NotifyUseSkill(int callType, int index ,int routeIndex)
     {
-        if((CallType)callType == CallType.Skill)
+        if ((CallType)callType == CallType.Skill)
             skillDatas[index].routeIndex = routeIndex;
+        else if ((CallType)callType == CallType.Plain)
+            plainDatas[index].routeIndex = routeIndex;
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
@@ -567,5 +573,16 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
     protected void CallPlayAnimation(AnimationChangeType changeType, CallType callType, int index)
     {
         PlayAnimation.Invoke(changeType, callType, index);
+    }
+
+    public void DownCamera()
+    {
+        float _nextAngle = cameraMain.transform.eulerAngles.x - 0.2f;
+        float _normalizedAngle = GlobalOperation.Instance.NormalizeAngle(_nextAngle);
+        if (_normalizedAngle > 60)
+            _normalizedAngle = 60;
+        else if (_normalizedAngle < -60)
+            _normalizedAngle = -60;
+        cameraMain.transform.localRotation = Quaternion.Euler(_normalizedAngle, 0, 0);
     }
 }
