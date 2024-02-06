@@ -340,7 +340,7 @@ namespace Player
                 {
                     if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.35f)
                     {
-                        if (dagger.active == true)
+                        if (dagger.activeSelf == true)
                         {
                             dagger.SetActive(false);
                             CallRPCEvent("InstantiateObject", "Response", "Dagger");
