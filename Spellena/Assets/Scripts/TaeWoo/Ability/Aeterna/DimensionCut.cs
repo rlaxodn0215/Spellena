@@ -81,9 +81,8 @@ namespace Player
             data[2] = "DimensionSlash_" + charge;
             data[3] = rot;
             data[4] = ishealing;
-
             PhotonNetwork.Instantiate("Projectiles/" + (string)data[2],
-                Player.camera.transform.position, Player.transform.localRotation, 0, data);
+                    Player.camera.transform.position, Player.transform.localRotation, 0, data);
         }
     }
 }

@@ -2103,11 +2103,11 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: Combat_2H_Attack01
+      name: Combat_2H_Attack01_0
       takeName: Combat_2H_Attack01
       internalID: 654816665159000255
       firstFrame: 896
-      lastFrame: 933
+      lastFrame: 905
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -2130,7 +2130,7 @@ ModelImporter:
       transformMask: []
       maskType: 3
       maskSource: {instanceID: 0}
-      additiveReferencePoseFrame: 0
+      additiveReferencePoseFrame: 895.80005
     - serializedVersion: 16
       name: Combat_2H_Attack02
       takeName: Combat_2H_Attack02
@@ -2972,6 +2972,35 @@ ModelImporter:
       maskType: 3
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Combat_2H_Attack01_1
+      takeName: Combat_2H_Attack01
+      internalID: 870023217195579393
+      firstFrame: 905
+      lastFrame: 933
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 895.80005
     isReadable: 0
   meshes:
     lODScreenPercentages: []
