@@ -112888,6 +112888,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3618329587002544779}
   - component: {fileID: 9121241745027489313}
+  - component: {fileID: 7888451508313739633}
   m_Layer: 7
   m_Name: Armor.016
   m_TagString: Untagged
@@ -113055,6 +113056,19 @@ SkinnedMeshRenderer:
     m_Center: {x: 0.05494204, y: -0.029350631, z: 0.00000014901161}
     m_Extent: {x: 0.9483751, y: 0.21696031, z: 0.54268694}
   m_DirtyAABB: 0
+--- !u!114 &7888451508313739633
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8747914441678402131}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0a8920b82d18ac43916689133626857, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  material: {fileID: 2100000, guid: a9c24bf43be87e04b9d1f5fd1ee1c3a9, type: 2}
 --- !u!1 &8759884517934116524
 GameObject:
   m_ObjectHideFlags: 0
