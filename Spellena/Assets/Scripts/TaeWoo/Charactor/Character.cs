@@ -815,7 +815,7 @@ namespace Player
             // Ragdoll로 처리
             Dead.SetActive(true);
             animator.enabled = false;
-            GetComponent<CapsuleCollider>().enabled = false;
+            //GetComponent<CapsuleCollider>().enabled = false;
             Alive.SetActive(false);
             moveVec = Vector3.zero;
 
@@ -852,6 +852,7 @@ namespace Player
             gameObject.transform.rotation = Quaternion.identity;
             moveVec = Vector3.zero;
             isAlive = true;
+ 
 
             for (int i = 0; i < ragdollRigid.Length; i++)
             {
@@ -862,7 +863,7 @@ namespace Player
 
             Alive.SetActive(true);
             animator.enabled = true;
-            GetComponent<CapsuleCollider>().enabled = true;
+            //GetComponent<CapsuleCollider>().enabled = true;
             Dead.SetActive(false);
 
             hp = dataHp;

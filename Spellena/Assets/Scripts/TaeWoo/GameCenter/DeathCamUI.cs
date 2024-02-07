@@ -58,7 +58,7 @@ public class DeathCamUI : MonoBehaviourPunCallbacks
 
     void Update()
     {
-        //UpdateTimer();
+        UpdateTimer();
     }
 
     [PunRPC]
