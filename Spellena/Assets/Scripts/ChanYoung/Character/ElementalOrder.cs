@@ -1,17 +1,7 @@
-using ExitGames.Client.Photon;
-using ExitGames.Client.Photon.StructWrapping;
 using Photon.Pun;
-using Photon.Pun.UtilityScripts;
-using Photon.Realtime;
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Data.Common;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.LowLevel;
 //using static UnityEditor.Progress;
 
 namespace Player
@@ -38,6 +28,8 @@ namespace Player
         public GameObject rangeBoxArea;
 
         public Animator overlayAnimator;
+
+        public GameObject emptyEraser;
 
         RenderTexture minimapRenderTexture;
 
@@ -196,6 +188,11 @@ namespace Player
             avatarForOther.gameObject.layer = LayerMask.NameToLayer("Me");
             avatarForOther.gameObject.GetComponent<SkinnedMeshRenderer>().enabled = false;
             avatarForMe.gameObject.layer = LayerMask.NameToLayer("OverlayCameraForMe");
+
+            for(int i = 0; i < emptyEraser.transform.childCount; i++)
+            {
+                emptyEraser.transform.GetChild(i).gameObject.layer = 6;
+            }
         }
 
         [PunRPC]
