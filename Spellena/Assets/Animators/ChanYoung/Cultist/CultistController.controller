@@ -896,7 +896,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 1672085084001958510, guid: 02231033c3483d64286d3414b20e59e4, type: 3}
+  m_Motion: {fileID: -203655887218126122, guid: cca7e84f9ac8492478c24ec2336b36d0, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -3598,32 +3598,6 @@ AnimatorStateTransition:
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
---- !u!1102 &2419944624209345777
-AnimatorState:
-  serializedVersion: 6
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: idle
-  m_Speed: 1
-  m_CycleOffset: 0
-  m_Transitions: []
-  m_StateMachineBehaviours: []
-  m_Position: {x: 50, y: 50, z: 0}
-  m_IKOnFeet: 0
-  m_WriteDefaultValues: 1
-  m_Mirror: 0
-  m_SpeedParameterActive: 0
-  m_MirrorParameterActive: 0
-  m_CycleOffsetParameterActive: 0
-  m_TimeParameterActive: 0
-  m_Motion: {fileID: -5252816984213320552, guid: f05ff71558052094bb9d0bde2493d1af, type: 3}
-  m_Tag: 
-  m_SpeedParameter: 
-  m_MirrorParameter: 
-  m_CycleOffsetParameter: 
-  m_TimeParameter: 
 --- !u!1101 &2567624063721343555
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -3670,7 +3644,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: -203655887218126122, guid: 6c894864f278816438e3170db90de0b9, type: 3}
+  m_Motion: {fileID: -203655887218126122, guid: 06b3c6c0f9c4a9440948b52611d9f9e2, type: 3}
   m_Tag: 
   m_SpeedParameter: LungeHoldingSpeed
   m_MirrorParameter: 
@@ -3724,7 +3698,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: -203655887218126122, guid: 90be4882b85489c4ea270aae6fc08c4b, type: 3}
+  m_Motion: {fileID: -203655887218126122, guid: ac734ddc33fb2be4685c16703fd38f68, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -5043,9 +5017,6 @@ AnimatorStateMachine:
   - serializedVersion: 1
     m_State: {fileID: 9031274000039001412}
     m_Position: {x: 840, y: -70, z: 0}
-  - serializedVersion: 1
-    m_State: {fileID: 2419944624209345777}
-    m_Position: {x: 640, y: 120, z: 0}
   m_ChildStateMachines: []
   m_AnyStateTransitions: []
   m_EntryTransitions: []
