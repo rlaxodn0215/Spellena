@@ -15,7 +15,7 @@ MonoBehaviour:
   loadingTime: 1
   characterSelectTime: 10
   readyTime: 1
-  playerRespawnTime: 5
+  playerRespawnTime: 12
   assistTime: 10
   angelStatueCoolTime: 30
   angelStatueHpPerTime: 10

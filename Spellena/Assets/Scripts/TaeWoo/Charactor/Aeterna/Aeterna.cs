@@ -83,6 +83,10 @@ namespace Player
         protected override void Update()
         {
             base.Update();
+            if(Input.GetKeyDown(KeyCode.F5))
+            {
+                ultimateCount += 5;
+            }
         }
 
 
@@ -557,7 +561,7 @@ namespace Player
                 StartCoroutine(attackPauseCoroutine);
                 StartCoroutine(skill4SlashCoroutine);
                 StartCoroutine(SkillTimer(0));
-
+                overlayCamera.transform.localRotation = Quaternion.Euler(0, 0, -5);
             }
 
             if(!isMouseButton)

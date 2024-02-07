@@ -70,6 +70,7 @@ namespace Player
             }
 
             Player.soundManager.PlayAudioOverlap("GrandSlashSound", 1.0f, false, false, "EffectSound");
+            Player.overlayCamera.transform.localRotation = Quaternion.Euler(0, 0, -30);
         }
 
         [PunRPC]
