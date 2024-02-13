@@ -52,7 +52,7 @@ namespace Player
         private void OnDuration()
         {
             Player.BasicAttackTrigger();
-            //Player.GetComponent<PhotonView>().RPC("BasicAttackTrigger", RpcTarget.AllBufferedViaServer);
+            Player.GetComponent<PhotonView>().RPC("BasicAttackTrigger", RpcTarget.AllBufferedViaServer);
             StartCoroutine(ActiveTirgger());
             StartCoroutine(EndAttack());
         }
