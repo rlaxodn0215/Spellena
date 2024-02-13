@@ -20,6 +20,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     public RoomItem roomItemPrefab;
     public Transform contentObjects;
 
+    public Dropdown gameMode;
     public Dropdown maxPlayers;
 
     public float timeBetweenUpdates = 1.5f;
@@ -28,9 +29,10 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     public PlayerItem playerItemPrefab;
     public Transform playerItemParentA;
     public Transform playerItemParentB;
-
+    public Transform AIPanel;
 
     private const string playerItemPrefabPath = "SiHyun/Prefabs/PlayerItem";
+    public static bool isFightAI = false;
 
     private void Start()
     {
@@ -51,6 +53,13 @@ public class LobbyManager : MonoBehaviourPunCallbacks
             };
 
             PhotonNetwork.CreateRoom(roomInputField.text, roomOptions);
+        }
+
+        if(gameMode.value == 1)
+        {
+            playerItemParentB.parent.gameObject.SetActive(false);
+            AIPanel.gameObject.SetActive(true);
+            isFightAI = true;
         }
     }
 

@@ -153,6 +153,14 @@ namespace GameCenterTest0
                 }
             }
 
+            if(LobbyManager.isFightAI)
+            {
+                GameObject playerCharacter = PhotonNetwork.Instantiate("Characters/Aloy",
+                        gameCenter.playerSpawnB[bTeamIndex].position, Quaternion.identity);
+                playerCharacter.GetComponent<Character>().SetTagServer("TeamB");
+                playerCharacter.GetComponent<PhotonView>().RPC("ChangeName", RpcTarget.All, "Aloy");
+            }
+
             // MakeTeamStateUI
             foreach (var player in PhotonNetwork.CurrentRoom.Players.Values)
             {

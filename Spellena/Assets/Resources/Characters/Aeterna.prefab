@@ -12896,6 +12896,30 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 5624648683831435769}
     m_Modifications:
+    - target: {fileID: 167982670982843764, guid: 739d8be056c6b0345ae6b08a908b47bd, type: 3}
+      propertyPath: MaxDistance
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 538108301194703473, guid: 739d8be056c6b0345ae6b08a908b47bd, type: 3}
+      propertyPath: MaxDistance
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 824349146954097299, guid: 739d8be056c6b0345ae6b08a908b47bd, type: 3}
+      propertyPath: MaxDistance
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 983202335902431526, guid: 739d8be056c6b0345ae6b08a908b47bd, type: 3}
+      propertyPath: MaxDistance
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 1279524151210907502, guid: 739d8be056c6b0345ae6b08a908b47bd, type: 3}
+      propertyPath: MaxDistance
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 1648190447112327928, guid: 739d8be056c6b0345ae6b08a908b47bd, type: 3}
+      propertyPath: MaxDistance
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 2579179625124296693, guid: 739d8be056c6b0345ae6b08a908b47bd, type: 3}
       propertyPath: m_Name
       value: AeternaSoundManager
@@ -12947,6 +12971,50 @@ PrefabInstance:
     - target: {fileID: 2579179625124296695, guid: 739d8be056c6b0345ae6b08a908b47bd, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3225183740625924359, guid: 739d8be056c6b0345ae6b08a908b47bd, type: 3}
+      propertyPath: MaxDistance
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 3302422623861484118, guid: 739d8be056c6b0345ae6b08a908b47bd, type: 3}
+      propertyPath: MaxDistance
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 3340468752521184020, guid: 739d8be056c6b0345ae6b08a908b47bd, type: 3}
+      propertyPath: MaxDistance
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 3841488487658265165, guid: 739d8be056c6b0345ae6b08a908b47bd, type: 3}
+      propertyPath: MaxDistance
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 4236529994451086837, guid: 739d8be056c6b0345ae6b08a908b47bd, type: 3}
+      propertyPath: MaxDistance
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 4427463161609033290, guid: 739d8be056c6b0345ae6b08a908b47bd, type: 3}
+      propertyPath: MaxDistance
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 4740459828121628811, guid: 739d8be056c6b0345ae6b08a908b47bd, type: 3}
+      propertyPath: MaxDistance
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 7369267409986361527, guid: 739d8be056c6b0345ae6b08a908b47bd, type: 3}
+      propertyPath: MaxDistance
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 7742225910959476450, guid: 739d8be056c6b0345ae6b08a908b47bd, type: 3}
+      propertyPath: MaxDistance
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 9032077897420683377, guid: 739d8be056c6b0345ae6b08a908b47bd, type: 3}
+      propertyPath: MaxDistance
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 9144475880296949609, guid: 739d8be056c6b0345ae6b08a908b47bd, type: 3}
+      propertyPath: MaxDistance
+      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 739d8be056c6b0345ae6b08a908b47bd, type: 3}
