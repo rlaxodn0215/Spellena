@@ -890,6 +890,7 @@ namespace Player
                             {
                                 rangeBoxArea.SetActive(true);
                                 rangeBoxArea.transform.position = _arrivedGroundVec;
+                                rangeBoxArea.transform.position += new Vector3(0, 0.04f, 0);
                                 /*
                                 rangeBoxArea.transform.localPosition +=
                                     new Vector3(0, rangeBoxArea.transform.localScale.y / 2, rangeBoxArea.transform.localScale.z / 2);
