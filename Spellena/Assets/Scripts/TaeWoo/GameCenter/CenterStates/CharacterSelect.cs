@@ -83,7 +83,7 @@ namespace GameCenterTest0
                     //choseCharacter = "Aeterna";
                 }
 
-                if ((string)player.CustomProperties["Team"] == "A")     // A ÆÀ (Red)
+                if ((string)player.CustomProperties["Team"] == "A")     // A ï¿½ï¿½ (Red)
                 {
                     GameObject playerCharacter = PhotonNetwork.Instantiate("Characters/" + choseCharacter,
                         gameCenter.playerSpawnA[aTeamIndex].position, Quaternion.identity);
@@ -91,7 +91,7 @@ namespace GameCenterTest0
 
                     PhotonView[] views = playerCharacter.GetComponentsInChildren<PhotonView>();
 
-                    // foreach - > for ¹®À¸·Î
+                    // foreach - > for ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
                     foreach (PhotonView view in views)
                     {
                         view.TransferOwnership(player.ActorNumber);
@@ -118,7 +118,7 @@ namespace GameCenterTest0
                     gameCenter.playersA.Add(player);
                 }
 
-                else if ((string)player.CustomProperties["Team"] == "B")    // B ÆÀ (Blue)
+                else if ((string)player.CustomProperties["Team"] == "B")    // B ï¿½ï¿½ (Blue)
                 {
                     GameObject playerCharacter = PhotonNetwork.Instantiate("Characters/" + choseCharacter,
                         gameCenter.playerSpawnB[bTeamIndex].position, Quaternion.identity);
@@ -155,10 +155,7 @@ namespace GameCenterTest0
 
             if(LobbyManager.isFightAI)
             {
-                GameObject playerCharacter = PhotonNetwork.Instantiate("Characters/Aloy",
-                        gameCenter.playerSpawnB[bTeamIndex].position, Quaternion.identity);
-                playerCharacter.GetComponent<Character>().SetTagServer("TeamB");
-                playerCharacter.GetComponent<PhotonView>().RPC("ChangeName", RpcTarget.All, "Aloy");
+                photonView.RPC("ActiveAI", RpcTarget.AllBuffered, true);
             }
 
             // MakeTeamStateUI
@@ -187,6 +184,13 @@ namespace GameCenterTest0
 
             gameCenter.currentGameState = GameCenterTest.GameState.GameReady;
             Debug.Log("GameReady in CharacterSelect");
+        }
+
+        [PunRPC]
+        public void ActiveAI(bool isActive)
+        {
+            GameObject temp = GameObject.Find("GameSystem").transform.Find("Aloy").gameObject;
+            temp.SetActive(isActive);
         }
 
     }
