@@ -7,13 +7,11 @@ public class GaiaTiedObject : SpawnObject
 {
     public ElementalOrderData elementalOrderData;
 
+    public GameObject rangeArea;
+
     float castingTime;
 
     float lifeTime;
-    float currentLifeTime = 0f;
-
-    float cylinderCheckTime;
-    float currentCylinderCheckTime = 0f;
 
     int hitCount = 5;
     int currentHitCount = 0;
@@ -49,6 +47,11 @@ public class GaiaTiedObject : SpawnObject
             {
                 _temp[j].startLifetime = hitTimer * 4;
             }
+        }
+
+        for(int i = 0; i < hitCount; i++)
+        {
+            rangeArea.transform.GetChild(i).GetComponent<ParticleSystem>().startLifetime = castingTime;
         }
     }
 
