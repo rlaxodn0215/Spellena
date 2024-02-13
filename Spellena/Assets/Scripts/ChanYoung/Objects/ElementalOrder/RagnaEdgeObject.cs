@@ -94,7 +94,7 @@ public class RagnaEdgeObject : SpawnObject
         if (PhotonNetwork.IsMasterClient && isColliderOn)
         {
             GameObject _rootObject = hitObject.transform.root.gameObject;
-            if(_rootObject.layer == 15 && _rootObject.tag == tag)
+            if(_rootObject.layer == 15 && _rootObject.tag != tag)
             {
                 for(int i = 0; i < hitObjects.Count; i++)
                 {
