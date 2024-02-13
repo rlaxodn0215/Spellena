@@ -100,9 +100,8 @@ public class AloyBT : BehaviorTree.Tree
 
     void SetLookAtObj()
     {
-        if (animator == null) return;
+        if (animator == null || lookTransform == null) return;      
         animator.SetLookAtWeight(PlayerLookAtWeight.weight, PlayerLookAtWeight.bodyWeight);
-        if (lookTransform == null) return;          
         animator.SetLookAtPosition(lookTransform.position);
         aimingTrasform.LookAt(lookTransform.position);
     }

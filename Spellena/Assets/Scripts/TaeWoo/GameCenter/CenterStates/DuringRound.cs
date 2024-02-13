@@ -12,6 +12,10 @@ namespace GameCenterTest0
         bool isOnce = true;
         bool OccupyBarCountOnce = true;
         bool isFighting = false;
+        [HideInInspector]
+        public GameObject AIObject;
+        [HideInInspector]
+        public GameObject AIObjectDead;
 
         public override void StateExecution()
         {
@@ -231,6 +235,14 @@ namespace GameCenterTest0
 
                 if (temp.GetComponent<Character>() == null) continue;
                 if (temp.GetComponent<Character>().isOccupying == true)
+                {
+                    gameCenter.teamBOccupying++;
+                }
+            }
+
+            if(LobbyManager.isFightAI)
+            {
+                if(AIObject.GetComponent<Character>().isOccupying == true)
                 {
                     gameCenter.teamBOccupying++;
                 }

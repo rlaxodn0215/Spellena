@@ -18,6 +18,8 @@ namespace GameCenterTest0
         public GameObject playerStatObj;
 
         public GameCenterTestData gameCenterTestData;
+        public GameObject AIObject;
+        public GameObject AIObjectDead;
 
         [HideInInspector]
         public PhotonView characterSelectView;
@@ -221,6 +223,8 @@ namespace GameCenterTest0
             roundEndTime = gameCenterTestData.roundEndTime;
             roundEndResultTime = gameCenterTestData.roundEndResultTime;
 
+            temp2.AIObject = AIObject;
+            temp4.AIObject = AIObject;
         }
 
         void ConnectBetweenBGM(string objName)

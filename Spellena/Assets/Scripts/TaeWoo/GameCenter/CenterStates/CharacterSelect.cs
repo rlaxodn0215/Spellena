@@ -11,7 +11,8 @@ namespace GameCenterTest0
         bool isOnce = true;
         bool isCheckTimer = false;
         float tempTimer = 0.0f;
-
+        [HideInInspector]
+        public GameObject AIObject;
         public override void StateExecution()
         {
             if (!isCheckTimer)
@@ -155,7 +156,7 @@ namespace GameCenterTest0
 
             if(LobbyManager.isFightAI)
             {
-                photonView.RPC("ActiveAI", RpcTarget.AllBuffered, true);
+                photonView.RPC("ActiveAI", RpcTarget.AllBuffered, true, "Aloy");
             }
 
             // MakeTeamStateUI
@@ -187,10 +188,9 @@ namespace GameCenterTest0
         }
 
         [PunRPC]
-        public void ActiveAI(bool isActive)
+        public void ActiveAI(bool isActive, string name)
         {
-            GameObject temp = GameObject.Find("GameSystem").transform.Find("Aloy").gameObject;
-            temp.SetActive(isActive);
+            AIObject.SetActive(isActive);
         }
 
     }
