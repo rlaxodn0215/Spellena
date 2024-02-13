@@ -27,9 +27,9 @@ namespace DefineDatas
 
     static class PlayerAniLayerIndex
     {
-        public static int BaseLayer = 0;
-        public static int MoveLayer = 1;
-        public static int AttackLayer = 2;
+        public static int BaseLayer                                 = 0;
+        public static int MoveLayer                                 = 1;
+        public static int AttackLayer                               = 2;
     }
 
     static class DefineNumber
