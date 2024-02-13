@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: GameCenterTestData
   m_EditorClassIdentifier: 
   loadingTime: 1
-  characterSelectTime: 10
+  characterSelectTime: 20
   readyTime: 1
   playerRespawnTime: 12
   assistTime: 10

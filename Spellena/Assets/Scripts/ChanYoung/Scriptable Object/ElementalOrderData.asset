@@ -38,13 +38,7 @@ MonoBehaviour:
   gaiaTiedCoolDownTime: 13
   gaiaTiedCastingTime: 2
   gaiaTiedMaxDistace: 16
-  gaiaTiedLifeTime:
-  - 0.5
-  - 0.5
-  - 0.5
-  - 0.5
-  - 0.5
-  - 0.5
+  gaiaTiedLifeTime: 4
   meteorStrikeDamage: 550
   meteorStrikeCoolDownTime: 20
   meteorStrikeCastingTime: 3.5
