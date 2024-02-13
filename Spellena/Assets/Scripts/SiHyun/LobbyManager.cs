@@ -12,6 +12,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     public InputField roomInputField;
     public GameObject lobbyPanel;
     public GameObject roomPanel;
+    public GameObject roomCreatePanel;
     public Text roomName;
 
     public Button startButton;
@@ -55,12 +56,26 @@ public class LobbyManager : MonoBehaviourPunCallbacks
             PhotonNetwork.CreateRoom(roomInputField.text, roomOptions);
         }
 
-        if(gameMode.value == 1)
-        {
-            playerItemParentB.parent.gameObject.SetActive(false);
-            AIPanel.gameObject.SetActive(true);
-            isFightAI = true;
-        }
+        if (gameMode.value == 1)
+        { 
+            RoomOptions roomOptions = new RoomOptions()
+            {
+                MaxPlayers = -(maxPlayers.value - 10),
+                IsOpen = true,
+                IsVisible = true,
+            };
+
+            PhotonNetwork.CreateRoom("AITest", roomOptions);
+            roomCreatePanel.SetActive(true);
+            StartCoroutine(StartTraining());
+        } 
+    }
+
+    IEnumerator StartTraining()
+    {
+        isFightAI = true;
+        yield return new WaitForSeconds(1.5f);
+        LoadSceneManager.LoadNextSceneAI("TaeWooScene_3");
     }
 
 
@@ -103,8 +118,8 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     public override void OnJoinedRoom()
     {
         Debug.Log(PhotonNetwork.AuthValues.UserId);
-        lobbyPanel.SetActive(false);
-        roomPanel.SetActive(true);
+        lobbyPanel.SetActive(isFightAI);
+        roomPanel.SetActive(!isFightAI);
         UpdateRoomUI();
     }
 

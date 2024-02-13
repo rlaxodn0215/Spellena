@@ -23,6 +23,13 @@ public class LoadSceneManager : MonoBehaviourPunCallbacks
         PhotonNetwork.LoadLevel("TaeWoo_LoadingScene");
     }
 
+    public static void LoadNextSceneAI(string sceneName)
+    {
+        nextScene = sceneName;
+        redTeamActorNums.Add(PhotonNetwork.LocalPlayer.ActorNumber);
+        PhotonNetwork.LoadLevel("TaeWoo_LoadingScene");
+    }
+
     public static void GoBackToMenu(string sceneName)
     {
         nextScene = sceneName;
