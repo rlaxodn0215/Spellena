@@ -14,7 +14,9 @@ namespace Player
         public GameObject overlayCamera;
         public GameObject minimapCamera;
         public GameObject Aim;
-        public GameObject OverlaySight;
+        public GameObject overlaySight;
+        public GameObject overlaySightRight;
+        public GameObject overlaySightLeft;
         public GameObject overlayAnimatorObject;
 
         public GameObject leftHandSpellFire;
@@ -73,8 +75,6 @@ namespace Player
         MeteorStrike meteorStrike;
         TerraBreak terraBreak;
         EterialStorm eterialStorm = new EterialStorm();
-
-        float spell1DefaultAnimationLength;
 
         [HideInInspector]
         public float ragnaEdgeCoolDownTime = 0f;
@@ -319,7 +319,7 @@ namespace Player
                     }
                     else if (isGaiaTied)
                     {
-                        rangeBoxArea.transform.localPosition -= new Vector3(0, rangeBoxArea.transform.localScale.y / 2, rangeBoxArea.transform.localScale.z / 2);
+                        //rangeBoxArea.transform.localPosition -= new Vector3(0, rangeBoxArea.transform.localScale.y / 2, rangeBoxArea.transform.localScale.z / 2);
                         pointStrike = rangeBoxArea.transform.position;
                         isPointStrike = true;
                     }
@@ -890,8 +890,15 @@ namespace Player
                             {
                                 rangeBoxArea.SetActive(true);
                                 rangeBoxArea.transform.position = _arrivedGroundVec;
+                                /*
                                 rangeBoxArea.transform.localPosition +=
                                     new Vector3(0, rangeBoxArea.transform.localScale.y / 2, rangeBoxArea.transform.localScale.z / 2);
+                                */
+
+                                if (rangeBoxArea.GetComponent<ParticleSystem>().time > 0.7f)
+                                {
+                                    rangeBoxArea.GetComponent<ParticleSystem>().Simulate(0.3f);
+                                }
                             }
                             else
                             {
@@ -930,7 +937,12 @@ namespace Player
                             {
                                 rangeBoxArea.SetActive(true);
                                 rangeBoxArea.transform.position = _arrivedGroundVec;
-                                rangeBoxArea.transform.localPosition += new Vector3(0, rangeBoxArea.transform.localScale.y / 2, rangeBoxArea.transform.localScale.z / 2);
+                                rangeBoxArea.transform.position += new Vector3(0, 0.04f, 0);
+                                //rangeBoxArea.transform.localPosition += new Vector3(0, rangeBoxArea.transform.localScale.y / 2, rangeBoxArea.transform.localScale.z / 2);
+                                if (rangeBoxArea.GetComponent<ParticleSystem>().time > 0.7f)
+                                {
+                                    rangeBoxArea.GetComponent<ParticleSystem>().Simulate(0.3f);
+                                }
                             }
                             else
                             {
@@ -1153,6 +1165,12 @@ namespace Player
             }
         }
 
+        [Range(0f, 1f)]
+        public float testWeight1 = 0;
+        [Range(0f, 2f)]
+        public float testWeight2 = 0;
+
+
         protected override void OnAnimatorIK()
         {
             if (animatorForOther == null) return;
@@ -1161,36 +1179,36 @@ namespace Player
             {
                 if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Idle"))
                 {
-                    leftCurrentWeight = Mathf.Lerp(leftCurrentWeight, 0.2f, Time.deltaTime * 8f);
-                    rightCurrentWeight = Mathf.Lerp(rightCurrentWeight, 0.22f, Time.deltaTime * 8f);
+                    leftCurrentWeight = Mathf.Lerp(leftCurrentWeight, 0.32f, Time.deltaTime * 20f);
+                    rightCurrentWeight = Mathf.Lerp(rightCurrentWeight, 0.32f, Time.deltaTime * 20f);
                 }
                 else if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Spell1"))
                 {
-                    rightCurrentWeight = Mathf.Lerp(rightCurrentWeight, targetWeight, Time.deltaTime * 8f);
-                    leftCurrentWeight = Mathf.Lerp(leftCurrentWeight, targetWeight, Time.deltaTime * 8f);
+                    rightCurrentWeight = Mathf.Lerp(rightCurrentWeight, targetWeight, Time.deltaTime * 20f);
+                    leftCurrentWeight = Mathf.Lerp(leftCurrentWeight, targetWeight, Time.deltaTime * 20f);
                 }
                 else if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Spell2"))
                 {
-                    rightCurrentWeight = Mathf.Lerp(rightCurrentWeight, 0.2f, Time.deltaTime * 8f);
-                    leftCurrentWeight = Mathf.Lerp(leftCurrentWeight, 0, Time.deltaTime * 8f);
+                    rightCurrentWeight = Mathf.Lerp(rightCurrentWeight, 0.2f, Time.deltaTime * 20f);
+                    leftCurrentWeight = Mathf.Lerp(leftCurrentWeight, 0, Time.deltaTime * 20f);
                 }
                 else if (overlayAnimator.GetCurrentAnimatorStateInfo(1).IsName("Spell6"))
                 {
 
-                    rightCurrentWeight = Mathf.Lerp(rightCurrentWeight, targetWeight, Time.deltaTime * 8f);
-                    leftCurrentWeight = Mathf.Lerp(leftCurrentWeight, 0, Time.deltaTime * 8f);
+                    rightCurrentWeight = Mathf.Lerp(rightCurrentWeight, targetWeight, Time.deltaTime * 20f);
+                    leftCurrentWeight = Mathf.Lerp(leftCurrentWeight, 0, Time.deltaTime * 20f);
                 }
                 else
                 {
-                    rightCurrentWeight = Mathf.Lerp(rightCurrentWeight, 0, Time.deltaTime * 8f);
-                    leftCurrentWeight = Mathf.Lerp(leftCurrentWeight, 0, Time.deltaTime * 8f);
+                    rightCurrentWeight = Mathf.Lerp(rightCurrentWeight, 0, Time.deltaTime * 20f);
+                    leftCurrentWeight = Mathf.Lerp(leftCurrentWeight, 0, Time.deltaTime * 20f);
                 }
 
                 overlayAnimator.SetIKPositionWeight(AvatarIKGoal.LeftHand, leftCurrentWeight);
-                overlayAnimator.SetIKPosition(AvatarIKGoal.LeftHand, OverlaySight.transform.position);
+                overlayAnimator.SetIKPosition(AvatarIKGoal.LeftHand, overlaySight.transform.position);
 
                 overlayAnimator.SetIKPositionWeight(AvatarIKGoal.RightHand, rightCurrentWeight);
-                overlayAnimator.SetIKPosition(AvatarIKGoal.RightHand, OverlaySight.transform.position);
+                overlayAnimator.SetIKPosition(AvatarIKGoal.RightHand, overlaySight.transform.position);
 
                 if (commands.Count <= 0)
                     SetHandEffectPositionIK(0, 0);
@@ -1209,13 +1227,13 @@ namespace Player
             else
             {
                 Debug.Log(currentHandPoint);
-                Vector3 _tempHandPoint = Vector3.Lerp(currentHandPoint, networkHandPoint, Time.deltaTime * 12);
+                Vector3 _tempHandPoint = Vector3.Lerp(currentHandPoint, networkHandPoint, Time.deltaTime * 20);
                 animatorForOther.SetIKPosition(AvatarIKGoal.LeftHand, _tempHandPoint);
                 animatorForOther.SetIKPosition(AvatarIKGoal.RightHand, _tempHandPoint);
                 currentHandPoint = _tempHandPoint;
 
-                float _tempRightHandWeight = Mathf.Lerp(rightNotMineCurrentWeight, networkRightCurrentWeight, Time.deltaTime * 12);
-                float _tempLeftHandWeight = Mathf.Lerp(leftNotMineCurrentWeight, networkLeftCurrentWeight, Time.deltaTime * 12);
+                float _tempRightHandWeight = Mathf.Lerp(rightNotMineCurrentWeight, networkRightCurrentWeight, Time.deltaTime * 20);
+                float _tempLeftHandWeight = Mathf.Lerp(leftNotMineCurrentWeight, networkLeftCurrentWeight, Time.deltaTime * 20);
                 animatorForOther.SetIKPositionWeight(AvatarIKGoal.RightHand, _tempRightHandWeight);
                 animatorForOther.SetIKPositionWeight(AvatarIKGoal.LeftHand, _tempLeftHandWeight);
                 rightNotMineCurrentWeight = _tempRightHandWeight;

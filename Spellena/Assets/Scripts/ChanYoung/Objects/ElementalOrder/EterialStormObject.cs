@@ -174,10 +174,8 @@ public class EterialStormObject : SpawnObject,IPunObservable
     {
         GameObject _rootObject = other.transform.root.gameObject;
 
-        if(tag != _rootObject.tag)
-        {
+        if(tag == _rootObject.tag)
             return;
-        }
 
         float _xPos = other.transform.position.x - transform.position.x;
         float _zPos = other.transform.position.z - transform.position.z;

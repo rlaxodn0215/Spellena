@@ -13,7 +13,7 @@ public class MeteorStrikeObject : SpawnObject
     float currentCastingTime = 0f;
     float lifeTime;
     float currentLifeTime = 0f;
-    float delay = 0.2f;
+    float delay = 0.4f;
 
     public GameObject hitCollider;
     public GameObject hitEffect;
@@ -53,13 +53,12 @@ public class MeteorStrikeObject : SpawnObject
                     currentLifeTime -= Time.deltaTime;
                     if (currentLifeTime <= 0f)
                     {
-                        if (PhotonNetwork.IsMasterClient)
-                            RequestRPC("RequestDestroy");
+                        if (photonView.IsMine)
+                            PhotonNetwork.Destroy(gameObject);
                     }
                 }
             }
         }
-        //RequestRPC("UpdateData");
     }
 
     void Init()
@@ -124,37 +123,6 @@ public class MeteorStrikeObject : SpawnObject
                 }
             }
         }
-    }
-
-    void RequestRPC(string tunnelCommand)
-    {
-        object[] _tempData;
-        if (tunnelCommand == "UpdateData")
-        {
-            _tempData = new object[4];
-            _tempData[0] = tunnelCommand;
-            _tempData[1] = currentCastingTime;
-            _tempData[2] = currentLifeTime;
-            _tempData[3] = hitObjects.ToArray();
-        }
-        else
-        {
-            _tempData = new object[2];
-            _tempData[0] = tunnelCommand;
-        }
-        
-        photonView.RPC("CallRPCTunnelElementalOrderSpell4", RpcTarget.AllBuffered, _tempData);
-    }
-
-    [PunRPC]
-    public void CallRPCTunnelElementalOrderSpell4(object[] data)
-    {
-        if ((string)data[0] == "ActiveCollider")
-            ActiveCollider();
-        else if ((string)data[0] == "RequestDestroy")
-            RequestDestroy();
-        else if ((string)data[0] == "UpdateData")
-            UpdateData(data);
     }
     void ActiveCollider()
     {

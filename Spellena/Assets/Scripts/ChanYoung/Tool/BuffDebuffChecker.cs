@@ -1,13 +1,9 @@
 using Photon.Pun;
-using Photon.Pun.UtilityScripts;
 using Player;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
-using Photon.Realtime;
-
 public class BuffDebuffChecker : MonoBehaviourPunCallbacks
 {
     public GameObject tentacleObject;
@@ -84,12 +80,19 @@ public class BuffDebuffChecker : MonoBehaviourPunCallbacks
         {
             Debug.Log("°£´Ù");
             Vector3[] corners = agent.path.corners;
+            
             for(int i = 0; i < corners.Length; i++)
             {
                 corners[i] += new Vector3(0, 1f, 0);
             }
+            
             lineRenderer.positionCount = corners.Length;
             lineRenderer.SetPositions(corners);
+            Vector3 _velocity = GetComponent<Rigidbody>().velocity;
+
+            _velocity.y = 0f;
+
+            GetComponent<Rigidbody>().velocity = _velocity;
         }
         else
         {
@@ -197,8 +200,10 @@ public class BuffDebuffChecker : MonoBehaviourPunCallbacks
                 if (chasingTimer <= 0f)
                 {
                     agent.enabled = false;
-                    if(photonView.IsMine)
+                    if (photonView.IsMine)
+                    {
                         photonView.RPC("ResetTentacleRequest", RpcTarget.MasterClient);
+                    }
                 }
             }
         }
@@ -398,7 +403,8 @@ public class BuffDebuffChecker : MonoBehaviourPunCallbacks
 
         if (tentacles[0].isActive == true)
         {
-            ChaseNearEnemy();
+            if (photonView.IsMine)
+                ChaseNearEnemy();
         }
     }
 
