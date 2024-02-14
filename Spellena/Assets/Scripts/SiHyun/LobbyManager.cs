@@ -13,6 +13,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     public GameObject lobbyPanel;
     public GameObject roomPanel;
     public GameObject roomCreatePanel;
+    public GameObject enterTrainingRoom;
     public Text roomName;
 
     public Button startButton;
@@ -74,6 +75,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     IEnumerator StartTraining()
     {
         isFightAI = true;
+        enterTrainingRoom.SetActive(true);
         yield return new WaitForSeconds(1.5f);
         LoadSceneManager.LoadNextSceneAI("TaeWooScene_3");
     }

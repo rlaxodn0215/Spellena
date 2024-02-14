@@ -48,7 +48,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isUsed: 0
-  damage: 20
+  userName: 
+  damage: 50
   arrowVelocity: 80
   rotateSpeed: 0
   ableHitParticle: 1

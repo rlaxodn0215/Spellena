@@ -1,8 +1,10 @@
+using UnityEngine;
+
 namespace DefineDatas
 {
-    static class AimOffset
+    static class Offset
     {
-        public static float YOffset = 0.5f;
+        public static Vector3 AimOffset = new Vector3(0.0f, 0.5f, 0.0f);
     }
 
     static class CharacterName

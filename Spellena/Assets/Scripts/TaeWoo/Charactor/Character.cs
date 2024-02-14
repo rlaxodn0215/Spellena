@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Photon.Pun;
+using UnityEngine.AI;
 using GameCenterTest0;
 
 namespace Player
@@ -70,7 +71,6 @@ namespace Player
         public float headShotRatio;
 
         // 데이터 베이스에서 받는 데이터들
-        [HideInInspector]
         public int dataHp;
 
         [HideInInspector]
@@ -700,11 +700,11 @@ namespace Player
                     else
                     {
                         hp -= damage;
-                        //Debug.Log("Player Damaged !! : " + damage + " EnemyName: " + enemy);
+                        Debug.Log("Player Damaged !! : " + damage + " EnemyName: " + enemy);
                     }
 
-
-                    UI.GetComponent<ScreenEffectManager>().PlayDamageEffect(damage);
+                    if(UI !=null)
+                        UI.GetComponent<ScreenEffectManager>().PlayDamageEffect(damage);
                 }
 
                  var killer = GameCenterTest.FindPlayerWithCustomProperty("Name", enemy);
@@ -712,6 +712,13 @@ namespace Player
                  // 사망시
                  if (hp <= 0)
                  {
+                    if(UI == null)
+                    {
+                        StartCoroutine(AILifeDead());
+                        return;
+                    }
+
+
                     isAlive = false;
                     if (killer == null)
                     {
@@ -734,7 +741,8 @@ namespace Player
 
                      StartCoroutine(PlayerDead(0.2f, killer,damagePart,direction,force));
                  }
-                  
+
+                 if (killer == null) return;
                  int temp0 = (int)killer.CustomProperties["TotalDamage"];
                  killer.CustomProperties["ParameterName"] = "TotalDamage";
                   
@@ -769,6 +777,46 @@ namespace Player
 
             }
 
+        }
+
+        IEnumerator<WaitForSeconds> AILifeDead()
+        {
+            Dead.transform.position = transform.position;
+            Dead.SetActive(true);
+            gameObject.transform.position = new Vector3(0, -1000, 0);
+            gameObject.GetComponent<NavMeshAgent>().enabled = false;
+            if (ragdollRigid == null)
+            {
+                ragdollRigid = Dead.GetComponentsInChildren<Rigidbody>(true);
+                ragdollPos = new Vector3[ragdollRigid.Length];
+                ragdollRot = new Quaternion[ragdollRigid.Length];
+
+                for (int i = 0; i < ragdollRigid.Length; i++)
+                {
+                    ragdollPos[i] = ragdollRigid[i].transform.localPosition;
+                    ragdollRot[i] = ragdollRigid[i].transform.localRotation;
+                }
+            }
+            InGameUI ui = GameObject.Find("GlobalUI").GetComponentInChildren<InGameUI>();
+            ui.ShowKillUI("Aloy");
+            ui.ShowKillLog("TestPlayer1", "Aloy", false, PhotonNetwork.LocalPlayer.ActorNumber);
+            int temp2 = (int)PhotonNetwork.LocalPlayer.CustomProperties["KillCount"];
+            if (PhotonNetwork.IsMasterClient)
+                GameCenterTest.ChangePlayerCustomProperties(PhotonNetwork.LocalPlayer, "KillCount", temp2 + 1);
+            yield return new WaitForSeconds(10.0f);
+            Dead.SetActive(false);
+            gameObject.GetComponent<Rigidbody>().velocity = Vector3.zero;
+            gameObject.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+            gameObject.transform.position = new Vector3(82.0f, 17.5f, 0.62f);
+            for (int i = 0; i < ragdollRigid.Length; i++)
+            {
+                ragdollRigid[i].transform.localPosition = ragdollPos[i];
+                ragdollRigid[i].transform.localRotation = ragdollRot[i];
+                ragdollRigid[i].velocity = new Vector3(0, 0, 0);
+            }
+            hp = dataHp;
+            yield return new WaitForSeconds(0.5f);
+            gameObject.GetComponent<NavMeshAgent>().enabled = true;
         }
 
         IEnumerator<WaitForSeconds> PlayerDead(float time, Photon.Realtime.Player killer, string damgePart, Vector3 direction, float force)

@@ -107,8 +107,12 @@ namespace Player
                         soundManger.GetComponent<PhotonView>().RPC("PlayAudioOverlap", RpcTarget.AllBuffered, "Absorb", 1.0f, false, false, "EffectSound");
                     }
                 }
-            }
 
+                if (other.transform.GetComponent<Managers.PoolObject>())
+                {
+                    other.transform.GetComponent<Managers.PoolObject>().DisActive();
+                }
+            }
         }
 
         public void OnTriggerExit(Collider other)
@@ -129,6 +133,7 @@ namespace Player
                 }
             }
         }
+
 
         [PunRPC]
         void DeBuff(string playerName)

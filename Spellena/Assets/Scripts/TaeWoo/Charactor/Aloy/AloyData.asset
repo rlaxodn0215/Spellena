@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: AloyData
   m_EditorClassIdentifier: 
   sightAngle: 150
-  sightDistance: 30
+  sightDistance: 35
   moveSpeed: 3.5
   rotateSpeed: 120
   avoidSpeed: 1.2

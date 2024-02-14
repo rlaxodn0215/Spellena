@@ -9846,7 +9846,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isUsed: 0
-  damage: 30
+  userName: 
+  damage: 85
   arrowVelocity: 100
   rotateSpeed: 0
   ableHitParticle: 1

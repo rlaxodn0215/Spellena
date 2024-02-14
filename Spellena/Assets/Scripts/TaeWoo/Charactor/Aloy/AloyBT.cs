@@ -102,7 +102,7 @@ public class AloyBT : BehaviorTree.Tree
     {
         if (animator == null || lookTransform == null) return;      
         animator.SetLookAtWeight(PlayerLookAtWeight.weight, PlayerLookAtWeight.bodyWeight);
-        lookPosition = lookTransform.position + new Vector3(0, AimOffset.YOffset, 0);
+        lookPosition = lookTransform.position + Offset.AimOffset;
         animator.SetLookAtPosition(lookPosition);
         aimingTrasform.LookAt(lookPosition);
     }

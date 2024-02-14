@@ -123,6 +123,8 @@ namespace GameCenterTest0
             if(LobbyManager.isFightAI)
             {
                 GameObject.Find("Aloy").transform.position = new Vector3(82.0f, 17.5f, 0.62f);
+                GameObject.Find("Aloy").GetComponent<Player.Character>().hp 
+                    = GameObject.Find("Aloy").GetComponent<Player.Character>().dataHp;
             }
 
         }

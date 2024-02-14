@@ -256,7 +256,14 @@ public class LaserArrowAttack : AbilityNode
         yield return new WaitForSeconds(0.2f);
         beamParticleHit.SetActive(true);
 
-        yield return new WaitForSeconds(4.3f);
+        for(int i = 0; i < 10; i++)
+        {
+            if(hit.transform.GetComponent<Player.Character>() !=null)
+            hit.transform.GetComponent<Player.Character>().
+                    PlayerDamaged(CharacterName.Character_2, 25, null, Vector3.zero, 0.0f);
+            yield return new WaitForSeconds(0.5f);
+        }
+
         beamParticleHit.SetActive(false);
         yield return new WaitForSeconds(0.7f);
         beamParticle.SetActive(false);

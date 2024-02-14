@@ -34346,7 +34346,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isUsed: 0
   userName: 
-  damage: 10
+  damage: 75
   arrowVelocity: 45
   rotateSpeed: 15
   ableHitParticle: 1
