@@ -13,8 +13,8 @@ public class AloyBT : BehaviorTree.Tree
 
     [HideInInspector]
     public Transform lookTransform;
-
     private Transform aimingTrasform;
+    private Vector3 lookPosition;
     private List<AbilityNode> skills = new List<AbilityNode>();
     private Dictionary<AbilityMaker.FunctionName, AbilityNode> functions
         = new Dictionary<AbilityMaker.FunctionName, AbilityNode>();
@@ -102,8 +102,9 @@ public class AloyBT : BehaviorTree.Tree
     {
         if (animator == null || lookTransform == null) return;      
         animator.SetLookAtWeight(PlayerLookAtWeight.weight, PlayerLookAtWeight.bodyWeight);
-        animator.SetLookAtPosition(lookTransform.position);
-        aimingTrasform.LookAt(lookTransform.position);
+        lookPosition = lookTransform.position + new Vector3(0, AimOffset.YOffset, 0);
+        animator.SetLookAtPosition(lookPosition);
+        aimingTrasform.LookAt(lookPosition);
     }
 
     // 현재 어떤 Node에 있는지 확인

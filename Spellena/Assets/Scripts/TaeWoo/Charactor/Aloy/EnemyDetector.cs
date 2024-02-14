@@ -76,7 +76,9 @@ public class EnemyDetector: Condition
                 {
                     if (hit.collider.gameObject.layer != LayerMask.NameToLayer(LayerMaskName.Wall))
                     {
-                        // 태그가 다른 적 구분
+                        //
+                        if (!player.gameObject.GetComponent<Player.Character>().isAlive) continue;
+                        //
                         Debug.DrawLine(SightPos, targetPos, Color.red);
                         if (((AloyBT)tree).lookTransform == null)
                         {

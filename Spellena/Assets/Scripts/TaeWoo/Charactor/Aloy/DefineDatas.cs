@@ -1,5 +1,10 @@
 namespace DefineDatas
 {
+    static class AimOffset
+    {
+        public static float YOffset = 0.5f;
+    }
+
     static class CharacterName
     {
         public static string Character_1                             = "Aeterna";
