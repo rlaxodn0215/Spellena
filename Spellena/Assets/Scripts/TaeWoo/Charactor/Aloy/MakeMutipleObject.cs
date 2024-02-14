@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Managers;
+using DefineDatas;
 
 public class MakeMutipleObject : MonoBehaviour
 {
@@ -29,7 +30,7 @@ public class MakeMutipleObject : MonoBehaviour
             {
                 Vector3 pos = transform.position + GetRandomVector(randomPos);
                 Quaternion rot = transform.rotation * Quaternion.Euler(GetRandomVector(randomRot));
-                PoolManager.Instance.GetObject(PoolObjectName.Strike, pos, rot);
+                PoolManager.Instance.GetObject(CharacterName.Character_2, PoolObjectName.Strike, pos, rot);
                 time2 = Time.time;
                 count++;
             }

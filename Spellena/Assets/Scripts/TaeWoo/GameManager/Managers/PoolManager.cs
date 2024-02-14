@@ -102,7 +102,7 @@ namespace Managers
             return sb.ToString();
         }
 
-        public PoolObject GetObject(PoolObjectName name)
+        public PoolObject GetObject(string userName, PoolObjectName name)
         {
             if(!poolDatas.ContainsKey(name))
             {
@@ -126,11 +126,12 @@ namespace Managers
             data.objIDs.Remove(data.objIDs[0]);
             poolDatas[name] = data;
 
+            ob.userName = userName;
             ob.isUsed = true;
             ob.gameObject.SetActive(true);
             return ob;
         }
-        public PoolObject GetObject(PoolObjectName name, Vector3 pos, Quaternion rot)
+        public PoolObject GetObject(string userName, PoolObjectName name, Vector3 pos, Quaternion rot)
         {
             if (!poolDatas.ContainsKey(name))
             {
@@ -156,6 +157,7 @@ namespace Managers
 
             ob.transform.position = pos;
             ob.transform.rotation = rot;
+            ob.userName = userName;
             ob.isUsed = true;
             ob.gameObject.SetActive(true);
             return ob;
@@ -198,6 +200,7 @@ namespace Managers
             if(temp.isUsed)
             {
                 temp.isUsed = false;
+                temp.userName = null;
                 temp.gameObject.SetActive(false);
                 poolDatas[name].objIDs.Add(id);
             }

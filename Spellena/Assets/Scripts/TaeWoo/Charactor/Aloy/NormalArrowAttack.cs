@@ -156,7 +156,7 @@ public class NormalArrowAttack : AbilityNode
             Debug.Log("AloyBasicAttack to " + "<color=magenta>"+ ((AloyBT)tree).lookTransform.name + "</color>");
             bowAnimator.SetBool(PlayerAniState.Shoot, true);
             animator.SetBool(PlayerAniState.Shoot, true);
-            PoolManager.Instance.GetObject(PoolObjectName.Arrow, attackTransform.position, attackTransform.rotation);
+            PoolManager.Instance.GetObject(CharacterName.Character_2, PoolObjectName.Arrow, attackTransform.position, attackTransform.rotation);
             isDrawing = !bowAnimator.GetCurrentAnimatorStateInfo(PlayerAniLayerIndex.BaseLayer).IsName(PlayerAniState.Shoot);
         }
         else

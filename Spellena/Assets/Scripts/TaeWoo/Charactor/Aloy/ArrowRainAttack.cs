@@ -110,9 +110,10 @@ public class ArrowRainAttack : AbilityNode
 
         yield return new WaitForSeconds(0.75f);
 
-        ClearData(DataContext.FixNode);
         ((AloyBT)tree).lookTransform = null;
+        yield return new WaitForSeconds(0.5f);
 
+        ClearData(DataContext.FixNode);
         yield return new WaitForSeconds(3.0f);
 
         ariseArrow.SetActive(false);

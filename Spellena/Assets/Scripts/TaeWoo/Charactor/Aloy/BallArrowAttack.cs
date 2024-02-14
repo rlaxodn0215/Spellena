@@ -1,12 +1,10 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using BehaviorTree;
 using Managers;
 using CoroutineMaker;
 using DefineDatas;
-
 public class BallArrowAttack : AbilityNode
 {
     public enum MoveWay
@@ -210,7 +208,7 @@ public class BallArrowAttack : AbilityNode
 
         for (int i = 0; i < 5; i++)
         {
-            PoolManager.Instance.GetObject(PoolObjectName.Ball,attackTransform.position, attackTransform.rotation);
+            PoolManager.Instance.GetObject(CharacterName.Character_2, PoolObjectName.Ball,attackTransform.position, attackTransform.rotation);
             yield return new WaitForSeconds(0.3f);
         }
 

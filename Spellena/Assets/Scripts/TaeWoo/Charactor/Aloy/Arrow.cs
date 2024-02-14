@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Player;
 using Managers;
 using DefineDatas;
 
@@ -52,13 +53,14 @@ public class Arrow : PoolObject
         if (collision.transform.name == gameObject.name) return;       
         if (ableArrowStuck)  MakeHitEffect(stuckObjectName,collision, true);
         if (ableHitParticle) MakeHitEffect(hitEffectName,collision, false);
+        if (collision.transform.CompareTag(TagName.TeamA)) PlayerAttack(collision);
         DisActive();
     }
 
     void MakeHitEffect(PoolObjectName name, Collision collision, bool isFollowHitObject)
     {
         PoolObject ob = PoolManager.Instance.
-            GetObject(name, collision.GetContact(0).point, transform.rotation);
+            GetObject(CharacterName.Character_2, name, collision.GetContact(0).point, transform.rotation);
         if (isFollowHitObject)
         {
             Vector3 distance = collision.GetContact(0).point - collision.transform.position;
@@ -95,6 +97,13 @@ public class Arrow : PoolObject
 
         timers[(int)ArrowCoolTime.ArrowStuckDestoryTime].ChangeCoolTime(DefineNumber.ZeroCount);
         stuckObj.DisActive();
+    }
+
+    void PlayerAttack(Collision collision)
+    {
+        Character enemyCharacter = collision.transform.GetComponent<Character>();
+        if (enemyCharacter == null) return;
+        enemyCharacter.PlayerDamaged(CharacterName.Character_2, damage, null, Vector3.zero, 0.0f);
     }
 
     public override void DisActive()

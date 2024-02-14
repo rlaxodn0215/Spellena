@@ -73,11 +73,11 @@ public class AloyBT : BehaviorTree.Tree
         }
     }
 
-    //protected override void Update()
-    //{
-    //    base.Update();
-    //    ShowNodeState();
-    //}
+    protected override void Update()
+    {
+        base.Update();
+        ShowNodeState();
+    }
 
     IEnumerator CoolTimer()
     {
@@ -106,9 +106,9 @@ public class AloyBT : BehaviorTree.Tree
         aimingTrasform.LookAt(lookTransform.position);
     }
 
-    //// 현재 어떤 Node에 있는지 확인
-    //void ShowNodeState()
-    //{
-    //    Debug.Log("<color=orange>" + root.GetData(DataContext.NodeStatus).nodeName + "</color>");
-    //}
+    // 현재 어떤 Node에 있는지 확인
+    void ShowNodeState()
+    {
+        Debug.Log("<color=orange>" + root.GetData(DataContext.NodeStatus).nodeName + "</color>");
+    }
 }

@@ -1,9 +1,21 @@
 namespace DefineDatas
 {
+    static class CharacterName
+    {
+        public static string Character_1                             = "Aeterna";
+        public static string Character_2                             = "Aloy";
+    }
+
     static class LayerMaskName
     {
         public static string Player                                 = "Player";
         public static string Wall                                   = "Wall";
+    }
+
+    static class TagName
+    {
+        public static string TeamA                                  = "TeamA";
+        public static string TeamB                                  = "TeamB";
     }
 
     static class PlayerLookAtWeight
