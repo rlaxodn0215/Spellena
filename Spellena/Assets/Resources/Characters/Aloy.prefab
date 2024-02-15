@@ -121560,7 +121560,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6641403763395112254
 Transform:
   m_ObjectHideFlags: 0
@@ -121670,7 +121670,7 @@ MonoBehaviour:
   actionObjectTransforms:
   - {fileID: 6641403763395112254}
   - {fileID: 6641403763395112254}
-  - {fileID: 3594591372001810115}
+  - {fileID: 7946092602608366333}
   - {fileID: 8437601267935796744}
   - {fileID: 3743448134845833872}
   - {fileID: 3168933863513000898}
@@ -121703,7 +121703,7 @@ MonoBehaviour:
   - {fileID: 6103375518963117369}
   - {fileID: 1913057305055770696}
   - {fileID: 703988844584622635}
-  sceneViewId: 22
+  sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
 --- !u!54 &3061295276326681022

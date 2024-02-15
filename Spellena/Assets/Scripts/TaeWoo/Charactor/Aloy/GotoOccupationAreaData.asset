@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4fc5dfedf6a9fab48a2f4fe904f3a9d6, type: 3}
   m_Name: GotoOccupationAreaData
   m_EditorClassIdentifier: 
-  moveSpeed: 0
-  rotateSpeed: 0
+  moveSpeed: 5
+  rotateSpeed: 120

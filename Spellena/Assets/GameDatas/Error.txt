@@ -1,1 +1,4 @@
 ERROR CODE 2 : 
+ERROR CODE 11 : NormalArrowAttack_bowAnimator_NULL
+ERROR CODE 7 : EnemyDetector_bowAnimator_NULL
+에러 발생 시간 : 2024-02-15-17-33-05
