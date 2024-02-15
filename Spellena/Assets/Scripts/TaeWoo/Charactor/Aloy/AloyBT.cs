@@ -55,12 +55,14 @@ public class AloyBT : BehaviorTree.Tree
     {
         try
         {
+            // 에러가 발생했는지 확인
             if (ErrorManager.isErrorOccur) 
                 throw new Exception("에러 발생 시간 : " + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss"));
         }
 
         catch (Exception e)
         {
+            // 에러 발생 시간 저장 후 게임 종료
             ErrorManager.SaveErrorData(e.Message);
             Application.Quit();
         }
@@ -78,7 +80,7 @@ public class AloyBT : BehaviorTree.Tree
         {
             for (int i = 0; i < actions.Count; i++)
             {
-                if(actions[i].coolTimer !=null)
+                if(actions[i].coolTimer != null)
                     actions[i].coolTimer.UpdateCoolTime(Time.deltaTime);
             }
 
