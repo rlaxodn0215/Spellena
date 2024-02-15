@@ -15273,6 +15273,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5087662612811888954}
   - component: {fileID: 269320553715115373}
+  - component: {fileID: 1522292135}
   m_Layer: 15
   m_Name: AriseArrow
   m_TagString: Untagged
@@ -15317,6 +15318,102 @@ MonoBehaviour:
   makeDelay: 0
   randomPos: {x: 0, y: 0, z: 0}
   randomRot: {x: 0, y: 0, z: 0}
+--- !u!82 &1522292135
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 710407902717563764}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: 7bff58be4bc4fcc40bb8bd35c23702fb, type: 3}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 3
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 2
+  MaxDistance: 100
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &753862569250548268
 GameObject:
   m_ObjectHideFlags: 0
@@ -96184,6 +96281,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 121117214463737267}
+  - component: {fileID: 1522292134}
   m_Layer: 15
   m_Name: AloyArrowStikeEnergy
   m_TagString: Untagged
@@ -96212,6 +96310,102 @@ Transform:
   m_Father: {fileID: 3168933863513000898}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!82 &1522292134
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6491933004426387578}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: 789eeeebb78d4d94e8efde8606b447f7, type: 3}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 3
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 8
+  MaxDistance: 100
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &6712523471616344892
 GameObject:
   m_ObjectHideFlags: 0
@@ -121474,8 +121668,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionObjectTransforms:
+  - {fileID: 6641403763395112254}
+  - {fileID: 6641403763395112254}
+  - {fileID: 3594591372001810115}
+  - {fileID: 8437601267935796744}
+  - {fileID: 3743448134845833872}
+  - {fileID: 3168933863513000898}
   - {fileID: 0}
-  datas: []
+  - {fileID: 0}
+  datas:
+  - {fileID: 11400000, guid: 27c38cab2a56ba845a34fc150e7749c0, type: 2}
+  - {fileID: 11400000, guid: a69af3d854d434b4589af6b04b8fe93a, type: 2}
+  - {fileID: 11400000, guid: a2f07de5577f53c479123c383c9961a7, type: 2}
+  - {fileID: 11400000, guid: d432ecd83c6e22e428e2c1465319bfc0, type: 2}
 --- !u!114 &8259013388521052597
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -121498,7 +121703,7 @@ MonoBehaviour:
   - {fileID: 6103375518963117369}
   - {fileID: 1913057305055770696}
   - {fileID: 703988844584622635}
-  sceneViewId: 0
+  sceneViewId: 22
   InstantiationId: 0
   isRuntimeInstantiated: 0
 --- !u!54 &3061295276326681022
@@ -121601,7 +121806,7 @@ MonoBehaviour:
   isAlive: 1
   chargeCount: 0
   ultimateCount: 0
-  hp: 1000
+  hp: 800
   sitSpeed: 0
   sitSideSpeed: 0
   sitBackSpeed: 0
@@ -121611,7 +121816,7 @@ MonoBehaviour:
   runSpeedRatio: 0
   jumpHeight: 0
   headShotRatio: 0
-  dataHp: 1000
+  dataHp: 800
   dataSitSpeed: 0
   dataSitSideSpeed: 0
   dataSitBackSpeed: 0
