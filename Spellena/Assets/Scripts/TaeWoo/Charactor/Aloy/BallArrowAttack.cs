@@ -1,11 +1,12 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using BehaviorTree;
 using Managers;
 using CoroutineMaker;
 using DefineDatas;
-public class BallArrowAttack : AbilityNode
+public class BallArrowAttack : ActionNode
 {
     public enum MoveWay
     {
@@ -16,7 +17,6 @@ public class BallArrowAttack : AbilityNode
     }
 
     private MoveWay way;
-    private float avoidSpeed = 1.2f;
     private Animator bowAnimator;
     private GameObject arrowAniObj;
 
@@ -27,22 +27,29 @@ public class BallArrowAttack : AbilityNode
     private NavMeshAgent agent;
     private Animator animator;
 
-    private float avoidTiming = 1.0f;
-    private float rotateSpeed = 7.5f;
+    private float avoidSpeed;
+    private float avoidTiming;
+    private float rotateSpeed;
 
     private CoolTimer avoidTimer;
 
     private MakeCoroutine coroutine;
 
-    public BallArrowAttack(BehaviorTree.Tree tree, AbilityMaker abilityMaker,float coolTime) : base(tree, NodeName.Skill_2, coolTime)
+    public BallArrowAttack(BehaviorTree.Tree tree, List<Transform> actionObjectTransforms, ScriptableObject data) : 
+        base(tree, NodeType.Action, ((SkillData)data).coolTime)
     {
-        playerTransform = abilityMaker.abilityObjectTransforms[(int)AbilityMaker.AbilityObjectName.CharacterTransform];
-        attackTransform = abilityMaker.abilityObjectTransforms[(int)AbilityMaker.AbilityObjectName.AimingTransform].GetChild(1);
-        bowAnimator = abilityMaker.abilityObjectTransforms[(int)AbilityMaker.AbilityObjectName.BowAniObject].GetComponent<Animator>();
-        arrowAniObj = abilityMaker.abilityObjectTransforms[(int)AbilityMaker.AbilityObjectName.ArrowAniObject].gameObject;
+        playerTransform = actionObjectTransforms[(int)ActionObjectName.CharacterTransform];
+        attackTransform = actionObjectTransforms[(int)ActionObjectName.AimingTransform].GetChild(1);
+        bowAnimator = actionObjectTransforms[(int)ActionObjectName.BowAniObject].GetComponent<Animator>();
+        arrowAniObj = actionObjectTransforms[(int)ActionObjectName.ArrowAniObject].gameObject;
         aimParticle = attackTransform.transform.GetChild(0).gameObject;
         agent = playerTransform.GetComponent<NavMeshAgent>();
         animator = playerTransform.GetComponent<Animator>();
+
+        avoidSpeed = ((SkillData)data).avoidSpeed;
+        avoidTiming = ((SkillData)data).avoidTiming;
+        rotateSpeed = ((SkillData)data).rotateSpeed;
+
         avoidTimer = new CoolTimer(avoidTiming);
     }
 
@@ -52,7 +59,7 @@ public class BallArrowAttack : AbilityNode
         {
             Avoiding();
             Attack();
-            SetDataToRoot(DataContext.NodeStatus, this);
+            SetDataToRoot(NodeData.NodeStatus, this);
             return NodeState.Running;
         }
 
@@ -197,7 +204,7 @@ public class BallArrowAttack : AbilityNode
 
     IEnumerator MutipleShoot()
     {
-        SetDataToRoot(DataContext.FixNode, this);
+        SetDataToRoot(NodeData.FixNode, this);
 
         bowAnimator.SetBool(PlayerAniState.Draw, true);
         animator.SetBool(PlayerAniState.CheckEnemy, true);
@@ -217,7 +224,7 @@ public class BallArrowAttack : AbilityNode
 
         yield return new WaitForSeconds(0.8f);
 
-        ClearData(DataContext.FixNode);
+        ClearData(NodeData.FixNode);
         coroutine.Stop();
 
     }

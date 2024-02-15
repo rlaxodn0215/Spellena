@@ -2,6 +2,63 @@ using UnityEngine;
 
 namespace DefineDatas
 {
+    public enum PlayerAniLayerIndex
+    {
+        BaseLayer,
+        MoveLayer,
+        AttackLayer
+    }
+    // 노드 상태
+    public enum NodeState
+    {
+        Running,
+        Success,
+        Failure
+    }
+    // 노드 종류
+    public enum NodeType
+    {
+        NONE,
+        Sequence,
+        Selector,
+        Parallel,
+        Condition,
+        Action
+    }
+    // 노드에 저장하는 데이터 종류
+    public enum NodeData
+    {
+        NodeStatus,
+        FixNode
+    }
+    // Action에 필요한 object
+    public enum ActionObjectName
+    {
+        CharacterTransform,
+        CharacterTree,
+        BowAniObject,
+        ArrowAniObject,
+        AimingTransform,
+        ArrowStrikeStartPoint,
+        DownArrowTransform,
+        OccupationPoint
+    }
+    // Action 종류
+    public enum ActionName
+    {
+        GotoOccupationArea,
+        NormalArrowAttack,
+        BallArrowAttack,
+        ArrowRainAttack,
+        NONE
+    }
+    public enum AvoidWay
+    {
+        Forward = 0x0001,
+        Back = 0x0010,
+        Left = 0x0100,
+        Right = 0x1000,
+    }
     static class Offset
     {
         public static Vector3 AimOffset = new Vector3(0.0f, 0.5f, 0.0f);
@@ -44,13 +101,6 @@ namespace DefineDatas
         public static string Shoot                                  = "Shoot";
     }
 
-    static class PlayerAniLayerIndex
-    {
-        public static int BaseLayer                                 = 0;
-        public static int MoveLayer                                 = 1;
-        public static int AttackLayer                               = 2;
-    }
-
     static class DefineNumber
     {
         public static int RandomInitNum                             = 7;
@@ -63,27 +113,26 @@ namespace DefineDatas
         public static float SightHeightRatio                        = 1.5f;
     }
 
-    static class ErrorCode
+    public enum ErrorCode
     {
-        public static int AbilityMaker_Tree_NULL                    = 0;
-        public static int AbilityMaker_data_NULL                    = 1;
-        public static int AloyBT_animator_NULL                      = 2;
-        public static int AloyBT_abilityMaker_NULL                  = 3;
-        public static int AloyBT_aimingTrasform_NULL                = 4;
-        public static int EnemyDetector_condition_NULL              = 5;
-        public static int EnemyDetector_playerTransform_NULL        = 6;
-        public static int EnemyDetector_bowAnimator_NULL            = 7;
-        public static int EnemyDetector_animator_NULL               = 8;
-        public static int NormalArrowAttack_playerTransform_NULL    = 9;
-        public static int NormalArrowAttack_attackTransform_NULL    = 10;
-        public static int NormalArrowAttack_bowAnimator_NULL        = 11;
-        public static int NormalArrowAttack_arrowAniObj_NULL        = 12;
-        public static int NormalArrowAttack_agent_NULL              = 13;
-        public static int NormalArrowAttack_animator_NULL           = 14;
-        public static int NormalArrowAttack_avoidTimer_NULL         = 15;
-        public static int GotoOccupationArea_arrowAniObj_NULL       = 16;
-        public static int GotoOccupationArea_agent_NULL             = 17;
-        public static int GotoOccupationArea_animator_NULL          = 18;
+        AbilityMaker_Tree_NULL,
+        AbilityMaker_data_NULL,
+        AloyBT_animator_NULL,
+        AloyBT_abilityMaker_NULL,
+        AloyBT_aimingTrasform_NULL,
+        EnemyDetector_condition_NULL,
+        EnemyDetector_playerTransform_NULL,
+        EnemyDetector_bowAnimator_NULL,
+        EnemyDetector_animator_NULL,
+        NormalArrowAttack_playerTransform_NULL,
+        NormalArrowAttack_attackTransform_NULL,
+        NormalArrowAttack_bowAnimator_NULL,
+        NormalArrowAttack_arrowAniObj_NULL,
+        NormalArrowAttack_agent_NULL,
+        NormalArrowAttack_animator_NULL,
+        NormalArrowAttack_avoidTimer_NULL,
+        GotoOccupationArea_arrowAniObj_NULL,
+        GotoOccupationArea_agent_NULL,
+        GotoOccupationArea_animator_NULL
     }
-
 }

@@ -121459,9 +121459,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 909f213626eec134a916e3cd88bc35c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  data: {fileID: 11400000, guid: eefe1c9dc7f89df45b654bcbdf320df3, type: 2}
-  characterSkills: 04000000040000000200000004000000
-  characterFunctions: 00000000
+  characterActions: 00000000010000000200000003000000
   lookTransform: {fileID: 0}
 --- !u!114 &1503749395690966994
 MonoBehaviour:
@@ -121475,16 +121473,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96635c522391e7d4ba5d2b898cd55116, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  abilityObjectTransforms:
-  - {fileID: 6641403763395112254}
-  - {fileID: 6641403763395112254}
-  - {fileID: 7946092602608366333}
-  - {fileID: 8437601267935796744}
-  - {fileID: 3743448134845833872}
-  - {fileID: 3168933863513000898}
+  actionObjectTransforms:
   - {fileID: 0}
-  - {fileID: 0}
-  data: {fileID: 0}
+  datas: []
 --- !u!114 &8259013388521052597
 MonoBehaviour:
   m_ObjectHideFlags: 0

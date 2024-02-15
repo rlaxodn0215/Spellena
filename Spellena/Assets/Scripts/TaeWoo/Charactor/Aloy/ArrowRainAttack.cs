@@ -5,7 +5,7 @@ using BehaviorTree;
 using CoroutineMaker;
 using UnityEngine.AI;
 using DefineDatas;
-public class ArrowRainAttack : AbilityNode
+public class ArrowRainAttack : ActionNode
 {
     private Animator bowAnimator;
     private GameObject arrowAniObj;
@@ -22,19 +22,24 @@ public class ArrowRainAttack : AbilityNode
     private NavMeshAgent agent;
 
     private MakeCoroutine coroutine;
-    private float rotateSpeed = 7.5f;
 
-    public ArrowRainAttack(BehaviorTree.Tree tree, AbilityMaker abilityMaker, float coolTime): base(tree, NodeName.Skill_4, coolTime)
+    private float rotateSpeed;
+
+    public ArrowRainAttack(BehaviorTree.Tree tree, List<Transform> actionObjectTransforms, ScriptableObject data)
+        : base(tree, NodeType.Action, ((SkillData)data).coolTime)
+
     {
-        playerTransform = abilityMaker.abilityObjectTransforms[(int)AbilityMaker.AbilityObjectName.CharacterTransform];
-        attackTransform = abilityMaker.abilityObjectTransforms[(int)AbilityMaker.AbilityObjectName.ArrowStrikeStartPoint];
-        downArrowPosObj = abilityMaker.abilityObjectTransforms[(int)AbilityMaker.AbilityObjectName.DownArrowTransform];
-        bowAnimator = abilityMaker.abilityObjectTransforms[(int)AbilityMaker.AbilityObjectName.BowAniObject].GetComponent<Animator>();
-        arrowAniObj = abilityMaker.abilityObjectTransforms[(int)AbilityMaker.AbilityObjectName.ArrowAniObject].gameObject;
+        playerTransform = actionObjectTransforms[(int)ActionObjectName.CharacterTransform];
+        attackTransform = actionObjectTransforms[(int)ActionObjectName.ArrowStrikeStartPoint];
+        downArrowPosObj = actionObjectTransforms[(int)ActionObjectName.DownArrowTransform];
+        bowAnimator = actionObjectTransforms[(int)ActionObjectName.BowAniObject].GetComponent<Animator>();
+        arrowAniObj = actionObjectTransforms[(int)ActionObjectName.ArrowAniObject].gameObject;
         ariseArrow = attackTransform.transform.GetChild(0).gameObject;
         ariseEnergy = attackTransform.transform.GetChild(1).gameObject;
         animator = playerTransform.GetComponent<Animator>();
         agent = playerTransform.GetComponent<NavMeshAgent>();
+
+        rotateSpeed = ((SkillData)data).rotateSpeed;
     }
 
     public override NodeState Evaluate()
@@ -42,7 +47,7 @@ public class ArrowRainAttack : AbilityNode
         if (((AloyBT)tree).lookTransform != null)
         {
             Attack();
-            SetDataToRoot(DataContext.NodeStatus, this);
+            SetDataToRoot(NodeData.NodeStatus, this);
             return NodeState.Running;
         }
 
@@ -93,7 +98,7 @@ public class ArrowRainAttack : AbilityNode
 
     IEnumerator ShootStrike()
     {
-        SetDataToRoot(DataContext.FixNode, this);
+        SetDataToRoot(NodeData.FixNode, this);
 
         animator.SetBool(PlayerAniState.AvoidRight, false);
         animator.SetBool(PlayerAniState.AvoidLeft, false);
@@ -113,7 +118,7 @@ public class ArrowRainAttack : AbilityNode
         ((AloyBT)tree).lookTransform = null;
         yield return new WaitForSeconds(0.5f);
 
-        ClearData(DataContext.FixNode);
+        ClearData(NodeData.FixNode);
         yield return new WaitForSeconds(3.0f);
 
         ariseArrow.SetActive(false);

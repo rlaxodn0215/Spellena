@@ -1,19 +1,20 @@
 using System.Collections.Generic;
+using DefineDatas;
 
 namespace BehaviorTree
 {
     public class Parallel : Node
     {
         int index = 0;
-        public Parallel(Tree tree, NodeName name, List<Node> children) : base(tree, name, children) { }
+        public Parallel(Tree tree, List<Node> children) : base(tree, NodeType.Parallel, children) { }
         public override NodeState Evaluate()
         {
-            if (GetData(DataContext.FixNode) == null)
+            if (GetData(NodeData.FixNode) == null)
                 index = (index + 1) % children.Count;
 
             Node node = children[index];
 
-            SetDataToRoot(DataContext.NodeStatus, this);
+            SetDataToRoot(NodeData.NodeStatus, this);
 
             switch (node.Evaluate())
             {

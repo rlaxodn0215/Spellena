@@ -6,69 +6,62 @@ using DefineDatas;
 using System;
 public class AloyBT : BehaviorTree.Tree
 {
-    // 캐릭터 스킬 설정
-    public List<AbilityMaker.SkillName> characterSkills;
-    // 캐릭터 기능 설정(ex.거점이동)
-    public List<AbilityMaker.FunctionName> characterFunctions;
+    // 캐릭터 기능 설정
+    public List<ActionName> characterActions;
 
     [HideInInspector]
     public Transform lookTransform;
     private Transform aimingTrasform;
     private Vector3 lookPosition;
-    private List<AbilityNode> skills = new List<AbilityNode>();
-    private Dictionary<AbilityMaker.FunctionName, AbilityNode> functions
-        = new Dictionary<AbilityMaker.FunctionName, AbilityNode>();
-    private AbilityMaker abilityMaker;
+    private List<ActionNode> actions = new List<ActionNode>();
+    private ActionNodeMaker actionNodeMaker;
     private Animator animator;
 
     void InitData()
     {
         UnityEngine.Random.InitState(DefineNumber.RandomInitNum);
         animator = GetComponent<Animator>();
-        if (animator == null) ErrorDataMaker.SaveErrorData(ErrorCode.AloyBT_animator_NULL);
-        abilityMaker = GetComponent<AbilityMaker>();
-        if (abilityMaker == null) ErrorDataMaker.SaveErrorData(ErrorCode.AloyBT_abilityMaker_NULL);
-        aimingTrasform = abilityMaker.abilityObjectTransforms[(int)AbilityMaker.AbilityObjectName.AimingTransform];
-        if(aimingTrasform == null) ErrorDataMaker.SaveErrorData(ErrorCode.AloyBT_aimingTrasform_NULL);
-        for (int i = 0; i < characterSkills.Count; i++)
-            skills.Add(abilityMaker.MakeSkill(characterSkills[i]));      
-        for (int i = 0; i < characterFunctions.Count; i++)
-            functions[characterFunctions[i]] = abilityMaker.MakeFunction(characterFunctions[i]);
+        if (animator == null) ErrorManager.SaveErrorData(ErrorCode.AloyBT_animator_NULL);
+        actionNodeMaker = GetComponent<ActionNodeMaker>();
+        if (actionNodeMaker == null) ErrorManager.SaveErrorData(ErrorCode.AloyBT_abilityMaker_NULL);
+        aimingTrasform = actionNodeMaker.actionObjectTransforms[(int)ActionObjectName.AimingTransform];
+        if(aimingTrasform == null) ErrorManager.SaveErrorData(ErrorCode.AloyBT_aimingTrasform_NULL);
+        for (int i = 0; i < characterActions.Count; i++)
+            actions.Add(actionNodeMaker.MakeActionNode(characterActions[i]));      
     }
     protected override Node SetupTree()
     {
         InitData();
-        Node root = new Selector(this, NodeName.Selector ,new List<Node>
+        Node root = new Selector(this, new List<Node>
         {
-            new EnemyDetector(this, EnemyDetector.EnemyDetectType.CheckEnemyInSight, 
-                new Parallel(this, NodeName.Parallel, MakeSkillNode()),abilityMaker),
-            functions[AbilityMaker.FunctionName.GotoOccupationArea]
+            new EnemyDetector(this,
+                new Parallel(this, new List<Node>
+                {
+                    actions[(int)ActionName.NormalArrowAttack],
+                    actions[(int)ActionName.BallArrowAttack],
+                    actions[(int)ActionName.ArrowRainAttack]
+                }),
+            actionNodeMaker.actionObjectTransforms),
+            actions[(int)ActionName.GotoOccupationArea]
         }
         );
-        root.SetDataToRoot(DataContext.NodeStatus, root);
+        root.SetDataToRoot(NodeData.NodeStatus, root);
         StartCoroutine(CoolTimer());
         ErrorCheck();
         return root;
     }
 
-    List<Node> MakeSkillNode()
-    {
-        List<Node> temp = new List<Node>();
-        for (int i = 0; i < skills.Count; i++)
-            temp.Add(skills[i]);
-        return temp;
-    }
     void ErrorCheck()
     {
         try
         {
-            if (ErrorDataMaker.isErrorOccur) 
+            if (ErrorManager.isErrorOccur) 
                 throw new Exception("에러 발생 시간 : " + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss"));
         }
 
         catch (Exception e)
         {
-            ErrorDataMaker.SaveErrorData(e.Message);
+            ErrorManager.SaveErrorData(e.Message);
             Application.Quit();
         }
     }
@@ -83,10 +76,10 @@ public class AloyBT : BehaviorTree.Tree
     {
         while (true)
         {
-            for (int i = 0; i < skills.Count; i++)
+            for (int i = 0; i < actions.Count; i++)
             {
-                if(skills[i].coolTimer !=null)
-                    skills[i].coolTimer.UpdateCoolTime(Time.deltaTime);
+                if(actions[i].coolTimer !=null)
+                    actions[i].coolTimer.UpdateCoolTime(Time.deltaTime);
             }
 
             yield return null;
@@ -110,6 +103,6 @@ public class AloyBT : BehaviorTree.Tree
     // 현재 어떤 Node에 있는지 확인
     void ShowNodeState()
     {
-        Debug.Log("<color=orange>" + root.GetData(DataContext.NodeStatus).nodeName + "</color>");
+        Debug.Log("<color=orange>" + root.GetData(NodeData.NodeStatus).nodeType + "</color>");
     }
 }

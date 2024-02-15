@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using DefineDatas;
 
 namespace BehaviorTree
 {
@@ -6,7 +7,8 @@ namespace BehaviorTree
     public class Selector : Node
     {
         public Selector() : base() { }
-        public Selector(Tree tree, NodeName name, List<Node> children) : base(tree, name, children) { }
+        public Selector(Tree tree, List<Node> children) 
+            : base(tree, NodeType.Selector, children) { }
 
         public override NodeState Evaluate()
         {
@@ -27,7 +29,7 @@ namespace BehaviorTree
                 }
             }
 
-            SetDataToRoot(DataContext.NodeStatus, this);
+            SetDataToRoot(NodeData.NodeStatus, this);
             state = NodeState.Failure;
             return state;
         }
