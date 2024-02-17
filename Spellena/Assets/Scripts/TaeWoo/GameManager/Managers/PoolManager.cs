@@ -1,32 +1,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Text;
+using DefineDatas;
 
 namespace Managers
 {
-    public enum PoolObjectName
-    {
-        Arrow,
-        ArrowExplode,
-        ArrowStuck,
-        Ball,
-        BallExplode,
-        Strike,
-        StrikeExplode,
-        StrikeStuck
-    }
-    public struct PoolObjectData
-    {
-        public PoolObjectName name;
-        public GameObject obj;
-        public int initObjectNum;
-        public int addObjectNum;
-        public List<PoolObject> objs;
-        public List<int> objIDs;
-    }
-
     public class PoolManager : SingletonTemplate<PoolManager>
     {
+        public struct PoolObjectData
+        {
+            public PoolObjectName name;
+            public GameObject obj;
+            public int initObjectNum;
+            public int addObjectNum;
+            public List<PoolObject> objs;
+            public List<int> objIDs;
+        }
+
         public PoolManagerData managerData;
 
         private Dictionary<PoolObjectName, PoolObjectData> poolDatas
@@ -70,14 +60,14 @@ namespace Managers
 
                 for (int j = 1; j <= data.initObjectNum; j++)
                 {
-                    data.objs.Add(CreateNewObject((PoolObjectName)i, data, j));
+                    data.objs.Add(CreateNewObject(data, j));
                 }
 
                 poolDatas[(PoolObjectName)i] = data;
             }
         }
 
-        PoolObject CreateNewObject(PoolObjectName name , PoolObjectData pObjData, int id)
+        PoolObject CreateNewObject(PoolObjectData pObjData, int id)
         {
             GameObject gb = Instantiate(pObjData.obj, transform); //부모 아래에 소환
             gb.name = MakeObjectName(pObjData.obj.name, id);
@@ -86,7 +76,7 @@ namespace Managers
             if (poolObj == null) poolObj = gb.AddComponent<PoolObject>();
 
             gb.SetActive(false);
-            poolObj.SetPoolObjectData(id, name, transform);
+            poolObj.SetPoolObjectData(id, pObjData.name, transform);
             poolObj.SetCallback(DisActiveObject);
             poolObj.InitPoolObject();
             poolObj.isUsed = false;
@@ -119,7 +109,7 @@ namespace Managers
 
             else
             {
-                ob = CreateNewObject(name, data, ++data.addObjectNum);
+                ob = CreateNewObject(data, ++data.addObjectNum);
                 data.objs.Add(ob);
             }
 
@@ -148,7 +138,7 @@ namespace Managers
 
             else
             {
-                ob = CreateNewObject(name, data, ++data.addObjectNum);
+                ob = CreateNewObject(data, ++data.addObjectNum);
                 data.objs.Add(ob);
             }
 

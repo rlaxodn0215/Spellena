@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-using Managers;
+using DefineDatas;
 
 [CreateAssetMenu(fileName = "PoolManagerData", menuName = "ScriptableObject/PoolManagerData")]
 public class PoolManagerData : ScriptableObject

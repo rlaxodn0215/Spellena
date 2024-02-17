@@ -121653,7 +121653,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 909f213626eec134a916e3cd88bc35c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterActions: 00000000010000000200000003000000
+  characterMoveAction: 0
+  characterSkills: 010000000200000003000000
   lookTransform: {fileID: 0}
 --- !u!114 &1503749395690966994
 MonoBehaviour:

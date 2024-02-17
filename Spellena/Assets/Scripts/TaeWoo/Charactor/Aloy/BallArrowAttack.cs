@@ -36,7 +36,7 @@ public class BallArrowAttack : ActionNode
     private MakeCoroutine coroutine;
 
     public BallArrowAttack(BehaviorTree.Tree tree, List<Transform> actionObjectTransforms, ScriptableObject data) : 
-        base(tree, NodeType.Action, ((SkillData)data).coolTime)
+        base(tree, ActionName.BallArrowAttack, ((SkillData)data).coolTime)
     {
         playerTransform = actionObjectTransforms[(int)ActionObjectName.CharacterTransform];
         attackTransform = actionObjectTransforms[(int)ActionObjectName.AimingTransform].GetChild(1);
@@ -59,7 +59,8 @@ public class BallArrowAttack : ActionNode
         {
             Avoiding();
             Attack();
-            SetDataToRoot(NodeData.NodeStatus, this);
+            if(GetData(NodeData.FixNode) == this)
+                SetDataToRoot(NodeData.NodeStatus, this);
             return NodeState.Running;
         }
 
@@ -180,7 +181,6 @@ public class BallArrowAttack : ActionNode
             Debug.Log("AloyPreciseShot to " + "<color=magenta>"
             + ((AloyBT)tree).lookTransform.name + "</color>");
 
-            //preciseAttackArrows.GetObject(attackTransform);
             coroutine = MakeCoroutine.Start_Coroutine(MutipleShoot());
         }
 

@@ -59,6 +59,18 @@ namespace DefineDatas
         Left = 0x0100,
         Right = 0x1000,
     }
+    public enum PoolObjectName
+    {
+        Arrow,
+        ArrowExplode,
+        ArrowStuck,
+        Ball,
+        BallExplode,
+        Strike,
+        StrikeExplode,
+        StrikeStuck
+    }
+
     static class Offset
     {
         public static Vector3 AimOffset = new Vector3(0.0f, 0.5f, 0.0f);

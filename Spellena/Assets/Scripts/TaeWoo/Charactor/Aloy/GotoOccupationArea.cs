@@ -13,7 +13,7 @@ public class GotoOccupationArea : ActionNode
     private int randomIndex = 0;
 
     public GotoOccupationArea(BehaviorTree.Tree tree, List<Transform> actionObjectTransforms, ScriptableObject data)
-        : base(tree, NodeType.Action)
+        : base(tree, ActionName.GotoOccupationArea)
     {
         arrowAniObj = actionObjectTransforms[(int)ActionObjectName.ArrowAniObject].gameObject;
         if (arrowAniObj == null) ErrorManager.SaveErrorData(ErrorCode.GotoOccupationArea_arrowAniObj_NULL);

@@ -22,7 +22,7 @@ public class NormalArrowAttack : ActionNode
     private Ray ray = new Ray();
 
     public NormalArrowAttack(BehaviorTree.Tree tree, List<Transform> actionObjectTransforms, ScriptableObject data)
-        : base(tree, NodeType.Action, ((SkillData)data).coolTime)
+        : base(tree, ActionName.NormalArrowAttack, ((SkillData)data).coolTime)
     {
         playerTransform = actionObjectTransforms[(int)ActionObjectName.CharacterTransform];
         if (playerTransform == null) ErrorManager.SaveErrorData(ErrorCode.NormalArrowAttack_playerTransform_NULL);
@@ -141,7 +141,7 @@ public class NormalArrowAttack : ActionNode
         Vector3 targetDir = (((AloyBT)tree).lookTransform.position - playerTransform.position).normalized;
         targetDir.y = 0;
         playerTransform.forward = Vector3.Lerp(playerTransform.forward, targetDir, rotateSpeed * Time.deltaTime);
-        bool isDrawing;
+        //bool isDrawing;
         if (coolTimer.IsCoolTimeFinish() && 
             animator.GetCurrentAnimatorStateInfo((int)PlayerAniLayerIndex.AttackLayer).IsName(PlayerAniState.Aim) &&
             Mathf.Acos(Vector3.Dot(playerTransform.forward, targetDir)) * Mathf.Rad2Deg <= DefineNumber.AttackAngleDifference)
@@ -151,14 +151,13 @@ public class NormalArrowAttack : ActionNode
             bowAnimator.SetBool(PlayerAniState.Shoot, true);
             animator.SetBool(PlayerAniState.Shoot, true);
             PoolManager.Instance.GetObject(CharacterName.Character_2, PoolObjectName.Arrow, attackTransform.position, attackTransform.rotation);
-            isDrawing = !bowAnimator.GetCurrentAnimatorStateInfo((int)PlayerAniLayerIndex.BaseLayer).IsName(PlayerAniState.Shoot);
+            //isDrawing = !bowAnimator.GetCurrentAnimatorStateInfo((int)PlayerAniLayerIndex.BaseLayer).IsName(PlayerAniState.Shoot);
         }
         else
         {
             bowAnimator.SetBool(PlayerAniState.Shoot, false);
             animator.SetBool(PlayerAniState.Shoot, false);
-            isDrawing = bowAnimator.GetCurrentAnimatorStateInfo((int)PlayerAniLayerIndex.BaseLayer).IsName(PlayerAniState.Draw);
+            //isDrawing = bowAnimator.GetCurrentAnimatorStateInfo((int)PlayerAniLayerIndex.BaseLayer).IsName(PlayerAniState.Draw);
         }
-        arrowAniObj.SetActive(isDrawing);
     }
 }

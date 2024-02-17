@@ -6,8 +6,10 @@ using DefineDatas;
 using System;
 public class AloyBT : BehaviorTree.Tree
 {
-    // 캐릭터 기능 설정
-    public List<ActionName> characterActions;
+    // 캐릭터 스킬 설정
+    public ActionName characterMoveAction;
+    // 캐릭터 스킬 설정
+    public List<ActionName> characterSkills;
 
     [HideInInspector]
     public Transform lookTransform;
@@ -19,15 +21,13 @@ public class AloyBT : BehaviorTree.Tree
 
     void InitData()
     {
-        UnityEngine.Random.InitState(DefineNumber.RandomInitNum);
         animator = GetComponent<Animator>();
-        if (animator == null) ErrorManager.SaveErrorData(ErrorCode.AloyBT_animator_NULL);
         actionNodeMaker = GetComponent<ActionNodeMaker>();
-        if (actionNodeMaker == null) ErrorManager.SaveErrorData(ErrorCode.AloyBT_abilityMaker_NULL);
         aimingTrasform = actionNodeMaker.actionObjectTransforms[(int)ActionObjectName.AimingTransform];
-        if(aimingTrasform == null) ErrorManager.SaveErrorData(ErrorCode.AloyBT_aimingTrasform_NULL);
-        for (int i = 0; i < characterActions.Count; i++)
-            actions.Add(actionNodeMaker.MakeActionNode(characterActions[i]));      
+        NullCheck();
+        actions.Add(actionNodeMaker.MakeActionNode(characterMoveAction));
+        for (int i = 0; i < characterSkills.Count; i++)
+            actions.Add(actionNodeMaker.MakeActionNode(characterSkills[i]));      
     }
     protected override Node SetupTree()
     {
@@ -51,11 +51,19 @@ public class AloyBT : BehaviorTree.Tree
         return root;
     }
 
+    // null 발생시 ErrorMessage 저장
+    void NullCheck()
+    {
+        if (animator == null)           ErrorManager.SaveErrorData(ErrorCode.AloyBT_animator_NULL);
+        if (actionNodeMaker == null)    ErrorManager.SaveErrorData(ErrorCode.AloyBT_abilityMaker_NULL);
+        if (aimingTrasform == null)     ErrorManager.SaveErrorData(ErrorCode.AloyBT_aimingTrasform_NULL);
+    }
+
     void ErrorCheck()
     {
         try
         {
-            // 에러가 발생했는지 확인
+            // 에러 발생 확인
             if (ErrorManager.isErrorOccur) 
                 throw new Exception("에러 발생 시간 : " + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss"));
         }
@@ -66,12 +74,6 @@ public class AloyBT : BehaviorTree.Tree
             ErrorManager.SaveErrorData(e.Message);
             Application.Quit();
         }
-    }
-
-    protected override void Update()
-    {
-        base.Update();
-        ShowNodeState();
     }
 
     IEnumerator CoolTimer()
@@ -102,9 +104,26 @@ public class AloyBT : BehaviorTree.Tree
         aimingTrasform.LookAt(lookPosition);
     }
 
-    // 현재 어떤 Node에 있는지 확인
-    void ShowNodeState()
+    //private void OnGUI()
+    //{
+    //    GUI.Box(new Rect(0, 375, 150, 25), "<color=magenta>" + "AI Status" + "</color>");
+    //    GUI.Box(new Rect(0, 400, 150, 25), "<color=orange>" + ((ActionNode)root.GetData(NodeData.NodeStatus)).actionName + "</color>");
+    //}
+
+    private void OnGUI()
     {
-        Debug.Log("<color=orange>" + root.GetData(NodeData.NodeStatus).nodeType + "</color>");
+        GUI.Box(new Rect(0, 375, 150, 25), "<color=magenta>" + "AI Status" + "</color>");
+
+        if (root.GetData(NodeData.FixNode) != null)
+            GUI.Box(new Rect(0, 400, 150, 25), "<color=orange>" + ((ActionNode)root.GetData(NodeData.NodeStatus)).actionName + "</color>");
+        else
+        {
+            if (lookTransform !=null)
+                GUI.Box(new Rect(0, 400, 150, 25), "<color=orange>" + "NormalArrowAttack" + "</color>");
+            else
+                GUI.Box(new Rect(0, 400, 150, 25), "<color=orange>" + ((ActionNode)root.GetData(NodeData.NodeStatus)).actionName + "</color>");
+
+        }
     }
+
 }

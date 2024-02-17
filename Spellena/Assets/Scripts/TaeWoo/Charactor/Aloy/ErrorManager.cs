@@ -41,7 +41,7 @@ public class ErrorManager
 
     private static string MakeErrorSentence(ErrorCode errorCode)
     {
-        return "ERROR CODE " + (int)errorCode + " : " + errorCode;
+        return "ERROR CODE " + (int)errorCode + " : " + errorCode.ToString();
     }
 
 }

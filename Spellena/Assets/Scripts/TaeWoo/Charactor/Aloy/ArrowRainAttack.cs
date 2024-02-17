@@ -26,7 +26,7 @@ public class ArrowRainAttack : ActionNode
     private float rotateSpeed;
 
     public ArrowRainAttack(BehaviorTree.Tree tree, List<Transform> actionObjectTransforms, ScriptableObject data)
-        : base(tree, NodeType.Action, ((SkillData)data).coolTime)
+        : base(tree, ActionName.ArrowRainAttack, ((SkillData)data).coolTime)
 
     {
         playerTransform = actionObjectTransforms[(int)ActionObjectName.CharacterTransform];
@@ -47,7 +47,8 @@ public class ArrowRainAttack : ActionNode
         if (((AloyBT)tree).lookTransform != null)
         {
             Attack();
-            SetDataToRoot(NodeData.NodeStatus, this);
+            if (GetData(NodeData.FixNode) == this)
+                SetDataToRoot(NodeData.NodeStatus, this);
             return NodeState.Running;
         }
 

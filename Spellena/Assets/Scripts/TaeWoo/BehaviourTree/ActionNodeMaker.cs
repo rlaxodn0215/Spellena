@@ -4,8 +4,11 @@ using BehaviorTree;
 using DefineDatas;
 public class ActionNodeMaker : MonoBehaviour
 {
+    //Action 제작을 위해 필요한 오브젝트들
     public List<Transform> actionObjectTransforms;
+    // 각 Action Data의 ScriptableObject
     public List<ScriptableObject> datas;
+
     private BehaviorTree.Tree tree;
     private void Awake()
     {
