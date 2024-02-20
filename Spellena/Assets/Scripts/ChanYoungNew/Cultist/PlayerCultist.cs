@@ -19,27 +19,27 @@ public class PlayerCultist : PlayerCommon
     {
         for(int i = 0; i < skillDatas.Count; i++)
         {
-            skillDatas[i].statesRoute.Add(SkillData.State.None);
-            skillDatas[i].statesRoute.Add(SkillData.State.Casting);
+            skillDatas[i].route.Add(SkillData.State.None);
+            skillDatas[i].route.Add(SkillData.State.Casting);
         }
 
         //스킬 1
-        skillDatas[0].statesRoute.Add(SkillData.State.Channeling);
+        skillDatas[0].route.Add(SkillData.State.Channeling);
         //스킬 2
-        skillDatas[1].statesRoute.Add(SkillData.State.Channeling);
+        skillDatas[1].route.Add(SkillData.State.Channeling);
         //스킬 3
-        skillDatas[2].statesRoute.Add(SkillData.State.Channeling);
+        skillDatas[2].route.Add(SkillData.State.Channeling);
 
         for(int i = 0; i < plainDatas.Count; i++)
         {
-            plainDatas[i].statesRoute.Add(SkillData.State.None);
+            plainDatas[i].route.Add(SkillData.State.None);
         }
-        plainDatas[0].statesRoute.Add(SkillData.State.Casting);
+        plainDatas[0].route.Add(SkillData.State.Casting);
 
-        plainDatas[1].statesRoute.Add(SkillData.State.Holding);
-        plainDatas[1].statesRoute.Add(SkillData.State.Channeling);
+        plainDatas[1].route.Add(SkillData.State.Holding);
+        plainDatas[1].route.Add(SkillData.State.Channeling);
 
-        plainDatas[2].statesRoute.Add(SkillData.State.Casting);
+        plainDatas[2].route.Add(SkillData.State.Casting);
 
 
         skill3CastingEffect = unique.transform.GetChild(0).GetChild(0).GetComponent<ParticleSystem>();
@@ -75,9 +75,10 @@ public class PlayerCultist : PlayerCommon
         }
     }
 
+    /*
     protected override void PlayNormalSkillLogic(int index)
     {
-        if (skillDatas[index].statesRoute[skillDatas[index].routeIndex] == SkillData.State.Casting)
+        if (skillDatas[index].route[skillDatas[index].routeIndex] == SkillData.State.Casting)
         {
             ResetPlain();
             skillDatas[index].progressTime = playerData.skillCastingTime[index];
@@ -88,24 +89,26 @@ public class PlayerCultist : PlayerCommon
             if(photonView.IsMine)
                 photonView.RPC("NotifyUseSkill", RpcTarget.Others, (int)CallType.Skill, index, skillDatas[index].routeIndex);
         }
-        else if (skillDatas[index].statesRoute[skillDatas[index].routeIndex] == SkillData.State.Channeling)
+        else if (skillDatas[index].route[skillDatas[index].routeIndex] == SkillData.State.Channeling)
         {
             ResetPlain();
             skillDatas[index].progressTime = playerData.skillChannelingTime[index];
             PlayLogic(CallType.Skill, SkillData.State.Channeling, index);
         }
-        else if (skillDatas[index].statesRoute[skillDatas[index].routeIndex] == SkillData.State.None)
+        else if (skillDatas[index].route[skillDatas[index].routeIndex] == SkillData.State.None)
         {
             PlayLogic(CallType.Skill, SkillData.State.None, index);
             skillDatas[index].coolDownTime = playerData.skillCoolDownTime[index];
         }
     }
+    */
 
+    /*
     protected override void PlayNormalPlainLogic(int index)
     {
         Debug.Log(plainDatas[index].routeIndex);
-        Debug.Log(plainDatas[index].statesRoute[plainDatas[index].routeIndex]);
-        if (plainDatas[index].statesRoute[plainDatas[index].routeIndex] == SkillData.State.Casting)
+        Debug.Log(plainDatas[index].route[plainDatas[index].routeIndex]);
+        if (plainDatas[index].route[plainDatas[index].routeIndex] == SkillData.State.Casting)
         {
             plainDatas[index].progressTime = playerData.plainCastingTime[index];
             PlayLogic(CallType.Plain, SkillData.State.Casting, index);
@@ -114,7 +117,7 @@ public class PlayerCultist : PlayerCommon
             if (photonView.IsMine)
                 photonView.RPC("NotifyUseSkill", RpcTarget.Others, (int)CallType.Plain, index, plainDatas[index].routeIndex);
         }
-        else if (plainDatas[index].statesRoute[plainDatas[index].routeIndex] == SkillData.State.Holding)
+        else if (plainDatas[index].route[plainDatas[index].routeIndex] == SkillData.State.Holding)
         {
 
             plainDatas[index].progressTime = playerData.plainCastingTime[index];
@@ -124,7 +127,7 @@ public class PlayerCultist : PlayerCommon
             if (photonView.IsMine)
                 photonView.RPC("NotifyUseSkill", RpcTarget.Others, (int)CallType.Plain, index, plainDatas[index].routeIndex);
         }
-        else if (plainDatas[index].statesRoute[plainDatas[index].routeIndex] == SkillData.State.Channeling)
+        else if (plainDatas[index].route[plainDatas[index].routeIndex] == SkillData.State.Channeling)
         {
             if (photonView.IsMine && plainDatas[index].progressTime > 0f)
                 photonView.RPC("NotifyUseSkill", RpcTarget.Others, (int)CallType.Plain, index, plainDatas[index].routeIndex);
@@ -133,12 +136,13 @@ public class PlayerCultist : PlayerCommon
             PlayLogic(CallType.Plain, SkillData.State.Channeling, index);
             CallPlayAnimation(AnimationChangeType.Change, CallType.Plain, index);
         }
-        else if (plainDatas[index].statesRoute[plainDatas[index].routeIndex] == SkillData.State.None)
+        else if (plainDatas[index].route[plainDatas[index].routeIndex] == SkillData.State.None)
         {
             if(index == 1 || index == 2)
                 ResetPlain();
         }
     }
+    */
 
 
 

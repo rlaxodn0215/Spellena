@@ -15,6 +15,8 @@ public class PlayerElementalOrder : PlayerCommon
     public GameObject rightOverlayOrbs;
     public GameObject leftOverlayOrbs;
 
+    object[] instantiateData = new object[2];
+
 
     protected override void InitUniqueComponents()
     {
@@ -23,10 +25,16 @@ public class PlayerElementalOrder : PlayerCommon
 
         for(int i = 0; i < skillDatas.Count; i++)
         {
-            skillDatas[i].statesRoute.Add(SkillData.State.None);
-            skillDatas[i].statesRoute.Add(SkillData.State.Unique);
-            skillDatas[i].statesRoute.Add(SkillData.State.Casting);
+            skillDatas[i].route.Add(SkillData.State.None);
+            skillDatas[i].route.Add(SkillData.State.Unique);
+            skillDatas[i].route.Add(SkillData.State.Casting);
+
+            skillDatas[i].networkRoute.Add(SkillData.State.None);
+            skillDatas[i].networkRoute.Add(SkillData.State.Casting);
         }
+
+        instantiateData[0] = photonView.ViewID;
+        instantiateData[1] = tag;
     }
 
     protected override void Update()
@@ -47,6 +55,7 @@ public class PlayerElementalOrder : PlayerCommon
             //스킬 진행 중에는 다른 기능 사용 불가
             if (IsProgressing())
                 return;
+
             int _unique = CheckUniqueState();
             if(_unique == 3 || _unique == 5)
             {
@@ -58,7 +67,10 @@ public class PlayerElementalOrder : PlayerCommon
             if (_index >= 0)
             {
                 if (skillDatas[_index].isReady)
+                {
                     ChangeNextRoot(CallType.Skill, _index);
+                    //photonView.RPC("CallChange", RpcTarget.Others);
+                }
             }
         }
     }
@@ -95,7 +107,7 @@ public class PlayerElementalOrder : PlayerCommon
     {
         for(int i = 0; i < skillDatas.Count; i++)
         {
-            if (skillDatas[i].statesRoute[skillDatas[i].routeIndex] == SkillData.State.Unique)
+            if (skillDatas[i].route[skillDatas[i].routeIndex] == SkillData.State.Unique)
                 return i;
         }
         return -1;
@@ -148,23 +160,60 @@ public class PlayerElementalOrder : PlayerCommon
     }
 
     //이 함수 실행 후 리스너가 변경됨
-    protected override void PlayNormalSkillLogic(int index)
+    protected override void PlaySkillLogic(int index)
     {
-        if (skillDatas[index].statesRoute[skillDatas[index].routeIndex] == SkillData.State.Unique)
+        if (photonView.IsMine)
+        {
+            if (skillDatas[index].route[skillDatas[index].routeIndex] == SkillData.State.Unique)
+            {
+                if (index == 0 || index == 1 || index == 2 || index == 4)
+                    SetCastingAura(index, true);
+                else if (index == 3 || index == 5)
+                    SetPointStrike(true);
+            }
+            else if (skillDatas[index].route[skillDatas[index].routeIndex] == SkillData.State.Casting)
+            {
+                skillDatas[index].isReady = false;
+                skillDatas[index].isLocalReady = false;
+                skillDatas[index].progressTime = playerData.skillCastingTime[index];
+            }
+        }
+        else
+        {
+
+        }
+    }
+
+    protected override void PlayPlainLogic(int index)
+    {
+        if (photonView.IsMine)
+        {
+
+        }
+        else
+        {
+
+        }
+    }
+
+    /*
+    protected override void PlaySkillLogic(int index)
+    {
+        if (skillDatas[index].route[skillDatas[index].routeIndex] == SkillData.State.Unique)
         {
             if (index == 0 || index == 1 || index == 2 || index == 4)
                 SetCastingAura(index, true);
             else if (index == 3 || index == 5)
                 SetPointStrike(true);
         }
-        else if (skillDatas[index].statesRoute[skillDatas[index].routeIndex] == SkillData.State.Casting)
+        else if (skillDatas[index].route[skillDatas[index].routeIndex] == SkillData.State.Casting)
         {
             skillDatas[index].isReady = false;
             skillDatas[index].isLocalReady = false;
             skillDatas[index].progressTime = playerData.skillCastingTime[index];
 
             //스킬 로직 실행 -> 자신의 클라이언트는 정상적으로 다음 상태로 이동하는 것이기 때문에 강제적으로 이동한 것이 아님
-            PlayLogic(CallType.Skill, skillDatas[index].statesRoute[skillDatas[index].routeIndex], index);
+            PlayLogic(CallType.Skill, skillDatas[index].route[skillDatas[index].routeIndex], index);
             CallPlayAnimation(AnimationChangeType.Invoke, CallType.Skill, index);
 
             SetCastingAura(index, false);
@@ -178,12 +227,15 @@ public class PlayerElementalOrder : PlayerCommon
                 photonView.RPC("SyncCommandEffect", RpcTarget.All, commands.ToArray());
             }
         }
-        else if (skillDatas[index].statesRoute[skillDatas[index].routeIndex] == SkillData.State.None)
+        else if (skillDatas[index].route[skillDatas[index].routeIndex] == SkillData.State.None)
         {
             skillDatas[index].coolDownTime = playerData.skillCoolDownTime[index];
         }
     }
+    */
+    
 
+    /*
     protected override void PlayForceSkillLogic(int index)
     {
         if (photonView.IsMine)
@@ -193,7 +245,7 @@ public class PlayerElementalOrder : PlayerCommon
         }
         else//다른 클라이언트에서 변경될 때
         {
-            if (skillDatas[index].statesRoute[skillDatas[index].routeIndex] == SkillData.State.Casting)
+            if (skillDatas[index].route[skillDatas[index].routeIndex] == SkillData.State.Casting)
             {
                 skillDatas[index].progressTime = playerData.skillCastingTime[index];
                 if(PhotonNetwork.IsMasterClient)
@@ -201,6 +253,7 @@ public class PlayerElementalOrder : PlayerCommon
             }
         }
     }
+    */
 
     protected override void PlayLogic(CallType callType, SkillData.State state, int index)
     {
@@ -244,6 +297,9 @@ public class PlayerElementalOrder : PlayerCommon
         isCameraLocked = IsOn;
     }
 
+
+    /*
+    */
     private void SetCastingAura(int index, bool IsOn)
     {
         castingAura.SetActive(IsOn);
@@ -271,6 +327,10 @@ public class PlayerElementalOrder : PlayerCommon
         }
     }
 
+
+    /*
+    기능 : 스킬 시전 범위 위치를 실시간으로 확인하는 기능
+    */
     private void SetCastingAuraPos()
     {
         Ray _ray = new Ray();
@@ -290,63 +350,43 @@ public class PlayerElementalOrder : PlayerCommon
     private void PlaySkillLogic1()
     {
         //MeteorStrike, 1, 1
-        object[] _temp = new object[2];
-        _temp[0] = photonView.ViewID;
-        _temp[1] = tag;
         PhotonNetwork.Instantiate("ChanYoungNew/ElementalOrder/ElementalOrderSkill1", castingAura.transform.position,
-            Quaternion.identity, data: _temp);
+            Quaternion.identity, data: instantiateData);
     }
 
     private void PlaySkillLogic2()
     {
-        object[] _temp = new object[2];
-        _temp[0] = photonView.ViewID;
-        _temp[1] = tag;
         PhotonNetwork.Instantiate("ChanYoungNew/ElementalOrder/ElementalOrderSkill2", castingAura.transform.position,
-        Quaternion.identity, data: _temp);
+        Quaternion.identity, data: instantiateData);
         //RagnaEdge 1, 2
     }
 
     private void PlaySkillLogic3()
     {
         //BurstFlare 1, 3
-        object[] _temp = new object[2];
-        _temp[0] = photonView.ViewID;
-        _temp[1] = tag;
-
         PhotonNetwork.Instantiate("ChanYoungNew/ElementalOrder/ElementalOrderSkill3", castingAura.transform.position,
-        transform.rotation, data: _temp);
+        transform.rotation, data: instantiateData);
     }
 
     private void PlaySkillLogic4()
     {
         //GaiaTied 2, 2
-        object[] _temp = new object[2];
-        _temp[0] = photonView.ViewID;
-        _temp[1] = tag;
-
         PhotonNetwork.Instantiate("ChanYoungNew/ElementalOrder/ElementalOrderSkill4", pointStrike,
-        Quaternion.identity, data: _temp);
+        Quaternion.identity, data: instantiateData);
     }
 
     private void PlaySkillLogic5()
     {
         //TerraBreak 2, 3
-        object[] _temp = new object[2];
-        _temp[0] = photonView.ViewID;
-        _temp[1] = tag;
         PhotonNetwork.Instantiate("ChanYoungNew/ElementalOrder/ElementalOrderSkill5", castingAura.transform.position,
-            transform.rotation, data: _temp);
+            transform.rotation, data: instantiateData);
     }
 
     private void PlaySkillLogic6()
     {
         //Eterial Storm 3, 3
-        object[] _temp = new object[2];
-        _temp[0] = photonView.ViewID;
-        _temp[1] = tag;
         PhotonNetwork.Instantiate("ChanYoungNew/ElementalOrder/ElementalOrderSkill6", pointStrike,
-            Quaternion.identity, data: _temp);
+            Quaternion.identity, data: instantiateData);
     }
 
 
