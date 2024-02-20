@@ -1,18 +1,11 @@
 using UnityEngine;
+using System.Collections.Generic;
 using UnityEngine.AI;
 using BehaviorTree;
 using Managers;
 using DefineDatas;
-public class NormalArrowAttack : AbilityNode
+public class NormalArrowAttack : ActionNode
 {
-    enum AvoidWay
-    {
-        Forward         =   0x0001,
-        Back            =   0x0010,
-        Left            =   0x0100,
-        Right           =   0x1000,
-    }
-
     private uint checkAvoidWay = 0x0000;
     private Animator bowAnimator;
     private GameObject arrowAniObj;
@@ -28,32 +21,33 @@ public class NormalArrowAttack : AbilityNode
     private Vector3 avoidDir = Vector3.zero;
     private Ray ray = new Ray();
 
-    public NormalArrowAttack(BehaviorTree.Tree tree, AbilityMaker abilityMaker, float coolTime) : base(tree,NodeName.Skill_1, coolTime)
+    public NormalArrowAttack(BehaviorTree.Tree tree, List<Transform> actionObjectTransforms, ScriptableObject data)
+        : base(tree, ActionName.NormalArrowAttack, ((SkillData)data).coolTime)
     {
-        playerTransform = abilityMaker.abilityObjectTransforms[(int)AbilityMaker.AbilityObjectName.CharacterTransform];
-        if (playerTransform == null) ErrorDataMaker.SaveErrorData(ErrorCode.NormalArrowAttack_playerTransform_NULL);
+        playerTransform = actionObjectTransforms[(int)ActionObjectName.CharacterTransform];
+        if (playerTransform == null) ErrorManager.SaveErrorData(ErrorCode.NormalArrowAttack_playerTransform_NULL);
 
-        attackTransform = abilityMaker.abilityObjectTransforms[(int)AbilityMaker.AbilityObjectName.AimingTransform].GetChild(0);
-        if (attackTransform == null) ErrorDataMaker.SaveErrorData(ErrorCode.NormalArrowAttack_attackTransform_NULL);
+        attackTransform = actionObjectTransforms[(int)ActionObjectName.AimingTransform].GetChild(0);
+        if (attackTransform == null) ErrorManager.SaveErrorData(ErrorCode.NormalArrowAttack_attackTransform_NULL);
 
-        bowAnimator = abilityMaker.abilityObjectTransforms[(int)AbilityMaker.AbilityObjectName.BowAniObject].GetComponent<Animator>();
-        if (bowAnimator == null) ErrorDataMaker.SaveErrorData(ErrorCode.NormalArrowAttack_bowAnimator_NULL);
+        bowAnimator = actionObjectTransforms[(int)ActionObjectName.BowAniObject].GetComponent<Animator>();
+        if (bowAnimator == null) ErrorManager.SaveErrorData(ErrorCode.NormalArrowAttack_bowAnimator_NULL);
 
-        arrowAniObj = abilityMaker.abilityObjectTransforms[(int)AbilityMaker.AbilityObjectName.ArrowAniObject].gameObject;
-        if (arrowAniObj == null) ErrorDataMaker.SaveErrorData(ErrorCode.NormalArrowAttack_arrowAniObj_NULL);
+        arrowAniObj = actionObjectTransforms[(int)ActionObjectName.ArrowAniObject].gameObject;
+        if (arrowAniObj == null) ErrorManager.SaveErrorData(ErrorCode.NormalArrowAttack_arrowAniObj_NULL);
 
         agent = playerTransform.GetComponent<NavMeshAgent>();
-        if (agent == null) ErrorDataMaker.SaveErrorData(ErrorCode.NormalArrowAttack_agent_NULL);
+        if (agent == null) ErrorManager.SaveErrorData(ErrorCode.NormalArrowAttack_agent_NULL);
 
         animator = playerTransform.GetComponent<Animator>();
-        if (animator == null) ErrorDataMaker.SaveErrorData(ErrorCode.NormalArrowAttack_animator_NULL);
+        if (animator == null) ErrorManager.SaveErrorData(ErrorCode.NormalArrowAttack_animator_NULL);
 
-        avoidSpeed = abilityMaker.data.avoidSpeed;
-        avoidTiming = abilityMaker.data.avoidTiming;
-        rotateSpeed = abilityMaker.data.rotateSpeed;
+        avoidSpeed = ((SkillData)data).avoidSpeed;
+        avoidTiming = ((SkillData)data).avoidTiming;
+        rotateSpeed = ((SkillData)data).rotateSpeed;
 
         avoidTimer = new CoolTimer(avoidTiming);
-        if (avoidTimer == null) ErrorDataMaker.SaveErrorData(ErrorCode.NormalArrowAttack_avoidTimer_NULL);
+        if (avoidTimer == null) ErrorManager.SaveErrorData(ErrorCode.NormalArrowAttack_avoidTimer_NULL);
     }
     public override NodeState Evaluate()
     {
@@ -61,7 +55,7 @@ public class NormalArrowAttack : AbilityNode
         {
             Avoiding();
             Attack();
-            SetDataToRoot(DataContext.NodeStatus, this);
+            SetDataToRoot(NodeData.NodeStatus, this);
             return NodeState.Running;
         }
         else
@@ -147,24 +141,23 @@ public class NormalArrowAttack : AbilityNode
         Vector3 targetDir = (((AloyBT)tree).lookTransform.position - playerTransform.position).normalized;
         targetDir.y = 0;
         playerTransform.forward = Vector3.Lerp(playerTransform.forward, targetDir, rotateSpeed * Time.deltaTime);
-        bool isDrawing;
+        //bool isDrawing;
         if (coolTimer.IsCoolTimeFinish() && 
-            animator.GetCurrentAnimatorStateInfo(PlayerAniLayerIndex.AttackLayer).IsName(PlayerAniState.Aim) &&
+            animator.GetCurrentAnimatorStateInfo((int)PlayerAniLayerIndex.AttackLayer).IsName(PlayerAniState.Aim) &&
             Mathf.Acos(Vector3.Dot(playerTransform.forward, targetDir)) * Mathf.Rad2Deg <= DefineNumber.AttackAngleDifference)
         {
             coolTimer.ChangeCoolTime(DefineNumber.ZeroCount);
             Debug.Log("AloyBasicAttack to " + "<color=magenta>"+ ((AloyBT)tree).lookTransform.name + "</color>");
             bowAnimator.SetBool(PlayerAniState.Shoot, true);
             animator.SetBool(PlayerAniState.Shoot, true);
-            PoolManager.Instance.GetObject(PoolObjectName.Arrow, attackTransform.position, attackTransform.rotation);
-            isDrawing = !bowAnimator.GetCurrentAnimatorStateInfo(PlayerAniLayerIndex.BaseLayer).IsName(PlayerAniState.Shoot);
+            PoolManager.Instance.GetObject(CharacterName.Character_2, PoolObjectName.Arrow, attackTransform.position, attackTransform.rotation);
+            //isDrawing = !bowAnimator.GetCurrentAnimatorStateInfo((int)PlayerAniLayerIndex.BaseLayer).IsName(PlayerAniState.Shoot);
         }
         else
         {
             bowAnimator.SetBool(PlayerAniState.Shoot, false);
             animator.SetBool(PlayerAniState.Shoot, false);
-            isDrawing = bowAnimator.GetCurrentAnimatorStateInfo(PlayerAniLayerIndex.BaseLayer).IsName(PlayerAniState.Draw);
+            //isDrawing = bowAnimator.GetCurrentAnimatorStateInfo((int)PlayerAniLayerIndex.BaseLayer).IsName(PlayerAniState.Draw);
         }
-        arrowAniObj.SetActive(isDrawing);
     }
 }

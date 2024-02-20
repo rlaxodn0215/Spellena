@@ -5,7 +5,6 @@ namespace BehaviorTree
     public class Tree : MonoBehaviour
     {
         protected Node root = null;
-        public CharacterData data;
         protected virtual void Start()
         {
             root = SetupTree();

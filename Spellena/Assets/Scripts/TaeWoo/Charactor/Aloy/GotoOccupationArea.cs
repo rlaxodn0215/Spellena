@@ -4,7 +4,7 @@ using UnityEngine.AI;
 using BehaviorTree;
 using DefineDatas;
 
-public class GotoOccupationArea : AbilityNode
+public class GotoOccupationArea : ActionNode
 {
     private List<Transform> occupationPoints = new List<Transform>();
     private NavMeshAgent agent;
@@ -12,29 +12,29 @@ public class GotoOccupationArea : AbilityNode
     private GameObject arrowAniObj;
     private int randomIndex = 0;
 
-    public GotoOccupationArea(BehaviorTree.Tree tree, AbilityMaker abilityMaker, float coolTime)
-        : base(tree, NodeName.Function_1, coolTime)
+    public GotoOccupationArea(BehaviorTree.Tree tree, List<Transform> actionObjectTransforms, ScriptableObject data)
+        : base(tree, ActionName.GotoOccupationArea)
     {
-        arrowAniObj = abilityMaker.abilityObjectTransforms[(int)AbilityMaker.AbilityObjectName.ArrowAniObject].gameObject;
-        if (arrowAniObj == null) ErrorDataMaker.SaveErrorData(ErrorCode.GotoOccupationArea_arrowAniObj_NULL);
+        arrowAniObj = actionObjectTransforms[(int)ActionObjectName.ArrowAniObject].gameObject;
+        if (arrowAniObj == null) ErrorManager.SaveErrorData(ErrorCode.GotoOccupationArea_arrowAniObj_NULL);
 
-        agent = abilityMaker.abilityObjectTransforms[(int)AbilityMaker.AbilityObjectName.CharacterTransform].GetComponent<NavMeshAgent>();
-        if (agent == null) ErrorDataMaker.SaveErrorData(ErrorCode.GotoOccupationArea_agent_NULL);
+        agent = actionObjectTransforms[(int)ActionObjectName.CharacterTransform].GetComponent<NavMeshAgent>();
+        if (agent == null) ErrorManager.SaveErrorData(ErrorCode.GotoOccupationArea_agent_NULL);
 
-        animator = abilityMaker.abilityObjectTransforms[(int)AbilityMaker.AbilityObjectName.CharacterTransform].GetComponent<Animator>();
-        if (animator == null) ErrorDataMaker.SaveErrorData(ErrorCode.GotoOccupationArea_animator_NULL);
+        animator = actionObjectTransforms[(int)ActionObjectName.CharacterTransform].GetComponent<Animator>();
+        if (animator == null) ErrorManager.SaveErrorData(ErrorCode.GotoOccupationArea_animator_NULL);
 
-        agent.speed = abilityMaker.data.moveSpeed;
-        agent.angularSpeed = abilityMaker.data.rotateSpeed;
+        agent.speed = ((GotoOccupationAreaData)data).moveSpeed;
+        agent.angularSpeed = ((GotoOccupationAreaData)data).rotateSpeed;
 
-        for(int i = 0; i < abilityMaker.abilityObjectTransforms[(int)AbilityMaker.AbilityObjectName.OccupationPoint].childCount; i++)
+        for(int i = 0; i < actionObjectTransforms[(int)ActionObjectName.OccupationPoint].childCount; i++)
         {
-            occupationPoints.Add(abilityMaker.abilityObjectTransforms[(int)AbilityMaker.AbilityObjectName.OccupationPoint].GetChild(i));
+            occupationPoints.Add(actionObjectTransforms[(int)ActionObjectName.OccupationPoint].GetChild(i));
         }
     }
     public override NodeState Evaluate()
     {
-        SetDataToRoot(DataContext.NodeStatus, this);
+        SetDataToRoot(NodeData.NodeStatus, this);
         RandomOccupationPosition();
         animator.SetBool(PlayerAniState.Move, true);
         arrowAniObj.SetActive(false);
@@ -42,7 +42,6 @@ public class GotoOccupationArea : AbilityNode
         state = NodeState.Running;
         return state;
     }
-
     private void RandomOccupationPosition()
     {       
         if (agent.remainingDistance <= agent.stoppingDistance)

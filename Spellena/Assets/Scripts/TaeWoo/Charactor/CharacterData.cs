@@ -8,6 +8,9 @@ public class CharacterData : ScriptableObject
     public int Hp;
     public float moveSpeed;
     public float jumpHeight;
+    public float avoidSpeed;
+    public float avoidTiming;
+    public float rotateSpeed;
 
     public float basicAttackTime;
 

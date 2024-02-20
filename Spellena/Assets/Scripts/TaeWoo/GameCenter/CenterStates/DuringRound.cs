@@ -161,9 +161,18 @@ namespace GameCenterTest0
 
                         else
                         {
-                            gameCenter.inGameUIView.RPC("ShowKillLog", RpcTarget.AllBuffered, (string)targetPlayer.CustomProperties["KillerName"],
-                                 targetPlayer.CustomProperties["Name"], ((string)targetPlayer.CustomProperties["Team"] == "A"),
-                                 GameCenterTest.FindPlayerWithCustomProperty("Name", (string)targetPlayer.CustomProperties["KillerName"]).ActorNumber);
+                            Photon.Realtime.Player ply = GameCenterTest.FindPlayerWithCustomProperty("Name", (string)targetPlayer.CustomProperties["KillerName"]);
+                            if (ply == null)
+                            {
+                                gameCenter.inGameUIView.RPC("ShowKillLog", RpcTarget.AllBuffered, (string)targetPlayer.CustomProperties["KillerName"],
+                                    (string)targetPlayer.CustomProperties["Name"], ((string)targetPlayer.CustomProperties["Team"] == "A"), -2);
+                            }
+
+                            else
+                            {
+                                gameCenter.inGameUIView.RPC("ShowKillLog", RpcTarget.AllBuffered, (string)targetPlayer.CustomProperties["KillerName"],
+                                    (string)targetPlayer.CustomProperties["Name"], ((string)targetPlayer.CustomProperties["Team"] == "A"), ply.ActorNumber);
+                            }
                         }
 
                         ShowTeamMateDead((string)targetPlayer.CustomProperties["Team"], (string)targetPlayer.CustomProperties["Name"]);

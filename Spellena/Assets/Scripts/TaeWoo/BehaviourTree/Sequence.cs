@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using DefineDatas;
 
 namespace BehaviorTree
 {
@@ -6,7 +7,7 @@ namespace BehaviorTree
     public class Sequence : Node
     {
         public Sequence() : base() { }
-        public Sequence(Tree tree, NodeName name, List<Node> children) : base(tree, name, children) { }
+        public Sequence(Tree tree, List<Node> children) : base(tree, NodeType.Sequence, children) { }
 
         public override NodeState Evaluate()
         {

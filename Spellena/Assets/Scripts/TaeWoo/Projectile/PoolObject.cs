@@ -1,4 +1,5 @@
 using UnityEngine;
+using DefineDatas;
 
 namespace Managers
 {
@@ -7,9 +8,11 @@ namespace Managers
         public delegate void Callback_Disapear(PoolObjectName name, int id);
         Callback_Disapear onDisapear;
 
-        public int ObjID { get; private set; }
         [HideInInspector]
         public bool isUsed;
+        [HideInInspector]
+        public string userName;
+        public int ObjID { get; private set; }
         protected PoolObjectName objectName;
         protected Transform objTrans;
 

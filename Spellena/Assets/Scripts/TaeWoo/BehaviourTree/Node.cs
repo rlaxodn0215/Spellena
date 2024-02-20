@@ -1,56 +1,28 @@
 using System.Collections.Generic;
+using DefineDatas;
 
 namespace BehaviorTree
 {
-    public enum NodeState
-    {
-        Running,
-        Success,
-        Failure
-    }
-
-    public enum NodeName
-    {
-        NONE,
-        Sequence,
-        Selector,
-        Parallel,
-        Condition_1,
-        Function_1,
-        Skill_1,
-        Skill_2,
-        Skill_3,
-        Skill_4
-    }
-
-    public enum DataContext
-    {
-        NodeStatus,
-        FixNode,
-    }
-
     public class Node
     {
         protected NodeState state;
-        public NodeName nodeName = NodeName.NONE;
+        public NodeType nodeType = NodeType.NONE;
 
         public Tree tree;
         public Node parent;
         protected List<Node> children = new List<Node>();
 
-        private Dictionary<DataContext, Node> dataContext 
-            = new Dictionary<DataContext, Node>();
+        private Dictionary<NodeData, Node> nodeData = new Dictionary<NodeData, Node>();
 
         public Node()
         {
             parent = null;
         }
 
-        public Node(Tree useTree, NodeName name, List<Node> children)
+        public Node(Tree useTree, NodeType type, List<Node> children)
         {
             tree = useTree;
-            nodeName = name;
-
+            nodeType = type;
             if(children != null)
             foreach (Node child in children)
                 Attach(child);
@@ -67,12 +39,14 @@ namespace BehaviorTree
             return NodeState.Failure;
         }
 
-        public void SetData(DataContext key, Node value)
+        // 해당 데이터를 현재 노드에 저장
+        public void SetData(NodeData key, Node value)
         {
-            dataContext[key] = value;
+            nodeData[key] = value;
         }
 
-        public void SetDataToRoot(DataContext key, Node value)
+        // 해당 데이터를 Root 노드에 저장
+        public void SetDataToRoot(NodeData key, Node value)
         {
             Node temp = parent;
             Node root = this;
@@ -83,13 +57,13 @@ namespace BehaviorTree
                 temp = temp.parent;
             }
 
-            root.dataContext[key] = value;
+            root.nodeData[key] = value;
         }
 
-        public Node GetData(DataContext key)
+        public Node GetData(NodeData key)
         {
             Node value = null;
-            if (dataContext.TryGetValue(key, out value))
+            if (nodeData.TryGetValue(key, out value))
                 return value;
 
             // 부모 노드에 해당 데이터가 있는지 확인
@@ -105,11 +79,11 @@ namespace BehaviorTree
             return null;
         }
 
-        public bool ClearData(DataContext key)
+        public bool ClearData(NodeData key)
         {
-            if (dataContext.ContainsKey(key))
+            if (nodeData.ContainsKey(key))
             {
-                dataContext.Remove(key);
+                nodeData.Remove(key);
                 return true;
             }
 

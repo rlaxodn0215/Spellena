@@ -81,6 +81,16 @@ public class DeathCamUI : MonoBehaviourPunCallbacks
             killerStat.text = "";
         }
 
+        else if(killerID == "Aloy")
+        {
+            ShowCharacterIcon(killerID);
+
+            killerCharacter.text = "처치자 : Aloy";
+            killerCharacter1.text = "내 영웅 처치 : Aloy";
+            killerName.text = killerName1.text = killerID;
+            killerStat.text = "";
+        }
+
         else
         {
             foreach (var player in PhotonNetwork.CurrentRoom.Players.Values)
@@ -127,6 +137,9 @@ public class DeathCamUI : MonoBehaviourPunCallbacks
                 break;
             case "Cultist":
                 killerIcon.sprite = characterIcons[4];
+                break;
+            case "Aloy":
+                killerIcon.sprite = characterIcons[5];
                 break;
             default:
                 break;

@@ -7,86 +7,83 @@ using System;
 public class AloyBT : BehaviorTree.Tree
 {
     // 캐릭터 스킬 설정
-    public List<AbilityMaker.SkillName> characterSkills;
-    // 캐릭터 기능 설정(ex.거점이동)
-    public List<AbilityMaker.FunctionName> characterFunctions;
+    public ActionName characterMoveAction;
+    // 캐릭터 스킬 설정
+    public List<ActionName> characterSkills;
 
     [HideInInspector]
     public Transform lookTransform;
-
     private Transform aimingTrasform;
-    private List<AbilityNode> skills = new List<AbilityNode>();
-    private Dictionary<AbilityMaker.FunctionName, AbilityNode> functions
-        = new Dictionary<AbilityMaker.FunctionName, AbilityNode>();
-    private AbilityMaker abilityMaker;
+    private Vector3 lookPosition;
+    private List<ActionNode> actions = new List<ActionNode>();
+    private ActionNodeMaker actionNodeMaker;
     private Animator animator;
 
     void InitData()
     {
-        UnityEngine.Random.InitState(DefineNumber.RandomInitNum);
         animator = GetComponent<Animator>();
-        if (animator == null) ErrorDataMaker.SaveErrorData(ErrorCode.AloyBT_animator_NULL);
-        abilityMaker = GetComponent<AbilityMaker>();
-        if (abilityMaker == null) ErrorDataMaker.SaveErrorData(ErrorCode.AloyBT_abilityMaker_NULL);
-        aimingTrasform = abilityMaker.abilityObjectTransforms[(int)AbilityMaker.AbilityObjectName.AimingTransform];
-        if(aimingTrasform == null) ErrorDataMaker.SaveErrorData(ErrorCode.AloyBT_aimingTrasform_NULL);
+        actionNodeMaker = GetComponent<ActionNodeMaker>();
+        aimingTrasform = actionNodeMaker.actionObjectTransforms[(int)ActionObjectName.AimingTransform];
+        NullCheck();
+        actions.Add(actionNodeMaker.MakeActionNode(characterMoveAction));
         for (int i = 0; i < characterSkills.Count; i++)
-            skills.Add(abilityMaker.MakeSkill(characterSkills[i]));      
-        for (int i = 0; i < characterFunctions.Count; i++)
-            functions[characterFunctions[i]] = abilityMaker.MakeFunction(characterFunctions[i]);
+            actions.Add(actionNodeMaker.MakeActionNode(characterSkills[i]));      
     }
     protected override Node SetupTree()
     {
         InitData();
-        Node root = new Selector(this, NodeName.Selector ,new List<Node>
+        Node root = new Selector(this, new List<Node>
         {
-            new EnemyDetector(this, EnemyDetector.EnemyDetectType.CheckEnemyInSight, 
-                new Parallel(this, NodeName.Parallel, MakeSkillNode()),abilityMaker),
-            functions[AbilityMaker.FunctionName.GotoOccupationArea]
+            new EnemyDetector(this,
+                new Parallel(this, new List<Node>
+                {
+                    actions[(int)ActionName.NormalArrowAttack],
+                    actions[(int)ActionName.BallArrowAttack],
+                    actions[(int)ActionName.ArrowRainAttack]
+                }),
+            actionNodeMaker.actionObjectTransforms),
+            actions[(int)ActionName.GotoOccupationArea]
         }
         );
-        root.SetDataToRoot(DataContext.NodeStatus, root);
+        root.SetDataToRoot(NodeData.NodeStatus, root);
         StartCoroutine(CoolTimer());
         ErrorCheck();
         return root;
     }
 
-    List<Node> MakeSkillNode()
+    // null 발생시 ErrorMessage 저장
+    void NullCheck()
     {
-        List<Node> temp = new List<Node>();
-        for (int i = 0; i < skills.Count; i++)
-            temp.Add(skills[i]);
-        return temp;
+        if (animator == null)           ErrorManager.SaveErrorData(ErrorCode.AloyBT_animator_NULL);
+        if (actionNodeMaker == null)    ErrorManager.SaveErrorData(ErrorCode.AloyBT_abilityMaker_NULL);
+        if (aimingTrasform == null)     ErrorManager.SaveErrorData(ErrorCode.AloyBT_aimingTrasform_NULL);
     }
+
     void ErrorCheck()
     {
         try
         {
-            if (ErrorDataMaker.isErrorOccur) 
+            // 에러 발생 확인
+            if (ErrorManager.isErrorOccur) 
                 throw new Exception("에러 발생 시간 : " + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss"));
         }
 
         catch (Exception e)
         {
-            ErrorDataMaker.SaveErrorData(e.Message);
+            // 에러 발생 시간 저장 후 게임 종료
+            ErrorManager.SaveErrorData(e.Message);
             Application.Quit();
         }
     }
-
-    //protected override void Update()
-    //{
-    //    base.Update();
-    //    ShowNodeState();
-    //}
 
     IEnumerator CoolTimer()
     {
         while (true)
         {
-            for (int i = 0; i < skills.Count; i++)
+            for (int i = 0; i < actions.Count; i++)
             {
-                if(skills[i].coolTimer !=null)
-                    skills[i].coolTimer.UpdateCoolTime(Time.deltaTime);
+                if(actions[i].coolTimer != null)
+                    actions[i].coolTimer.UpdateCoolTime(Time.deltaTime);
             }
 
             yield return null;
@@ -102,13 +99,31 @@ public class AloyBT : BehaviorTree.Tree
     {
         if (animator == null || lookTransform == null) return;      
         animator.SetLookAtWeight(PlayerLookAtWeight.weight, PlayerLookAtWeight.bodyWeight);
-        animator.SetLookAtPosition(lookTransform.position);
-        aimingTrasform.LookAt(lookTransform.position);
+        lookPosition = lookTransform.position + Offset.AimOffset;
+        animator.SetLookAtPosition(lookPosition);
+        aimingTrasform.LookAt(lookPosition);
     }
 
-    //// 현재 어떤 Node에 있는지 확인
-    //void ShowNodeState()
+    //private void OnGUI()
     //{
-    //    Debug.Log("<color=orange>" + root.GetData(DataContext.NodeStatus).nodeName + "</color>");
+    //    GUI.Box(new Rect(0, 375, 150, 25), "<color=magenta>" + "AI Status" + "</color>");
+    //    GUI.Box(new Rect(0, 400, 150, 25), "<color=orange>" + ((ActionNode)root.GetData(NodeData.NodeStatus)).actionName + "</color>");
     //}
+
+    private void OnGUI()
+    {
+        GUI.Box(new Rect(0, 375, 150, 25), "<color=magenta>" + "AI Status" + "</color>");
+
+        if (root.GetData(NodeData.FixNode) != null)
+            GUI.Box(new Rect(0, 400, 150, 25), "<color=orange>" + ((ActionNode)root.GetData(NodeData.NodeStatus)).actionName + "</color>");
+        else
+        {
+            if (lookTransform !=null)
+                GUI.Box(new Rect(0, 400, 150, 25), "<color=orange>" + "NormalArrowAttack" + "</color>");
+            else
+                GUI.Box(new Rect(0, 400, 150, 25), "<color=orange>" + ((ActionNode)root.GetData(NodeData.NodeStatus)).actionName + "</color>");
+
+        }
+    }
+
 }

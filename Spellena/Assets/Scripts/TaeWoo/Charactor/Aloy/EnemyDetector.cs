@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 using System;
 using BehaviorTree;
 using DefineDatas;
@@ -18,35 +19,25 @@ public class EnemyDetector: Condition
     private Ray ray;
     private RaycastHit hit;
 
-    public EnemyDetector(BehaviorTree.Tree tree, EnemyDetectType detectType, Node _TNode, AbilityMaker abilityMaker)
-        : base(tree,NodeName.Condition_1, null, _TNode)
+    public EnemyDetector(BehaviorTree.Tree tree, Node _TNode, List<Transform> actionObjectTransforms)
+        : base(tree, null, _TNode)
     {
-        condition += DefineDetectType(detectType);
-        if (condition == null) ErrorDataMaker.SaveErrorData(ErrorCode.EnemyDetector_condition_NULL);
+        condition += CheckEnemyInSight;
+        if (condition == null) ErrorManager.SaveErrorData(ErrorCode.EnemyDetector_condition_NULL);
 
-        playerTransform = abilityMaker.abilityObjectTransforms[(int)AbilityMaker.AbilityObjectName.CharacterTransform];
-        if (playerTransform == null) ErrorDataMaker.SaveErrorData(ErrorCode.EnemyDetector_playerTransform_NULL);
+        playerTransform = actionObjectTransforms[(int)ActionObjectName.CharacterTransform];
+        if (playerTransform == null) ErrorManager.SaveErrorData(ErrorCode.EnemyDetector_playerTransform_NULL);
 
-        bowAnimator = abilityMaker.abilityObjectTransforms[(int)AbilityMaker.AbilityObjectName.BowAniObject].GetComponent<Animator>();
-        if (bowAnimator == null) ErrorDataMaker.SaveErrorData(ErrorCode.EnemyDetector_bowAnimator_NULL);
+        bowAnimator = actionObjectTransforms[(int)ActionObjectName.BowAniObject].GetComponent<Animator>();
+        if (bowAnimator == null) ErrorManager.SaveErrorData(ErrorCode.EnemyDetector_bowAnimator_NULL);
 
         animator = playerTransform.GetComponent<Animator>();
-        if (animator == null) ErrorDataMaker.SaveErrorData(ErrorCode.EnemyDetector_animator_NULL);
+        if (animator == null) ErrorManager.SaveErrorData(ErrorCode.EnemyDetector_animator_NULL);
 
-        viewAngle = abilityMaker.data.sightAngle;
-        viewRadius = abilityMaker.data.sightDistance;
+        viewAngle = 120f;
+        viewRadius = 35;
         targetMask = LayerMask.GetMask(LayerMaskName.Player);
         ray = new Ray();
-    }
-    Func<bool> DefineDetectType(EnemyDetectType detectType)
-    {
-        switch(detectType)
-        {
-            case EnemyDetectType.CheckEnemyInSight:
-                return CheckEnemyInSight;
-        }
-
-        return null;
     }
 
     public bool CheckEnemyInSight()
@@ -76,7 +67,9 @@ public class EnemyDetector: Condition
                 {
                     if (hit.collider.gameObject.layer != LayerMask.NameToLayer(LayerMaskName.Wall))
                     {
-                        // 태그가 다른 적 구분
+                        //
+                        if (!player.gameObject.GetComponent<Player.Character>().isAlive) continue;
+                        //
                         Debug.DrawLine(SightPos, targetPos, Color.red);
                         if (((AloyBT)tree).lookTransform == null)
                         {
