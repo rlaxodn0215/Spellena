@@ -236,8 +236,6 @@ public class PlayerCultist : PlayerCommon
     {
         if (photonView.IsMine)
         {
-            Debug.Log("Å©¾Æ¾Ç");
-            //Èú
             Ray _ray = cameraMain.ScreenPointToRay(aim.transform.position);
             RaycastHit _hit;
             if (Physics.Raycast(_ray, out _hit, Mathf.Infinity, LayerMask.GetMask("Player") | layerMaskWall | layerMaskMap))

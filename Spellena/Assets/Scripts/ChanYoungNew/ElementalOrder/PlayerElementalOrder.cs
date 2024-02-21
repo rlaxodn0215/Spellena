@@ -276,8 +276,12 @@ public class PlayerElementalOrder : PlayerCommon
             }
         }
     }
-
-
+    
+    /*
+    기능 : 지점 타격 위치를 결정하는 기능
+    인자 ->
+    IsOn : 지점 타격 기능을 On할지 Off할지 결정하는 인자
+    */
     private void SetPointStrike(bool IsOn)
     {
         if (IsOn)
