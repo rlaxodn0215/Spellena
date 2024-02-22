@@ -1,49 +1,30 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
-using ListenerNodeData;
+using DataObserver;
 
 public class PlayerObserver : MonoBehaviour
 {
-    private List<ListenNode> listenNodes = new List<ListenNode>();
-    private List<ListenNode> listener = new List<ListenNode>();
-
-    private void Update()
+    private List<DataObserver<int>> dataObserversInt = new List<DataObserver<int>>();
+    private List<DataObserver<Vector2>> dataObserversVector2 = new List<DataObserver<Vector2>>();
+    public void RaiseDataObserver<T>(DataObserver<T> dataObserver)
     {
-        ListenState();
+        if (typeof(T) == typeof(int))
+            dataObserversInt.Add((DataObserver<int>)(object)dataObserver);
+        else if (typeof(T) == typeof(Vector2))
+            dataObserversVector2.Add((DataObserver<Vector2>)(object)dataObserver);
+        else
+            return;
+        dataObserver.NotifyDataChanged += Notify;
     }
 
-    private void ListenState()
+    private void Notify<T>(DataObserver<T> observer)
     {
-        for(int i = 0; i < listenNodes.Count; i++)
-        {
-            if (listenNodes[i].index != listener[i].index)
-            {
-                listenNodes[i].NotifyChange();//예시 : routeIndex가 변화하였을 때 호출
-                listener[i].index = listenNodes[i].index;
-            }
-        }
-    }
-    
-    public void RaiseListenNode(ListenNode listenNode)
-    {
-        ListenNode _listener = new ListenNode();
-
-        _listener.index = listenNode.index;
-
-        listenNodes.Add(listenNode);
-        listener.Add(_listener);
     }
 
-    public void LowerListenNode(ListenNode listenNode)
+
+    public void LowerDataObserver<T>(DataObserver<T> dataObserver)
     {
-        for(int i = 0; i < listenNodes.Count; i++)
-        {
-            if (listenNodes[i] == listenNode)
-            {
-                listenNodes.RemoveAt(i);
-                listener.RemoveAt(i);
-            }
-        }
+        dataObserver.NotifyDataChanged -= Notify;
     }
+
 }

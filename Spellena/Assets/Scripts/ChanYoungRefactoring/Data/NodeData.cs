@@ -16,6 +16,6 @@ namespace ListenerNodeData
 
     public enum ListenNodeDataType
     {
-
+        Int, Vector2
     }
 }
