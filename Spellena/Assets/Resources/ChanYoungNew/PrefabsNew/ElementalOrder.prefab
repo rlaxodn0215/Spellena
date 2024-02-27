@@ -102467,8 +102467,6 @@ GameObject:
   - component: {fileID: 7667575225708645538}
   - component: {fileID: 7667575225708645539}
   - component: {fileID: 7667575225708645564}
-  - component: {fileID: 5342523856560370274}
-  - component: {fileID: 5755468417569486053}
   m_Layer: 15
   m_Name: ElementalOrder
   m_TagString: Untagged
@@ -102508,7 +102506,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 112
+  m_Constraints: 122
   m_CollisionDetection: 0
 --- !u!136 &7667575225708645537
 CapsuleCollider:
@@ -102590,44 +102588,9 @@ MonoBehaviour:
   observableSearch: 2
   ObservedComponents:
   - {fileID: 7667575225708645539}
-  - {fileID: 5342523856560370274}
-  - {fileID: 5755468417569486053}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
---- !u!114 &5342523856560370274
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7667575225708645566}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7f3475a9485765d4f8a00d6521d9296f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playerData: {fileID: 11400000, guid: 68ccf550adebe66449b36e4db70d6bbc, type: 2}
-  cameraMain: {fileID: 7667575226808863569}
-  cameraOverlay: {fileID: 5361540843814770686}
-  cameraMinimap: {fileID: 6986448173717303346}
-  UI: {fileID: 203072567810128901}
-  moveDirection: {x: 0, y: 0}
-  isRunning: 0
-  rightOverlayOrbs: {fileID: 4942409049012450306}
-  leftOverlayOrbs: {fileID: 4997941968728638128}
---- !u!114 &5755468417569486053
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7667575225708645566}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0f4ddb26faa772f40b2c77c38c264bd0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &7667575226157978949
 GameObject:
   m_ObjectHideFlags: 0

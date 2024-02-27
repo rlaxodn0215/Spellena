@@ -23,6 +23,7 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
 
     protected bool isGround = false;
     protected bool isAlive = true;
+
     protected bool isUniqueState = false;
 
     public Camera cameraMain;
@@ -36,8 +37,8 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
     protected GameObject unique;
 
     protected Rigidbody rigidbodyMain;
-    protected GameObject AvatarForMe;
-    protected GameObject AvatarForOther;
+    protected GameObject avatarForMe;
+    protected GameObject avatarForOther;
 
     public Vector2 moveDirection;
     public bool isRunning = false;
@@ -70,21 +71,70 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
         {
             None, Unique, Casting, Holding, Channeling
         }
-        public int routeIndex = 0;
-        public List<State> statesRoute = new List<State>();
 
-        public float progressTime = 0f;
-        public float coolDownTime = 0f;
-        public bool isReady = false;
+        public int routeIndex = 0;
+        public bool isMine = false; //isMin
+
+        //자신의 클라이언트에서의 흐름
+        public List<State> route = new List<State>();
         public bool isLocalReady = false;
+
+        //다른 클라이언트에서의 흐름
+        public List<State> networkRoute = new List<State>();
+        public bool isReady = false;
+
+        //진행 시간 -> 
+        public float progressTime = 0f;
+
+        //쿨타임적용은 모든 클라이언트에 적용됨 -> isReady는 마스터에서만 신호를 보냄
+        public float coolDownTime = 0f;
+
     }
 
     virtual protected void Awake()
     {
-        rigidbodyMain = GetComponent<Rigidbody>();
-
         InitCommonComponents();
         InitUniqueComponents();
+    }
+
+    //캐릭터 공통으로 적용되는 정보
+    protected void InitCommonComponents()
+    {
+        rigidbodyMain = GetComponent<Rigidbody>();
+        playerInput = GetComponent<PlayerInput>();
+        player = photonView.Owner;
+
+
+        layerMaskMap = LayerMask.GetMask("Map");
+        layerMaskWall = LayerMask.GetMask("Wall");
+        layerMaskPlayer = LayerMask.GetMask("Player");
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
+        avatarForOther = transform.GetChild(1).gameObject;
+        avatarForMe = transform.GetChild(2).gameObject;
+
+        unique = transform.GetChild(0).GetChild(1).gameObject;
+
+        minimapMask = UI.transform.GetChild(0).gameObject;
+
+        aim = UI.transform.GetChild(3).gameObject;
+
+        if (photonView.IsMine)
+            SetLocalPlayer();
+
+
+        //스킬
+        AddSkill(playerData.skillCastingTime.Count);
+        AddPlain(playerData.plainCastingTime.Count);
+    }
+
+
+    //캐릭터 마다 다르게 적용되는 정보
+    virtual protected void InitUniqueComponents()
+    {
+
     }
 
     virtual protected void FixedUpdate()
@@ -99,25 +149,7 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
         }
     }
 
-    virtual protected void Update()
-    {
-    }
-
-    [PunRPC]
-    public void NotifyReady(int callType, int index)
-    {
-        if ((CallType)callType == CallType.Skill)
-        {
-            skillDatas[index].isReady = true;
-            Debug.Log("스킬 : " + (index + 1) + " 준비");
-        }
-        else
-        {
-            plainDatas[index].isReady = true;
-            Debug.Log("평타 : " + (index + 1) + " 준비");
-        }
-    }
-
+    //스킬 진행, 쿨타임 진행
     virtual protected void ProgressTime()
     {
         for (int i = 0; i < skillDatas.Count; i++)
@@ -141,7 +173,7 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
             }
         }
 
-        for(int i = 0; i < plainDatas.Count; i++)
+        for (int i = 0; i < plainDatas.Count; i++)
         {
             if (PhotonNetwork.IsMasterClient && plainDatas[i].isReady == false)
             {
@@ -158,18 +190,62 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
         }
     }
 
+    //캐릭터의 평타, 스킬의 준비 완료 상태를 클라이언트에게 보냄
+    [PunRPC]
+    public void NotifyReady(int callType, int index)
+    {
+        if ((CallType)callType == CallType.Skill)
+            skillDatas[index].isReady = true;
+        else
+            plainDatas[index].isReady = true;
+    }
+
+    /*
+    기능 : 캐릭터 스킬의 상태를 다음 상태로 전환
+    인자 ->
+    callType : 스킬인지 평타인지를 받아옴
+    index : 몇 번 스킬인지 받아옴
+    */
+    virtual protected void ChangeNextRoot(CallType callType, int index)
+    {
+        if (callType == CallType.Skill)
+        {
+            skillDatas[index].routeIndex++;
+            if (skillDatas[index].isMine)
+                if (skillDatas[index].routeIndex >= skillDatas[index].route.Count)
+                    skillDatas[index].routeIndex = 0;
+            else
+                if (skillDatas[index].routeIndex >= skillDatas[index].networkRoute.Count)
+                    skillDatas[index].routeIndex = 0;
+        }
+        else
+        {
+            plainDatas[index].routeIndex++;
+            if (plainDatas[index].isMine)
+                if (plainDatas[index].routeIndex >= plainDatas[index].route.Count)
+                    plainDatas[index].routeIndex = 0;
+            else
+                if (plainDatas[index].routeIndex >= plainDatas[index].networkRoute.Count)
+                    plainDatas[index].routeIndex = 0;
+        }
+    }
+
+
+    virtual protected void Update()
+    {
+    }
+    
+
+    /*
+    기능 : 현재 스킬의 상태가 변경되는 지 매 프레임마다 확인
+    */
     private void ListenStateChange()
     {
         for(int i = 0; i < skillDatas.Count; i++)
         {
             if (skillDatas[i].routeIndex != skillListener[i])
             {
-                int _diff = skillDatas[i].routeIndex - skillListener[i];
-                bool _isForce = false;
-                if (!(_diff == 1 || _diff == 1 - skillDatas[i].statesRoute.Count))
-                    _isForce = true;
-                CallStateChangeEvent(CallType.Skill, i, _isForce);
-
+                CallStateChangeEvent(CallType.Skill, i);
                 skillListener[i] = skillDatas[i].routeIndex;
             }
         }
@@ -178,78 +254,33 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
         {
             if (plainDatas[i].routeIndex != plainListener[i])
             {
-                int _diff = plainDatas[i].routeIndex - plainListener[i];
-                bool _isForce = false;
-                if (!(_diff == 1 || _diff == 1 - plainDatas[i].statesRoute.Count))
-                    _isForce = true;
-
-                CallStateChangeEvent(CallType.Plain, i, _isForce);
-
+                CallStateChangeEvent(CallType.Plain, i);
                 plainListener[i] = plainDatas[i].routeIndex;
             }
         }
     }
 
     //스킬, 평타 상태 변경 시 호출됨
-    virtual protected void CallStateChangeEvent(CallType callType, int index, bool isForce)
+    virtual protected void CallStateChangeEvent(CallType callType, int index)
     {
         //정상적인 상태 이동
         if (callType == CallType.Skill)
-        {
-            if (!isForce)
-                PlayNormalSkillLogic(index);
-            else
-                PlayForceSkillLogic(index);
-
-        }
+            PlaySkillLogic(index);
         else
-        {
-            if (!isForce)
-                PlayNormalPlainLogic(index);
-            else
-                PlayForcePlainLogic(index);
-        }
-
+            PlayPlainLogic(index);
     }
 
-
-    //쿨타임 적용, 애니메이션 실행도 이쪽에서 오버라이드해서 구현
-    virtual protected void PlayNormalSkillLogic(int index)
+    //스킬 ,평타 로직 진행 -> 캐릭터마다 오버라이드 시켜 진행
+    virtual protected void PlaySkillLogic(int index)
     {
 
     }
 
-    virtual protected void PlayForceSkillLogic(int index)
+    virtual protected void PlayPlainLogic(int index)
     {
 
     }
 
-    virtual protected void PlayNormalPlainLogic(int index)
-    {
-
-    }
-
-    virtual protected void PlayForcePlainLogic(int index)
-    {
-
-    }
-
-    //스킬, 평타를 다음 상태로 전환
-    virtual protected void ChangeNextRoot(CallType callType, int index)
-    {
-        if(callType == CallType.Skill)
-        {
-            skillDatas[index].routeIndex++;
-            if (skillDatas[index].routeIndex >= skillDatas[index].statesRoute.Count)
-                skillDatas[index].routeIndex = 0;
-        }
-        else
-        {
-            plainDatas[index].routeIndex++;
-            if (plainDatas[index].routeIndex >= plainDatas[index].statesRoute.Count)
-                plainDatas[index].routeIndex = 0;
-        }
-    }
 
     protected void AddSkill(int count)
     {
@@ -284,6 +315,10 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
             isGround = false;
     }
 
+
+    /*
+    기능 : moveDirection의 값과 externalForce에 따라 Rigidbody의 velocity를 변경
+    */ 
     virtual protected void MovePlayer()
     {
         Vector3 _direction = Vector3.zero;
@@ -313,43 +348,9 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
         rigidbodyMain.velocity = new Vector3(_velocity.x, rigidbodyMain.velocity.y, _velocity.z) + externalForce;
     }
 
-    protected void InitCommonComponents()
-    {
-        layerMaskMap = LayerMask.GetMask("Map");
-        layerMaskWall = LayerMask.GetMask("Wall");
-        layerMaskPlayer = LayerMask.GetMask("Player");
-
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-
-        player = photonView.Owner;
-
-        AvatarForOther = transform.GetChild(1).gameObject;
-        AvatarForMe = transform.GetChild(2).gameObject;
-
-
-        unique = transform.GetChild(0).GetChild(1).gameObject;
-
-        minimapMask = UI.transform.GetChild(0).gameObject;
-
-        aim = UI.transform.GetChild(3).gameObject;
-
-        if(photonView.IsMine)
-            SetLocalPlayer();
-
-
-        //스킬
-        AddSkill(playerData.skillCastingTime.Count);
-        AddPlain(playerData.plainCastingTime.Count);
-
-        playerInput = GetComponent<PlayerInput>();
-    }
-
-    virtual protected void InitUniqueComponents()
-    {
-
-    }
-
+    /*
+    기능 : 캐릭터 생성 시 플레이어 클라이언트에서 자신의 캐릭터용 설정을 적용
+    */
     virtual public void SetLocalPlayer()
     {
         cameraOverlay.gameObject.SetActive(true);
@@ -358,17 +359,25 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
 
         UI.SetActive(true);
 
-        SkinnedMeshRenderer[] _skinMeshForOther = AvatarForOther.GetComponentsInChildren<SkinnedMeshRenderer>();
-        SkinnedMeshRenderer[] _skinMeshForMe = AvatarForMe.GetComponentsInChildren<SkinnedMeshRenderer>();
+        SkinnedMeshRenderer[] _skinMeshForOther = avatarForOther.GetComponentsInChildren<SkinnedMeshRenderer>();
+        SkinnedMeshRenderer[] _skinMeshForMe = avatarForMe.GetComponentsInChildren<SkinnedMeshRenderer>();
+
         for (int i = 0; i < _skinMeshForOther.Length; i++)
             _skinMeshForOther[i].gameObject.layer = 6;
         for (int i = 0; i < _skinMeshForMe.Length; i++)
             _skinMeshForMe[i].gameObject.layer = 8;
-
     }
 
     //입력 이벤트 -> 키보드 상태 변경 시 마다 호출
 
+
+    /*
+    기능 : 마우스를 움직이면 시야를 이동할 수 있음
+    인자 ->
+    inputValue : 마우스 입력을 Vector2 형식으로 받음
+    -> 카메라 좌, 우 : x좌표 출력
+    -> 카메라 상, 하 : y좌표 출력
+    */
     virtual protected void OnMouseMove(InputValue inputValue)
     {
         if (!isCameraLocked)
@@ -384,6 +393,14 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
             cameraMain.transform.localRotation = Quaternion.Euler(_normalizedAngle, 0, 0);
         }
     }
+
+    /*
+    기능 : 키보드 WSAD를 입력하면 호출되어 움직이는 방향을 결정하고 캐릭터 하반신 애니메이션 이벤트를 실행
+    인자 ->
+    inputValue : 키보드 입력을 Vector2 형식으로 받음
+    -> W, S : x좌표 출력
+    -> A, D : y좌표 출력
+    */
     virtual protected void OnMove(InputValue inputValue)
     {
         moveDirection = new Vector2(inputValue.Get<Vector2>().x, inputValue.Get<Vector2>().y);
@@ -427,13 +444,16 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
         CancelSkill();
     }
 
-
+    
+    /*
+    
+    */
     virtual protected void OnMouseButton()
     {
         isClicked = !isClicked;
         if (isClicked)
         {
-            //스킬 진행 중에는 다른 기능 사용 불가
+            //스킬 진행 중에는 다른 행동 불가
             if (IsProgressing())
                 return;
 
@@ -485,7 +505,6 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
             for (int i = 0; i < skillDatas.Count; i++)
                 skillDatas[i].isLocalReady = false;
             skillDatas[index].isLocalReady = true;
-            Debug.Log("스킬 " + (index + 1) + " : 준비");
         }
     }
 
@@ -501,6 +520,7 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
         }
     }
 
+    //스킬이 준비되어 있는지 확인
     protected int GetIndexofSkillReady()
     {
         for (int i = 0; i < skillDatas.Count; i++)
@@ -509,6 +529,7 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
         return -1;
     }
 
+    //평타가 준비되어있는지 확인
     protected int GetIndexofPlainReady()
     {
         for (int i = 0; i < plainDatas.Count; i++)
@@ -550,21 +571,17 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
         rigidbodyMain.velocity = _velocity;
     }
 
+
+    /*
+    기능 : 스킬의 routeIndex를 받음
+    인자 ->
+    callType : 스킬인지 평타인지를 받아옴
+    index : 몇 번 스킬인지 받아옴
+    */
     [PunRPC]
-    virtual public void NotifyUseSkill(int callType, int index ,int routeIndex)
+    virtual public void NotifyUseSkill(int callType, int index)
     {
-        if ((CallType)callType == CallType.Skill)
-            skillDatas[index].routeIndex = routeIndex;
-        else if ((CallType)callType == CallType.Plain)
-            plainDatas[index].routeIndex = routeIndex;
-    }
-
-    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
-    {
-    }
-
-    virtual protected void PlayLogic(CallType callType, SkillData.State state, int index)
-    {
+        ChangeNextRoot((CallType)callType, index);
     }
 
     protected void CallPlayAnimation(AnimationChangeType changeType, CallType callType, int index)
@@ -581,5 +598,13 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
         else if (_normalizedAngle < -60)
             _normalizedAngle = -60;
         cameraMain.transform.localRotation = Quaternion.Euler(_normalizedAngle, 0, 0);
+    }
+
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+    }
+
+    virtual protected void PlayLogic(CallType callType, SkillData.State state, int index)
+    {
     }
 }

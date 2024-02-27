@@ -2,6 +2,7 @@ using Photon.Pun;
 using UnityEngine;
 using GlobalEnum;
 using System.Collections.Generic;
+using UnityEngine.EventSystems;
 
 public class PlayerCommonAnimation : MonoBehaviourPunCallbacks, IPunObservable
 {
@@ -78,7 +79,9 @@ public class PlayerCommonAnimation : MonoBehaviourPunCallbacks, IPunObservable
         networkRotation = cameraMain.transform.localRotation;
 
         playerCommon = transform.root.GetComponent<PlayerCommon>();
+
         playerCommon.UpdateLowerAnimation += UpdateLowerAnimation;
+
         sightMain = cameraMain.transform.GetChild(0);
         handSightMain = cameraMain.transform.GetChild(1);
         animator = GetComponent<Animator>();
@@ -115,6 +118,9 @@ public class PlayerCommonAnimation : MonoBehaviourPunCallbacks, IPunObservable
         }
     }
 
+    /*
+    기능 : 하반신 애니메이션 파라미터 값의 목표를 변경
+    */
     virtual protected void UpdateLowerAnimation(Vector2 moveDirection, bool isRunning)
     {
         //y가 앞뒤, x가 좌우 x가 0보다 크면 오른쪽
@@ -126,8 +132,26 @@ public class PlayerCommonAnimation : MonoBehaviourPunCallbacks, IPunObservable
 
         animator.SetFloat("TargetMoveDirectionVertical", moveDirection.y);
         animator.SetFloat("TargetMoveDirectionHorizontal", moveDirection.x);
+
+        photonView.RPC("ChangeLowerParameter", RpcTarget.Others, moveDirection.x, moveDirection.y);
     }
 
+    /*
+    기능 : 포톤 뷰를 가진 플레이어에게서 하반신 애니메이션의 목표 파라미터값을 받아 적용합니다.
+    인자 ->
+    directionX : 애니메이션의 앞, 뒤 방향
+    directionY : 애니메이션의 좌, 우 방향
+    */
+    [PunRPC]
+    public void ChangeLowerParameter(int directionX, int directionY)
+    {
+        animator.SetFloat("TargetMoveDirectionVertical", directionY);
+        animator.SetFloat("TargetMoveDirectionHorizontal", directionX);
+    }
+
+    /*
+    기능 : 애니메이션이 변경되는 것을 확인
+    */
     virtual protected bool ListenAnimatorState()
     {
         int _hash = animator.GetNextAnimatorStateInfo(1).fullPathHash;
@@ -141,12 +165,21 @@ public class PlayerCommonAnimation : MonoBehaviourPunCallbacks, IPunObservable
         return false;
     }
 
+    /*
+    기능 : 애니메이션이 변경될 때 1회 실행되는 함수
+    */
     virtual protected void PlayAnimationChangeEvent()
     {
         AnimatorStateInfo _info = animator.GetNextAnimatorStateInfo(1);
         ChangeAnimationRoot(_info);
     }
 
+    /*
+    기능 : 애니메이션의 routeIndex를 변경하여 routeIndex에 있는 route의 AnimationType에 따라
+    애니메이션의 속도를 변경합니다.
+    인자 ->
+    info 
+    */
     virtual protected void ChangeAnimationRoot(AnimatorStateInfo info)
     {
         if(currentAnimationType == CallType.Skill)
@@ -184,6 +217,11 @@ public class PlayerCommonAnimation : MonoBehaviourPunCallbacks, IPunObservable
 
     }
 
+    /*
+    기능 : 애니메이션 state의 정보를 받아 새로 변경되는 애니메이션의 속도를 변경
+    인자 ->
+    info : 다음 애니메이션 상태의 정도
+    */
     virtual protected void SetAnimationSpeed(AnimatorStateInfo info)
     {
         float _length = info.length;
@@ -197,18 +235,14 @@ public class PlayerCommonAnimation : MonoBehaviourPunCallbacks, IPunObservable
         {
             _parameter = "Skill" + (currentAnimationIndex + 1);
             _time = skillRoutes[currentAnimationIndex].routeTime[skillRoutes[currentAnimationIndex].routeIndex];
-
             AnimationType _tempType = skillRoutes[currentAnimationIndex].route[skillRoutes[currentAnimationIndex].routeIndex];
-
             AddAnimationType(ref _parameter, _tempType);
         }
         else if (currentAnimationType == CallType.Plain)
         {
             _parameter = "Plain" + (currentAnimationIndex + 1);
             _time = plainRoutes[currentAnimationIndex].routeTime[plainRoutes[currentAnimationIndex].routeIndex];
-
             AnimationType _tempType = plainRoutes[currentAnimationIndex].route[plainRoutes[currentAnimationIndex].routeIndex];
-
             AddAnimationType(ref _parameter, _tempType);
         }
 
@@ -233,7 +267,13 @@ public class PlayerCommonAnimation : MonoBehaviourPunCallbacks, IPunObservable
         animator.SetLookAtWeight(1f);
     }
 
-
+    /*
+    기능 : 애니메이션 파라미터 변경
+    인자 ->
+    changeType : 애니메이션을 강제로 바꾸는 지를 결정하는 인자
+    callType : 스킬인지 평타인지 구분
+    index : 스킬 인덱스
+    */
     virtual protected void PlayAnimation(AnimationChangeType changeType, CallType callType, int index)
     {
         if (index < 0)
@@ -260,26 +300,24 @@ public class PlayerCommonAnimation : MonoBehaviourPunCallbacks, IPunObservable
             currentAnimationIndex = index;
         }
         else if (changeType == AnimationChangeType.Change)
-        {
-            ChangeAnimation();
-        }
+            ChangeAnimation(callType, index);
     }
 
-    virtual protected void ChangeAnimation()
+    virtual protected void ChangeAnimation(CallType callType, int index)
     {
 
     }
-
+    
+    /*
+    IPunObservable 인터페이스(Photon.Pun기능)
+    기능 : 초당 20회 정도 호출되어 모든 클라이언트에 값을 연동함
+    */
     virtual public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         if (stream.IsWriting)
-        {
             stream.SendNext(cameraMain.transform.localRotation);
-        }
         else
-        {
             networkRotation = (Quaternion)stream.ReceiveNext();
-        }
     }
 
 }
