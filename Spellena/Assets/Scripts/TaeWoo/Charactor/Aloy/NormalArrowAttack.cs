@@ -148,7 +148,7 @@ public class NormalArrowAttack : ActionNode
         {
             coolTimer.ChangeCoolTime(DefineNumber.ZeroCount);
             //Debug.Log("AloyBasicAttack to " + "<color=magenta>"+ ((AloyBT)tree).lookTransform.name + "</color>");
-            Logging.Log("AloyBasicAttack to " + "<color=magenta>" + ((AloyBT)tree).lookTransform.name + "</color>");
+            ErrorManager.Log("AloyBasicAttack to " + "<color=magenta>" + ((AloyBT)tree).lookTransform.name + "</color>");
             bowAnimator.SetBool(PlayerAniState.Shoot, true);
             animator.SetBool(PlayerAniState.Shoot, true);
             PoolManager.Instance.GetObject(CharacterName.Character_2, PoolObjectName.Arrow, attackTransform.position, attackTransform.rotation);

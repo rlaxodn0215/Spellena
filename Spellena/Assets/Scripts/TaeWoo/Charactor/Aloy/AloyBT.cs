@@ -21,7 +21,7 @@ public class AloyBT : BehaviorTree.Tree
 
     void InitData()
     {
-        animator = GetComponent<Animator>();
+        //animator = GetComponent<Animator>();
         actionNodeMaker = GetComponent<ActionNodeMaker>();
         aimingTrasform = actionNodeMaker.actionObjectTransforms[(int)ActionObjectName.AimingTransform];
         NullCheck();
@@ -64,14 +64,16 @@ public class AloyBT : BehaviorTree.Tree
         try
         {
             // 에러 발생 확인
-            if (ErrorManager.isErrorOccur) 
-                throw new Exception("에러 발생 시간 : " + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss"));
+            if (ErrorManager.isErrorOccur)
+                throw new Exception("NULL Reference 발생으로 인한 게임 종료");
+            else
+                ErrorManager.SaveErrorData("No NULL Reference");
         }
 
         catch (Exception e)
         {
-            // 에러 발생 시간 저장 후 게임 종료
             ErrorManager.SaveErrorData(e.Message);
+            ErrorManager.SendErrorReport();
             Application.Quit();
         }
     }

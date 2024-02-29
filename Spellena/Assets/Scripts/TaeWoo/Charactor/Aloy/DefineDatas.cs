@@ -125,16 +125,6 @@ namespace DefineDatas
         public static float SightHeightRatio                        = 1.5f;
     }
 
-    public static class Logging
-    {
-        // PlayerSettings의 ScriptCompilation에서 ENABLE_DEBUG가 추가 되어야 함수 호출
-        [System.Diagnostics.Conditional("ENABLE_DEBUG")]
-        static public void Log(object message)
-        {
-            Debug.Log(message);
-        }
-    }
-
     public enum ErrorCode
     {
         // NULL ERROR
