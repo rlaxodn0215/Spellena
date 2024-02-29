@@ -102,15 +102,15 @@ namespace DefineDatas
 
     static class PlayerAniState
     {
-        public static string Move                                   = "Move";
-        public static string CheckEnemy                             = "CheckEnemy";
-        public static string AvoidRight                             = "AvoidRight";
-        public static string AvoidLeft                              = "AvoidLeft";
-        public static string AvoidForward                           = "AvoidForward";
-        public static string AvoidBack                              = "AvoidBack";
-        public static string Aim                                    = "Aim";
-        public static string Draw                                   = "Draw";
-        public static string Shoot                                  = "Shoot";
+        public readonly static int Move                             = Animator.StringToHash("Move");
+        public readonly static int CheckEnemy                       = Animator.StringToHash("CheckEnemy");
+        public readonly static int AvoidRight                       = Animator.StringToHash("AvoidRight");
+        public readonly static int AvoidLeft                        = Animator.StringToHash("AvoidLeft");
+        public readonly static int AvoidForward                     = Animator.StringToHash("AvoidForward");
+        public readonly static int AvoidBack                        = Animator.StringToHash("AvoidBack");
+        public readonly static int Aim                              = Animator.StringToHash("Aim");
+        public readonly static int Draw                             = Animator.StringToHash("Draw");
+        public readonly static int Shoot                            = Animator.StringToHash("Shoot");
     }
 
     static class DefineNumber
@@ -125,8 +125,19 @@ namespace DefineDatas
         public static float SightHeightRatio                        = 1.5f;
     }
 
+    public static class Logging
+    {
+        // PlayerSettings의 ScriptCompilation에서 ENABLE_DEBUG가 추가 되어야 함수 호출
+        [System.Diagnostics.Conditional("ENABLE_DEBUG")]
+        static public void Log(object message)
+        {
+            Debug.Log(message);
+        }
+    }
+
     public enum ErrorCode
     {
+        // NULL ERROR
         AbilityMaker_Tree_NULL,
         AbilityMaker_data_NULL,
         AloyBT_animator_NULL,
@@ -145,6 +156,11 @@ namespace DefineDatas
         NormalArrowAttack_avoidTimer_NULL,
         GotoOccupationArea_arrowAniObj_NULL,
         GotoOccupationArea_agent_NULL,
-        GotoOccupationArea_animator_NULL
+        GotoOccupationArea_animator_NULL,
+
+        // PoolManager ERROR
+        NoSpawnPoolObjects,
+        CannotFindPoolObjectName,
+        CannotFindPoolObjectID
     }
 }

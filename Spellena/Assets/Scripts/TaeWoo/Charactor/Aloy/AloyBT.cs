@@ -110,6 +110,7 @@ public class AloyBT : BehaviorTree.Tree
     //    GUI.Box(new Rect(0, 400, 150, 25), "<color=orange>" + ((ActionNode)root.GetData(NodeData.NodeStatus)).actionName + "</color>");
     //}
 
+#if UNITY_EDITOR
     private void OnGUI()
     {
         GUI.Box(new Rect(0, 375, 150, 25), "<color=magenta>" + "AI Status" + "</color>");
@@ -125,5 +126,5 @@ public class AloyBT : BehaviorTree.Tree
 
         }
     }
-
+#endif
 }

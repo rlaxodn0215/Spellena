@@ -174,7 +174,7 @@ public class BallArrowAttack : ActionNode
             Vector3.Lerp(playerTransform.forward, targetDir, rotateSpeed * Time.deltaTime);
 
         if (coolTimer.IsCoolTimeFinish() &&
-            animator.GetCurrentAnimatorStateInfo(2).IsName(PlayerAniState.Aim))
+            animator.GetCurrentAnimatorStateInfo(2).IsName("Aim"))
         {
             coolTimer.ChangeCoolTime(0.0f);
 
@@ -189,7 +189,7 @@ public class BallArrowAttack : ActionNode
             bowAnimator.SetBool(PlayerAniState.Shoot, false);
             animator.SetBool(PlayerAniState.Shoot, false);
 
-            if (bowAnimator.GetCurrentAnimatorStateInfo(0).IsName(PlayerAniState.Draw))
+            if (bowAnimator.GetCurrentAnimatorStateInfo(0).IsName("Draw"))
             {
                 arrowAniObj.SetActive(true);
             }

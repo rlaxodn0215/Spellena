@@ -143,11 +143,12 @@ public class NormalArrowAttack : ActionNode
         playerTransform.forward = Vector3.Lerp(playerTransform.forward, targetDir, rotateSpeed * Time.deltaTime);
         //bool isDrawing;
         if (coolTimer.IsCoolTimeFinish() && 
-            animator.GetCurrentAnimatorStateInfo((int)PlayerAniLayerIndex.AttackLayer).IsName(PlayerAniState.Aim) &&
+            animator.GetCurrentAnimatorStateInfo((int)PlayerAniLayerIndex.AttackLayer).IsName("Aim") &&
             Mathf.Acos(Vector3.Dot(playerTransform.forward, targetDir)) * Mathf.Rad2Deg <= DefineNumber.AttackAngleDifference)
         {
             coolTimer.ChangeCoolTime(DefineNumber.ZeroCount);
-            Debug.Log("AloyBasicAttack to " + "<color=magenta>"+ ((AloyBT)tree).lookTransform.name + "</color>");
+            //Debug.Log("AloyBasicAttack to " + "<color=magenta>"+ ((AloyBT)tree).lookTransform.name + "</color>");
+            Logging.Log("AloyBasicAttack to " + "<color=magenta>" + ((AloyBT)tree).lookTransform.name + "</color>");
             bowAnimator.SetBool(PlayerAniState.Shoot, true);
             animator.SetBool(PlayerAniState.Shoot, true);
             PoolManager.Instance.GetObject(CharacterName.Character_2, PoolObjectName.Arrow, attackTransform.position, attackTransform.rotation);
