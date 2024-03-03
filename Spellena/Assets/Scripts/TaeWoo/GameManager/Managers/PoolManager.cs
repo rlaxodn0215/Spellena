@@ -73,7 +73,7 @@ namespace Managers
                 PoolObjectData data = poolDatas[(PoolObjectName)i];
                 data.addObjectNum = data.initObjectNum;
 
-                for (int j = 1; j <= data.initObjectNum; j++)
+                for (int j = 0; j < data.initObjectNum; j++)
                 {
                     data.objs.Add(CreateNewObject(data, j));
                 }
@@ -126,8 +126,8 @@ namespace Managers
         {
             if (!poolDatas.ContainsKey(name))
             {
-                ErrorManager.Log("해당 이름의 PoolObject를 찾을 수 없습니다 : " + name.ToString());
-                ErrorManager.SaveErrorData(ErrorCode.CannotFindPoolObjectName, " : " + name.ToString());
+                ErrorManager.Log("해당 이름의 PoolObject를 찾을 수 없습니다(GetObject(string, PoolObjectName)) : " + name.ToString());
+                ErrorManager.SaveErrorData(ErrorCode.CannotFindPoolObjectName, " : " + name.ToString() + "from GetObject(string, PoolObjectName)");
                 return null;
             }
 
@@ -162,8 +162,8 @@ namespace Managers
         {
             if (!poolDatas.ContainsKey(name))
             {
-                ErrorManager.Log("해당 이름의 PoolObject를 찾을 수 없습니다 : " + name.ToString());
-                ErrorManager.SaveErrorData(ErrorCode.CannotFindPoolObjectName, " : " + name.ToString());
+                ErrorManager.Log("해당 이름의 PoolObject를 찾을 수 없습니다(GetObject(string, PoolObjectName, Vector3, Quaternion)) : " + name.ToString());
+                ErrorManager.SaveErrorData(ErrorCode.CannotFindPoolObjectName, " : " + name.ToString() + "from GetObject(string, PoolObjectName, Vector3, Quaternion)");
                 return null;
             }
 
@@ -199,16 +199,16 @@ namespace Managers
         {
             if (!poolDatas.ContainsKey(name))
             {
-                ErrorManager.Log("해당 이름의 PoolObject를 찾을 수 없습니다 : " + name.ToString());
-                ErrorManager.SaveErrorData(ErrorCode.CannotFindPoolObjectName, " : " + name.ToString());
+                ErrorManager.Log("해당 이름의 PoolObject를 찾을 수 없습니다(DisActiveObject(PoolObjectName, int)) : " + name.ToString());
+                ErrorManager.SaveErrorData(ErrorCode.CannotFindPoolObjectName, " : " + name.ToString() + "from DisActiveObject(PoolObjectName, int)");
                 return;
             }
 
             PoolObject ob = SearchObject(name, id);
             if (ob == null)
             {
-                ErrorManager.Log("해당 ID 의 PoolObject를 찾을 수 없습니다 : " + id.ToString());
-                ErrorManager.SaveErrorData(ErrorCode.CannotFindPoolObjectID, " : " + id.ToString());
+                ErrorManager.Log("해당 ID 의 PoolObject를 찾을 수 없습니다(DisActiveObject(PoolObjectName, int)) : " + id.ToString());
+                ErrorManager.SaveErrorData(ErrorCode.CannotFindPoolObjectID, " : " + id.ToString() + "from DisActiveObject(PoolObjectName, int)");
                 return;
             }
 
@@ -229,45 +229,21 @@ namespace Managers
         {
             if (!poolDatas.ContainsKey(name))
             {
-                ErrorManager.Log("해당 이름의 PoolObject를 찾을 수 없습니다 : " + name.ToString());
-                ErrorManager.SaveErrorData(ErrorCode.CannotFindPoolObjectName, " : " + name.ToString());
+                ErrorManager.Log("해당 이름의 PoolObject를 찾을 수 없습니다(SearchObject(PoolObjectName, int)) : " + name.ToString());
+                ErrorManager.SaveErrorData(ErrorCode.CannotFindPoolObjectName, " : " + name.ToString() + "from SearchObject(PoolObjectName, int)");
                 return null;
             }
 
-            // PoolObject를 이진 탐색으로 찾는다
-            PoolObject ob = BinarySearch(poolDatas[name], id);
-
+            // ID와 리스트 인덱스 번호 동일
+            PoolObject ob = poolDatas[name].objs[id];
             if (ob == null)
             {
-                ErrorManager.Log("해당 ID 의 PoolObject를 찾을 수 없습니다 : " + id.ToString());
-                ErrorManager.SaveErrorData(ErrorCode.CannotFindPoolObjectID, " : " + id.ToString());
+                ErrorManager.Log("해당 ID 의 PoolObject를 찾을 수 없습니다(SearchObject(PoolObjectName, int)) : " + id.ToString());
+                ErrorManager.SaveErrorData(ErrorCode.CannotFindPoolObjectID, " : " + id.ToString() + "from SearchObject(PoolObjectName, int)");
                 return null;
             }
 
             return ob;
         }
-
-        /*
-        * PoolObject ID로 이진탐색
-        * 매개변수: 탐색 할 PoolObject 데이터(PoolObjectData), 탐색 할 PoolObject ID(int)
-        * 리턴 값: PoolObject
-        */
-        public PoolObject BinarySearch(PoolObjectData data, int target)
-        {
-            int start = 0;
-            int end = data.addObjectNum - 1;
-            int mid;
-
-            while (start <= end)
-            {
-                mid = (start + end) / 2;
-                if (data.objs[mid].ObjID == target) return data.objs[mid];
-                else if (data.objs[mid].ObjID > target) end = mid - 1;
-                else start = mid + 1;
-            }
-
-            return null;
-        }
-
     }
 }

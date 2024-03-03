@@ -40,7 +40,7 @@ public class Arrow : PoolObject
     }
     void OnEnable()
     {
-        if (ObjID > 0)
+        if (ObjID >= 0)
         {
             if (rigidbody == null) rigidbody = gameObject.AddComponent<Rigidbody>();
             rigidbody.velocity = transform.forward * arrowVelocity;

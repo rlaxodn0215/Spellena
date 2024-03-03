@@ -12,7 +12,7 @@ namespace Managers
         public bool isUsed;
         [HideInInspector]
         public string userName;
-        public int ObjID { get; private set; }
+        public int ObjID { get; private set; } = -1;
         protected PoolObjectName objectName;
         protected Transform objTrans;
 
