@@ -16,7 +16,7 @@ namespace Managers
             public int initObjectNum;
             public int addObjectNum;
             public List<PoolObject> objs;
-            public List<int> objIDs;
+            public Queue<int> objIDs;
         }
 
         // PoolObject 정보가 담긴 ScriptableObject
@@ -48,7 +48,7 @@ namespace Managers
                 temp.initObjectNum = managerData.poolObjectDatas[i].initObjectNum;
                 temp.addObjectNum = 0;
                 temp.objs = new List<PoolObject>();
-                temp.objIDs = new List<int>();
+                temp.objIDs = new Queue<int>();
 
                 poolDatas[temp.name] = temp;
             }
@@ -100,7 +100,7 @@ namespace Managers
             poolObj.SetCallback(DisActiveObject);                   // Delegate에 DisActiveObject 함수 구독  
             poolObj.InitPoolObject();
             poolObj.isUsed = false;
-            pObjData.objIDs.Add(id);
+            pObjData.objIDs.Enqueue(id);
 
             return poolObj;
         }
@@ -135,7 +135,7 @@ namespace Managers
             PoolObject ob;
             if (data.objIDs.Count > 0)
             {
-                ob = SearchObject(name, data.objIDs[0]);
+                ob = SearchObject(name, data.objIDs.Peek());
             }
 
             else
@@ -144,7 +144,7 @@ namespace Managers
                 data.objs.Add(ob);
             }
 
-            data.objIDs.Remove(data.objIDs[0]);
+            data.objIDs.Dequeue();
             poolDatas[name] = data;
 
             ob.userName = userName;
@@ -171,7 +171,7 @@ namespace Managers
             PoolObject ob;
             if (data.objIDs.Count > 0)
             {
-                ob = SearchObject(name, data.objIDs[0]);
+                ob = SearchObject(name, data.objIDs.Peek());
             }
 
             else
@@ -180,7 +180,7 @@ namespace Managers
                 data.objs.Add(ob);
             }
 
-            data.objIDs.Remove(data.objIDs[0]);
+            data.objIDs.Dequeue();
             poolDatas[name] = data;
 
             ob.transform.SetPositionAndRotation(pos, rot);
@@ -217,7 +217,7 @@ namespace Managers
             ob.isUsed = false;
             ob.userName = null;
             ob.gameObject.SetActive(false);
-            poolDatas[name].objIDs.Add(id);
+            poolDatas[name].objIDs.Enqueue(id);
         }
 
         /*

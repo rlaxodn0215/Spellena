@@ -1,6 +1,6 @@
 -------------
-Device Model : MS-7D18 (Micro-Star International Co., Ltd.)
-Device OS : Windows 10  (10.0.19045) 64bit
+Device Model : B80GV.AA0502 (LG Electronics)
+Device OS : Windows 11  (10.0.22621) 64bit
 -------------
 ERROR CODE 2 : AloyBT_animator_NULL
 NULL Reference 발생으로 인한 게임 종료
