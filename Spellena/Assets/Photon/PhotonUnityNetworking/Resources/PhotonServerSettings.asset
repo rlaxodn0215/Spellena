@@ -224,6 +224,13 @@ MonoBehaviour:
   - TeleportPlayer
   - ActiveAI
   - ChangeLowerParameter
+  - SyncTargetMove
+  - NotifySkillReady
+  - AddExternalForce
+  - SyncRoute
+  - SyncAnimationCall
+  - SyncTargetDirection
+  - SyncRun
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 103d491e9714cfb47ab4a32713d75b15, type: 3}
+  m_Name: ElementalOrderSkillRoute
+  m_EditorClassIdentifier: 
+  skillCoolDownTime:
+  - 5
+  - 5
+  - 5
+  - 5
+  - 5
+  - 5
+  skillCastingTime:
+  - 2
+  - 2
+  - 2
+  - 2
+  - 2
+  - 2
+  skillChannelingTime: []
+  skillRoutes:
+  - {fileID: 11400000, guid: 6909dfe9f01698a48982b2be0825c7a9, type: 2}
+  - {fileID: 11400000, guid: 87170ec87e1df4240bcce37e9cff80ad, type: 2}
+  - {fileID: 11400000, guid: 8193885252b49ae4ca900e335ee1f824, type: 2}
+  - {fileID: 11400000, guid: 8cdeb9e04fcb42b4498724768b9bcb7f, type: 2}
+  - {fileID: 11400000, guid: bb28d262670e5004aaf716322c391ea3, type: 2}
+  - {fileID: 11400000, guid: f592deb679fc8d449ada32a2585bc007, type: 2}
+  plainCastingTime: []
+  plainChannelingTime: []
