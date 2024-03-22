@@ -1,6 +1,6 @@
 -------------
-Device Model : B80GV.AA0502 (LG Electronics)
-Device OS : Windows 11  (10.0.22621) 64bit
+Device Model : ASUS TUF Gaming F17 FX707VV4_FX707VV4 (ASUSTeK COMPUTER INC.)
+Device OS : Windows 11  (10.0.22631) 64bit
 -------------
 ERROR CODE 2 : AloyBT_animator_NULL
 NULL Reference 발생으로 인한 게임 종료
