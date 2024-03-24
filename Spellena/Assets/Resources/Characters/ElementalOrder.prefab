@@ -102577,7 +102577,63 @@ MonoBehaviour:
   m_ControlsChangedEvent:
     m_PersistentCalls:
       m_Calls: []
-  m_ActionEvents: []
+  m_ActionEvents:
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 014e639d-438e-4502-aaf9-878ae67f0483
+    m_ActionName: PlayerActions/Move[/Keyboard/w,/Keyboard/s,/Keyboard/a,/Keyboard/d]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 1ccbb9cf-1dd8-4a03-9cf2-639da2bd1827
+    m_ActionName: PlayerActions/Jump[/Keyboard/space]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: c688387f-6e32-457f-b9d8-80f705424874
+    m_ActionName: PlayerActions/MouseButton[/Mouse/leftButton]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: d461b346-707c-4314-bafe-14410b1a730d
+    m_ActionName: PlayerActions/MouseButton2[/Mouse/rightButton]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 54b3753b-b01d-4f90-bbb5-32b7c43bbcd2
+    m_ActionName: PlayerActions/Run[/Keyboard/leftShift]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: fac7d23a-a706-4d21-89a4-f1497b9704f5
+    m_ActionName: PlayerActions/Sit[/Keyboard/leftCtrl]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 873478a1-3497-4f82-bd4b-2c6392f85f81
+    m_ActionName: PlayerActions/Interaction[/Keyboard/f]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 3374d651-0ef2-408c-9e35-633cf05bf18e
+    m_ActionName: PlayerActions/ButtonCancel[/Keyboard/e]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 9e48be17-8905-45ba-81b9-fdcfe24d91ec
+    m_ActionName: PlayerActions/Skill1[/Keyboard/1]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: b0877e92-11da-4ef6-ab74-0cdd223915f0
+    m_ActionName: PlayerActions/Skill2[/Keyboard/2]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 467c893b-c415-468a-be3f-10ed8f2b1d45
+    m_ActionName: PlayerActions/Skill3[/Keyboard/3]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 6fd97b47-a85c-43fa-bc29-5a939870a496
+    m_ActionName: PlayerActions/Skill4[/Keyboard/4]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 749cf095-5f8b-4187-84e8-fe44d0a84e3d
+    m_ActionName: PlayerActions/Fly[/Keyboard/space]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: b89f763a-44da-4787-862c-d86647c7ed7f
+    m_ActionName: PlayerActions/MouseMove[/Mouse/delta/up,/Mouse/delta/down,/Mouse/delta/left,/Mouse/delta/right]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: PlayerActions

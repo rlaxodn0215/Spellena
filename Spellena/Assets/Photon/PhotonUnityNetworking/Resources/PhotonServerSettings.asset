@@ -231,6 +231,7 @@ MonoBehaviour:
   - SyncAnimationCall
   - SyncTargetDirection
   - SyncRun
+  - SyncMoveDirection
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

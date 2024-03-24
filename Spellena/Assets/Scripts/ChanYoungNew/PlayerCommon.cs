@@ -483,11 +483,6 @@ public class PlayerCommon : MonoBehaviourPunCallbacks, IPunObservable
 
     }
 
-    virtual protected void OnSit()
-    {
-
-    }
-
     virtual protected void OnInteraction()
     {
 
